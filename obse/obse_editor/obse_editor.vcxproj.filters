@@ -1,0 +1,308 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="commands">
+      <UniqueIdentifier>{bafa1337-8220-44b9-9740-3a6f4e85a8fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="internals">
+      <UniqueIdentifier>{01862586-1552-4baa-87a1-7ec191d0f090}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="hooks">
+      <UniqueIdentifier>{b901226e-a4c9-4687-8fd8-c2a0526eb583}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="plugin_api">
+      <UniqueIdentifier>{904905c5-32a9-4681-a859-31c3f00818aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="api">
+      <UniqueIdentifier>{30a9b9e4-4064-46c3-ad26-265f8859d359}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\obse\Commands_ActiveEffect.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_Actor.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_ActorValue.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_AI.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_Array.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_Cell.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_Class.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_CombatStyle.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_Console.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_Creature.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_Faction.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_FileIO.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_Game.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_General.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_Input.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_Inventory.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_InventoryRef.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_LeveledList.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_Magic.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_MagicEffect.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_Math.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_Menu.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_MiscForms.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_MiscReference.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_PathGrid.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_Physics.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_Player.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_Quest.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_Race.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_Script.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_Sound.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_String.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_TextInput.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Commands_Weather.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\CommandTable.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse_common\SafeWrite.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\ScriptTokens.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\ScriptUtils.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Utilities.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorHookWindow.cpp">
+      <Filter>hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Hooks_Script.cpp">
+      <Filter>hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\PluginManager.cpp">
+      <Filter>plugin_api</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorAPI.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="EditorRTTI.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\GameData.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse\Script.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="obse_editor.cpp" />
+    <ClCompile Include="..\StdAfx.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\obse\Commands_ActiveEffect.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_Actor.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_ActorValue.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_AI.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_Array.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_Cell.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_Class.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_CombatStyle.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_Console.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_Creature.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_Faction.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_FileIO.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_Game.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_Input.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_Inventory.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_InventoryRef.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_LeveledList.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_Magic.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_MagicEffect.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_Math.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_Menu.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_MiscForms.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_MiscReference.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_PathGrid.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_Physics.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_Player.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_Quest.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_Race.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_Script.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_Sound.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_String.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_TextInput.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Commands_Weather.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\CommandTable.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse_common\SafeWrite.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\ScriptTokens.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\ScriptUtils.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Utilities.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorHookWindow.h">
+      <Filter>hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\Hooks_Script.h">
+      <Filter>hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\PluginAPI.h">
+      <Filter>plugin_api</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\PluginManager.h">
+      <Filter>plugin_api</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorAPI.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="EditorRTTI.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\GameData.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse\obse.h" />
+    <ClInclude Include="..\obse_common\obse_version.h" />
+    <ClInclude Include="..\obse\Commands_General.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="..\StdAfx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\obse_common\obse_version.rc" />
+  </ItemGroup>
+</Project>

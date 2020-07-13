@@ -1,0 +1,5 @@
+SCC = This is a source code control file
+
+[common.vcxproj]
+SCC_Aux_Path = "P4SCC#50.0.94.31:1667##shadeMe##DungHillMansion"
+SCC_Project_Name = Perforce Project

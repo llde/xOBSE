@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ShowAllFiles>false</ShowAllFiles>
+    <LocalDebuggerCommand Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_416|Win32'">G:\TES 4 Oblivion\Oblivion.exe</LocalDebuggerCommand>
+    <LocalDebuggerWorkingDirectory Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_416|Win32'">G:\TES 4 Oblivion\</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerAttach Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_416|Win32'">true</LocalDebuggerAttach>
+    <DebuggerFlavor Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_416|Win32'">WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerCommand Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_416|Win32'">G:\TES 4 Oblivion\Oblivion.exe</LocalDebuggerCommand>
+    <LocalDebuggerWorkingDirectory Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_416|Win32'">G:\TES 4 Oblivion</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerAttach Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_416|Win32'">true</LocalDebuggerAttach>
+    <DebuggerFlavor Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_416|Win32'">WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+</Project>

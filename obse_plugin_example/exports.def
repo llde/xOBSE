@@ -1,0 +1,4 @@
+LIBRARY	"obse_plugin_example"
+EXPORTS
+OBSEPlugin_Query
+OBSEPlugin_Load

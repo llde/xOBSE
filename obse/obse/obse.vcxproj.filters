@@ -1,0 +1,644 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="api">
+      <UniqueIdentifier>{486f985c-04ca-4518-b8fc-6a9347fb6b14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="api\game">
+      <UniqueIdentifier>{e55d32e3-5be5-445a-b449-55d80d9e8944}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="api\netimmerse">
+      <UniqueIdentifier>{a8521286-c4ca-477e-9533-5263f4082d04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="api\havok">
+      <UniqueIdentifier>{cbbe1a4c-20e0-42b8-a675-9daf74e9a57e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="commands">
+      <UniqueIdentifier>{bcc1fe6b-5eb4-4eb0-8848-26e838dff657}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="hooks">
+      <UniqueIdentifier>{0d580db1-50e8-49fa-b3c0-7f2120ef9cb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="plugin_api">
+      <UniqueIdentifier>{7ce6f8f7-85e3-4f68-bc35-7ff03bf760a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="internals">
+      <UniqueIdentifier>{2bfd224a-e83b-4454-b794-91d080059aa1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GameActorValues.cpp">
+      <Filter>api\game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameAPI.cpp">
+      <Filter>api\game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameBSExtraData.cpp">
+      <Filter>api\game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameData.cpp">
+      <Filter>api\game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameExtraData.cpp">
+      <Filter>api\game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameForms.cpp">
+      <Filter>api\game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMagicEffects.cpp">
+      <Filter>api\game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameMenus.cpp">
+      <Filter>api\game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObjects.cpp">
+      <Filter>api\game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameOSDepend.cpp">
+      <Filter>api\game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameProcess.cpp">
+      <Filter>api\game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTasks.cpp">
+      <Filter>api\game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTiles.cpp">
+      <Filter>api\game</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTypes.cpp">
+      <Filter>api\game</Filter>
+    </ClCompile>
+    <ClCompile Include="Script.cpp">
+      <Filter>api\game</Filter>
+    </ClCompile>
+    <ClCompile Include="NiAPI.cpp">
+      <Filter>api\netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="NiCollision.cpp">
+      <Filter>api\netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="NiControllers.cpp">
+      <Filter>api\netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="NiExtraData.cpp">
+      <Filter>api\netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="NiGeometry.cpp">
+      <Filter>api\netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="NiHavok.cpp">
+      <Filter>api\netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="NiHavokCharacters.cpp">
+      <Filter>api\netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="NiHavokConstraints.cpp">
+      <Filter>api\netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="NiHavokObjects.cpp">
+      <Filter>api\netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="NiHavokShapes.cpp">
+      <Filter>api\netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="NiNodes.cpp">
+      <Filter>api\netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="NiObjects.cpp">
+      <Filter>api\netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="NiProperties.cpp">
+      <Filter>api\netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="NiRenderer.cpp">
+      <Filter>api\netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="NiRTTI.cpp">
+      <Filter>api\netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="NiTasks.cpp">
+      <Filter>api\netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="NiTypes.cpp">
+      <Filter>api\netimmerse</Filter>
+    </ClCompile>
+    <ClCompile Include="HavokBase.cpp">
+      <Filter>api\havok</Filter>
+    </ClCompile>
+    <ClCompile Include="HavokCharacters.cpp">
+      <Filter>api\havok</Filter>
+    </ClCompile>
+    <ClCompile Include="HavokCollision.cpp">
+      <Filter>api\havok</Filter>
+    </ClCompile>
+    <ClCompile Include="HavokDynamics.cpp">
+      <Filter>api\havok</Filter>
+    </ClCompile>
+    <ClCompile Include="HavokReflection.cpp">
+      <Filter>api\havok</Filter>
+    </ClCompile>
+    <ClCompile Include="HavokTypes.cpp">
+      <Filter>api\havok</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_ActiveEffect.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_Actor.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_ActorValue.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_AI.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_Array.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_Cell.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_Class.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_CombatStyle.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_Console.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_Creature.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_Faction.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_FileIO.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_Game.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_General.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_Input.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_Inventory.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_InventoryRef.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_LeveledList.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_Magic.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_MagicEffect.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_Math.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_Menu.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_MiscForms.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_MiscReference.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_PathGrid.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_Physics.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_Player.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_Quest.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_Race.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_Script.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_Sound.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_String.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_TextInput.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Commands_Weather.cpp">
+      <Filter>commands</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks_DirectInput8Create.cpp">
+      <Filter>hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks_Gameplay.cpp">
+      <Filter>hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks_Memory.cpp">
+      <Filter>hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks_NetImmerse.cpp">
+      <Filter>hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks_SaveLoad.cpp">
+      <Filter>hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks_Script.cpp">
+      <Filter>hooks</Filter>
+    </ClCompile>
+    <ClCompile Include="PluginManager.cpp">
+      <Filter>plugin_api</Filter>
+    </ClCompile>
+    <ClCompile Include="Serialization.cpp">
+      <Filter>plugin_api</Filter>
+    </ClCompile>
+    <ClCompile Include="ArrayVar.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="CommandTable.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="EventManager.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="FunctionScripts.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="InternalSerialization.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="InventoryReference.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="Loops.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="ModTable.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="..\obse_common\SafeWrite.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptTokens.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptUtils.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="StringVar.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="Tasks.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="ThreadLocal.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="obse.cpp" />
+    <ClCompile Include="..\StdAfx.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GameActorValues.h">
+      <Filter>api\game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameAPI.h">
+      <Filter>api\game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameBSExtraData.h">
+      <Filter>api\game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameData.h">
+      <Filter>api\game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameExtraData.h">
+      <Filter>api\game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameForms.h">
+      <Filter>api\game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMagicEffects.h">
+      <Filter>api\game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameMenus.h">
+      <Filter>api\game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObjects.h">
+      <Filter>api\game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameOSDepend.h">
+      <Filter>api\game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameProcess.h">
+      <Filter>api\game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameRTTI.h">
+      <Filter>api\game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTasks.h">
+      <Filter>api\game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameThreads.h">
+      <Filter>api\game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTiles.h">
+      <Filter>api\game</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTypes.h">
+      <Filter>api\game</Filter>
+    </ClInclude>
+    <ClInclude Include="Script.h">
+      <Filter>api\game</Filter>
+    </ClInclude>
+    <ClInclude Include="NiAPI.h">
+      <Filter>api\netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="NiCollision.h">
+      <Filter>api\netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="NiControllers.h">
+      <Filter>api\netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="NiExtraData.h">
+      <Filter>api\netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="NiGeometry.h">
+      <Filter>api\netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="NiHavok.h">
+      <Filter>api\netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="NiHavokCharacters.h">
+      <Filter>api\netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="NiHavokConstraints.h">
+      <Filter>api\netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="NiHavokObjects.h">
+      <Filter>api\netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="NiHavokShapes.h">
+      <Filter>api\netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="NiNodes.h">
+      <Filter>api\netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="NiObjects.h">
+      <Filter>api\netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="NiProperties.h">
+      <Filter>api\netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="NiRenderer.h">
+      <Filter>api\netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="NiRTTI.h">
+      <Filter>api\netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="NiTask.h">
+      <Filter>api\netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="NiTypes.h">
+      <Filter>api\netimmerse</Filter>
+    </ClInclude>
+    <ClInclude Include="HavokBase.h">
+      <Filter>api\havok</Filter>
+    </ClInclude>
+    <ClInclude Include="HavokCharacters.h">
+      <Filter>api\havok</Filter>
+    </ClInclude>
+    <ClInclude Include="HavokCollision.h">
+      <Filter>api\havok</Filter>
+    </ClInclude>
+    <ClInclude Include="HavokDynamics.h">
+      <Filter>api\havok</Filter>
+    </ClInclude>
+    <ClInclude Include="HavokReflection.h">
+      <Filter>api\havok</Filter>
+    </ClInclude>
+    <ClInclude Include="HavokTypes.h">
+      <Filter>api\havok</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_ActiveEffect.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_Actor.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_ActorValue.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_AI.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_Array.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_Cell.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_Class.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_CombatStyle.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_Console.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_Creature.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_Faction.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_FileIO.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_Game.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_General.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_Input.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_Inventory.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_InventoryRef.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_LeveledList.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_Magic.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_MagicEffect.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_Math.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_Menu.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_MiscForms.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_MiscReference.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_PathGrid.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_Physics.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_Player.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_Quest.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_Race.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_Script.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_Sound.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_String.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_TextInput.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Commands_Weather.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="ParamInfos.h">
+      <Filter>commands</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_DirectInput8Create.h">
+      <Filter>hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_Gameplay.h">
+      <Filter>hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_Memory.h">
+      <Filter>hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_NetImmerse.h">
+      <Filter>hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_SaveLoad.h">
+      <Filter>hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_Script.h">
+      <Filter>hooks</Filter>
+    </ClInclude>
+    <ClInclude Include="PluginAPI.h">
+      <Filter>plugin_api</Filter>
+    </ClInclude>
+    <ClInclude Include="PluginManager.h">
+      <Filter>plugin_api</Filter>
+    </ClInclude>
+    <ClInclude Include="Serialization.h">
+      <Filter>plugin_api</Filter>
+    </ClInclude>
+    <ClInclude Include="ArrayVar.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="CommandTable.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="EventManager.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="FunctionScripts.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="InternalSerialization.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="InventoryReference.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="Loops.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="ModTable.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="..\obse_common\SafeWrite.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptTokens.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptUtils.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="StringVar.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="Tasks.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadLocal.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="Utilities.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="VarMap.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="obse.h" />
+    <ClInclude Include="..\obse_common\obse_prefix.h" />
+    <ClInclude Include="..\obse_common\obse_version.h" />
+    <ClInclude Include="..\StdAfx.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="GameRTTI_1_1.inl">
+      <Filter>api\game</Filter>
+    </None>
+    <None Include="GameRTTI_1_2.inl">
+      <Filter>api\game</Filter>
+    </None>
+    <None Include="GameRTTI_1_2_416.inl">
+      <Filter>api\game</Filter>
+    </None>
+    <None Include="NiRTTI_1_1.inl">
+      <Filter>api\netimmerse</Filter>
+    </None>
+    <None Include="NiRTTI_1_2_416.inl">
+      <Filter>api\netimmerse</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\obse_common\obse_version.rc" />
+  </ItemGroup>
+</Project>

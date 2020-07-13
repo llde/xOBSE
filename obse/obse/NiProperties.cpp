@@ -1,0 +1,1 @@
+#include "NiProperties.h"

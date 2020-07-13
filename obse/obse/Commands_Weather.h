@@ -1,0 +1,62 @@
+#pragma once
+
+#include "CommandTable.h"
+
+extern CommandInfo kCommandInfo_GetCurrentWeatherID;
+extern CommandInfo kCommandInfo_GetWeatherInfo;
+
+extern CommandInfo kCommandInfo_GetCurrentClimateID;
+extern CommandInfo kCommandInfo_SetCurrentClimate;
+extern CommandInfo kCommandInfo_RefreshCurrentClimate;
+extern CommandInfo kCommandInfo_SetWorldspaceClimate;
+extern CommandInfo kCommandInfo_GetClimateSunriseBegin;
+extern CommandInfo kCommandInfo_GetClimateSunriseEnd;
+extern CommandInfo kCommandInfo_GetClimateSunsetBegin;
+extern CommandInfo kCommandInfo_GetClimateSunsetEnd;
+extern CommandInfo kCommandInfo_GetClimateMoonPhaseLength;
+extern CommandInfo kCommandInfo_GetClimateHasMasser;
+extern CommandInfo kCommandInfo_GetClimateHasSecunda;
+extern CommandInfo kCommandInfo_GetClimateVolatility;
+
+extern CommandInfo kCommandInfo_SetClimateSunriseBegin;
+extern CommandInfo kCommandInfo_SetClimateSunriseEnd;
+extern CommandInfo kCommandInfo_SetClimateSunsetBegin;
+extern CommandInfo kCommandInfo_SetClimateSunsetEnd;
+extern CommandInfo kCommandInfo_SetClimateMoonPhaseLength;
+extern CommandInfo kCommandInfo_SetClimateHasMasser;
+extern CommandInfo kCommandInfo_SetClimateHasSecunda;
+extern CommandInfo kCommandInfo_SetClimateVolatility;
+
+extern CommandInfo kCommandInfo_GetWeatherWindSpeed;
+extern CommandInfo kCommandInfo_GetWeatherCloudSpeedLower;
+extern CommandInfo kCommandInfo_GetWeatherCloudSpeedUpper;
+extern CommandInfo kCommandInfo_GetWeatherTransDelta;
+extern CommandInfo kCommandInfo_GetWeatherSunGlare;
+extern CommandInfo kCommandInfo_GetWeatherSunDamage;
+extern CommandInfo kCommandInfo_GetWeatherFogDayNear;
+extern CommandInfo kCommandInfo_GetWeatherFogDayFar;
+extern CommandInfo kCommandInfo_GetWeatherFogNightNear;
+extern CommandInfo kCommandInfo_GetWeatherFogNightFar;
+
+extern CommandInfo kCommandInfo_SetWeatherWindSpeed;
+extern CommandInfo kCommandInfo_SetWeatherCloudSpeedLower;
+extern CommandInfo kCommandInfo_SetWeatherCloudSpeedUpper;
+extern CommandInfo kCommandInfo_SetWeatherTransDelta;
+extern CommandInfo kCommandInfo_SetWeatherSunGlare;
+extern CommandInfo kCommandInfo_SetWeatherSunDamage;
+extern CommandInfo kCommandInfo_SetWeatherFogDayNear;
+extern CommandInfo kCommandInfo_SetWeatherFogDayFar;
+extern CommandInfo kCommandInfo_SetWeatherFogNightNear;
+extern CommandInfo kCommandInfo_SetWeatherFogNightFar;
+
+extern CommandInfo kCommandInfo_GetWeatherHDRValue;
+extern CommandInfo kCommandInfo_SetWeatherHDRValue;
+extern CommandInfo kCommandInfo_GetWeatherColor;
+extern CommandInfo kCommandInfo_SetWeatherColor;
+
+extern CommandInfo kCommandInfo_GetWeatherLightningFrequency;
+extern CommandInfo kCommandInfo_SetWeatherLightningFrequency;
+
+extern CommandInfo kCommandInfo_GetWeatherClassification;
+
+extern CommandInfo kCommandInfo_GetWeatherOverride;

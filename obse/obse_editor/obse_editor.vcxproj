@@ -1,0 +1,316 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug 1_0_0_303|Win32">
+      <Configuration>Debug 1_0_0_303</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug 1_2_0_0|Win32">
+      <Configuration>Debug 1_2_0_0</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release 1_0_0_303|Win32">
+      <Configuration>Release 1_0_0_303</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release 1_2_0_0|Win32">
+      <Configuration>Release 1_2_0_0</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{AE98B269-67B4-4B3E-B4C8-6274F48282E8}</ProjectGuid>
+    <RootNamespace>obse_editor</RootNamespace>
+    <SccProjectName>Perforce Project</SccProjectName>
+    <SccLocalPath>..\..</SccLocalPath>
+    <SccProvider>MSSCCI:Perforce SCM</SccProvider>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_0|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_0|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release 1_0_0_303|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug 1_0_0_303|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_0|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_0|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release 1_0_0_303|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug 1_0_0_303|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug 1_0_0_303|Win32'">Debug\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug 1_0_0_303|Win32'">Debug\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug 1_0_0_303|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release 1_0_0_303|Win32'">Release\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release 1_0_0_303|Win32'">Release\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release 1_0_0_303|Win32'">false</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_0|Win32'">$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_0|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_0|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_0|Win32'">$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_0|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_0|Win32'">false</LinkIncremental>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug 1_0_0_303|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug 1_0_0_303|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug 1_0_0_303|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_0|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_0|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_0|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release 1_0_0_303|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release 1_0_0_303|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release 1_0_0_303|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_0|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_0|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_0|Win32'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug 1_0_0_303|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;OBSE_EDITOR_EXPORTS;CS_VERSION=0x0100012F;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <ForcedIncludeFiles>StdAfx.h;obse_common/obse_prefix.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)obse_editor.pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <BaseAddress>0x10080000</BaseAddress>
+      <ImportLibrary>$(OutDir)obse_editor.lib</ImportLibrary>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Message>Installing DLL...</Message>
+      <Command>copy "$(TargetPath)" "$(OblivionPath)\obse_editor_1_2.dll"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release 1_0_0_303|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;OBSE_EDITOR_EXPORTS;CS_VERSION=0x0100012F;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ForcedIncludeFiles>StdAfx.h;obse_common/obse_prefix.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <BaseAddress>0x10080000</BaseAddress>
+      <ImportLibrary>$(OutDir)obse_editor.lib</ImportLibrary>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Message>Installing DLL...</Message>
+      <Command>copy "$(TargetPath)" "$(OblivionPath)\obse_editor_1_2.dll"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_0|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;OBSE_EDITOR_EXPORTS;CS_VERSION=0x01020000;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <ForcedIncludeFiles>StdAfx.h;obse_common/obse_prefix.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)obse_editor.pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <BaseAddress>0x10080000</BaseAddress>
+      <ImportLibrary>$(OutDir)obse_editor.lib</ImportLibrary>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Message>Installing DLL...</Message>
+      <Command>copy "$(TargetPath)" "$(OblivionPath)\obse_editor_1_2.dll"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_0|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;OBSE_EDITOR_EXPORTS;CS_VERSION=0x01020000;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ForcedIncludeFiles>StdAfx.h;obse_common/obse_prefix.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <BaseAddress>0x10080000</BaseAddress>
+      <ImportLibrary>$(OutDir)obse_editor.lib</ImportLibrary>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Message>Installing DLL...</Message>
+      <Command>copy "$(TargetPath)" "$(OblivionPath)\obse_editor_1_2.dll"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\common\common.vcxproj">
+      <Project>{20c6411c-596f-4b85-be4e-8bc91f59d8a6}</Project>
+      <CopyLocalSatelliteAssemblies>true</CopyLocalSatelliteAssemblies>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\obse\Commands_ActiveEffect.cpp" />
+    <ClCompile Include="..\obse\Commands_Actor.cpp" />
+    <ClCompile Include="..\obse\Commands_ActorValue.cpp" />
+    <ClCompile Include="..\obse\Commands_AI.cpp" />
+    <ClCompile Include="..\obse\Commands_Array.cpp" />
+    <ClCompile Include="..\obse\Commands_Cell.cpp" />
+    <ClCompile Include="..\obse\Commands_Class.cpp" />
+    <ClCompile Include="..\obse\Commands_CombatStyle.cpp" />
+    <ClCompile Include="..\obse\Commands_Console.cpp" />
+    <ClCompile Include="..\obse\Commands_Creature.cpp" />
+    <ClCompile Include="..\obse\Commands_Faction.cpp" />
+    <ClCompile Include="..\obse\Commands_FileIO.cpp" />
+    <ClCompile Include="..\obse\Commands_Game.cpp" />
+    <ClCompile Include="..\obse\Commands_General.cpp" />
+    <ClCompile Include="..\obse\Commands_Input.cpp" />
+    <ClCompile Include="..\obse\Commands_Inventory.cpp" />
+    <ClCompile Include="..\obse\Commands_InventoryRef.cpp" />
+    <ClCompile Include="..\obse\Commands_LeveledList.cpp" />
+    <ClCompile Include="..\obse\Commands_Magic.cpp" />
+    <ClCompile Include="..\obse\Commands_MagicEffect.cpp" />
+    <ClCompile Include="..\obse\Commands_Math.cpp" />
+    <ClCompile Include="..\obse\Commands_Menu.cpp" />
+    <ClCompile Include="..\obse\Commands_MiscForms.cpp" />
+    <ClCompile Include="..\obse\Commands_MiscReference.cpp" />
+    <ClCompile Include="..\obse\Commands_PathGrid.cpp" />
+    <ClCompile Include="..\obse\Commands_Physics.cpp" />
+    <ClCompile Include="..\obse\Commands_Player.cpp" />
+    <ClCompile Include="..\obse\Commands_Quest.cpp" />
+    <ClCompile Include="..\obse\Commands_Race.cpp" />
+    <ClCompile Include="..\obse\Commands_Script.cpp" />
+    <ClCompile Include="..\obse\Commands_Sound.cpp" />
+    <ClCompile Include="..\obse\Commands_String.cpp" />
+    <ClCompile Include="..\obse\Commands_TextInput.cpp" />
+    <ClCompile Include="..\obse\Commands_Weather.cpp" />
+    <ClCompile Include="..\obse\CommandTable.cpp" />
+    <ClCompile Include="..\obse_common\SafeWrite.cpp" />
+    <ClCompile Include="..\obse\ScriptTokens.cpp" />
+    <ClCompile Include="..\obse\ScriptUtils.cpp" />
+    <ClCompile Include="..\obse\Utilities.cpp" />
+    <ClCompile Include="..\StdAfx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug 1_0_0_303|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_0|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release 1_0_0_303|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_0|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="EditorHookWindow.cpp" />
+    <ClCompile Include="..\obse\Hooks_Script.cpp" />
+    <ClCompile Include="..\obse\PluginManager.cpp" />
+    <ClCompile Include="EditorAPI.cpp" />
+    <ClCompile Include="EditorRTTI.cpp" />
+    <ClCompile Include="..\obse\GameData.cpp" />
+    <ClCompile Include="..\obse\Script.cpp" />
+    <ClCompile Include="obse_editor.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\obse\Commands_ActiveEffect.h" />
+    <ClInclude Include="..\obse\Commands_Actor.h" />
+    <ClInclude Include="..\obse\Commands_ActorValue.h" />
+    <ClInclude Include="..\obse\Commands_AI.h" />
+    <ClInclude Include="..\obse\Commands_Array.h" />
+    <ClInclude Include="..\obse\Commands_Cell.h" />
+    <ClInclude Include="..\obse\Commands_Class.h" />
+    <ClInclude Include="..\obse\Commands_CombatStyle.h" />
+    <ClInclude Include="..\obse\Commands_Console.h" />
+    <ClInclude Include="..\obse\Commands_Creature.h" />
+    <ClInclude Include="..\obse\Commands_Faction.h" />
+    <ClInclude Include="..\obse\Commands_FileIO.h" />
+    <ClInclude Include="..\obse\Commands_Game.h" />
+    <ClInclude Include="..\obse\Commands_General.h" />
+    <ClInclude Include="..\obse\Commands_Input.h" />
+    <ClInclude Include="..\obse\Commands_Inventory.h" />
+    <ClInclude Include="..\obse\Commands_InventoryRef.h" />
+    <ClInclude Include="..\obse\Commands_LeveledList.h" />
+    <ClInclude Include="..\obse\Commands_Magic.h" />
+    <ClInclude Include="..\obse\Commands_MagicEffect.h" />
+    <ClInclude Include="..\obse\Commands_Math.h" />
+    <ClInclude Include="..\obse\Commands_Menu.h" />
+    <ClInclude Include="..\obse\Commands_MiscForms.h" />
+    <ClInclude Include="..\obse\Commands_MiscReference.h" />
+    <ClInclude Include="..\obse\Commands_PathGrid.h" />
+    <ClInclude Include="..\obse\Commands_Physics.h" />
+    <ClInclude Include="..\obse\Commands_Player.h" />
+    <ClInclude Include="..\obse\Commands_Quest.h" />
+    <ClInclude Include="..\obse\Commands_Race.h" />
+    <ClInclude Include="..\obse\Commands_Script.h" />
+    <ClInclude Include="..\obse\Commands_Sound.h" />
+    <ClInclude Include="..\obse\Commands_String.h" />
+    <ClInclude Include="..\obse\Commands_TextInput.h" />
+    <ClInclude Include="..\obse\Commands_Weather.h" />
+    <ClInclude Include="..\obse\CommandTable.h" />
+    <ClInclude Include="..\obse_common\SafeWrite.h" />
+    <ClInclude Include="..\obse\ScriptTokens.h" />
+    <ClInclude Include="..\obse\ScriptUtils.h" />
+    <ClInclude Include="..\obse\Utilities.h" />
+    <ClInclude Include="..\StdAfx.h" />
+    <ClInclude Include="EditorHookWindow.h" />
+    <ClInclude Include="..\obse\Hooks_Script.h" />
+    <ClInclude Include="..\obse\PluginAPI.h" />
+    <ClInclude Include="..\obse\PluginManager.h" />
+    <ClInclude Include="EditorAPI.h" />
+    <ClInclude Include="EditorRTTI.h" />
+    <ClInclude Include="..\obse\GameData.h" />
+    <ClInclude Include="..\obse\obse.h" />
+    <ClInclude Include="..\obse_common\obse_version.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\obse_common\obse_version.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
