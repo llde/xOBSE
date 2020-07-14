@@ -2,6 +2,7 @@
 #include "NiObjects.h"
 #include "obse_common/SafeWrite.h"
 #include "common/ICriticalSection.h"
+#define _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS
 #include <hash_map>
 
 #define ENABLE_NETIMMERSE_DEBUG 0

@@ -1,5 +1,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29806.167
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "loader", "loader\loader.vcxproj", "{5B080AB3-FC8A-43BB-99DA-9022F34FD9A5}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "common", "..\common\common.vcxproj", "{20C6411C-596F-4B85-BE4E-8BC91F59D8A6}"
@@ -23,27 +25,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc", "Misc", "{399E8DD8-D
 	EndProjectSection
 EndProject
 Global
-	GlobalSection(SourceCodeControl) = preSolution
-		SccNumberOfProjects = 7
-		SccProjectUniqueName0 = loader\\loader.vcxproj
-		SccLocalPath0 = ..
-		SccProjectFilePathRelativizedFromConnection0 = obse\\loader\\
-		SccProjectUniqueName1 = ..\\common\\common.vcxproj
-		SccLocalPath1 = ..\\common
-		SccProjectUniqueName2 = obse\\obse.vcxproj
-		SccLocalPath2 = ..
-		SccProjectFilePathRelativizedFromConnection2 = obse\\obse\\
-		SccProjectUniqueName3 = obse_editor\\obse_editor.vcxproj
-		SccLocalPath3 = ..
-		SccProjectFilePathRelativizedFromConnection3 = obse\\obse_editor\\
-		SccProjectUniqueName4 = loader_common\\loader_common.vcxproj
-		SccLocalPath4 = ..
-		SccProjectFilePathRelativizedFromConnection4 = obse\\loader_common\\
-		SccProjectUniqueName5 = steam_loader\\steam_loader.vcxproj
-		SccLocalPath5 = ..
-		SccProjectFilePathRelativizedFromConnection5 = obse\\steam_loader\\
-		SccLocalPath6 = .
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug 1_1_0_511|Win32 = Debug 1_1_0_511|Win32
 		Debug 1_2_0_214|Win32 = Debug 1_2_0_214|Win32
@@ -154,5 +135,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4F3CF3B0-CC6E-4ADB-8F2B-5419092AA779}
 	EndGlobalSection
 EndGlobal

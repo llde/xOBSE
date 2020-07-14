@@ -15,6 +15,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+#include <string>
 #include "common/ITypes.h"
 #include "common/IErrors.h"
 #include "common/IDynamicCreate.h"

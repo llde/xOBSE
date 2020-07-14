@@ -12,6 +12,7 @@
 
 #define DPSAPI_VERSION	1
 
+#define _CRT_NO_VA_START_VALIDATION
 // WIN32
 #include <winsock2.h>
 #include <windows.h>

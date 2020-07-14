@@ -1322,7 +1322,7 @@ DEFINE_CS_FLAG_FUNC(PrefersRanged)
 DEFINE_CS_FLAG_FUNC(MeleeAlertOK)
 
 
-#if DEBUG 
+#ifdef DEBUG 
 bool Cmd_DumpCombatStyle_Execute(COMMAND_ARGS)
 {
 	*result = 1;
@@ -2935,22 +2935,6 @@ static ParamInfo kParams_OneCombatStyle_OneInt[2] =
 	{	"int",			kParamType_Integer,		0	},
 };
 
-#if DEBUG
-CommandInfo kCommandInfo_DumpCombatStyle =
-{
-	"DumpCombatStyle",
-	"",
-	0,
-	"Dumps data contained in a pair of Combat Styles",
-	0,
-	2,
-	kParams_TwoCombatStyles,
-	HANDLER(Cmd_DumpCombatStyle_Execute),
-	Cmd_Default_Parse,
-	NULL,
-	0
-};
-#endif
 
 DEFINE_COMMAND(GetCombatStyleIgnoreAlliesInArea, gets a combat style flag, 0, 1, kParams_OneCombatStyle);
 DEFINE_COMMAND(GetCombatStyleWillYield, gets a combat style flag, 0, 1, kParams_OneCombatStyle);

@@ -2,10 +2,6 @@
 
 #include "CommandTable.h"
 
-#if DEBUG
-extern CommandInfo kCommandInfo_DumpCombatStyle;
-#endif
-
 extern CommandInfo kCommandInfo_GetCombatStyle;
 
 extern CommandInfo kCommandInfo_GetCombatStyleDodgeChance;
