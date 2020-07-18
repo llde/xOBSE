@@ -702,14 +702,14 @@ bool CreateExceptionMiniDump( _EXCEPTION_POINTERS *ExceptionInfo )
 					//		MiniDumpWithDataSegs|
 							MiniDumpWithFullMemoryInfo|
 							MiniDumpWithHandleData);
-
+#ifdef OBSE_CORE
 	BOOL rv = MiniDumpWriteDump(GetCurrentProcess(),
 								GetCurrentProcessId(),
 								DumpFile,
 								mdt, (ExceptionInfo != 0) ? &mdei : 0, 0, 0 );
-
 	if( !rv )
 		return false;
+#endif
 
 	CloseHandle(DumpFile);
 	return true;
@@ -720,8 +720,9 @@ LONG WINAPI OBSEUnhandledExceptionFilter( __in struct _EXCEPTION_POINTERS *Excep
 	CreateExceptionMiniDump(ExceptionInfo);
 
 #ifdef OBLIVION
+#ifdef OBSE_CORE
 	ShowWindow((*g_osGlobals)->window, SW_MINIMIZE);
-
+#endif
 	MessageBox(NULL, "Oblivion has crashed! A minidump has been created in the game directory.", "OBSE", MB_TASKMODAL|MB_SETFOREGROUND|MB_ICONERROR|MB_OK);
 #else
 	MessageBox(NULL, "The Construction Set has crashed! A minidump has been created in the game directory.", "OBSE", MB_TASKMODAL|MB_SETFOREGROUND|MB_ICONERROR|MB_OK);

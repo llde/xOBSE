@@ -1368,7 +1368,10 @@ bool ExtractSetStatementVar(Script* script, ScriptEventList* eventList, void* sc
 		}
 		break;
 	default:
+#ifdef OBSE_CORE
 		ShowRuntimeError(script, "Function must be used within a Set statement");
+#endif
+		break;
 	}
 
 	return bExtracted;
@@ -1489,7 +1492,9 @@ bool ScriptFormatStringArgs::Arg(FormatStringArgs::argType asType, void * outRes
 {
 	if (numArgs == 0)
 	{
+#ifdef OBSE_CORE
 		ShowRuntimeError(scriptObj, "Too few args for format specifier");
+#endif
 		return false;
 	}
 
