@@ -258,7 +258,7 @@ public:
 
 		NodePos pos = GetNthNode(index);
 		_Node* pTargetNode = pos.node;
-		_Node* newNode = (_Node*)FormHeap_Allocate(sizeof(newNode));
+		_Node* newNode = (_Node*)FormHeap_Allocate(sizeof(_Node));
 		if (newNode && pTargetNode) {
 			if (index == eListEnd) {
 				pTargetNode->next = newNode;
