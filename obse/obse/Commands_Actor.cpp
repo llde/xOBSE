@@ -1112,7 +1112,7 @@ static bool GetCombatControllerData_Execute(COMMAND_ARGS, UInt32 type)
 						controller->selectedSummonSpell
 					};
 
-					for (UInt32 i = 0; i < sizeof(spells); i++) {
+					for (UInt32 i = 0; i < sizeof(spells)  / sizeof(CombatController::SelectedSpellInfo*); i++) {
 						if (spells[i] && spells[i]->item) {
 							g_ArrayMap.SetElementFormID(arr, idx, (OBLIVION_CAST(spells[i]->item, MagicItem, TESForm))->refID);
 							idx += 1;
