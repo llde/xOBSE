@@ -1290,7 +1290,9 @@ bool SetActorSwimBreathOverride(Actor* actor, UInt32 state)
 		if (it != s_ActorSwimmingBreathMap.end())
 		{
 			it->second = ((it->second & kActorSwimBreath_IsUnderWater) | (state << 1));
+			return true;
 		}
+		s_ActorSwimmingBreathMap.insert(std::map<Actor*,UInt32>::value_type(actor, state << 1));
 		return true;
 	}
 	return false;
