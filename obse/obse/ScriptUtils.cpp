@@ -2117,7 +2117,7 @@ void ExpressionParser::Message(UInt32 errorCode, ...)
 	{
 		char msgText[0x400];
 		#if OBLIVION
-			sprintf_s(msgText, sizeof(msgText), "Error line %d\n\n%s", m_lineBuf->lineNumber, msg->fmt);
+			sprintf_s(msgText, sizeof(msgText), "Error line %d\n\n%s", m_lineBuf->lineNumber, msg->fmt.data());
 			g_ErrOut.vShow(msgText, args);
 		#else
 			vsprintf_s(msgText, sizeof(msgText), msg->fmt.c_str(), args);
