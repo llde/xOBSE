@@ -147,7 +147,7 @@ static bool Cmd_IsReference_Execute(COMMAND_ARGS)
 	return true;
 }
 
-static enum {
+enum {
 	eScriptVar_Get = 1,
 	eScriptVar_GetRef,
 	eScriptVar_Has,

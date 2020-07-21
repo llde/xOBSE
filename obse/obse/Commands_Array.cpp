@@ -381,7 +381,7 @@ static bool Cmd_ar_Find_Execute(COMMAND_ARGS)
 	return true;
 }
 
-static enum eIterMode {
+enum eIterMode {
 	kIterMode_First,
 	kIterMode_Last,
 	kIterMode_Next,

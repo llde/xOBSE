@@ -347,7 +347,7 @@ static void __stdcall MemoryHeap_Free_Hook(void * ptr)
 		g_heapAllocCurrent--;
 		if(g_heapAllocCurrent == 0xFFFFFFFF)
 		{
-			fprintf(memLog, "### double free\n", ptr);
+			fprintf(memLog, "%x double free\n", ptr);
 			fflush(memLog);
 
 			g_heapAllocCurrent = 0;

@@ -1659,7 +1659,7 @@ static bool Cmd_DeleteReference_Execute(COMMAND_ARGS)
 	return true;
 }
 
-static enum {
+enum ProjectileDataType {
 	kProjectile_Speed,
 	kProjectile_Distance,
 	kProjectile_Time,
@@ -1730,7 +1730,7 @@ static bool Cmd_GetProjectileLifetime_Execute(COMMAND_ARGS)
 	return GetProjectileValue_Execute(PASS_COMMAND_ARGS, kProjectile_Time);
 }
 
-static enum {
+enum ArrowAdditionType{
 	kArrow_BowEnchantment,
 	kArrow_Enchantment,
 	kArrow_Poison
@@ -1856,13 +1856,13 @@ static bool Cmd_SetProjectileSpeed_Execute(COMMAND_ARGS)
 	return SetProjectileValue(PASS_COMMAND_ARGS, kProjectile_Speed);
 }
 
-static enum {
+enum MapMarkerType{
 	kMapMarker_Visible,
 	kMapMarker_CanTravel,
 	kMapMarker_Type
 };
 
-static enum {
+enum MapMarkerMode {
 	kSet,
 	kGet
 };

@@ -927,7 +927,7 @@ TESForm* GetPCLastDroppedItem()
 #error unsupported oblivion version
 #endif
 
-static enum QuitGameMessage
+enum QuitGameMessage
 {
 	kQuit_ToMainMenu,
 	kQuit_ToWindows,

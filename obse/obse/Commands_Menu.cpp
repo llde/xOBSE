@@ -50,7 +50,7 @@ static bool Cmd_GetActiveMenuMode_Execute(COMMAND_ARGS)
 	return true;
 }
 
-static enum eMenuValue {
+enum eMenuValue {
 	//no params
 	kMenu_Soulgem,
 	kMenu_EnchantItem,
@@ -529,7 +529,7 @@ static bool Cmd_GetContainerMenuView_Execute(COMMAND_ARGS)
 	return true;
 }
 
-static enum {
+enum MenuValueType{
 	kGetFloat,
 	kSetFloat,
 	kGetString,
@@ -753,7 +753,7 @@ static bool Cmd_IsGameMessageBox_Execute(COMMAND_ARGS)
 	return true;
 }
 
-static enum {
+enum MsgBoxType{
 	kMsgBox_Unknown,
 	kMsgBox_Script,
 	kMsgBox_BuyItem,

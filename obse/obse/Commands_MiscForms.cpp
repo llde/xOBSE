@@ -15,7 +15,7 @@
 // game remembers the last TESDescription retrieved from disk and caches its text.
 static TESDescription** s_cachedTESDescription = (TESDescription**)0x00B33C04;
 
-static enum {
+enum IngredientMode {
 	eMode_Get,
 	eMode_Set,
 	eMode_GetChance,
