@@ -106,6 +106,7 @@ static bool Cmd_RemoveAllSpells_Execute(COMMAND_ARGS)
 		TESSpellList* spellList = (TESSpellList *)Oblivion_DynamicCast(thisObj->baseForm, 0, RTTI_TESForm, RTTI_TESSpellList, 0);
 		if (spellList) {
 			spellList->RemoveAllSpells();
+			*result = 1;
 		}
 	}
 	return true;
