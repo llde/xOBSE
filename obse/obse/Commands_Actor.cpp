@@ -1123,16 +1123,12 @@ static bool GetCombatControllerData_Execute(COMMAND_ARGS, UInt32 type)
 				break;
 			case kCombatController_AvailableSpells:
 				{
-					UInt32 i = 0;
 					CombatController::AvailableSpellList** cur = &controller->rangedSpells;
-					while (i < 4) {
-						for (CombatController::AvailableSpellList* list = *cur; list && list->info && list->info->item; list = list->next) {
-							TESForm* magicForm = OBLIVION_CAST(list->info->item, MagicItem, TESForm);
-							g_ArrayMap.SetElementFormID(arr, idx, magicForm->refID);
-							idx += 1;
-						}
-						i++;
-					}
+					for (CombatController::AvailableSpellList* list = *cur; list && list->info && list->info->item; list = list->next) {
+						TESForm* magicForm = OBLIVION_CAST(list->info->item, MagicItem, TESForm);
+						g_ArrayMap.SetElementFormID(arr, idx, magicForm->refID);
+						idx += 1;
+					}					
 				}
 				break;
 		}
