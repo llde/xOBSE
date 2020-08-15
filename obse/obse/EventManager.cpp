@@ -66,9 +66,11 @@ struct EventInfo
 {
 	EventInfo (std::string const& name_, UInt8* params_, UInt8 nParams_, bool defer_, EventHookInstaller* installer_)
 		: name(name_), paramTypes(params_), numParams(nParams_), isDeferred(defer_), callbacks(NULL), installHook(installer_)
-		{ MakeLower (name); }
+		{ MakeLower (name);}
 	EventInfo (std::string const& name_, UInt8 * params_, UInt8 numParams_) : name(name_), paramTypes(params_), numParams(numParams_), isDeferred(false), callbacks(NULL), installHook(NULL)
-		{ MakeLower (name); }
+	{
+		MakeLower(name); 
+	}
 	EventInfo () : name(""), paramTypes(NULL), numParams(0), isDeferred(false), callbacks(NULL), installHook(NULL)
 		{ ; }
 	~EventInfo();
@@ -1461,7 +1463,7 @@ UInt32 EventIDForMessage(UInt32 msgID)
 	}
 }
 
-typedef std::vector<EventInfo> EventInfoList;
+typedef std::vector<EventInfo*> EventInfoList;
 static EventInfoList s_eventInfos;
 
 UInt32 EventIDForString(const char* eventStr)
@@ -1471,7 +1473,7 @@ UInt32 EventIDForString(const char* eventStr)
 	eventStr = name.c_str();
 	UInt32 numEventInfos = s_eventInfos.size ();
 	for (UInt32 i = 0; i < numEventInfos; i++) {
-		if (!strcmp(eventStr, s_eventInfos[i].name.c_str())) {
+		if (!strcmp(eventStr, s_eventInfos[i]->name.c_str())) {
 			return i;
 		}
 	}
@@ -1551,7 +1553,7 @@ void __stdcall HandleEventForCallingObject(UInt32 id, TESObjectREFR* callingObj,
 {
 	ScopedLock lock(s_criticalSection);
 
-	EventInfo* eventInfo = &s_eventInfos[id];
+	EventInfo* eventInfo = s_eventInfos[id];
 	if (eventInfo->callbacks) {
 		for (CallbackList::iterator iter = eventInfo->callbacks->begin(); iter != eventInfo->callbacks->end(); ) {
 			if (iter->IsRemoved()) {
@@ -1658,11 +1660,11 @@ bool SetHandler(const char* eventName, EventCallback& handler)
 	{
 		// have to assume registering for a user-defined event which has not been used before this point
 		id = s_eventInfos.size();
-		s_eventInfos.push_back (EventInfo (eventName, kEventParams_OneArray, 1));
+		s_eventInfos.push_back (new EventInfo (eventName, kEventParams_OneArray, 1));
 	}
 
 	if (id < s_eventInfos.size()) {
-		EventInfo* info = &s_eventInfos[id];
+		EventInfo* info = s_eventInfos[id];
 		// is hook installed for this event type?
 		if (info->installHook) {
 			if (*(info->installHook)) {
@@ -1687,7 +1689,6 @@ bool SetHandler(const char* eventName, EventCallback& handler)
 				}
 			}
 		}
-
 		info->callbacks->push_back(handler);
 		return true;
 	}
@@ -1699,11 +1700,11 @@ bool SetHandler(const char* eventName, EventCallback& handler)
 bool RemoveHandler(const char* id, EventCallback& handler)
 {
 	ScopedLock lock(s_criticalSection);
-
+	//TODO remove event type if custom and not having an handler anymore
 	UInt32 eventType = EventIDForString(id);
 	bool bRemovedAtLeastOne = false;
-	if (eventType < s_eventInfos.size() && s_eventInfos[eventType].callbacks) {
-		CallbackList* callbacks = s_eventInfos[eventType].callbacks;
+	if (eventType < s_eventInfos.size() && s_eventInfos[eventType]->callbacks) {
+		CallbackList* callbacks = s_eventInfos[eventType]->callbacks;
 		for (CallbackList::iterator iter = callbacks->begin(); iter != callbacks->end(); ) {
 			if (iter->script == handler.script) {
 				bool bMatches = true;
@@ -1836,9 +1837,10 @@ bool DispatchUserDefinedEvent (const char* eventName, Script* sender, UInt32 arg
 	UInt32 eventID = EventIDForString (eventName);
 	if (kEventID_INVALID == eventID)
 	{
-		// create new entry for this event
-		eventID = s_eventInfos.size ();
-		s_eventInfos.push_back (EventInfo (eventName, kEventParams_OneArray, 1));
+		// The event isn't found, event should not be created by Dispatch but only on Set. 
+		//TODO maybe defer the dispatch for unregistered events to avoid possible loss of events 
+		_MESSAGE("Dispatch on unregistered event %s. Ignoring", eventName);
+		return false;
 	}
 
 	// get or create args array
@@ -1934,7 +1936,7 @@ void Tick()
 
 void Init()
 {
-#define EVENT_INFO(name, params, hookInstaller, deferred) s_eventInfos.push_back (EventInfo (name, params, params ? sizeof(params) : 0, deferred, hookInstaller));
+#define EVENT_INFO(name, params, hookInstaller, deferred) s_eventInfos.push_back (new EventInfo (name, params, params ? sizeof(params) : 0, deferred, hookInstaller));
 
 	EVENT_INFO("onhit", kEventParams_GameEvent, &s_MainEventHook, false)
 	EVENT_INFO("onhitwith", kEventParams_GameEvent, &s_MainEventHook, false)

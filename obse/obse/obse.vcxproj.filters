@@ -620,7 +620,6 @@
     <ClInclude Include="..\obse_common\obse_prefix.h" />
     <ClInclude Include="..\obse_common\obse_version.h" />
     <ClInclude Include="..\StdAfx.h" />
-    <ClInclude Include="..\obse_common\resource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GameRTTI_1_1.inl">
