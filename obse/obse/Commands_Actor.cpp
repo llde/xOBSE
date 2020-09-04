@@ -21,7 +21,7 @@ static bool Cmd_HasSpell_Execute(COMMAND_ARGS)
 
 	if (!thisObj) return true;
 
-	TESNPC* npc = (TESNPC *)Oblivion_DynamicCast(thisObj->baseForm, 0, RTTI_TESForm, RTTI_TESNPC, 0);
+	TESActorBase* npc = (TESActorBase*)Oblivion_DynamicCast(thisObj->baseForm, 0, RTTI_TESForm, RTTI_TESActorBase, 0);
 	if (!npc) return true;
 
 	TESForm	* form = NULL;
@@ -31,21 +31,6 @@ static bool Cmd_HasSpell_Execute(COMMAND_ARGS)
 	if(form)
 	{
 		SpellItem* spell = (SpellItem*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_SpellItem, 0);
-
-#if 1
-
-		EffectItemList* spellEffectList = (EffectItemList*)Oblivion_DynamicCast(spell, 0, RTTI_SpellItem, RTTI_EffectItemList, 0);
-		if (spellEffectList) {
-			EffectItemList::Entry* entry = &(spellEffectList->effectList);
-			while (entry) {
-				EffectItem* effect = entry->effectItem;
-				entry = entry->next;
-			}
-		}
-
-//		MagicItem* magicItem = (MagicItem*)Oblivion_DynamicCast(spell, 0, RTTI_SpellItem, RTTI_MagicItem, 0);
-//		DumpClass(magicItem);
-#endif
 
 		TESSpellList& spellList = npc->spellList;
 		TESSpellList::Entry* curEntry = &spellList.spellList;
