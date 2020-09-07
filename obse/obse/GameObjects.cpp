@@ -578,7 +578,7 @@ float TESObjectREFR::GetDistance(TESObjectREFR* other, bool bIncludeDisabled)
 {
 #if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	float result;
-	ThisStdCall(0x0065D270, this, other, bIncludeDisabled);
+	ThisStdCall(0x004D7E90, this, other, bIncludeDisabled);
 	__asm { fstp	[result] }
 #else
 #error unsupported Oblivion version
