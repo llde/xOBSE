@@ -128,6 +128,8 @@ namespace EventManager
 	// removes all instances of handler regardless of filters
 	bool RemoveHandler(const char* id, Script* fnScript);
 
+	bool EventHandlerExist(const char* ev, EventCallback& handler);
+
 	// handle an OBSEMessagingInterface message
 	void HandleOBSEMessage(UInt32 msgID, void* data);
 

@@ -3188,8 +3188,8 @@ void CommandTable::Init(void)
 	ADD_CMD (SetActorMaxSwimBreath);
 	ADD_CMD (OverrideActorSwimBreath);
 	ADD_CMD (SetFlyCameraSpeedMult);
-
-
+	//OBSE v21.5
+	ADD_CMD(EventHandlerExist);
 	/* to add later if problems can be solved
 	g_scriptCommands.Add(&kCommandInfo_SetCurrentClimate); // too many problems
 	g_scriptCommands.Add(&kCommandInfo_SetWorldspaceClimate);

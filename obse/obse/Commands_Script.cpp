@@ -487,6 +487,19 @@ static bool Cmd_RemoveEventHandler_Execute(COMMAND_ARGS)
 	return true;
 }
 
+static bool Cmd_EventHandlerExist_Execute(COMMAND_ARGS)
+{
+	ExpressionEvaluator eval(PASS_COMMAND_ARGS);
+	EventManager::EventCallback callback(NULL);
+	char eventName[0x20];
+	*result = 0.0;
+	if (ExtractEventCallback(eval, &callback, eventName)) {
+		if (EventManager::EventHandlerExist(eventName, callback))
+			*result = 1.0;
+	}
+	return true;
+}
+
 static bool Cmd_GetCurrentEventName_Execute(COMMAND_ARGS)
 {
 	const char* eventName = EventManager::GetCurrentEventName().c_str();
@@ -780,6 +793,17 @@ CommandInfo kCommandInfo_RemoveEventHandler =
 	"removes event handlers matching the event, script, and optional filters specified",
 	0, 4, kOBSEParams_SetEventHandler,
 	HANDLER(Cmd_RemoveEventHandler_Execute),
+	Cmd_Expression_Parse,
+	NULL,
+	0
+};
+
+CommandInfo kCommandInfo_EventHandlerExist =
+{
+	"EventHandlerExist", "", 0,
+	"check if an event handler matching the event, script, and optional filters specified exists",
+	0, 4, kOBSEParams_SetEventHandler,
+	HANDLER(Cmd_EventHandlerExist_Execute),
 	Cmd_Expression_Parse,
 	NULL,
 	0
