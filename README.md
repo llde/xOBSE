@@ -136,5 +136,6 @@ This version is maintained by *llde* and *shadeMe*
 
 ## Thanks
 Thanks to the xNVSE people  korri123 (aka Kormákur), lStewieAl, jazzisparis, iranrmrf, maletsna (c6), and carxt (aka karut)  that with their fork inspired me to take over this
+Also a thanks to *Ershin* (Oblivion Display Tweaks, Loot Menu) that reported a serious bug in the Event Framework
 
 A special thanks to *ianpatt* that allowed us to mantian this fork.
