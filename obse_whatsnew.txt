@@ -1,6 +1,6 @@
 xOBSE 0021.5:
     Global:
-        -Compiled with vs2019. Will require vcrun2019 as dependency.
+        -Compiled with vs2019.
         -Fixed example plugin compilation 
     Fix:
         -Fixed a critical bug in the Event Handler System that could cause CTD when too much handlers are used.
@@ -13,6 +13,7 @@ xOBSE 0021.5:
     Addition:
         -Added EventHandlerExist function. 
         -Added console print for GetOBSEVersion/Revision and for Plugins detection functions
+        -Added the GOG version and another Polish version to the launcher
 
 0021:
 -Fixed swimming event registrations
