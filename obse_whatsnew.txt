@@ -1,15 +1,15 @@
 xOBSE 0021.5:
     Global:
-        -Compiled with vs2019. Will require vcrun20190 as dependency.
+        -Compiled with vs2019. Will require vcrun2019 as dependency.
         -Fixed example plugin compilation 
     Fix:
-        -Fixed a critical bug in the Event Handler System that could cause CTD when too much handlers.
+        -Fixed a critical bug in the Event Handler System that could cause CTD when too much handlers are used.
         -Fixed GetDistance definitions
         -Fixed HasSpell to work correctly on creature actors. Also slight optimization of the function.
         -Fixed GetSelectedSpells CTD
-        -Fixed Actor OVerride Breath System
+        -Fixed Actor Override Breath System
         -GetCombatSpell don't return every spell duplicated 4 times anymore
-        -Fixed tList SetAt function that could cause issue if the allocator can reutrn less then 8 bytes
+        -Fixed tList SetAt function that could cause issue if the allocator can return less then 8 bytes
     Addition:
         -Added EventHandlerExist function. 
         -Added console print for GetOBSEVersion/Revision and for Plugins detection functions
