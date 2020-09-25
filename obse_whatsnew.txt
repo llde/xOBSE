@@ -1,0 +1,701 @@
+xOBSE 0021.5:
+    Global:
+        -Compiled with vs2019. Will require vcrun20190 as dependency.
+        -Fixed example plugin compilation 
+    Fix:
+        -Fixed a critical bug in the Event Handler System that could cause CTD when too much handlers.
+        -Fixed GetDistance definitions
+        -Fixed HasSpell to work correctly on creature actors. Also slight optimization of the function.
+        -Fixed GetSelectedSpells CTD
+        -Fixed Actor OVerride Breath System
+        -GetCombatSpell don't return every spell duplicated 4 times anymore
+        -Fixed tList SetAt function that could cause issue if the allocator can reutrn less then 8 bytes
+    Addition:
+        -Added EventHandlerExist function. 
+        -Added console print for GetOBSEVersion/Revision and for Plugins detection functions
+
+0021:
+-Fixed swimming event registrations
+-Fixed format string evaluation inside compiler overridden blocks
+-Fixed the %n format specifier to correctly handle deleted references
+-Fixed Get/SetLevCreatureTemplate and SetCalcAllLevels command definitions
+-PluginAPI addition: IsUserFunction
+-Reverted the No Actor Value AV type code to its original value to preserve backward compatibility
+-Added a command alias for SetFlyCameraSpeedMult (SFCSM)
+
+0021 beta 4:
+-Fixed AV type code for No Actor Value (existing scripts that use the old value, 256, will need to be corrected manually)
+-GetAVSkillMasteryLevel/C uses base actor value for the skill
+-Fixed ToggleCreatureModel to not CTD when enabling models
+-Fixed GetStageIDs to work with stage-less quests. And to work in general
+-Fixed GetStageEntries to correctly populate its result array
+-Fixed RemoveEventHandler to correctly handle filtered OnHealthDamage event handlers
+-Fixed GetLuckModifiedSkill to allow negative values, call game code to calculate the capped value (to improve compatibility with plugins that modify the formula)
+-GetFactions
+-GetLowActors
+-Get/SetLevCreatureTemplate, SetCalcAllLevels
+-OnWaterSurface/Dive, Get/SetActorSwimBreath, Get/SetActorMaxSwimBreath, OverrideActorSwimBreath
+-Fixed MagicEffectUsesOtherActorValue-GetMagicEffectOtherActorValue/C mix-up
+-Allowed SetMagicEffectResistValue/C to remove resist AVs
+-SetFlyCameraSpeedMult
+
+0021 beta 3:
+-Fixed compatibility with the CustomSpellIcons OBSE plugin
+-Fixed issue with the script precompiler that caused it to erroneously display errors when a script ended with a commented line
+-Fixed issue with the equality operator that prevented the correct evaluation of numeric-form comparisons
+-Fixed SetSoulLevel/SetSoulGemCapacity; they apparently never worked hitherto
+-Fixed GetActorValueC to correctly return negative actor values
+-OnQuestComplete, OnMagicCast, OnMagicApply
+-Get/SetSkillSpecializationC, GetRequiredSkillExpC, GetAVSkillMasteryLevel/C
+-GetLuckModifiedSkill accepts an optional arg to return the uncapped result
+-Missing plugin handler warnings display the name of the delinquent plugin
+-Added attacker filter to OnHealthDamage 
+-Added GetActiveMenuRef support for the enchantment recharge menu
+-PluginAPI additions: GetPluginLoaded, GetPluginVersion, PeekNextRecordInfo
+
+0021 beta 2:
+-Added support for minidump generation to help with post-mortem debugging
+-Fixed issue with RunScriptLine that caused rare CTDs during game initialization
+-Fixed issue with the serialization code that caused CTDs when a game session's initial loadgame operation failed
+-Fixed issue with RemoveScript that caused a CTD when called on a non-scriptable object
+-Fixed issue with ExpressionParser that prevented magic effect script references from being resolved correctly when using the compiler override
+-Patched vanilla bug that casued a CTD when an effect-less spell was added to the player using the AddSpell command
+-Patched vanilla bug that prevented NPCs from activating containers that had onActivate blocks in their scripts
+-Patched vanilla bug that permanently prevented the normal activation of unscripted objects when the Activate command was used on them
+-Annealed runtime error notification messages for script errors
+-GetGroundSurfaceMaterial
+
+0021 beta:
+-SetCombatStylePowerAttackFatigueModMult
+-HasTail, GatTailModelPath
+-GetLuckModifiedSkill
+-sv_ToUpper, sv_ToLower
+-SetCellMusicType
+-Get/SetSoundAttenuation
+-GetStageIDs, GetStageEntries
+-Set/UnsetStageText
+-SetStageDate
+-UpdateContainerMenu, UpdateSpellPurchaseMenu
+-LinkToDoor
+-CopyRace
+-SetCreatureType
+-DispatchEvent
+-Support for user-defined events
+-ToggleSkillPerk supports Journeyman and Master Mercantile perks
+-OnSoulTrap, OnSaveIni, OnMagicEffectHit2 events
+-Pass string variables to vanilla commands using '$quest.stringVar' syntax
+-MessageEX takes an optional duration, effective only if MenuQue plugin is running
+-ModPCMovementSpeed and ModPlayerSpellEffectiveness accept an optional parameter indicating if their effects should persist in the savegame
+-Fix recursive calls to *_NS commands not blocking message spam
+-Combat style commands allocate memory for "advanced" settings if not already present
+-Made annoying editor warning about unquoted strings/function pointers toggle-able through INI file (in the Data\OBSE folder)
+-Plugin API allows authors to optionally avoid dependencies on GameAPI/Utilities header files
+-Patch vanilla bug in which RemoveAllItems and GotoJail commands cause equipped quest item enchantments to become permanent
+-New loader injection method for the editor
+-Fix issue with PluginManager that caused a CTD when a plugin registered a listener inside a dispatch callback
+-Updated project to Visual Studio 2010
+-Add compiler override support for script bytecode lengths exceeding 0x4000 bytes when using the CSE OBSE plugin
+-Minor documentation fixes
+
+0020:
+-ToggleSkillPerk
+-Fix compiler override using localized actor value strings
+-Fix IsNthEffectItemScriptHostile returning inconsistent values
+-Prevent equipping an item from generating multiple OnActorEquip events
+-Prevent power-attacking generating multiple OnAttack events
+-Fix GetActiveSpell returning zero if the player has not switched from the default starting spell
+
+0020 beta 6:
+-GetCellNorthRotation
+-SetRaceWeight/Scale
+-SetGoldValue_T
+-GetActorBaseLevel
+-SetDoorTeleport now accepts an optional argument specifying the change should not be recorded in the savegame
+-OnCreatePotion event
+-Fix issues with input functions arising from conflicts between mods using GetKeyPress and Enable/DisableControl.
+-Fix IsDigit always returning true regardless of character type
+-Fix misnamed OnPlayerDrop event to OnActorDrop
+-Prevent GetDescription using cached value of skill perk text.
+-Make SetInputText accept extremely long strings
+-Make compiler override accept string_var as argument for old sv_* commands
+-Fix OnSkillUp event
+
+0020 beta 5:
+-Get/SetLocalGravity
+-Get/SetVelocity
+-GetVerticalVelocity
+-New events: OnHealthDamage, OnCreateSpell, OnEnchant, OnAttack, OnRelease, OnBowAttack, OnBlock, OnDodge, OnStagger, OnRecoil
+-OnActorEquip event now triggered by actors equipping items due to changes in their AI
+-SetVerticalVelocity now operates in game units instead of centimeters
+-Internal changes to handling of parallel script execution
+
+0020 beta 4:
+-Get/SetCellWaterType
+-GetEquippedTorchTimeLeft
+-(Set)IsHidden/Automatic/MinimalUseDoor, SetIsOblivionGate
+-OnEatIngredient, OnNewGame events
+-Update active effect commands to work on non-actor magic targets (doors, furniture, etc)
+-ar_Erase erases all elements if second argument omitted
+-GetGameLoaded now returns true when the player starts a new game
+
+0020 beta 3:
+-OnDrinkPotion, OnActorDrop, OnSpell/ScrollCast, OnFallImpact, OnMapMarkerAdd events
+-SetVerticalVelocity
+-GetHigh/MiddleHighActors
+-GetCurrentPackageProcedure
+-Get/SetSkillSpecialization
+-GetEditorID optionally does not return formID if no string editorID exists
+-%B, %b format specifiers for colored text in console
+-Fix compiler override not being deactivated at end of script block
+-Fix crash in GetRaceHairs/Eyes if race has no hairs/eyes defined
+-Fix OnHitWith event being reported multiple times per event if weapon enchanted
+
+0020 beta 2:
+-Set/ClearPlayersLastRiddenHorse
+-GetNthActiveEffectActorValue
+-Equip/UnequipItemSilent
+-GetCurrent/CallingScript
+-GetRaceVoice now returns "this" race if no voice race is defined
+-SetCellWaterHeight now works with cells that aren't defined in editor as having water
+-Make "stringVar[-x]" work as expected
+-Make foreach/while loops thread-safe
+-Fix issue with IsKeyPressed2 introduced in 0020 beta
+
+0020 beta:
+-Compiler override for passing OBSE expressions and data types as arguments to any command
+-Get/SetCellLighting
+-IsNthActiveEffectApplied, GetNthEffectItem
+-GetMapMarkers
+-PlayIdle
+-ar_CustomSort
+-GetPathNodesInRadius/Rect
+-Is/SetPathNodeDisabled
+-GetPathNodePos
+-PathEdgeExists
+-GetPathNodeLinkedRef
+-Get/SetCellClimate
+-SetCellBehavesAsExterior, SetCellHasWater
+-IsCellPublic, SetCellIsPublic
+-IsOblivionInterior/World, IsInOblivion
+-(Set)CanFastTravelFromWorld
+-GetBoundingRadius, GetEditorSize
+-GetTerrainHeight
+-ResolveModIndex
+-SetPos_T, SetOwnership_T, ClearOwnership_T
+-GetRequiredSkillExp
+-HasEffectShader
+-Get/SetLightDuration, Get/SetTimeLeft
+-SetCreatureSkill
+-SetInputText, SetTextInputControlHandler, SetTextInputDefaultControlsDisabled
+
+0019b:
+-Fix changes made to inventory references not being saved if the item previously had no associated extra data
+-Fix a potential issue with string variables
+-Prevent infinite loop in RemoveEventHandler if more than one script registered for a particular event type
+-Partially fix an issue with Quest Log Manager mod generating array access errors
+
+0019a:
+-Fixes an issue with stolen items in inventory
+
+0019:
+-GetAllModLocalData
+-Optional flag to RunScriptLine and RunBatchScript allows suppression of console output during script execution
+-Suppress editor warning about unquoted string when using the '->' operator
+-Add 'type' field to array returned by GetPackageData
+-GetBaseAVForActor now works for all actor values defined on base actors
+-Fix GetCellChanged command not reliably reporting cell transitions
+-Fix editor CTD associated with a buffer overrun bug present in the unmodified Construction Set
+-GetFirst/NextRef now support extremely large worldspaces
+-Prevent OnHitWith events from being reported to event handler scripts twice per event
+-Fix issues with GetBarterItem
+-GetPackageData now includes a 'Type' field indicating the package type
+-Various miscellaneous tweaks and bug fixes
+
+0019 beta 4:
+-GetWeatherOverride
+-GetPackageType
+-RemoveModLocalData
+-ClearActiveQuest
+-GetCurrentEventName
+-Get/SetLightRGB
+-GetTransactionInfo
+-PrintActiveTileInfo
+-MagicEffectCodeFromChars
+-Fix potential vanilla buffer overrun when parsing commands entered at console (so-called '73-byte bug')
+-Add OnActivate event handler support
+-Event handlers can now be used with non-actor references
+-Add PostLoadGame event handler
+-GetActiveMenuSelection correctly recognizes and returns scrolls in magic menu
+-GetInputText takes an optional argument to strip HTML from the returned string
+-Make game preserve ownership data on inventory references
+-Inventory references now correctly handle large quantities of items in a single stack
+-Fix potential CTD in AddToLeveledList if called with an invalid list
+-Updates to serialization of array/string variables
+-Fix potential CTD if GetBarterItem called while a transaction is in progress
+-SetClassSkills2 now works as advertised
+
+0019 beta 3:
+-GetClassMenuSelected/HighlightedClass
+-GetEnchMenuBaseItem
+-IsQuestCompleted, UncompleteQuest
+-GetRaceHairs/Eyes, GetRaceDefaultHair
+-GetInvRefsForItem
+-Update plugin API to allow calling user-defined function scripts from plugin code
+-Allow plugins to accept array variables by ID as command arguments
+-Expand plugin array variable interface
+-Fix incorrect number of parameters for SetPCAttributeBonusC
+-Fix potential crash when saving after iterating over inventory references
+-GetFirst/NextRef now ignore partially-loaded references
+-Fix issue with ToggleSpecialAnim
+-Misc. fixes and tweaks
+
+0019 beta 2:
+-RemoveEventHandler
+-GetBookLength
+-Get/Set/ModGoldValue now return correct values for alchemy items
+-ar_Map and ar_List now accept up to 20 elements
+-Fix potential crash when passing strings to script commands
+-Fix issue with token/activator scripts which could cause Super Hotkeys to stop functioning
+
+0019 beta 1:
+-Inventory reference-walking functionality
+-GetMagicEffectChars(C)
+-Getters/Setters for spell flags
+-Get/SetActiveQuest
+-GetCurrent/CompletedQuests
+-Commands for getting and setting location/target/schedule data for AI packages
+-ar_Map, ar_Append
+-Get/SetTexturePath
+-Get/Set/ModSigilStoneUses
+-SetDescription
+-SetCreatureSoundBase
+-GetBoundingBox
+-Update3D
+-Commands for getting information about the most recent barter transaction
+-Commands for getting information about the quantity menu
+-IsEquipped
+-Get/SetPCAttributeBonusC
+-RemoveMeIR, CopyIR
+-CreateTempRef
+-GetCellChanged
+-SetClassSkills2
+-Commands for getting information about the most recent Sigil Stone enchantment
+-New operators: unary*, unary&, ::, ->
+-Updates to plugin API
+-New, more readable command documentation format (courtesy of TheMagician)
+-Allow use of SetModelPath with creatures and NPCs
+-Allow user-defined functions to be called from within array elements
+-IsOffLimits uses player by default if argument omitted
+-Move SetScript out of beta status
+-SetEventHandler
+-Linear Algebra functions
+-Commands for manipulating actor value modifiers
+-Miscellaneous bug fixes and tweaks
+
+0018:
+-EquipItem2, EquipItem2NS
+-GetTeleportCellName
+-EquipMe
+-sv_Percentify
+-GetNthAEEnchantObject, GetNthAESummonRef, GetNthAEBoundItem
+-Fix crash when attempting to pass a string variable using '$' prefix
+-Fix an off-by-one error in y-coordinate of cells scanned by GetFirst/NextRef
+-HasName returns false if a potentially named object has no name
+-Update plugin messaging API
+-Fix potential crash in PrintTileInfo
+-Miscellaneous tweaks and bug fixes
+
+0018 beta 6:
+-CalcLevItems
+-ar_Range
+-GetRaceWeight
+-IsOblivionGate
+-GetMouseButtonsSwapped
+-GetCellBehavesAsExterior
+-GetAllies, GetTargets, GetSelectedSpells, GetCombatSpells
+-Update plugin array variable API
+-Fix token script errors caused by multi-threaded background loading of cells
+-Upgrade GetFormFromMod to look up dynamic forms
+-Add unary * operator for dereferencing a foreach iterator array
+-Miscellaneous tweaks and bug-fixes
+
+0018 beta 5:
+-Fix potential errors in token scripts when loading a saved game
+
+0018 beta 4:
+-GetRaceScale,
+-GetCurrentPackage, GetCurrentEditorPackage
+-GetWorldspaceParentWorldSpace
+-QuestExists, GlobalVariableExists
+-StringToActorValue
+-Fix MapMarker bugs from b3
+-Fix GetEquipmentSlot and GetequippedObject with the Torch/Light slot
+-Fixes for OutputLocalMapPicturesOverride
+-Fixes for Set/ModEquippedCurrentHealth
+-Fix for errant problems with array access
+-Fix for various expression parsing errors
+
+0018 beta 3:
+-GetWaterShader
+-SetOLMPGrids, GetGridsToLoad, OutputLocalMapPicturesOverride, con_OutputLocalMapPictures
+-GetRaceReaction
+-GetBaseAVC alias for GetBaseActorValueCode
+-SetCurrentHealth
+-TriggerPlayerSkilluse/C
+-ModPlayerSkillExp/C
+-Get/SetPlayerSkillAdvances/C
+-Operators: * defined for strings, -= for numbers, unary # shortcut for ToNumber
+-Enable support for select OBSE commands in quest/dialog conditions (currently only GetPCTrainingSessionsUsed and IsAmmo supported)
+-Fix SetBookSkillTaught
+-Make Get/Set/ModEquippedXXX commands work with multi-slot apparel
+-Fix inconsistent behavior with ar_Insert, ar_Size, and ar_Erase
+-SetName/Ex update map menu immediately when changing the name of a mapmarker
+-Fix crash when comparing empty strings
+-RunScriptLine and RunBatchScript now return false if errors occur, true if successful
+-Fix literal integrals used as command arguments in range 0-255 being treated as negative at run-time
+
+0018 beta 2:
+-Add operators *=, /=,  and ^=
+-Operators == and != support array comparisons
+-Fix GetNthEIScript return type
+-Improve script error reporting
+-Fix crash with GetTeleportCell
+-Reduce compiled size of integral operands in script bytecode - this helps alleviate a bug in the default compiler, but does mean that scripts using the obse expression handler and compiled in v0018 beta 2 must be run in v0018 beta 2 or later.
+-Fix crash compiling function scripts taking more than the maximum 10 arguments
+-GetDoorTeleportRot returns z-rotation instead of x-rotation
+-SetDoorTeleport correctly sets rotation
+-Fix crash with some combat style functions
+-import modwatershader console command as con_modwatershader
+-miscellaneous internal bug fixes and tweaks
+
+0018 beta 1:
+-User-defined functions
+-Class functions
+-GetUserTime
+-GetCreatureModelPaths
+-Get/SetSkillGoverningAttribute
+-Get/SetPlayerBirthsign
+-GetActorAlpha
+-GetMapMenuMarkerName/Ref
+-ToNumber
+-GetActiveEffectCodes/Casters
+-GetCurrentRegions
+-SetPackageTarget
+-GetBaseAV2
+-GetSpecialAnims
+-ToggleSpecialAnims
+-GetLeveledSpells
+-GetDescription
+-sv_Split
+-Array resizing, insertion, and list creation functions
+-Get/SetGameDifficulty
+-Set/ModCurrentCharge
+-Door teleport functions
+-Cell reset functions
+-GetTelekinesisRef
+-GetActorPackages
+-AI package functions
+-combat style flag functions
+-various miscellaneous functions, bug-fixes, and optimizations
+
+0017b:
+-Support for the Steam version of Oblivion. Huge thanks to jmccaskey at Valve for his assistance in getting this set up.
+
+0017a:
+-Fix compiler occasionally freezing when attempting to save a script
+-Make local variables take precedence over objectIDs in cases of name collision
+-Fix crash with GetEquippedItems after unequipping slotless items
+-IsModelPathValid now works with non-simple models like NPC and Hair
+-Remove delay between calling InsertInInputText and seeing the displayed text updated
+-Empty strings are no longer displayed as "NULL" with the %z format specifier; instead nothing is displayed
+
+0017:
+-CanUsePower, SetCanUsePower
+-GetUsedPowers, SetPowerTimer
+-Plugin API dispatches messages to registered plugins containing savegame name immediately before save/load serialization events
+-Fix bug in which nested arrays could become invalid when reloading a svegame
+-Compiler errors include line numbers
+-ar_Last no longer crashes if array contains only one element
+-obse_loader properly handles when large address aware flag is set on oblivion.exe
+
+0017 beta 2:
+
+[** Upgrade Information **]
+  Several changes occurred between beta 1 and beta 2 which require attention for users of mods based on beta 1. All scripts based on beta 1 need to be recompiled in the editor in order to function properly. Modders please update your mods; users please contact the authors of your mods for updated files. Additionally, due to the introduction of reference-counting for arrays, modders should be aware that arrays created and saved using beta 1 are compatible with beta 2 provided that exactly ONE reference to each array exists. If your scripts make use of the now-deprecated assignment-by-reference operator '=>', resulting in multiple references to the same array, then your users will need to revert to a clean savegame.
+  Please note that backward compatibility is not guaranteed for beta releases of OBSE. Once 0017 is officially released, we will maintain backward compatibility with the stable version.
+
+[Changes]
+-Fix assignment of forms to array elements in OBSE expressions
+-GetClass takes an optional base NPC as an argument
+-'%q', '%r', and '%e' are supported in string arguments to all functions, vanilla or otherwise
+-Ref-walking functions work correctly
+-Array assignment is now by reference. OBSE destroys arrays when they are no longer referenced, so scripts are no longer responsible for memory management
+-PrintTileInfo no longer crashes the game
+-Compiled bytecode for OBSE expressions is more concise
+-GetButtonPressed works correctly for text input messageboxes generated from scripts attached to temporary references
+-Added QuitGame/QuitToMainMenu messages to Plugin messaging API 
+-Compiler enforces correct loop structures
+-Added '$' operator as shorthand for ToString command
+-Alternate syntax for sv_Destruct accepts multiple string variables as arguments
+-ar_Null, ar_Copy, ar_DeepCopy
+-ar_First, ar_Last, ar_Next, ar_Prev
+-ar_Keys, ar_HasKey
+-ar_BadStringIndex, ar_BadNumericIndex
+-NumToHex, GetFormIDString, GetKeyName, AsciiToChar
+-DeleteReference
+-ActorValueToStringC
+-IsOblivionGate
+
+0017 beta 1:
+-Array variables
+-ForEach and While loops
+-New expression syntax
+-Effect setting functions
+-Combat style functions
+-Activate2
+-GetCurrentRegion
+-Functions to detect if keys or controls have been disabled via script
+-GetEquippedItems
+-IsRefDeleted
+-Various bug-fixes and miscellaneous functions
+
+0016:
+- DeleteFromInputText
+- MoveTextInputCursor
+- Get/SetStringIniSetting
+- Get/SetPCTrainingSessionsUsed
+- Updated plugin API
+- Miscellaneous bug fixes and tweaks
+
+0016 beta 2:
+Bug fixes:
+ - SetPCMajorSkillUps modifies player's ability to level up if it puts him above or below the levelup threshold
+ - Fix display issues with text input commands
+ - Crash when calling GetCursorPos during gamemode while playing in full-screen mode
+ - UpdateTextInput restores previous buttons if input box is closed and reopened
+ - sv_Replace now works correctly
+ - MenuTapKey now works correctly
+ - Remove DeleteReference command until support for Oblivion v1.1 becomes possible
+ - %n specifier prints names of exterior cells
+ - Restrict SetBaseForm to non-actors
+Enhancements/Additions:
+ -GetLastCreatedPotion, GetLastUniqueCreatedPotion
+ - sv_Set
+ - IsConsoleOpen
+ - GetBookText
+ - GetMenuHasTrait
+ - SetChanceNone
+ - IsControl, SetIsControl
+ - Ability to specify button ID rather than name for ClickMenuButton
+ - Plugin API for string variables
+ - Allow default text for book text input
+ - Alternative to pipe character for string parameters to commands called from the console
+ - Add optional RunOnRef param to RunScriptLine and RunBatchScript
+
+0016 beta 1:
+- New string variable datatype and associated commands
+- Debug mode output for scripts
+- Text input capabilities
+- Spell effectiveness modifier commands
+- Mapmarker commands
+- UI manipulation commands
+- Rudimentary script error logging
+- Projectile commands
+- Various other miscellaneous commands
+
+0015a:
+- Fix crash when biped model path functions called on an object for which the specified model is not defined
+- Update GetMagicProjectileSpell to return staff enchantment for projectiles fired from a staff
+- Fix incorrect return value for GetPluginVersion when specified plugin is not installed
+- Plugin manager now offers some protection against misbehaving plugins
+
+0015:
+- Add manifest to obse_loader to request UAC elevation on Vista
+- Add -waitforclose loader option to help programs that watch for process termination
+- Fix bugs in Enable/DisableControl
+- Fix crash in various formatted string functions
+
+0015 beta 2:
+- Fix crash when passing a value of zero to %k format specifier
+- Restore previous behavior of GetAltControl; add GetAltControl2, deprecating GetAltControl
+- GetAlchmenuIngredient/Count/Apparatus
+- Fix non-functional commands IsOnGround, IsInAir, and IsJumping
+- SetNameEx now operates on references as well as base objects. NOTE: The order of parameters has changed.
+- Engine fixes for leveled list saving/loading
+- Fix error reporting bug in the CS
+- Fix kParamType_InventoryObject extraction in ExtractArgsEx
+- Fix plugins not receiving a load callback if they have written no data
+- Replace LL rand() calls with mersenne twister
+
+0015 beta 1:
+- Plugin serialization API
+- Versions of functions such as AddItem which don't generate UI messages when called on the player
+- Projectile functions
+- Functions returning information about the active mod list
+- Sound functions for objects and creatures
+- Functions returning information about an NPC's hair and eyes
+- ToggleCreatureModel
+- Functions to access variables in external scripts by name
+- Functions to test the validity of reference variables
+- SetMessageSound/Icon
+- GetFullGoldValue
+- Hotkey functions
+- Detection state functions
+- Functions to get and set services offered by NPCs including training
+- Functions to iterate over an actor's AI packages
+- Animation-related functions for actors
+- Functions to return information about an actor's Havok state
+- GetGodMode
+- CompareScripts
+- Leveled list functions
+- Input functions are now synced with Oblivion control bindings
+- Get/SetSpellHostile
+- Functions to determine if a file path is valid
+- Functions to return information about the player's level-up progress
+
+0014b:
+- Fix plugin command overwrite bug
+
+0014a: 
+- Fix SetEnchantment to work on arrows
+- %p, %q, %{} specifiers for output functions, fix bug when displaying names containing literal percent signs, increase max string length
+- Fix bug with MessageBoxEx and GetButtonPressed
+- IsOffLimits ignores evil factions
+
+0014: Message extension functions, NPC, Actor and Creature misc functions, Faction functions, Race spell functions, Is/SetHarvested, ActorValue extentions for ActiveEffect and HasEffect functions, IsPersistent, IsOffLimits, GetHorse/GetRider, Get/Mod/SetActorValueC, GetBaseActorValueC, GetCreatureSoundBase, GetNumRanks, HasModel, IsModLoaded, HasName, HasBeenPickedUp, GetRace.
+Flag for ref-walking functions to include inactive references.
+Tweaks to GetSpellMagickaCost to include Luck and skill caps.
+Fix crash when adding a ScriptEffect with no name.
+Fix crash when quest scripts call ref-walking functions during Main Menu.
+All OBSE functions now accept float, long, and short variables defined in external scripts as arguments.
+
+0013a: bug fixes for GetOpenKey, SetNthEIXXX, Ref walking functions
+
+0013:
+- climate manipulation functions
+- new easier-to-use input functions
+- active magic effect manipulation and querying functions
+- plugin querying API
+- cell water level functions
+- con_LoadGame, SetPCAMurderer
+- internal visitor class framework
+- improve speed of inventory walking via higher-level data structures
+- fix Set/GetAttackDamage for creatures
+- fix Set/GetEquippedWeaponPoison from stopping the script
+- get/set travel horse and open key
+- weather manipulation functions
+- leveled list functions
+- set/copy hair and eyes
+- get creature base scale, reach and soul level
+- get/set container respawns
+- ownership functions
+- linked and teleport door functions
+- RefreshControlMap
+- GetFirstRef, GetNextRef, GetNumRefs
+- bugfixes for GetEnchantmentCost, GetSpellMagickaCost, IsAutoCalc, SetAutoCalc
+
+0012: Official plugin support, race attribute and skill functions, some climate and weather functions, enable effect item functions for ScriptEffects, add SetNthEIScript and SetNthEIScriptName, Get/SetSpellExplodesWithNoTarget, GetScript, RemoveScript, SetScript
+
+0011: Skill experience functions, AddFullEffectItem, RunBatchScript, global collision setting functions, more console commands, ModName and AppendName and several defect fixes
+- fixes GetBaseObject
+- IsArmor, IsBook, IsContainer and IsSoulGem no longer require the passed object ID
+- CopyAllEffectItems, CopyNthEffectItem and RemoveNthEffectItem no longer need a cloned form as a target
+- Adds con_SaveINI, con_QuitGame and con_TGM
+
+0010: Magic effect, book, model path manipulation, more console commands, menu input functions, math functions
+
+- update game setting/ini file functions to work with unsigned and boolean types
+- buffered input functions, useful for menus or other text input
+- fix some potential thread-safety issues
+- patch the RefID wraparound bug in 1.1.511 and 1.2.214 (note that the number will keep going up, but with OBSE installed it will wrap from 0xFFFFFFFF to 0xFF000000 properly)
+- fix Is* functions, allow passing arguments that are not considered 'inventory items'
+- replace local magic effect list with access to oblivion's internal list
+- actually seed the random number generator (doh)
+- fix internal access to form list for 1.2.214
+- calculate fps via average frametime (calculated via GetTickCount) over 20 frames
+- log version of OBSE, version of Oblivion in obse.log
+- change resource version number to 0.0.10.1 to allow for more precision when releasing intermediate versions without ticking the major version number
+- include NSIS script for modders that want an installer
+
+0009e: Compatibility with patch 1.2.0.416
+
+0009d: Compatibility with CS 1.2.0.404
+
+0009c: Compatibility with CS 1.2
+
+0009b: Compatibility with patch 1.2
+
+0009a: Bugfix release, fixes flow control functions and a potential SetModel crash
+
+0009: Individual GetValue functions, Set/ModValue functions, Beta Flow Control functions, new HTML command documentation
+- adds 114 functions: 70 provide completely new functionality
+- fix bug looping over magic effects
+- fix bug in GetMIV Poison to accurately return if the object is poison or not
+
+0008: GetEquippedObjectValue, GetEquippedCurrentValue, GetMagicItemValue, GetMagicEffectValue, GetMagicEffectCodeValue, MagicItemHasEffect, MagicItemHasEffectCode, GetNumMouseButtonsPressed, GetMouseButtonPress.
+
+- added Enchantment value to the Object Value functions to return a ref to any enchantment on an object
+- fix bug where equipment functions didn't manage rings correctly. The ring slots now return whatever ring is worn on that side, regardless of the form's declaration as a left or right ring slot.
+- fix bug with signed mouse movement
+- fix fake mouse keycode
+
+
+0007: GetOV Values: QuestItem, Poison, Food, unofficial oldblivion support, editor font changes
+
+- fix bug with GetOV ArmorType
+- fix bug with IngredientItem decoding affecting GetOV weight and value
+- integrate changes from Timeslip
+- reimplement editor font changing code so it works on win2k, add font picker dialog
+
+0006: Item Value functions, Item type functions, Class functions, HasSpell, ModActorValue2
+
+- more form structures and class decoding
+- fix bug with GetEquippedObject not returning an object that is damaged where another non-damaged object is the the inventory.
+
+0005: fixing math functions, DirectInput, GetOBSEVersion, console commands
+
+- converted to VS2005
+- compiles under VS Express
+- add timeslip's math fns, rename old fns
+- add many new CRCs
+- more form structures, a few game objects also
+- update rand function to use mersenne twister
+- add DirectInput hooking functions, disallow modification of ESC and ` keys
+
+0004: PrintToConsole, Get/SetActiveSpell, GetParentCell, math functions, alpha release
+
+Implemented PrintToConsole, Get/SetActiveSpell, GetParentCell, several math functions. Alpha release version, OK to use in released mods.
+
+- all RTTI structures
+- many form structures defined
+- testing dynamic form creation
+- improve dll loader sync for editor
+- added Utilities file with analysis utils
+
+0003: GetEquipmentSlotType. determining how inventory items are stored along with their extra data
+
+Implemented GetEquipmentSlotType. Fixed floating point return types for all functions. Considered an alpha release candidate.
+
+- fix script result type
+- pad opcodes out to 1400
+- get equipment command
+
+0002: first useful commands
+
+Implemented GetNumItems, GetInventoryType and IsKeyPressed.
+
+- dynamic_cast support
+- form access (no data yet)
+- extra data list access
+- more virtual functions documented
+- class hiearchy
+- minor code reorg
+- extra data types
+- container access
+- variable name cleanup
+- input commands
+- inventory commands
+
+0001: first release
+
+Simple proof of concept demo.
