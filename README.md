@@ -24,6 +24,11 @@ IF YOU ARE USING THE STEAM VERSION OF OBLIVION:
 2. Ensure you have enabled the Steam community in-game, or OBSE will fail to load. Go to Steam > Settings > In-Game and check the box marked "Enable Steam Community In-Game".
 3. Launch Oblivion via Steam or by running Oblivion.exe. OBSE will automatically be run along with Oblivion when launched. To disable this, rename or move obse_steam_loader.dll. You do not need to use obse_loader.exe unless you are running the editor.
 
+IF YOU ARE USING MOD ORGANIZER 2:
+
+Mod organizer user need to use special instruction to allow OBSE to function properly.
+Follow the instruction on this page: https://github.com/ModOrganizer2/modorganizer/wiki/Running-Oblivion-OBSE-with-MO2
+
 RUNNING TES:CONSTRUCTION SET WITH OBSE:
 
 Scripts written with these new commands must be written via the TESConstructionSet launched with obse_loader. Open a command prompt window, navigate to your oblivion install folder, and type "obse_loader -editor". The normal editor can open plugins with these extended scripts fine, it just can't recompile them and will give errors if you try.
@@ -80,7 +85,7 @@ The OBSE loader tells me I need to use the autopatcher:
 OBSE doesn't launch with the Direct2Drive version:
 
 - The Direct2Drive version of the Oblivion executable has additional DRM applied, which would be illegal for us to bypass. We cannot support this version. If you own a retail version of Oblivion, please use the autopatcher to extract a usable executable.
-- Note that if you are interested in buying a digitally distributed version of Oblivion, the Steam version is supported.
+- Note that if you are interested in buying a digitally distributed version of Oblivion, the GOG version and the Steam version are supported. (GOG Version preferred)
 
 Crashes or other strange behavior:
 
