@@ -2,8 +2,7 @@
 #include "NiObjects.h"
 #include "obse_common/SafeWrite.h"
 #include "common/ICriticalSection.h"
-#define _SILENCE_STDEXT_HASH_DEPRECATION_WARNINGS
-#include <hash_map>
+#include <unordered_map>
 
 #define ENABLE_NETIMMERSE_DEBUG 0
 #define ENABLE_INTERLOCKED_HOOKS 0
@@ -23,7 +22,7 @@ struct ObjectInfo
 	NiRTTI	* type;
 };
 
-typedef stdext::hash_map <NiObjectNET *, ObjectInfo>	NiObjectList;
+typedef std::unordered_map <NiObjectNET *, ObjectInfo>	NiObjectList;
 
 static ICriticalSection	g_lock;
 FILE					* g_log = NULL;
