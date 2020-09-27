@@ -604,7 +604,7 @@ void ErrOutput::vShow(ErrOutput::Message& msg, va_list args)
 		ShowError(msgText);
 }
 
-void ErrOutput::Show(ErrOutput::Message& msg, ...)
+void ErrOutput::Show(ErrOutput::Message msg, ...)
 {
 	va_list args;
 	va_start(args, msg);
