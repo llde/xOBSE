@@ -409,9 +409,26 @@ public:
 
 	enum
 	{
-		kFormFlags_QuestItem =				0x00000400,
-		kFormFlags_IgnoresFriendlyHits =	0x00100000
-	};
+		kFormFlags_FromMaster           = 0x00000001,   // form is from an esm file
+        kFormFlags_FromActiveFile       = 0x00000002,   // form is overriden by active mod or save file
+        kFormFlags_Loaded				= 0x00000004,   // ?? (from OBSE ModEntry defininition)
+        kFormFlags_Linked               = 0x00000008,   // set after formids have been resolved into TESForm*
+        kFormFlags_Deleted              = 0x00000020,   // set on deletion, not saved in CS, probably game as well
+        kFormFlags_BorderRegion         = 0x00000040,   // ?? (from TES4Edit)
+        kFormFlags_TurnOffFire          = 0x00000080,   // ?? (from TES4Edit)
+        kFormFlags_CastShadows          = 0x00000200,   // ?? (from TES4Edit)
+		kFormFlags_QuestItem            = 0x00000400,   // aka Quest Item, Persistent Reference, Essenstial Actor
+		kFromFlags_Essential            = kFormFlags_QuestItem, 
+        kFormFlags_InitiallyDisabled    = 0x00000800,   // ?? (from TES4Edit)
+        kFormFlags_Ignored              = 0x00001000,   // record is not loaded by CS, perhaps game as well
+        kFormFlags_Temporary            = 0x00004000,   // not saved in CS, probably game as well
+        kFormFlags_VisibleWhenDistant   = 0x00008000,   // ?? (from TES4Edit)
+        kFormFlags_OffLimits            = 0x00020000,   // ?? (from TES4Edit) //Offlimits for TESObjectCELL
+        kFormFlags_Compressed           = 0x00040000,   // ?? (from TES4Edit)
+        kFormFlags_CantWait             = 0x00080000,   // ?? (from TES4Edit) //For TESObjectCELL can't wait. Unknown for others TESForm
+        kFormFlags_IgnoresFriendlyHits  = 0x00100000,
+   		kFormFlags__SavedInRecord       = 0x000A8EE0,    // flag bits copied to record during serialization (from shadeMe)
+    };
 
 	struct ModReferenceList
 	{
@@ -3173,15 +3190,15 @@ public:
 
 	enum
 	{
-		kFlags0_Interior =				1 << 0,
-		kFlags0_HasWater =				1 << 1,
-		kFlags0_Unk2 =					1 << 2,
-		kFlags0_ForceHideLand =			1 << 3,	// shared bit - for exterior
-		kFlags0_OblivionInterior =		1 << 3,	// shared bit - for interior
-		kFlags0_Unk4 =					1 << 4,
-		kFlags0_Public =				1 << 5,
-		kFlags0_HandChanged =			1 << 6,
-		kFlags0_BehaveLikeExterior =	1 << 7,
+		kFlags0_Interior =				    1 << 0,
+		kFlags0_HasWater =				    1 << 1,
+		kFlags0_InvertFastTravelBeheviour =	1 << 2,
+		kFlags0_ForceHideLand =			    1 << 3,	// shared bit - for exterior
+		kFlags0_OblivionInterior =		    1 << 3,	// shared bit - for interior
+		kFlags0_Unk4 =					    1 << 4,
+		kFlags0_Public =				    1 << 5,
+		kFlags0_HandChanged =			    1 << 6,
+		kFlags0_BehaveLikeExterior =	    1 << 7,
 	};
 
 	TESObjectCELL();
