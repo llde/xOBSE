@@ -74,11 +74,7 @@ public:
 	// 28
 	struct Unk1B20
 	{
-		UInt32	unk00;
-		UInt32	unk04;
-		UInt32	unk08;
-		UInt32	unk0C;
-		UInt32	unk10;
+		DIMOUSESTATE2	mouseState;
 		UInt32	unk14;
 		UInt32	unk18;
 		UInt32	unk1C;
