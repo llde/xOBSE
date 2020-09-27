@@ -904,6 +904,7 @@ static void InstallOnDodgeHook()
 
 	// when an existing EntryExtendData for a soulgem is populated with a newly captured soul
 	static const UInt32 s_createExtraSoulPatchAddr1 = 0x00484D14;
+	static const UInt32 s_createExtraSoulRetnAddr1 = 0x00484D19;
 
 	// when a new EntryExtendData for a soulgem is created for a newly captured soul
 	static const UInt32 s_createExtraSoulPatchAddr2 = 0x00484D47;
@@ -926,9 +927,9 @@ static void __stdcall SetLastFilledSoulgem (ExtraContainerChanges::EntryData* en
 	// locate ExtraContainerChanges::Entry for this EntryData
 	TESObjectREFR* owner = *g_thePlayer;
 	ExtraContainerChanges::Entry* entry = ExtraContainerChanges::GetForRef (*g_thePlayer)->data->objList;
-	while (entry && entry->data != entryData)
+	while (entry && entry->data != entryData) {
 		entry = entry->next;
-
+	}
 	// create temp InventoryReference for soulgem
 	InventoryReference::Data irefData (entryData->type, entry, extendData);
 	InventoryReference* iref = InventoryReference::Create (owner, irefData, false);
@@ -944,7 +945,8 @@ static __declspec(naked) void CreateExtraSoulHook1 (void)
 		call SetLastFilledSoulgem
 
 		popad
-		jmp [s_BaseExtraList_SetExtraSoulLevel]		// overwritten function call
+		call [s_BaseExtraList_SetExtraSoulLevel]		// overwritten function call
+		jmp [s_createExtraSoulRetnAddr1]
 	}
 }
 
@@ -985,6 +987,7 @@ static void InstallOnSoulTrapHook()
 {
 	WriteRelCall(s_soulTrapPatchAddr, (UInt32)&OnSoulTrapHook);
 	WriteRelJump(s_createExtraSoulPatchAddr1, (UInt32)&CreateExtraSoulHook1);
+
 	WriteRelJump(s_createExtraSoulPatchAddr2, (UInt32)&CreateExtraSoulHook2);
 }
 	
