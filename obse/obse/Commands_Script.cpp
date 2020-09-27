@@ -139,10 +139,10 @@ static bool Cmd_IsFormValid_Execute(COMMAND_ARGS)
 
 static bool Cmd_IsReference_Execute(COMMAND_ARGS)
 {
-	TESObjectREFR* refr = NULL;
+	TESForm* refr = NULL;
 	*result = 0;
 	if (ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &refr))
-		*result = 1;
+		if (refr && refr->IsReference()) *result = 1;
 
 	return true;
 }
