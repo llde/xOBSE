@@ -76,8 +76,7 @@ int main(int argc, char ** argv)
 	if(procHookInfo.steamVersion)
 	{
 		// ### maybe check for the loader DLL and just CreateProcess("oblivion.exe") if we can?
-		PrintError("You are trying to use a Steam version of Oblivion. Steam users should launch the game through Steam, not by running obse_loader.exe. If OBSE fails to load, go to Steam > Settings > In Game and check the box marked \"Enable Steam community in game\". Please see the instructions in obse_readme.txt for more information.");
-		return 0;
+		_MESSAGE("Launching Steam version of Oblivion. This method isn't tested and mayem with associated evocation of the saints of the months may occur.");
 	}
 
 	if(g_options.m_crcOnly)
