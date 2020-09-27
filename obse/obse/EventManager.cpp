@@ -1651,7 +1651,7 @@ std::string GetCurrentEventName()
 {
 	ScopedLock lock(s_criticalSection);
 
-	return s_eventStack.size() ? s_eventStack.top() : "";
+	return s_eventStack.empty() ? "" : s_eventStack.top();
 }
 
 bool SetHandler(const char* eventName, EventCallback& handler)

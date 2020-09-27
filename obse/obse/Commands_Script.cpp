@@ -502,9 +502,8 @@ static bool Cmd_EventHandlerExist_Execute(COMMAND_ARGS)
 
 static bool Cmd_GetCurrentEventName_Execute(COMMAND_ARGS)
 {
-	const char* eventName = EventManager::GetCurrentEventName().c_str();
-
-	AssignToStringVar(PASS_COMMAND_ARGS, eventName);
+	std::string&& eventName = EventManager::GetCurrentEventName();
+	AssignToStringVar(PASS_COMMAND_ARGS, eventName.c_str());
 	return true;
 }
 
