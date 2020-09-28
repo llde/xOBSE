@@ -3114,6 +3114,25 @@ public:
 
 typedef Visitor<TESClimate::WeatherEntry, TESClimate::WeatherInfo> WeatherVisitor;
 
+class TESRegionData : public BaseFormComponent {
+public:
+	TESRegionData();
+	~TESRegionData();
+
+	UInt8 OverrideFlag;  //1 if Override flag setted, 0 otherwise
+	UInt8 unk2;  //Always seen 0
+	UInt8 Priority;
+	UInt8 unk4;   //Spurious, seems to be 7 or 8, maybe unused?
+};
+
+class TESRegionDataMap : public TESRegionData {
+public:
+	TESRegionDataMap();
+	~TESRegionDataMap();
+
+	BSStringT regionName;
+};
+
 // 2C
 class TESRegion : public TESForm
 {
@@ -3121,25 +3140,27 @@ public:
 	TESRegion();
 	~TESRegion();
 
-	struct Unk018
-	{
-		UInt32	unk0;
-		UInt32	unk4;
-		UInt8	unk8;
-		UInt8	pad9[3];
+	struct RegionDataEntry {
+		TESRegionData* data;
+		RegionDataEntry* next;
 	};
-
+	struct RegionDataList {
+		RegionDataEntry entry;
+		UInt8 unk8;   //Always 1
+		UInt8 pad9[3];  // Zero most of the times, 13-3-0 once
+	};
+    
 	struct Unk01C
 	{
 		UInt32	unk0;
 		Unk01C	* next;
 	};
 
-	Unk018	* unk018;				// 018
-	Unk01C	* unk01C;				// 01C
+	RegionDataList* dataList;			// 018
+	Unk01C	* areaList;				// 01C
 	TESWorldSpace	* worldSpace;	// 020
 	TESWeather		* weather;		// 024
-	float	unk028;					// 028
+	float	unk028;		
 };
 
 // 58
