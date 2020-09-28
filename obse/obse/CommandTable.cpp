@@ -2864,7 +2864,6 @@ void CommandTable::Init(void)
 	ADD_CMD_RET(GetNthActiveEffectBoundItem, kRetnType_Form);
 	ADD_CMD_RET(GetNthActiveEffectSummonRef, kRetnType_Form);
 
-	// undocumented, for testing by 2 or 3 modders
 	ADD_CMD(SetPlayerSkeletonPath);
 
 	// 0019
@@ -3188,8 +3187,11 @@ void CommandTable::Init(void)
 	ADD_CMD (SetActorMaxSwimBreath);
 	ADD_CMD (OverrideActorSwimBreath);
 	ADD_CMD (SetFlyCameraSpeedMult);
-	//OBSE v21.5
+	//OBSE v21.5-21.8
 	ADD_CMD(EventHandlerExist);
+	ADD_CMD(GetBaseAV3);
+	ADD_CMD(GetBaseAV3C);
+    ADD_CMD(IsNaked);
 	/* to add later if problems can be solved
 	g_scriptCommands.Add(&kCommandInfo_SetCurrentClimate); // too many problems
 	g_scriptCommands.Add(&kCommandInfo_SetWorldspaceClimate);
