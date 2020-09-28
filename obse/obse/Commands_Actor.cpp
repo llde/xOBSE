@@ -865,7 +865,7 @@ public:
 
 	UInt32 Val()  { return m_fixedActorValue; }
 };
-
+//DEPRECATED
 static bool Cmd_GetBaseAV2_Execute(COMMAND_ARGS)
 {
 	// only differs from vanilla cmd for player, and only for attributes and health
@@ -895,6 +895,129 @@ static bool Cmd_GetBaseAV2_Execute(COMMAND_ARGS)
 		}
 	}
 
+	return true;
+}
+
+static double GetBaseAV3(UInt32 actorValue, Actor* actor){
+	double val = actor->GetBaseActorValue(actorValue);  //In a perfect world we should try to fix this function directly instead of workaroundin this.
+	MagicTarget::EffectNode* list = actor->GetMagicTarget()->GetEffectList();
+	while(list){
+		if(list->data->spellType == SpellItem::kType_Ability){
+			if(actorValue <= kActorVal_Luck){
+				if(list->data->effectItem->actorValueOrOther == actorValue){
+					if(list->data->effectItem->effectCode == MACRO_SWAP32('DRAT')){
+						val += list->data->effectItem->magnitude;
+						//Note account for Truncated Drain effects
+					}
+					else if(list->data->effectItem->effectCode == MACRO_SWAP32('FOAT')){
+						val -= list->data->effectItem->magnitude;
+					}
+				}
+			}
+			else if(actorValue == kActorVal_Health){
+				if(list->data->effectItem->effectCode == MACRO_SWAP32('DRHE')){
+					val += list->data->effectItem->magnitude;
+					//Note account for Truncated Drain effects
+				}
+				else if(list->data->effectItem->effectCode == MACRO_SWAP32('FOHE')){
+					val -= list->data->effectItem->magnitude;
+				}
+			}
+			else if(actorValue == kActorVal_Magicka){	
+				if(list->data->effectItem->effectCode == MACRO_SWAP32('DRSP')){
+					val += list->data->effectItem->magnitude;
+					//Note account for Truncated Drain effects
+				}
+				else if(list->data->effectItem->effectCode == MACRO_SWAP32('FOSP')){
+					val -= list->data->effectItem->magnitude;
+				}
+			}
+			else if(actorValue == kActorVal_Energy){
+				if(list->data->effectItem->effectCode == MACRO_SWAP32('DRFA')){
+					val += list->data->effectItem->magnitude;
+					//Note account for Truncated Drain effects  TODO?
+				}
+				else if(list->data->effectItem->effectCode == MACRO_SWAP32('FOFA')){
+					val -= list->data->effectItem->magnitude;
+				}
+			}
+		}
+		list = list->Next();
+	}
+	return val;
+}   
+
+static bool Cmd_GetBaseAV3_Eval(COMMAND_ARGS_EVAL){
+	*result = 0;
+	Actor* actor = OBLIVION_CAST(thisObj, TESObjectREFR, Actor);
+	UInt32 actorVal = *((UInt32*)arg1);
+	if(actor)  *result = GetBaseAV3(actorVal, actor);
+	return true;
+}
+
+static bool Cmd_GetBaseAV3_Execute(COMMAND_ARGS){
+	*result = 0;
+	UInt32 actorVal = -1;
+	Actor* actor = OBLIVION_CAST(thisObj, TESObjectREFR, Actor);
+	if (!actor)	return true;
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &actorVal))	*result = GetBaseAV3(actorVal, actor);
+	//Truncate negative optionally
+	if(*result < 0) *result = 0;
+	if(IsConsoleMode()) Console_Print("GetBaseAV3 :  %f ",*result);
+	return true;
+}
+
+//Return true if actor has no LowerBody armour or clothing equipped and optionally for UpperBody. 
+static UInt32 IsNaked(Actor* npc, bool requiredUpperBody){
+	EquippedItemsList list = npc->GetEquippedItems();
+	bool foundLower = false;
+	bool foundUpper = requiredUpperBody ?  false : true;
+//	if(IsConsoleMode()) Console_Print("IsNaked SizeList:  %08X", list.size());
+	for(int i = 0; i < list.size(); i++){
+		TESForm* eq = list.at(i);
+//		if(IsConsoleMode()) Console_Print("IsNaked Element:  %08X", eq->refID);
+		//Not interested in Weapons
+		if(!eq) continue;
+		//TODO TESBIpedForm
+		TESObjectARMO* armor = OBLIVION_CAST(eq, TESForm, TESObjectARMO);
+		if(!armor){
+			TESObjectCLOT* cloth = OBLIVION_CAST(eq, TESForm, TESObjectCLOT);
+			if(!cloth) continue;
+			if(foundLower == false)	foundLower = (cloth->bipedModel.partMask & 8) == 8;
+			if(foundUpper == false)	foundUpper = (cloth->bipedModel.partMask & 4) == 4;
+		}
+		else{
+			if(foundLower == false) foundLower = (armor->bipedModel.partMask & 8) == 8;
+			if(foundUpper == false) foundUpper = (armor->bipedModel.partMask & 4) == 4;
+		}
+		if(foundLower == true  && foundUpper == true){
+//			if(IsConsoleMode()) Console_Print("IsNaked Exit with true:  %08X", 0);
+			return 0;
+		}
+	}
+//	if(IsConsoleMode()) Console_Print("IsNaked Exit with true:  %08X", 1);
+	return 1;
+}
+
+static bool Cmd_IsNaked_Eval(COMMAND_ARGS_EVAL){
+	*result = 0;
+	Actor* act = OBLIVION_CAST(thisObj, TESObjectREFR, Actor);
+	if(!act) return true;
+	bool requireUpperBody = false;
+	if(arg1) requireUpperBody = (*((UInt32*)arg1)) != 0 ? true : false;
+	*result = IsNaked(act, requireUpperBody);
+	return true;
+}
+
+static bool Cmd_IsNaked_Execute(COMMAND_ARGS){
+	*result = 0;
+	Actor* act = OBLIVION_CAST(thisObj, TESObjectREFR, Actor);
+	UInt32 requireUpper = 0;
+	if(!act) return true;
+	ExtractArgs(PASS_EXTRACT_ARGS, &requireUpper);
+	bool requireUpperBody = requireUpper != 0 ? true : false;
+	*result = IsNaked(act, requireUpperBody); 
+	if(IsConsoleMode()) Console_Print("IsNaked:  %f" , *result);
 	return true;
 }
 
@@ -1964,7 +2087,7 @@ DEFINE_COMMAND(GetEquippedItems,
 			   "returns an array containing the calling actor's equipped items",
 			   1, 0, NULL);
 
-DEFINE_COMMAND(GetBaseAV2, testing, 1, 1, kParams_OneActorValue);
+DEFINE_COMMAND(GetBaseAV2, 	"returns the base actor value without magical modifiers (DEPRECATED)", 1, 1, kParams_OneActorValue);
 CommandInfo kCommandInfo_GetBaseAV2C =
 {
 	"GetBaseAV2C",
@@ -1977,6 +2100,23 @@ CommandInfo kCommandInfo_GetBaseAV2C =
 	HANDLER(Cmd_GetBaseAV2_Execute),
 	Cmd_Default_Parse,
 	NULL,
+	0
+};
+
+
+DEFINE_COMMAND_CONDITIONAL(GetBaseAV3, "returns the base actor value without magical modifiers", 1, 1, kParams_OneActorValue);
+CommandInfo kCommandInfo_GetBaseAV3C =
+{
+	"GetBaseAV3C",
+	"",
+	0,
+	"returns the base actor value without magical modifiers",
+	1,
+	1,
+	kParams_OneInt,
+	HANDLER(Cmd_GetBaseAV3_Execute),
+	Cmd_Default_Parse,
+	HANDLER_EVAL(Cmd_GetBaseAV3_Eval),
 	0
 };
 
@@ -2098,3 +2238,5 @@ DEFINE_COMMAND(GetActorMaxSwimBreath, returns an actors maximum breath in second
 DEFINE_COMMAND(SetActorMaxSwimBreath, sets an actors maximum breath in seconds, 1, 1, kParams_OneFloat);
 
 DEFINE_COMMAND(OverrideActorSwimBreath, overrides breath behaviour with a few possible options, 1, 1, kParams_OneInt);
+
+DEFINE_COMMAND_CONDITIONAL(IsNaked, "Return 1 if the actor doesn't have a lowerbody model equipped, or an upperbody with argument 1, 0 otherwise" , 1, 1, kParams_OneOptionalInt);

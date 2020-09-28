@@ -68,6 +68,9 @@ extern CommandInfo kCommandInfo_SetPowerTimer;
 
 extern CommandInfo kCommandInfo_GetBaseAV2C;
 
+extern CommandInfo kCommandInfo_GetBaseAV3;
+extern CommandInfo kCommandInfo_GetBaseAV3C;
+
 extern CommandInfo kCommandInfo_GetAllies;
 extern CommandInfo kCommandInfo_GetTargets;
 extern CommandInfo kCommandInfo_GetSelectedSpells;
@@ -91,3 +94,4 @@ extern CommandInfo kCommandInfo_GetActorMaxSwimBreath;
 extern CommandInfo kCommandInfo_SetActorMaxSwimBreath;
 extern CommandInfo kCommandInfo_OverrideActorSwimBreath;
 
+extern CommandInfo kCommandInfo_IsNaked;
