@@ -122,6 +122,37 @@ struct ScriptLineBuffer;
 #define COMMAND_ARGS_EVAL TESObjectREFR * thisObj, void * arg1, void * arg2, double * result
 
 //Macro to make CommandInfo definitions a bit less tedious
+
+#define DEFINE_COMMAND(name, description, refRequired, numParams, paramInfo) \
+	CommandInfo (kCommandInfo_ ## name) = { \
+	#name, \
+	"", \
+	0, \
+	#description, \
+	refRequired, \
+	numParams, \
+	paramInfo, \
+	HANDLER(Cmd_ ## name ## _Execute), \
+	Cmd_Default_Parse, \
+	NULL, \
+	0 \
+	};
+
+#define DEFINE_COMMAND_CONDITIONAL(name ,description ,refRequired ,numParams ,paramInfo)\
+	CommandInfo (kCommandInfo_ ## name) = { \
+	#name, \
+	"", \
+	0, \
+	#description, \
+	refRequired, \
+	numParams, \
+	paramInfo, \
+	HANDLER(Cmd_ ## name ## _Execute), \
+	Cmd_Default_Parse, \
+	HANDLER_EVAL(Cmd_ ## name ## _Eval), \
+	0 \
+	};
+
 #define DEFINE_COMMAND(name, description, refRequired, numParams, paramInfo) \
 	CommandInfo (kCommandInfo_ ## name) = { \
 	#name, \
