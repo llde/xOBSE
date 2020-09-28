@@ -626,52 +626,6 @@ void ErrOutput::vShow(const char* msg, va_list args)
 	vShow(tempMsg, args);
 }
 
-const std::string & GetConfigPath(void)
-{
-	static std::string s_configPath;
-
-	if(s_configPath.empty())
-	{
-		std::string	runtimePath = GetOblivionDirectory();
-		if(!runtimePath.empty())
-		{
-			s_configPath = runtimePath;
-			s_configPath += "Data\\OBSE\\obse.ini";
-
-			_MESSAGE("config path = %s", s_configPath.c_str());
-		}
-	}
-
-	return s_configPath;
-}
-
-std::string GetConfigOption(const char * section, const char * key)
-{
-	std::string	result;
-
-	const std::string & configPath = GetConfigPath();
-	if(!configPath.empty())
-	{
-		char	resultBuf[256];
-		resultBuf[0] = 0;
-
-		UInt32	resultLen = GetPrivateProfileString(section, key, NULL, resultBuf, sizeof(resultBuf), configPath.c_str());
-
-		result = resultBuf;
-	}
-
-	return result;
-}
-
-bool GetConfigOption_UInt32(const char * section, const char * key, UInt32 * dataOut)
-{
-	std::string	data = GetConfigOption(section, key);
-	if(data.empty())
-		return false;
-
-	return (sscanf_s(data.c_str(), "%u", dataOut) == 1);
-}
-
 LPTOP_LEVEL_EXCEPTION_FILTER g_OriginalTopLevelExceptionFilter = NULL;
 
 bool CreateExceptionMiniDump( _EXCEPTION_POINTERS *ExceptionInfo )

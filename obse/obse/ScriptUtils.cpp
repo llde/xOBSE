@@ -5,6 +5,7 @@
 #include "Hooks_Script.h"
 #include "ParamInfos.h"
 #include "FunctionScripts.h"
+#include "Settings.h"
 
 #if OBLIVION
 
@@ -2086,9 +2087,6 @@ static ErrOutput::Message s_expressionErrors[] =
 
 ErrOutput::Message * ExpressionParser::s_Messages = s_expressionErrors;
 
-#define INI_COMPILER_WARNUNQUOTEDSTRING		"bWarningUnquotedString"
-#define INI_COMPILER_WARNFUNCTPTR			"bWarningUDFRefVar"
-
 void ExpressionParser::Message(UInt32 errorCode, ...)
 {
 	errorCode = errorCode > kError_Max ? kError_Max : errorCode;
@@ -2103,10 +2101,10 @@ void ExpressionParser::Message(UInt32 errorCode, ...)
 		switch (errorCode)
 		{
 		case kWarning_UnquotedString:
-			GetConfigOption_UInt32(INI_SECTION_COMPILER, INI_COMPILER_WARNUNQUOTEDSTRING, &enabled);
+			enabled = warningUnquotedString;
 			break;
 		case kWarning_FunctionPointer:
-			GetConfigOption_UInt32(INI_SECTION_COMPILER, INI_COMPILER_WARNFUNCTPTR, &enabled);
+			enabled = warningUDFRefVar;
 			break;
 		}
 

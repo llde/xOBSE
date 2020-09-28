@@ -12,6 +12,7 @@
 #include "Hooks_NetImmerse.h"
 #include "ThreadLocal.h"
 #include "EventManager.h"
+#include "Settings.h"
 
 IDebugLog	gLog("obse.log");
 
@@ -35,10 +36,8 @@ void OBSE_Initialize(void)
 
 		Sleep(1000 * 2);
 #endif
-		UInt32 EnableMiniDump = 0;
-		GetConfigOption_UInt32(INI_SECTION_RUNTIME, INI_RUNTIME_CRASHDUMP, &EnableMiniDump);
-
-		if (EnableMiniDump)
+		InitializeSettings();
+		if (installCrashdump)
 			g_OriginalTopLevelExceptionFilter = SetUnhandledExceptionFilter(OBSEUnhandledExceptionFilter);
 
 		MersenneTwister::init_genrand(GetTickCount());

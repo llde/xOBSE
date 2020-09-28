@@ -513,14 +513,7 @@ const float kCentimetersPerGameUnit = 1.0 / kGameUnitsPerCentimeter;
 inline float GameUnitsToCM(float gu) { return gu * kCentimetersPerGameUnit; }
 inline float CMToGameUnits(float cm) { return cm * kGameUnitsPerCentimeter; }
 
-const std::string & GetConfigPath(void);
-std::string GetConfigOption(const char * section, const char * key);
-bool GetConfigOption_UInt32(const char * section, const char * key, UInt32 * dataOut);
-
 extern LPTOP_LEVEL_EXCEPTION_FILTER g_OriginalTopLevelExceptionFilter;
 
 LONG WINAPI OBSEUnhandledExceptionFilter(__in  struct _EXCEPTION_POINTERS *ExceptionInfo);
 bool CreateExceptionMiniDump( _EXCEPTION_POINTERS *ExceptionInfo);
-
-#define INI_SECTION_RUNTIME		"Runtime"
-#define INI_RUNTIME_CRASHDUMP	"bCreateCrashDump"

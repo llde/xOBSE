@@ -227,5 +227,4 @@ bool Cmd_Expression_Parse(UInt32 numParams, ParamInfo* paramInfo, ScriptLineBuff
 
 extern Operator s_operators[];
 
-#define INI_SECTION_COMPILER		"Compiler"
 
