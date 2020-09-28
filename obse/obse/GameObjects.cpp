@@ -485,26 +485,24 @@ bool PlayerCharacter::SetSkeletonPath(const char* newPath)
 		return false;
 	}
 
+//	if (!(*g_FileFinder)->FindFile(newPath, 0, 0, -1)) return false;  //This doesn't seem to work
+
 	// store parent of current niNode
 	NiNode* niParent = (NiNode*)(niNode->m_parent);
 
 	// set niNode to NULL via BASE CLASS Set3D() method
 	ThisStdCall(s_TESObjectREFR_Set3D, this, NULL);
-
 	// modify model path
 	if (newPath) {
 		TESNPC* base = OBLIVION_CAST(baseForm, TESForm, TESNPC);
 		base->model.SetPath(newPath);
 	}
-
 	// create new NiNode, add to parent
 	*(g_bUpdatePlayerModel) = 1;
 	NiNode* newNode = (NiNode*)ThisStdCall(s_PlayerCharacter_GenerateNiNode, this);
-
 	niParent->AddObject(newNode, 1);
 	*(g_bUpdatePlayerModel) = 0;
 	newNode->SetName("Player");
-
 	// get and store camera node
 	// ### TODO: pretty this up
 	UInt32 vtbl = *((UInt32*)newNode);
@@ -514,12 +512,9 @@ bool PlayerCharacter::SetSkeletonPath(const char* newPath)
 
 	cameraNode = (NiObject*)ThisStdCall(vfunc, (NiNode*)this->firstPersonNiNode, "Camera01");
 	*g_1stPersonCameraNode = cameraNode;
-
 	Unk_52();
-
 	// Update face/head/hair
 	UpdateHead();
-
 	return true;
 }
 

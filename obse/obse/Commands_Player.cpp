@@ -555,7 +555,7 @@ static bool Cmd_SetPlayerSkeletonPath_Execute(COMMAND_ARGS)
 {
 	*result = 0.0;
 
-	char skelliePath[kMaxMessageLength];
+	char skelliePath[MAX_PATH];
 	PlayerCharacter* pc = *g_thePlayer;
 	if (pc)
 	{
