@@ -3422,6 +3422,10 @@ endif</pre>
 <p><a id="SetFlyCameraSpeedMult" class="f" href="http://cs.elderscrolls.com/index.php?title=SetFlyCameraSpeedMult">SetFlyCameraSpeedMult</a> - changes the speed multiplier for the player's camera when in fly camera mode.<br />
 <code class="s">(nothing) SetFlyCameraSpeedMult multiplier:float</code></p>
 
+<p><a id="SetPlayerSkeletonPath" class="f" href="http://cs.elderscrolls.com/index.php?title=SetPlayerSkeletonPAth">SetPlayerSkeletonPath</a> - Set the specific path as the player's skeleton. WARNING: passing an invalid path or invalid nif can crash the game.<br />
+<code class="s">(nothing) SetPlayerSkeletonPath path:string</code></p>
+
+
 <h3><a id="Projectile">Projectile</a></h3>
 
 <p>A reference to an arrow or magic projectile in the gameworld. Note that these references are destroyed by the game after a certain period of time. If stored in a reference variable, make sure the reference is still valid before using it in a function. Also note that calling GetBaseObject on a magic projectile will return the same reference; in other words, magic projectile references are their own base objects.</p>
@@ -4086,7 +4090,7 @@ endif</pre>
 <p><a id="RunScriptLine" class="f" href="http://cs.elderscrolls.com/index.php?title=RunScriptLine">RunScriptLine</a> - runs a line of script as if it were called from the console. If bRunOnRef is 1, the line of script will be executed on the calling object, if any. If bSuppressOutput is true, no output will be generated in the console while the script line is executing.<br />
 <code class="s">(nothing) <span class="op">reference.</span>RunScriptLine <a href="#Format_Specifiers">formatString</a>:string <span class="op">var1 var2 ... var20 bRunOnRef:bool bSuppressOutput:bool</span></code></p>
 
-<p><a id="GetFormFromMod" class="f" href="http://cs.elderscrolls.com/index.php?title=GetFormFromMod">GetFormFromMod</a> - attempts to look up and return a form defined in another mod, prepending the two-digit mod index to the formID. The formID is passed in hexadecimal format, i.e. 0001A46B. The first two digits of the formID are ignored and can be omitted. The formID must be passed as a literal value as script variables don't have the precision necessary to store all possible formIDs. The file name must include the file extension. Pass "NONE" as the file name to look up a dynamic form in the saved game (mod index 0xFF, for example cloned forms).<br />
+<p><a id="GetFormFromMod" class="f" href="http://cs.elderscrolls.com/index.php?title=GetFormFromMod">GetFormFromMod</a> - attempts to look up and return a form defined in another mod, prepending the two-digit mod index to the formID. The formID is passed in hexadecimal format, i.e. 0001A46B. The first two digits of the formID are ignored and can be omitted. The file name must include the file extension. Pass "NONE" as the file name to look up a dynamic form in the saved game (mod index 0xFF, for example cloned forms).<br />
 <code class="s">(form:ref) GetFormFromMod modFileName:string formID:hexString</code></p>
 
 <p><a id="ToggleFirstPerson" class="f" href="http://cs.elderscrolls.com/index.php?title=ToggleFirstPerson">ToggleFirstPerson</a> - toggles the player's POV to first or third person. Passing 1 enables first person view, 0 enables third person.<br />
