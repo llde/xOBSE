@@ -359,6 +359,8 @@
 	<li><a href="#SetActorMaxSwimBreath">SetActorMaxSwimBreath</a></li>
 	<li><a href="#OverrideActorSwimBreath">OverrideActorSwimBreath</a></li>
 	<li><a href="#SetFlyCameraSpeedMult">SetFlyCameraSpeedMult</a></li>
+	<li><a href="#IsNaked">IsNaked</a></li>
+
 </ul>
 
 <h2><a id="Function_Syntax_Format">Function Syntax Format</a></h2>
@@ -1888,11 +1890,11 @@
 <code class="s">(baseAV:int) reference.GetBaseActorValueC actorValueCode:int</code></p>
 <code class="s">(baseAV:int) reference.GetBaseAVC actorValueCode:int</code></p>
 
-<p><a id="GetBaseAV2" class="f" href="http://cs.elderscrolls.com/index.php?title=GetBaseAV2">GetBaseAV2</a> - returns the same value as the game's GetBaseAV command, but does not include the effects of Fortify abilities.<br />
-<code class="s">(baseAV:int) reference.GetBaseAV2 actorValue:string</code></p>
+<p><a id="GetBaseAV3" class="f" href="http://cs.elderscrolls.com/index.php?title=GetBaseAV3">GetBaseAV3</a> - returns the same value as the game's GetBaseAV command, but does not include the effects of Fortify abilities.<br />
+<code class="s">(baseAV:int) reference.GetBaseAV3 actorValue:string</code></p>
 
-<p><a id="GetBaseAV2C" class="f" href="http://cs.elderscrolls.com/index.php?title=GetBaseAV2C">GetBaseAV2C</a> - as GetBaseAV2, but takes an actor value code instead of an actor value name.<br />
-<code class="s">(baseAV:int) reference.GetBaseAV2C actorValueCode:int</code></p>
+<p><a id="GetBaseAV3C" class="f" href="http://cs.elderscrolls.com/index.php?title=GetBaseAV3C">GetBaseAV3C</a> - as GetBaseAV3, but takes an actor value code instead of an actor value name.<br />
+<code class="s">(baseAV:int) reference.GetBaseAV3C actorValueCode:int</code></p>
 
 <p><a id="GetAllies" class="f" href="http://cs.elderscrolls.com/index.php?title=GetAllies">GetAllies</a> -  for an actor in combat, returns an Array of other actors which the game considers allies of the calling actor at that particular moment.<br />
 <code class="s">(allies:Array) reference.GetAllies</code></p>
@@ -1908,6 +1910,9 @@
 
 <p><a id="PlayIdle" class="f" href="http://cs.elderscrolls.com/index.php?title=PlayIdle">PlayIdle</a> - attempts to make the calling actor play the specified idle animation. The animation must be one defined in the editor's Gameplay > Idle Animations window. Pass 1 for the forceIdle parameter to force the actor to play the idle regardless of any other animations currently playing.<br />
 <code class="s">(idlePlayed:bool) ref.PlayIdle idleAnim:ref <span class="op">forceIdle:bool</span></code></p>
+
+<p><a id="IsNaked" class="f" href="http://cs.elderscrolls.com/index.php?title=IsNaked">IsNaked</a> - returns 1 if the calling actor is naked, 0 otherwise. Naked means without a lowerbody equipment, and if requireUpper is 1 also requre an upperbody equipped <br />
+<code class="s">(isNaked:bool) reference.IsNaked <span class="op">requireUpperbody: bool</span></code></p>
 
 <h3><a id="AI_Package">AI Package</a></h3>
 
@@ -7473,6 +7478,7 @@ SetHair<sup>13</sup></a><br />
 	<li>GetIconPath - use <a href="#GetTexturePath">GetTexturePath</a></li>
 	<li>SetModelPathEX - pass a string_var to <code>SetModelPath</code></li>
 	<li>MessageBoxEx - pass a string_var to <code>MessageBox</code></li>
+	<li>GetBaseAV2 (C) - replaced by <a href="#GetBaseAV3">GetBaseAV3 (C)</a></li>
 </ul>
 
 <p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0 Strict" height="31" width="88" /></a></p></body>
