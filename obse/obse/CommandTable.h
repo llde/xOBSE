@@ -123,7 +123,7 @@ struct ScriptLineBuffer;
 
 //Macro to make CommandInfo definitions a bit less tedious
 
-#define DEFINE_COMMAND(name, description, refRequired, numParams, paramInfo) \
+#define DEFINE_COMMAND_CONDITIONAL(name ,description ,refRequired ,numParams ,paramInfo)\
 	CommandInfo (kCommandInfo_ ## name) = { \
 	#name, \
 	"", \
@@ -134,14 +134,14 @@ struct ScriptLineBuffer;
 	paramInfo, \
 	HANDLER(Cmd_ ## name ## _Execute), \
 	Cmd_Default_Parse, \
-	NULL, \
+	HANDLER_EVAL(Cmd_ ## name ## _Eval), \
 	0 \
 	};
 
-#define DEFINE_COMMAND_CONDITIONAL(name ,description ,refRequired ,numParams ,paramInfo)\
+#define DEFINE_COMMAND_CONDITIONAL_ALTNAME(name, altname ,description ,refRequired ,numParams ,paramInfo)\
 	CommandInfo (kCommandInfo_ ## name) = { \
 	#name, \
-	"", \
+    #altname, \
 	0, \
 	#description, \
 	refRequired, \
