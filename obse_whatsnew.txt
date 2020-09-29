@@ -2,7 +2,9 @@ xOBSE 21.8:
     Global:
         - Code MSVC 2019 complaint, remove hash_map and remove va_start reference usage
         - Example plugin error message print the OBSE version as decimal instead of hex
-        - Add the possibility to use the obse_launcher.exe to launch the steam version of Oblivion (EXPERIMENTAL, works under Proton)
+        - Added the possibility to use the obse_launcher.exe to launch the steam version of Oblivion (EXPERIMENTAL, works under Proton)
+        - Added the Polish Antology version by Cenega
+        - Restructured INI handling in a centralized store.
     Fix:
         -Fixed a CTD on the OnSoulTrap handler, when using soulgems with stolen flag and other extra-data
         -Fix GetCurrentEventName returning an empty string (and other issues)
@@ -18,7 +20,6 @@ xOBSE 21.8:
     Documentation:
         - Improve GetFormFromMod
         - Add  SetPlayerSkeletonPath
-        
         
 xOBSE 0021.5:
     Global:
