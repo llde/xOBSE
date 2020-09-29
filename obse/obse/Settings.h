@@ -9,9 +9,10 @@
 
 
 static std::string s_configPath;
-static UInt8 installCrashdump;
-static UInt8 warningUnquotedString;
-static UInt8 warningUDFRefVar;
-static bool FreeRef;
+
+extern UInt8 installCrashdump;
+extern UInt8 warningUnquotedString;
+extern UInt8 warningUDFRefVar;
+extern bool FreeRef;
 
 bool InitializeSettings();

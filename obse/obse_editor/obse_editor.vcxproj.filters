@@ -158,6 +158,9 @@
     </ClCompile>
     <ClCompile Include="obse_editor.cpp" />
     <ClCompile Include="..\StdAfx.cpp" />
+    <ClCompile Include="..\obse\Settings.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\obse\Commands_ActiveEffect.h">
@@ -301,6 +304,9 @@
       <Filter>commands</Filter>
     </ClInclude>
     <ClInclude Include="..\StdAfx.h" />
+    <ClInclude Include="..\obse\Settings.h">
+      <Filter>internals</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\obse_common\obse_version.rc" />

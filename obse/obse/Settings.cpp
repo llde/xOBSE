@@ -1,6 +1,11 @@
 #include "Utilities.h"
 #include "Settings.h"
 
+UInt8 installCrashdump;
+UInt8 warningUnquotedString;
+UInt8 warningUDFRefVar;
+bool FreeRef;
+
 bool InitializeSettings() {
 	std::string	runtimePath = GetOblivionDirectory();
 	//TODO create non existant INI
@@ -14,7 +19,7 @@ bool InitializeSettings() {
 	installCrashdump = GetPrivateProfileInt(INI_SECTION_RUNTIME, INI_RUNTIME_CRASHDUMP, 0, s_configPath.c_str());
 	warningUDFRefVar = GetPrivateProfileInt(INI_SECTION_COMPILER, INI_COMPILER_WARNFUNCTPTR, 1, s_configPath.c_str());
 	warningUnquotedString = GetPrivateProfileInt(INI_SECTION_COMPILER, INI_COMPILER_WARNUNQUOTEDSTRING, 1, s_configPath.c_str());
-	FreeRef = GetPrivateProfileInt(INI_SECTION_RUNTIME, "DeallocateReferences", 0, s_configPath.c_str());
+	FreeRef = GetPrivateProfileInt(INI_SECTION_RUNTIME, "bDeallocateReferences", 0, s_configPath.c_str());
 
     return true;
 }

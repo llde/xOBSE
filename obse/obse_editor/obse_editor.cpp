@@ -5,6 +5,7 @@
 #include "obse_common/SafeWrite.h"
 #include "richedit.h"
 #include "obse/Hooks_Script.h"
+#include "obse/Settings.h"
 
 IDebugLog	gLog("obse_editor.log");
 
@@ -251,7 +252,7 @@ void OBSE_Initialize(void)
 {
 	__try {
 		_MESSAGE("OBSE editor: initialize (version = %d.%d %08X)", OBSE_VERSION_INTEGER, OBSE_VERSION_INTEGER_MINOR, CS_VERSION);
-
+		InitializeSettings();
 #if 0
 		while(!IsDebuggerPresent())
 		{

@@ -42,6 +42,7 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v142</PlatformToolset>
+    <EnableASAN>false</EnableASAN>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_416|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -304,6 +305,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <BufferSecurityCheck>false</BufferSecurityCheck>
+      <StringPooling>true</StringPooling>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -439,6 +441,7 @@
     <ClCompile Include="..\obse_common\SafeWrite.cpp" />
     <ClCompile Include="ScriptTokens.cpp" />
     <ClCompile Include="ScriptUtils.cpp" />
+    <ClCompile Include="Settings.cpp" />
     <ClCompile Include="StringVar.cpp" />
     <ClCompile Include="Tasks.cpp" />
     <ClCompile Include="ThreadLocal.cpp" />
@@ -542,6 +545,7 @@
     <ClInclude Include="..\obse_common\SafeWrite.h" />
     <ClInclude Include="ScriptTokens.h" />
     <ClInclude Include="ScriptUtils.h" />
+    <ClInclude Include="Settings.h" />
     <ClInclude Include="StringVar.h" />
     <ClInclude Include="Tasks.h" />
     <ClInclude Include="ThreadLocal.h" />
