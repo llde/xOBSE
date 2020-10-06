@@ -1,0 +1,37 @@
+version: 21.8.{build}
+image: Visual Studio 2019
+
+
+platform:
+    - Win32
+
+configuration:
+    - Release 1_2_0_416
+    - Debug 1_2_0_416
+
+install:
+    - if "%platform%"=="Win32" set archi=x86
+    - if "%platform%"=="Win32" set platform_input=Win32
+
+    - call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat" %archi%
+
+
+build_script:
+    - cd "%APPVEYOR_BUILD_FOLDER%"\obse\
+    - msbuild obse_vs10.sln /p:configuration="%configuration%" /p:platform="%platform_input%" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+
+artifacts:
+    - name: "obse_1_2_416.dll"
+      path: \**\obse.dll
+
+    - name: "obse_editor_1_2.dll"
+      path: \**\obse_editor.dll
+
+    - name: "obse_steam_loader.dll"
+      path: \**\steam_loader.dll
+
+    - name: "obse_loader.exe"
+      path: \**\loader.exe
+
+    - name: "obse_command_doc.html"
+      path: \**\obse_command_doc.html
