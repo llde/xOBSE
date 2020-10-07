@@ -3372,12 +3372,22 @@ CommandInfo * CommandTable::GetByName(const char * name)
 
 CommandInfo* CommandTable::GetByOpcode(UInt32 opcode)
 {
-	// could do binary search here but padding command has opcode 0
-	for (CommandList::iterator iter = m_commands.begin(); iter != m_commands.end(); ++iter)
-		if (iter->opcode == opcode)
-			return &(*iter);
-
-	return NULL;
+	try {
+		const auto baseOpcode = m_commands.begin()->opcode;
+		const auto arrayIndex = opcode - baseOpcode;
+		auto* const command = &m_commands.at(arrayIndex);
+		if (command->opcode != opcode) {
+			_MESSAGE("ERROR: mismatched command opcodes when executing CommandTable::GetByOpcode (opcode:%X base: %X index %X: %d index opcode %x)",
+				opcode, baseOpcode, arrayIndex, command->opcode
+			);
+			return nullptr;
+		}
+		return command;
+	}
+	catch(std::out_of_range&) {
+		_MESSAGE("ERROR: opcode %X out of range (end is %X) when executing CommandTable:GetByOpcode", opcode, m_commands.end()->opcode);
+		return nullptr;
+	}
 }
 
 CommandReturnType CommandTable::GetReturnType(const CommandInfo* cmd)
