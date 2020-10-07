@@ -1,9 +1,11 @@
 
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/llde/xOBSE)](https://github.com/llde/xOBSE/releases/latest) [![Appveyor Build status](https://ci.appveyor.com/api/projects/status/github/llde/xOBSE?branch=master&svg=true)](https://ci.appveyor.com/project/llde/xOBSE/branch/master)
+
 This is a community maintained up-to-date fork of **Oblivion Script Extender** (OBSE). 
 
 ## Download
 
-[Download the latest OBSE](https://github.com/llde/xOBSE/releases/download/21.5/xOBSEv21.5.7z)
+[Download the latest OBSE](https://github.com/llde/xOBSE/releases/download/21.8/xOBSE21.8.7z)
 
 Changelogs and all releases are provided in the [releases section](https://github.com/llde/xOBSE/releases).
 
