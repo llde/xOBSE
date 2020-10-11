@@ -3,6 +3,7 @@
 #include "obse/GameObjects.h"
 #include "obse/Script.h"
 #include "obse/Hooks_Gameplay.h"
+#include <obse\Settings.h>
 
 #if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 typedef ExtraContainerChanges* (* _GetOrCreateExtraContainerChanges)(TESObjectREFR* refr);
@@ -43,7 +44,6 @@ bool ExtraContainerChanges::Entry::Remove(EntryExtendData* toRemove, bool bFree)
 	if (data) {
 		ExtraCount* xCount = toRemove->data ? (ExtraCount*)toRemove->data->GetByType(kExtraData_Count) : NULL;
 		SInt16 count = xCount ? xCount->count : 1;
-
 		EntryExtendData* prev = NULL;
 		for (EntryExtendData* cur = data->extendData; cur; cur = cur->next) {
 			if (cur == toRemove) {
@@ -51,11 +51,10 @@ bool ExtraContainerChanges::Entry::Remove(EntryExtendData* toRemove, bool bFree)
 					prev->next = cur->next;
 				else
 					data->extendData = cur->next;
-
 				data->countDelta -= count;
 				if (bFree) {
 					if (toRemove->data) {
-						toRemove->data->Destroy(false);
+						toRemove->data->Destroy(FreeRef);
 					}
 					FormHeap_Free(toRemove);
 				}

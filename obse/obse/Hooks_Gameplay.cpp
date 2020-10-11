@@ -21,6 +21,7 @@
 #include "Hooks_SaveLoad.h"
 #include "GameActorValues.h"
 #include "ThreadLocal.h"
+#include <obse\Settings.h>
 
 static void HandleMainLoopHook(void);
 
@@ -316,7 +317,7 @@ static void DoDeferredDelete()
 			TESObjectREFR* refr = OBLIVION_CAST(refForm, TESForm, TESObjectREFR);
 			if (!ioMan->IsInQueue(refr))		// only delete if no tasks are queued for reference
 			{
-				refr->Destroy(false);
+				refr->Destroy(FreeRef);
 				deletedREFRs.erase(iter++);
 			}
 			else
