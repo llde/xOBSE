@@ -550,8 +550,8 @@ public:
 	virtual void	GetStartingPos(float * pos) = 0;
 	virtual void	Unk_3E(void) = 0;
 	virtual void	Unk_3F(void) = 0;
-	virtual void	RemoveItem(TESForm* toRemove, BaseExtraList* extraList, UInt32 quantity, UInt32 unk3, UInt32 unk4, TESObjectREFR* destRef,
-		UInt32 unk6, UInt32 unk7, UInt32 unk8, UInt8 unk9) = 0;	// 40
+	virtual void	RemoveItem(TESForm* toRemove, BaseExtraList* extraList, UInt32 quantity, UInt32 useContainerOwnership, UInt32 drop, TESObjectREFR* destRef,
+		float* dropPos, float* dropRot, UInt32 unk8, UInt8 useExistingEntryData) = 0;	// 40
 	virtual void	Unk_41(void) = 0;
 	virtual void	Unk_42(void) = 0;
 	virtual void	Unk_43(void) = 0;
