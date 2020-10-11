@@ -349,7 +349,7 @@ public:
 
 	// TODO: determine which of these are in BaseFormComponent
 	virtual bool	Unk_03(BaseFormComponent * arg);	// return false if equal - compares names, typeID, flags
-	virtual void	Destroy(bool noDealloc);	// delete form? pass false to free the object's memory
+	virtual void	Destroy(bool Dealloc);	// delete form, pass true to deallocate?
 	virtual void	Unk_05(void);	// destroy form components
 	virtual void	Unk_06(void);	// call unk01 on form components
 	virtual bool	LoadForm(ModEntry* modEntry);

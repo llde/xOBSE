@@ -229,7 +229,7 @@ public:
 // 014+
 struct BaseExtraList
 {
-	virtual	void Destroy(bool bNoDealloc);	// removes and frees all of m_data
+	virtual	void Destroy(bool Dealloc);	// removes and frees all of m_data
 
 	bool			HasType(UInt32 type) const;
 	BSExtraData *	GetByType(UInt32 type) const;
