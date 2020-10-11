@@ -1,3 +1,13 @@
+xOBSE 22.0
+    Global:
+        - Added an AppVeyor CI. Build will be pushed from AppVeyor instead of using a local build.
+        - This should also fix the slow start some people are experiencing, while keeping the CRT statically linked
+    Fix:
+        - Fix InventoryReference RemoveMeIR isn't removing objects, leaving a 1 item stack
+    API:
+        - Decode more arguments for RemoveItem
+
+        
 xOBSE 21.8:
     Global:
         - Code MSVC 2019 complaint, remove hash_map and remove va_start reference usage

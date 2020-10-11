@@ -5,7 +5,7 @@ This is a community maintained up-to-date fork of **Oblivion Script Extender** (
 
 ## Download
 
-[Download the latest OBSE](https://github.com/llde/xOBSE/releases/download/21.8/xOBSE21.8.7z)
+[Download the latest OBSE](https://github.com/llde/xOBSE/releases/latest)
 
 Changelogs and all releases are provided in the [releases section](https://github.com/llde/xOBSE/releases).
 
