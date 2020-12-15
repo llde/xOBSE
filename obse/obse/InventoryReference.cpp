@@ -1,7 +1,6 @@
 #include "InventoryReference.h"
 #include "GameObjects.h"
 #include "GameAPI.h"
-#include <obse\Settings.h>
 
 void WriteToExtraDataList(BaseExtraList* from, BaseExtraList* to)
 {
@@ -37,7 +36,7 @@ InventoryReference::~InventoryReference()
 	// note: TESObjectREFR::Destroy() frees up the formID for reuse
 	if (m_tempRef) {
 		s_refmap.erase(m_tempRef->refID);
-		m_tempRef->Destroy(FreeRef);
+		m_tempRef->Destroy(false);
 	}
 
 	// remove unnecessary extra data, consolidate identical stacks
@@ -157,7 +156,7 @@ void InventoryReference::Clean()
 		iter = s_refmap.begin();
 	}
 }
-//TODO avoid triggering a DeferredAction when IsWorn()
+
 bool InventoryReference::RemoveFromContainer()
 {
 	if (Validate() && m_tempRef && m_containerRef) {
@@ -165,9 +164,8 @@ bool InventoryReference::RemoveFromContainer()
 			QueueAction(new DeferredRemoveAction(m_data));
 			return true;
 		}
-		m_containerRef->RemoveItem(m_data.type, m_data.extendData ? m_data.extendData->data : NULL, GetCount(), 0, 0, NULL, 0, 0, 1, 0);
 		SetRemoved();
-		return true;
+		return m_data.entry->Remove(m_data.extendData, true);
 	}
 	return false;
 }
@@ -176,13 +174,17 @@ bool InventoryReference::MoveToContainer(TESObjectREFR* dest)
 {
 	ExtraContainerChanges* xChanges = ExtraContainerChanges::GetForRef(dest);
 	if (xChanges && Validate() && m_tempRef && m_containerRef) {
-		if (m_data.extendData && m_data.extendData->data   && m_data.extendData->data->IsWorn()) {
+		if (m_data.extendData && m_data.extendData->data && m_data.extendData->data->IsWorn()) {
 			QueueAction(new DeferredRemoveAction(m_data, dest));
 			return true;
 		}
-		m_containerRef->RemoveItem(m_data.type, m_data.extendData ? m_data.extendData->data : NULL, GetCount(), 0, 0, dest, 0, 0, 1, 0);
-		SetRemoved();
-		return true;
+		else if (m_data.entry->Remove(m_data.extendData, false)) {
+			SetRemoved();
+			ExtraDataList* newDataList = ExtraDataList::Create();
+			newDataList->Copy(&m_tempRef->baseExtraList);
+			m_tempRef->baseExtraList.RemoveAll();
+			return xChanges->Add(m_tempRef->baseForm, newDataList) ? true : false;
+		}
 	}
 	return false;
 }
