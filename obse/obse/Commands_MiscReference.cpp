@@ -184,7 +184,7 @@ static bool Cmd_GetParentCellOwner_Execute(COMMAND_ARGS)
 
 	if (!thisObj)
 		return true;
-
+    if(!thisObj->parentCell) return true;
 	TESForm* owner = GetOwner(&(thisObj->parentCell->extraData));
 	if (owner)
 		*refResult = owner->refID;
