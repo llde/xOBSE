@@ -984,11 +984,15 @@ public:
 	UInt32		unk1E4[(0x204 - 0x1E4) >> 2];				// 1E4
 	float		maxAVModifiers[kActorVal_OblivionMax];		// 204
 	float		scriptAVModifiers[kActorVal_OblivionMax];	// 324
-	UInt32		unk444[(0x570 - 0x444) >> 2];				// 444
-	TESObjectREFR	* lastActivatedLoadDoor;	// 570 - most recently activated load door
+    float       health;                                    // 444
+    float       magicka;                                   // 448
+    float       stamina;                                   // 44C
+    UInt32      unk450[(0x570 - 0x450) >> 2];             // 450
+    TESObjectREFR	* lastActivatedLoadDoor;	// 570 - most recently activated load door
 	UInt32		unk574[(0x588 - 0x574) >> 2];	// 574
 	UInt8		isThirdPerson;					// 588
-	UInt8		pad589[3];						// 589
+	UInt8		pad589[2];						// 589
+	UInt8       isRunning;                      // 58B According to EchoEclipse, who named it shouldAutoRun
 	UInt32		unk58C[(0x5B0 - 0x58C) >> 2];	// 58C
 	void		* unk5B0;						// 5B0 - freed when running SetInCharGen 0
 	UInt8		** attributeBonuses;			// 5B4
