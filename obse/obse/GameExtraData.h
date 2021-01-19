@@ -35,22 +35,11 @@ public:
 	ExtraContainerChanges();
 	virtual ~ExtraContainerChanges();
 
-	struct EntryExtendData
-	{
-		ExtraDataList	* data;
-		EntryExtendData	* next;
-
-		ExtraDataList* Info() const { return data; }
-		EntryExtendData* Next() const { return next; }
-
-		static EntryExtendData* Create(ExtraDataList* list);
-	};
-
 	struct EntryData
 	{
-		EntryExtendData	* extendData;
-		SInt32			countDelta;
-		TESForm			* type;
+		tList<ExtraDataList>* extendData;
+		SInt32			      countDelta;
+		TESForm*              type;
 
 		static EntryData* Create(SInt32 countDelta, TESForm* type);
 		void Cleanup();
@@ -59,25 +48,12 @@ public:
 		bool Remove(EntryExtendData* toRemove, bool bFree);
 	};
 
-	struct Entry
-	{
-		EntryData	* data;
-		Entry		* next;
-
-		EntryData* Info() const { return data; }
-		Entry* Next() const { return next; }
-
-		bool Remove(EntryExtendData* toRemove, bool bFree);
-		bool Add(EntryExtendData* toAdd);
-		static Entry* Create();
-	};
-
 	struct Data
 	{
-		Entry			* objList;
-		TESObjectREFR	* owner;
-		float			totalWeight;	// of all items in inventory. cached, is -1 if needs to be recalculated
-		float			armorWeight;	// weight of equipped armor. cached as above. Both take armor weight perks into account
+		tList<EntryData>*   objList;
+		TESObjectREFR*      owner;
+		float	            totalWeight;	// of all items in inventory. cached, is -1 if needs to be recalculated
+		float			    armorWeight;	// weight of equipped armor. cached as above. Both take armor weight perks into account
 
 		static Data* Create(TESObjectREFR* owner);
 		void RunScripts();		// executes scripts attached to any scriptable objects in container

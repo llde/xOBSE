@@ -231,7 +231,7 @@ void ExtraContainerChanges::DebugDump()
 
 ExtraContainerChanges* ExtraContainerChanges::GetForRef(TESObjectREFR* refr)
 {
-	GetOrCreateExtraContainerChanges(refr);
+	GetOrCreateExtraContainerChanges(refr); //TODO GetOrCreateExtraContainerChanges should return the pointer
 	return (ExtraContainerChanges*)refr->baseExtraList.GetByType(kExtraData_ContainerChanges);
 }
 
