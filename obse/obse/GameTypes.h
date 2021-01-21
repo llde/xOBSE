@@ -224,13 +224,24 @@ public:
 		Iterator(_Node* node) : m_cur(node) { }
 		Iterator operator++()	{ if (!End()) m_cur = m_cur->Next(); return *this;}
 		bool End()	{	return m_cur == NULL;	}
-		const Item* operator->() { return (m_cur) ? m_cur->Item() : NULL; }
+		Item* operator->() { return (m_cur) ? m_cur->Item() : NULL; }
 		const Item* operator*() { return (m_cur) ? m_cur->Item() : NULL; }
 		const Iterator& operator=(const Iterator& rhs) {
 			m_cur = rhs.m_cur;
 			return *this;
 		}
+
 		Item* Get() { return (m_cur) ? m_cur->Item() : NULL; }
+		_Node* accessNode() { return m_cur; }
+		Item* RemoveMe() {
+			if (!m_cur) return NULL;
+			return m_cur->RemoveMe();
+		}
+		void SetInner(Item*  rhs) {
+			if (m_cur) {
+				m_cur->item = rhs;
+			}
+		}
 	};
 
 	const Iterator Begin() const { return Iterator(Head()); }
