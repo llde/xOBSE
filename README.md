@@ -23,8 +23,7 @@ If you use a desktop shortcut to launch Oblivion normally, just update the short
 IF YOU ARE USING THE STEAM VERSION OF OBLIVION:
 
 1. Copy obse_1_2_416.dll, obse_editor_1_2.dll, obse_steam_loader.dll and the Data folder  to your Oblivion directory. This is usually "C:\Program Files\Valve\Steam\SteamApps\common\oblivion".
-2. Ensure you have enabled the Steam community in-game, or OBSE will fail to load. Go to Steam > Settings > In-Game and check the box marked "Enable the Steam Overlay while in-game".
-3. Launch Oblivion via Steam or by running Oblivion.exe. OBSE will automatically be run along with Oblivion when launched. To disable this, rename or move obse_steam_loader.dll. You do not need to use obse_loader.exe unless you are running the editor.
+2. Launch Oblivion via Steam or by running Oblivion.exe. OBSE will automatically be run along with Oblivion when launched. To disable this, rename or move obse_steam_loader.dll. You do not need to use obse_loader.exe unless you are running the editor.
 
 IF YOU ARE USING MOD ORGANIZER 2:
 
