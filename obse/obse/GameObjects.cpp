@@ -87,11 +87,11 @@ EquippedItemsList Actor::GetEquippedItems()
 
 	ExtraContainerChanges	* xChanges = static_cast <ExtraContainerChanges *>(baseExtraList.GetByType(kExtraData_ContainerChanges));
 	if(xChanges && xChanges->data && xChanges->data->objList)
-		for(ExtraContainerChanges::Entry * entry = xChanges->data->objList; entry; entry = entry->next)
-			if(entry->data && entry->data->extendData && entry->data->type)
-				for(ExtraContainerChanges::EntryExtendData * extend = entry->data->extendData; extend; extend = extend->next)
-					if(extend->data && (extend->data->HasType(kExtraData_Worn) || extend->data->HasType(kExtraData_WornLeft)))
-						itemList.push_back(entry->data->type);
+		for(tList<ExtraContainerChanges::EntryData>::Iterator entry = xChanges->data->objList->Begin(); !entry.End(); ++entry)
+			if(*entry && entry->extendData && entry->type)
+				for(tList<ExtraDataList>::Iterator extend = entry->extendData->Begin(); !extend.End(); ++extend)
+					if(*extend && (extend->HasType(kExtraData_Worn) || extend->HasType(kExtraData_WornLeft)))
+						itemList.push_back(entry->type);
 
 	return itemList;
 }
@@ -100,11 +100,11 @@ void Actor::UnequipAllItems()
 {
 	ExtraContainerChanges* xChanges = static_cast <ExtraContainerChanges*> (baseExtraList.GetByType (kExtraData_ContainerChanges));
 	if (xChanges && xChanges->data && xChanges->data->objList)
-		for (ExtraContainerChanges::Entry* entry = xChanges->data->objList; entry; entry = entry->next)
-			if (entry->data && entry->data->extendData && entry->data->type && entry->data->type->IsQuestItem())
-				for (ExtraContainerChanges::EntryExtendData* extend = entry->data->extendData; extend; extend = extend->next)
-					if (extend->data && extend->data->IsWorn())
-						UnequipItem (entry->data->type, 1, extend->data, 0, false, 0);
+		for (tList<ExtraContainerChanges::EntryData>::Iterator entry = xChanges->data->objList->Begin(); !entry.End(); ++entry)
+			if (*entry && entry->extendData && entry->type && entry->type->IsQuestItem())
+				for (tList<ExtraDataList>::Iterator extend = entry->extendData->Begin(); !extend.End(); ++extend)
+					if (*extend && extend->IsWorn())
+						UnequipItem (entry->type, 1, extend.Get(), 0, false, 0);
 }
 
 ExtraContainerDataList	Actor::GetEquippedEntryDataList()
@@ -113,11 +113,11 @@ ExtraContainerDataList	Actor::GetEquippedEntryDataList()
 
 	ExtraContainerChanges	* xChanges = static_cast <ExtraContainerChanges *>(baseExtraList.GetByType(kExtraData_ContainerChanges));
 	if(xChanges && xChanges->data && xChanges->data->objList)
-		for(ExtraContainerChanges::Entry * entry = xChanges->data->objList; entry; entry = entry->next)
-			if(entry->data && entry->data->extendData && entry->data->type)
-				for(ExtraContainerChanges::EntryExtendData * extend = entry->data->extendData; extend; extend = extend->next)
-					if(extend->data && (extend->data->HasType(kExtraData_Worn) || extend->data->HasType(kExtraData_WornLeft)))
-						itemList.push_back(entry->data);
+		for (tList<ExtraContainerChanges::EntryData>::Iterator entry = xChanges->data->objList->Begin(); !entry.End(); ++entry)
+			if(*entry && entry->extendData && entry->type)
+				for (tList<ExtraDataList>::Iterator extend = entry->extendData->Begin(); !extend.End(); ++extend)
+					if(*extend && (extend->HasType(kExtraData_Worn) || extend->HasType(kExtraData_WornLeft)))
+						itemList.push_back(entry.Get());
 
 	return itemList;
 }
