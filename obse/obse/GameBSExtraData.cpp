@@ -11,7 +11,6 @@ bool BaseExtraList::HasType(UInt32 type) const
 BSExtraData * BaseExtraList::GetByType(UInt32 type) const
 {
 	if (!HasType(type)) return NULL;
-
 	for(BSExtraData * traverse = m_data; traverse; traverse = traverse->next)
 		if(traverse->type == type)
 			return traverse;

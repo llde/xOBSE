@@ -43,9 +43,9 @@ public:
 
 		static EntryData* Create(SInt32 countDelta, TESForm* type);
 		void Cleanup();
-		EntryExtendData * Add(EntryExtendData* newData);
+	/*	EntryExtendData * Add(EntryExtendData* newData);
 		EntryExtendData * Add(ExtraDataList* newList);
-		bool Remove(EntryExtendData* toRemove, bool bFree);
+		bool Remove(EntryExtendData* toRemove, bool bFree);*/
 	};
 
 	struct Data
@@ -65,18 +65,15 @@ public:
 	EntryData *	GetByType(TESForm * type);
 	void		DebugDump();
 	void		Cleanup();	// clean up unneeded extra data from each EntryData
-	EntryExtendData * Add(TESForm* form, ExtraDataList* dataList);
+	//EntryExtendData * Add(TESForm* form, ExtraDataList* dataList);
 	ExtraDataList* SetEquipped(TESForm* obj, bool bEquipped);
 
 	// get EntryData and ExtendData for all equipped objects, return num objects equipped
-	UInt32		GetAllEquipped(std::vector<EntryData*>& outEntryData, std::vector<EntryExtendData*>& outExtendData);
+	UInt32		GetAllEquipped(std::vector<EntryData*>& outEntryData, std::vector<ExtraDataList*>& outExtendData);
 
 	static ExtraContainerChanges* Create();
 	static ExtraContainerChanges* GetForRef(TESObjectREFR* refr);
 };
-
-typedef Visitor<ExtraContainerChanges::Entry, ExtraContainerChanges::EntryData> ExtraEntryVisitor;
-typedef Visitor<ExtraContainerChanges::EntryExtendData, ExtraDataList> ExtendDataVisitor;
 
 // cell and position where the current package was started?
 class ExtraPackageStartLocation : public BSExtraData

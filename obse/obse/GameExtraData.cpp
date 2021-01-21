@@ -16,13 +16,11 @@ ExtraContainerChanges::EntryData * ExtraContainerChanges::GetByType(TESForm * ty
 {
 	ExtraContainerChanges::EntryData	* result = NULL;
 
-	if(data)
-	{
-		for(Entry * entry = data->objList; entry; entry = entry->next)
-		{
-			if(entry->data && (entry->data->type == type))
+	if(data)	{
+		for(tList<EntryData>::Iterator entry = data->objList->Begin(); !entry.End(); ++entry)		{
+			if(*entry && (entry->type == type))
 			{
-				result = entry->data;
+				result = entry.Get();
 				break;
 			}
 		}
@@ -30,7 +28,7 @@ ExtraContainerChanges::EntryData * ExtraContainerChanges::GetByType(TESForm * ty
 
 	return result;
 }
-
+/*
 ExtraContainerChanges::EntryExtendData* ExtraContainerChanges::EntryExtendData::Create(ExtraDataList* list)
 {
 	EntryExtendData* extend = FORM_HEAP_ALLOCATE(EntryExtendData);
@@ -134,7 +132,7 @@ ExtraContainerChanges::Entry* ExtraContainerChanges::Entry::Create()
 	entry->next = NULL;
 	return entry;
 }
-
+*/
 void ExtraContainerChanges::EntryData::Cleanup()
 {
 #if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
@@ -156,29 +154,20 @@ UInt32 GetCountForExtraDataList(ExtraDataList* list)
 void ExtraContainerChanges::Cleanup()
 {
 	if (data) {
-		for (ExtraContainerChanges::Entry* cur = data->objList; cur; cur = cur->next) {
-			if (cur->data) {
-				cur->data->Cleanup();
+		for (tList<ExtraContainerChanges::EntryData>::Iterator cur = data->objList->Begin(); !cur.End(); ++cur) {
+			if (*cur) {
+				cur->Cleanup();
 
 				// make sure we don't have any NULL ExtraDataList's in extend data, game will choke when saving
-				EntryExtendData* prev = NULL;
-				for (EntryExtendData* xtendData = cur->data->extendData; xtendData; ) {
-					if (!xtendData->data) {
-						// remove this node
-						if (prev) {
-							prev->next = xtendData->next;
-						}
-						else {
-							cur->data->extendData = xtendData->next;
-						}
-
-						EntryExtendData* toDelete = xtendData;
-						xtendData = toDelete->next;
+				tList<ExtraDataList>::_Node* prev = NULL;
+				for (tList<ExtraDataList>::Iterator xtendData = cur->extendData->Begin(); xtendData.End();) {
+					if (!(*xtendData)) {
+						//Node is null remove
+						ExtraDataList* toDelete = xtendData.RemoveMe();
 						FormHeap_Free(toDelete);
 					}
 					else {
-						prev = xtendData;
-						xtendData = xtendData->next;
+						++xtendData;
 					}
 				}
 			}
@@ -191,28 +180,24 @@ void ExtraContainerChanges::DebugDump()
 	_MESSAGE("Dumping ExtraContainerChanges");
 	gLog.Indent();
 
-	if (data && data->objList)
-	{
-		for (ExtraContainerChanges::Entry* entry = data->objList; entry; entry = entry->next)
-		{
-			if (!entry->data) {
+	if (data && data->objList)	{
+		for (tList<ExtraContainerChanges::EntryData>::Iterator entry = data->objList->Begin(); !entry.End(); ++entry){
+			if (!*entry) {
 				_MESSAGE("No data!");
 				continue;
 			}
 
-			_MESSAGE("Type: %s CountDelta: %d [%08X]", GetFullName(entry->data->type), entry->data->countDelta, entry->data);
+			_MESSAGE("Type: %s CountDelta: %d [%08X]", GetFullName(entry->type), entry->countDelta, *entry);
 			gLog.Indent();
-			if (!entry->data->extendData)
+			if (!entry->extendData)
 				_MESSAGE("* No extend data *");
-			else
-			{
-				for (ExtraContainerChanges::EntryExtendData* extendData = entry->data->extendData; extendData; extendData = extendData->next)
-				{
+			else {
+				for(tList<ExtraDataList>::Iterator extendData = entry->extendData->Begin(); !extendData.End(); ++extendData){
 					_MESSAGE("Extend Data: [%08X]", extendData);
 					gLog.Indent();
-					if (extendData->data) {
-						extendData->data->DebugDump();
-						ExtraCount* xCount = (ExtraCount*)extendData->data->GetByType(kExtraData_Count);
+					if (*extendData) {
+						extendData->DebugDump();
+						ExtraCount* xCount = (ExtraCount*)extendData->GetByType(kExtraData_Count);
 						if (xCount) {
 							_MESSAGE("ExtraCount value : %d", xCount->count);
 						}
@@ -244,16 +229,16 @@ ExtraDataList* ExtraContainerChanges::SetEquipped(TESForm* obj, bool bEquipped)
 #endif
 }
 
-UInt32 ExtraContainerChanges::GetAllEquipped(std::vector<EntryData*>& outEntryData, std::vector<EntryExtendData*>& outExtendData)
+UInt32 ExtraContainerChanges::GetAllEquipped(std::vector<EntryData*>& outEntryData, std::vector<ExtraDataList*>& outExtendData)
 {
 	if (data) {
-		for (ExtraContainerChanges::Entry* entry = data->objList; entry; entry = entry->next) {
-			if (entry->data) {
-				for (ExtraContainerChanges::EntryExtendData* extend = entry->data->extendData; extend; extend = extend->next) {
-					if (extend->data) {
-						if (extend->data->IsWorn()) {
-							outEntryData.push_back(entry->data);
-							outExtendData.push_back(extend);
+		for (tList<ExtraContainerChanges::EntryData>::Iterator entry = data->objList->Begin(); !entry.End(); ++entry) {
+			if (*entry) {
+				for (tList<ExtraDataList>::Iterator extend = entry->extendData->Begin(); !extend.End(); ++extend) {
+					if (*extend) {
+						if (extend->IsWorn()) {
+							outEntryData.push_back(entry.Get());
+							outExtendData.push_back(extend.Get());
 						}
 					}
 				}
