@@ -160,7 +160,7 @@ void ExtraContainerChanges::Cleanup()
 
 				// make sure we don't have any NULL ExtraDataList's in extend data, game will choke when saving
 				tList<ExtraDataList>::_Node* prev = NULL;
-				for (tList<ExtraDataList>::Iterator xtendData = cur->extendData->Begin(); xtendData.End();) {
+				for (tList<ExtraDataList>::Iterator xtendData = cur->extendData->Begin(); !xtendData.End();) {
 					if (!(*xtendData)) {
 						//Node is null remove
 						ExtraDataList* toDelete = xtendData.RemoveMe();
