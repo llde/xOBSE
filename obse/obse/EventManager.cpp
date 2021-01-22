@@ -922,25 +922,25 @@ static void InstallOnDodgeHook()
 // temp ref (InventoryReference) created for most recently populated soul gem in player's inventory, valid only for a single frame
 static TESObjectREFR* s_lastFilledSoulgem = NULL;
 
-static void __stdcall SetLastFilledSoulgem (ExtraContainerChanges::EntryData* entryData, ExtraContainerChanges::EntryExtendData* extendData)
+static void __stdcall SetLastFilledSoulgem (ExtraContainerChanges::EntryData* entryData, tList<ExtraDataList>::_Node* extendData)
 {
 	// locate ExtraContainerChanges::Entry for this EntryData
 	TESObjectREFR* owner = *g_thePlayer;
-	ExtraContainerChanges::Entry* entry = ExtraContainerChanges::GetForRef (*g_thePlayer)->data->objList;
-	while (entry && entry->data != entryData) {
-		entry = entry->next;
+	tList<ExtraContainerChanges::EntryData>::Iterator entry = ExtraContainerChanges::GetForRef(*g_thePlayer)->data->objList->Begin();
+	while (!entry.End() && *entry != entryData) {
+		++entry;
 	}
 	// create temp InventoryReference for soulgem
-	InventoryReference::Data irefData (entryData->type, entry, extendData);
-	InventoryReference* iref = InventoryReference::Create (owner, irefData, false);
-	s_lastFilledSoulgem = iref->GetRef ();
+	InventoryReference::Data irefData(entryData->type, entry.Get(), extendData->item);
+	InventoryReference* iref =  InventoryReference::CreateInventoryRef(owner, irefData, false);
+	s_lastFilledSoulgem = iref->GetRef();
 }
 	
 static __declspec(naked) void CreateExtraSoulHook1 (void)
 {
 	__asm {
 		pushad
-		push esi		// EntryExtendData
+		push esi		// tList<ExtraDataList>
 		push ebp		// EntryData
 		call SetLastFilledSoulgem
 
