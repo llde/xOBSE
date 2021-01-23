@@ -8,7 +8,7 @@ bool BaseExtraList::HasType(UInt32 type) const
 	return (m_presenceBitfield[index] & bitMask) != 0;
 }
 
-BSExtraData * BaseExtraList::GetByType(UInt32 type) const
+BSExtraData* BaseExtraList::GetByType(UInt32 type) const
 {
 	if (!HasType(type)) return NULL;
 	for(BSExtraData * traverse = m_data; traverse; traverse = traverse->next)

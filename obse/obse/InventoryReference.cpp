@@ -21,7 +21,7 @@ void WriteToExtraDataList(BaseExtraList* from, BaseExtraList* to)
 std::map<UInt32, InventoryReference*> InventoryReference::s_refmap;
 
 
-InventoryReference* InventoryReference::CreateInventoryRef(TESObjectREFR* container, const InventoryReference::Data& data, bool bValidate)
+InventoryReference* InventoryReference::CreateInventoryRef(TESObjectREFR* container, InventoryReference::Data& data, bool bValidate)
 {
 	TESObjectREFR *refr = TESObjectREFR::Create(false);
 	InventoryReference* invRefr = (InventoryReference*)FormHeap_Allocate(sizeof(InventoryReference));
@@ -30,9 +30,13 @@ InventoryReference* InventoryReference::CreateInventoryRef(TESObjectREFR* contai
 	invRefr->m_tempEntry = false;
 	invRefr->m_bDoValidation = bValidate;
 	invRefr->m_bRemoved = false;
-	invRefr->SetData(data);
 	InventoryReference::s_refmap[refr->refID] = invRefr;
-
+	if (data.temporary) {
+		if (!data.entry) {
+			data.entry = CreateTempEntry(data.type, data.count, NULL);
+		} //DO we need also a xData?
+	}
+	invRefr->SetData(data);
 	return invRefr;
 }
 
@@ -74,7 +78,7 @@ void InventoryReference::Release(){
 
 void InventoryReference::DoDeferredActions() { return; } //TODO implement when recreating DeferredActions
 
-bool InventoryReference::SetData(const Data &data){
+bool InventoryReference::SetData(Data &data){
 	m_bRemoved = false;
 	m_tempRef->baseForm = data.type;
 	m_data = data;
