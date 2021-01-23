@@ -60,12 +60,11 @@ typedef std::map<TESForm*, UInt32> ExtraContainerMap;
 class ExtraContainerInfo
 {
 public:
-	ExtraContainerInfo(ExtraContainerChanges::Entry* entryList): m_map(), m_vec()
+	ExtraContainerInfo(tList<ExtraContainerChanges::EntryData>* entryList): m_map(), m_vec()
 	{
 		m_vec.reserve(128);
 		if (entryList) {
-			ExtraEntryVisitor visitor(entryList);
-			visitor.Visit(*this);
+			entryList->Visit(*this);
 		}
 	}
 
@@ -268,11 +267,11 @@ UInt32 GetContainerFormConfigCount(TESObjectREFR* thisObj, TESForm* formToFind)
 	UInt32 nConfigs = 0;
 	ContainerFormInfo formInfo;
 	GetContainerFormInfo(thisObj, formToFind, formInfo);
-	if (formInfo.m_baseCount > 0) nConfigs++;
+	if (formInfo.m_baseCount > 0) nConfigs++;  //TODO nConfig should be increased by the basecount?
 
 	if (formInfo.m_entryData) {
-		ExtendDataVisitor visitExtended(formInfo.m_entryData->extendData);
-		nConfigs += visitExtended.Count();
+		//TODO use the countDelta?
+		nConfigs += formInfo.m_entryData->extendData->Count();
 	}
 
 	return nConfigs;
@@ -286,10 +285,10 @@ ExtraDataList* GetNthContainerFormConfig(TESObjectREFR* thisObj, TESForm* formTo
 	ContainerFormInfo formInfo;
 	GetContainerFormInfo(thisObj, formToFind, formInfo);
 	if (formInfo.m_entryData) {
-		ExtendDataVisitor visitExtended(formInfo.m_entryData->extendData);
 		// adjust the index down by one as the base object has no overrides
 		// and all of the others are assumed to be after it
-		return visitExtended.GetNthInfo(index-1);
+		return  formInfo.m_entryData->extendData->GetNthItem(index - 1);
+
 	}
 	return NULL;
 }
@@ -420,7 +419,7 @@ static UInt32 GetItemSlotMask(TESForm * type)
 class FoundEquipped
 {
 public:
-	virtual bool Found(ExtraContainerChanges::EntryData* entryData, double *result, ExtraContainerChanges::EntryExtendData* extendData) = 0;
+	virtual bool Found(ExtraContainerChanges::EntryData* entryData, double *result, ExtraDataList* extendData) = 0;
 };
 
 static inline bool IsRingSlot(UInt32 slot)
@@ -432,42 +431,37 @@ static inline bool IsOppositeRing(UInt32 slot, UInt32 slotIdx) {
 	return (slot == kSlot_RightRing && slotIdx == kSlot_LeftRing) || (slot == kSlot_LeftRing && slotIdx == kSlot_RightRing);
 }
 
-static bool FindEquipped(TESObjectREFR* thisObj, UInt32 slotIdx, FoundEquipped* foundEquippedFunctor, double* result)
-{
-	ExtraContainerChanges	* containerChanges = static_cast <ExtraContainerChanges *>(thisObj->baseExtraList.GetByType(kExtraData_ContainerChanges));
-	if(containerChanges && containerChanges->data && containerChanges->data->objList)
-	{
-		for(ExtraContainerChanges::Entry * entry = containerChanges->data->objList; entry; entry = entry->next)
-		{
+static bool FindEquipped(TESObjectREFR* thisObj, UInt32 slotIdx, FoundEquipped* foundEquippedFunctor, double* result) {
+	ExtraContainerChanges* containerChanges = static_cast <ExtraContainerChanges*>(thisObj->baseExtraList.GetByType(kExtraData_ContainerChanges));
+	if(containerChanges && containerChanges->data && containerChanges->data->objList){
+		for(tList<ExtraContainerChanges::EntryData>::Iterator entry = containerChanges->data->objList->Begin(); !entry.End(); ++entry){
 			// do the fast check first (an object must have extend data to be equipped)
-			if(entry->data && entry->data->extendData && entry->data->type)
-			{
-				if (ItemSlotMatches(entry->data->type, slotIdx)) {
+			if(*entry && entry->extendData && entry->type){
+				if (ItemSlotMatches(entry->type, slotIdx)) {
 					// ok, it's the right type, now is it equipped?
-					for(ExtraContainerChanges::EntryExtendData * extend = entry->data->extendData; extend; extend = extend->next)
-					{
-						if (extend->data) {
+					for(tList<ExtraDataList>::Iterator extend = entry->extendData->Begin(); !extend.End(); ++extend){
+						if (*extend) {
 							// handle rings
 							bool bFound = false;
 							if (IsRingSlot(slotIdx))
 							{
-								if (slotIdx == kSlot_LeftRing && extend->data->HasType(kExtraData_WornLeft))
+								if (slotIdx == kSlot_LeftRing && extend->HasType(kExtraData_WornLeft))
 								{
 									bFound = true;
 								}
-								else if (slotIdx == kSlot_RightRing && extend->data->HasType(kExtraData_Worn))
+								else if (slotIdx == kSlot_RightRing && extend->HasType(kExtraData_Worn))
 								{
 									bFound = true;
 								}
 							}
-							else if (extend->data->HasType(kExtraData_Worn))
+							else if (extend->HasType(kExtraData_Worn))
 							{
 								bFound = true;
 							}
 
 							if (bFound)
 							{
-								return foundEquippedFunctor->Found(entry->data, result, extend);
+								return foundEquippedFunctor->Found(entry.Get(), result, extend.Get());
 							}
 						}
 					}
@@ -481,33 +475,27 @@ static bool FindEquipped(TESObjectREFR* thisObj, UInt32 slotIdx, FoundEquipped* 
 static bool FindEquippedByMask(TESObjectREFR* thisObj, UInt32 targetMask, UInt32 targetData, FoundEquipped* foundEquippedFunctor, double* result)
 {
 	ExtraContainerChanges	* containerChanges = static_cast <ExtraContainerChanges *>(thisObj->baseExtraList.GetByType(kExtraData_ContainerChanges));
-	if(containerChanges && containerChanges->data && containerChanges->data->objList)
-	{
-		for(ExtraContainerChanges::Entry * entry = containerChanges->data->objList; entry; entry = entry->next)
-		{
+	if(containerChanges && containerChanges->data && containerChanges->data->objList) {
+		for(tList<ExtraContainerChanges::EntryData>::Iterator  entry = containerChanges->data->objList->Begin(); !entry.End(); ++entry)	{
 			// do the fast check first (an object must have extend data to be equipped)
-			if(entry->data && entry->data->extendData && entry->data->type)
-			{
+			if(*entry && entry->extendData && entry->type) {
 				// does it match the slot?
-				UInt32	slotMask = GetItemSlotMask(entry->data->type);
-				if((slotMask & targetMask) == targetData)
-				{
-					for(ExtraContainerChanges::EntryExtendData * extend = entry->data->extendData; extend; extend = extend->next)
-					{
-						if(extend->data)
-						{
+				UInt32	slotMask = GetItemSlotMask(entry->type);
+				if((slotMask & targetMask) == targetData)	{
+					for(tList<ExtraDataList>::Iterator  extend = entry->extendData->Begin(); !extend.End(); ++extend){
+						if(*extend){
 							// is it equipped?
 							bool	isEquipped = false;
 
-							isEquipped = extend->data->HasType(kExtraData_Worn);
+							isEquipped = extend->HasType(kExtraData_Worn);
 
 							// special-case for left ring
 							if(!isEquipped)
-								isEquipped = (slotMask & (1 << TESBipedModelForm::kPart_LeftRing)) && extend->data->HasType(kExtraData_WornLeft);
+								isEquipped = (slotMask & (1 << TESBipedModelForm::kPart_LeftRing)) && extend->HasType(kExtraData_WornLeft);
 
 							if(isEquipped)
 							{
-								return foundEquippedFunctor->Found(entry->data, result, extend);
+								return foundEquippedFunctor->Found(entry.Get(), result, extend.Get());
 							}
 						}
 					}
@@ -524,7 +512,7 @@ class feGetObject : public FoundEquipped
 public:
 	feGetObject() {}
 	~feGetObject() {}
-	virtual bool Found(ExtraContainerChanges::EntryData* entryData, double *result, ExtraContainerChanges::EntryExtendData* extendData) {
+	virtual bool Found(ExtraContainerChanges::EntryData* entryData, double *result, ExtraDataList* extendData) {
 		UInt32* refResult = (UInt32*) result;
 		if (entryData) {
 			// cool, we win
@@ -1150,10 +1138,10 @@ class feGetCurrentValue : public FoundEquipped
 public:
 	feGetCurrentValue(UInt32 valueType) : m_valueType(valueType) {}
 	~feGetCurrentValue() {}
-	bool Found(ExtraContainerChanges::EntryData* entryData, double *result, ExtraContainerChanges::EntryExtendData* extendData) {
+	bool Found(ExtraContainerChanges::EntryData* entryData, double *result, ExtraDataList* extendData) {
 		UInt32* refResult = (UInt32*) result;
 		if (extendData) {
-			if (GetCurrentValue(*(extendData->data), m_valueType, result)) {
+			if (GetCurrentValue(*extendData, m_valueType, result)) {
 				return true;
 			} else {
 				return GetBaseValue(entryData->type, m_valueType, result);
@@ -1200,7 +1188,7 @@ class feGetBaseValue : public FoundEquipped
 public:
 	feGetBaseValue(UInt32 valueType) : m_valueType(valueType) {}
 	~feGetBaseValue() {}
-	bool Found(ExtraContainerChanges::EntryData* entryData, double *result, ExtraContainerChanges::EntryExtendData* extendData) {
+	bool Found(ExtraContainerChanges::EntryData* entryData, double *result, ExtraDataList* extendData) {
 		UInt32* refResult = (UInt32*) result;
 		if (entryData) {
 			return GetBaseValue(entryData->type, m_valueType, result);
@@ -2048,15 +2036,15 @@ class feChangeCurrentValue : public FoundEquipped
 	ChangeValueState& m_cvs;
 public:
 	feChangeCurrentValue(ChangeValueState& cvs) : m_cvs(cvs) {}
-	bool Found(ExtraContainerChanges::EntryData* entryData, double *result, ExtraContainerChanges::EntryExtendData* extendData) {
+	bool Found(ExtraContainerChanges::EntryData* entryData, double *result, ExtraDataList* extendData) {
 		switch(m_cvs.WhichValue()) {
 			case kVal_Health:
 			case kVal_CurHealth:
-				return ChangeCurrentHealth(entryData->type, extendData->data, m_cvs, result);
+				return ChangeCurrentHealth(entryData->type, extendData, m_cvs, result);
 			case kVal_Charge:
-				return ChangeCurrentCharge(entryData->type, extendData->data, m_cvs, result);
+				return ChangeCurrentCharge(entryData->type, extendData, m_cvs, result);
 			case kVal_WeaponPoison:
-				return ChangeCurrentPoison(entryData->type, extendData->data, m_cvs, result);
+				return ChangeCurrentPoison(entryData->type, extendData, m_cvs, result);
 			default:
 				return false;
 		}
@@ -3492,9 +3480,9 @@ public:
 //			return true;
 
 		//check if it looks like a hotkey
-		if (!entryData->extendData || !entryData->extendData->data)
+		if (!entryData->extendData || !entryData->extendData)
 			return false;
-		ExtraQuickKey* qKey = (ExtraQuickKey*)entryData->extendData->data->GetByType(kExtraData_QuickKey);
+		ExtraQuickKey* qKey = (ExtraQuickKey*)entryData->extendData->GetNthItem(0)->GetByType(kExtraData_QuickKey);//TODO this check only the first extradatalist, but more may be present in the EntryData 
 		if (!qKey)
 			return false;
 
@@ -3512,18 +3500,16 @@ static void _ClearHotKey ( UInt32 whichKey ) {
 		return;
 
 	//remove ExtraQuickKey from container changes
-	ExtraContainerChanges* xChanges = static_cast <ExtraContainerChanges *>((*g_thePlayer)->baseExtraList.GetByType(kExtraData_ContainerChanges));
+	ExtraContainerChanges* xChanges = static_cast <ExtraContainerChanges*>((*g_thePlayer)->baseExtraList.GetByType(kExtraData_ContainerChanges));
 	if (xChanges)
 	{
 		ExtraQuickKeyFinder finder(whichKey);
-		ExtraEntryVisitor visitor(xChanges->data->objList);
-		const ExtraContainerChanges::Entry* xEntry;
-		while (xEntry = visitor.Find(finder))
-		{
-			BSExtraData* toRemove = xEntry->data->extendData->data->GetByType(kExtraData_QuickKey);
+		const ExtraContainerChanges::EntryData* xEntry;
+		while (xEntry = xChanges->data->objList->Find(finder)){
+			BSExtraData* toRemove = xEntry->extendData->GetNthItem(0)->GetByType(kExtraData_QuickKey); //take only the 1 EDL, but more may be present
 			if (toRemove)
 			{
-				xEntry->data->extendData->data->Remove(toRemove);
+				xEntry->extendData->GetNthItem(0)->Remove(toRemove);  //merge the Ge
 				FormHeap_Free(toRemove);
 			}
 		}
@@ -3635,25 +3621,19 @@ static bool Cmd_SetHotKeyItem_Execute(COMMAND_ARGS)
 		if (xChanges)		//look up form in player's inventory
 		{
 			ExtraContainerChangesEntryFinder finder(qkForm);
-			ExtraEntryVisitor visitor(xChanges->data->objList);
-			const ExtraContainerChanges::Entry* xEntry = visitor.Find(finder);
-			if (xEntry)
-			{
-				if (!xEntry->data->extendData)
-				{
-					xEntry->data->extendData =
-						(ExtraContainerChanges::EntryExtendData*)(FormHeap_Allocate(sizeof(ExtraContainerChanges::EntryExtendData)));
-					xEntry->data->extendData->next = NULL;
-					xEntry->data->extendData->data = NULL;
+			ExtraContainerChanges::EntryData* xEntry = xChanges->data->objList->Find(finder);
+			if (xEntry)	{
+				if (!xEntry->extendData){
+					xEntry->extendData = (tList<ExtraDataList>*) tList<ExtraDataList>::Create();
 				}
-				if (!xEntry->data->extendData->data)
-					xEntry->data->extendData->data = ExtraDataList::Create();
+				if (xEntry->extendData->IsEmpty())
+					xEntry->extendData->AddAt(ExtraDataList::Create(),0);
 				if (!xQKey) {
 					xQKey = ExtraQuickKey::Create();
 					xQKey->keyID = whichKey;
 				}
 
-				xEntry->data->extendData->data->Add(xQKey);
+				xEntry->extendData->data->Add(xQKey);
 			}
 			else
 				Console_Print("SetHotKeyItem >> Item not found in inventory");
@@ -4088,9 +4068,9 @@ static bool Cmd_EquipItem2_Execute(COMMAND_ARGS)
 		for (UInt32 i = 0; i < postList.size(); i++) {
 			if (std::find(preList.begin(), preList.end(), postList[i]) == preList.end()) {
 				ExtraContainerChanges::EntryData* data = postList[i];
-				if (data->extendData && data->extendData->data) {
+				if (data->extendData && data->extendData->GetNthItem(0)) {
 					// mark the event
-					data->extendData->data->MarkScriptEvent(ScriptEventList::kEvent_OnEquip, actor);
+					data->extendData->GetNthItem(0)->MarkScriptEvent(ScriptEventList::kEvent_OnEquip, actor);
 				}
 				break;
 			}
