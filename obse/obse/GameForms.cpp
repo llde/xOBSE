@@ -2862,7 +2862,7 @@ bool TESPathGrid::SetExternalEdge(UInt16 localID, TESPathGridPoint* target, bool
 	if (localPt && target) {
 		if (bEnableEdge) {
 			if (externalEdges.IsNull()) {
-				externalEdges.SetList(tListBase<ExternalEdge, true>::Create(FormHeap_Allocate));
+				externalEdges.SetList(tListBase<ExternalEdge, true>::Create());
 			}
 			else if (externalEdges->Find(ExternalEdgeComparator(localID, target))) {
 				// edge already exists

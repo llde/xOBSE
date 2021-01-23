@@ -450,9 +450,9 @@ public:
 	}
 
 	typedef void * (* _allocator)(UInt32 size);
-	static tListBase<Item, _bHeadIsPtr> * Create(_allocator allocator)
+	static tListBase<Item, _bHeadIsPtr> * Create()
 	{
-		tListBase<Item, _bHeadIsPtr>* list = (tListBase<Item, _bHeadIsPtr>*)allocator(sizeof(tListBase<Item, _bHeadIsPtr>));
+		tListBase<Item, _bHeadIsPtr>* list = (tListBase<Item, _bHeadIsPtr>*)FormHeap_Allocate(sizeof(tListBase<Item, _bHeadIsPtr>));
 		memset(list, 0, sizeof(tListBase<Item, _bHeadIsPtr>));
 		return list;
 	}
