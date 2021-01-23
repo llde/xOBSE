@@ -58,18 +58,33 @@ TESObjectREFR* InventoryReference::CreateInventoryRefEntry(TESObjectREFR* contai
 }
 
 InventoryReference::~InventoryReference(){
-
+	if (m_data.type) Release();
+	if (m_tempRef) m_tempRef->Destroy(true);
+	if (m_tempEntry) {}
+	if (m_containerRef) {
+		ExtraContainerChanges* xChanges = (ExtraContainerChanges*)m_containerRef->baseExtraList.GetByType(kExtraData_ContainerChanges);
+		if (xChanges) xChanges->Cleanup();
+	}
 }
 
 void InventoryReference::Release(){
+	DoDeferredActions();
+	SetData(Data());
 }
 
 bool InventoryReference::SetData(const Data &data){
-
+	m_bRemoved = false;
+	m_tempRef->baseForm = data.type;
+	m_data = data;
+	WriteToExtraDataList(data.xData, &m_tempRef->baseExtraList);
+	return true;
 }
 
 bool InventoryReference::WriteRefDataToContainer(){
-
+	if (m_bRemoved) return true;
+	if (!m_containerRef || !Validate()) return false;
+	if (m_data.xData) WriteToExtraDataList(&m_tempRef->baseExtraList , m_data.xData);
+	return true;
 }
 
 SInt32 InventoryReference::GetCount(){

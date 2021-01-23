@@ -14,10 +14,11 @@ public:
         TESForm* type;
         ExtraContainerChanges::EntryData*	entry;
 		ExtraDataList*						xData;
-
-		Data(TESForm* t, ExtraContainerChanges::EntryData* en, ExtraDataList* ex) : type(t), entry(en), xData(ex) { }
-		Data(const Data& rhs) : type(rhs.type), entry(rhs.entry), xData(rhs.xData) { }
-		Data() : type(NULL), entry(NULL), xData(NULL) { }
+		SInt32								count; //count of the IR if xData NULL or without xCount, -1 otherwise
+		Data(TESForm* t, ExtraContainerChanges::EntryData* en, ExtraDataList* ex) : type(t), entry(en), xData(ex), count(-1) { }
+		Data(TESForm* t, ExtraContainerChanges::EntryData* en, SInt32 count) : type(t), entry(en), xData(nullptr), count(count) { }  //if EntryData* NULL, it's an object in ther base container.
+		Data(const Data& rhs) : type(rhs.type), entry(rhs.entry), xData(rhs.xData), count(rhs.count) { }
+		Data() : type(NULL), entry(NULL), xData(NULL),count(-1) { }
     };
     
     
