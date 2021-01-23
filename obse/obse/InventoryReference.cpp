@@ -72,6 +72,8 @@ void InventoryReference::Release(){
 	SetData(Data());
 }
 
+void InventoryReference::DoDeferredActions() { return; } //TODO implement when recreating DeferredActions
+
 bool InventoryReference::SetData(const Data &data){
 	m_bRemoved = false;
 	m_tempRef->baseForm = data.type;

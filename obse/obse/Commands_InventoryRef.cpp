@@ -72,6 +72,7 @@ static bool Cmd_CreateTempRef_Execute(COMMAND_ARGS)
 
 static bool Cmd_GetInvRefsForItem_Execute(COMMAND_ARGS)
 {
+	DEBUG_PRINT("GetInvRefsForItem executed");
 	// returns an array of inventory references for the specified base object in the calling object's inventory
 	TESForm* item = NULL;
 	ArrayID arrID = g_ArrayMap.Create(kDataType_Numeric, true, scriptObj->GetModIndex());
