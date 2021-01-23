@@ -139,14 +139,61 @@ bool StringIterLoop::Update(COMMAND_ARGS)
 
 ContainerIterLoop::ContainerIterLoop(const ForEachContext* context)
 {
-	TESObjectREFR* contRef = OBLIVION_CAST((TESForm*)context->sourceID, TESForm, TESObjectREFR);
+	TESObjectREFR* contRef = (TESObjectREFR*)context->sourceID;
+	m_refVar = context->var;
+	m_iterIndex = 0;
+	m_invRef = InventoryReference::CreateInventoryRef(contRef, InventoryReference::Data(), false );
+    TESContainer* cont = contRef->GetContainer();
+	if (cont) {
+		for (TESContainer::Entry* cur = &cont->list; cur; cur = cur->next) {
+			if (cur->data && cur->data->type->typeID != kFormType_LeveledItem) {
+				DEBUG_PRINT("Base container has %d %s", cur->data->count, GetFullName(cur->data->type));
+				m_elements.push_back(IRefData(cur->data->type, NULL, cur->data->count));
+                //TODO check for extradata in the base container and condense items
+			}
+		}
+		ExtraContainerChanges* xChanges = (ExtraContainerChanges*)contRef->baseExtraList.GetByType(kExtraData_ContainerChanges);
+        if(xChanges && xChanges->data){
+            for (tList<ExtraContainerChanges::EntryData>::Iterator entry = xChanges->data->objList->Begin(); !entry.End(); ++entry){
+                if(! *entry){
+                    DEBUG_PRINT("Warning: encountered NULL ExtraContainerChanges::EntryData pointer in ContainerIterLoop constructor.");
+                    continue;
+                }
+                TESForm* form = entry->type;
+                SInt32 countExtraData = entry->countDelta;
+                DEBUG_PRINT("ExtraContainer has %d %s", countExtraData, GetFullName(form));
+                //TODO what's the difference between countDelta and iterating the extendextradatas to get the count?
+                if (entry->extendData) {
+                    for (tList<ExtraDataList>::Iterator iter = entry->extendData->Begin(); !iter.End(); ++iter) {
+                        /*Every EntryExtendData represent a separate stack?*/
+                        ExtraCount* xCount = (ExtraCount*)iter->GetByType(kExtraData_Count);
+                        SInt32 count = xCount != NULL ? xCount->count : 1;
+                        DEBUG_PRINT("Got stack of %d  for %s", count, GetFullName(form));
+                        countExtraData-=count;
+						m_elements.push_back(IRefData(form, entry.Get(), iter.Get()));
+                    }
+                }
+                if(countExtraData > 0) {//There are still leftovers items not associated with an ExtraDataList TODO DOes this case actually happen?
+					m_elements.push_back(IRefData(form, entry.Get(), countExtraData));
+                    //TODO Add these to the baseContainer objects if any
+                }
+                DEBUG_PRINT("ExtraContainer has %d %s after loop", countExtraData, GetFullName(form));
+            }
+        }
+    }
+}
+/*
+ContainerIterLoop::ContainerIterLoop(const ForEachContext* context)
+{
+	TESObjectREFR* contRef = (TESObjectREFR*)context->sourceID;
 	m_refVar = context->var;
 	m_iterIndex = 0;
 	m_invRef = InventoryReference::Create(contRef, IRefData(NULL, NULL, NULL), false);	
 
 	// first: figure out what items exist by default
 	std::map<TESForm*, SInt32> baseObjectCounts;
-	TESContainer* cont = OBLIVION_CAST(contRef->baseForm, TESForm, TESContainer);
+//	TESContainer* cont = OBLIVION_CAST(contRef->baseForm, TESForm, TESContainer);
+    TESContainer* cont = contRef->GetContainer();
 	if (cont) {
 		for (TESContainer::Entry* cur = &cont->list; cur; cur = cur->next) {
 			if (cur->data && cur->data->type->typeID != kFormType_LeveledItem) {
@@ -254,7 +301,7 @@ ContainerIterLoop::ContainerIterLoop(const ForEachContext* context)
 	// initialize the iterator
 	SetIterator();
 }
-
+*/
 bool ContainerIterLoop::UnsetIterator()
 {
 	return m_invRef->WriteRefDataToContainer();
@@ -289,7 +336,7 @@ bool ContainerIterLoop::SetIterator()
 	else {
 		// loop ends, ref will shortly be invalid so zero out the var
 		m_refVar->data = 0;
-		m_invRef->SetData(IRefData(NULL, NULL, NULL));
+		m_invRef->SetData(IRefData(nullptr, nullptr, nullptr));
 		return false;
 	}
 }
