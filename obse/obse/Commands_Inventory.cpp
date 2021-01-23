@@ -3521,15 +3521,14 @@ static void _ClearHotKey ( UInt32 whichKey ) {
 		if (xChanges)
 		{
 			ExtraQuickKeyFinder finder(UInt32(-1), quickKey->start->data);
-			ExtraEntryVisitor visitor(xChanges->data->objList);
-			const ExtraContainerChanges::Entry* xEntry = NULL;
-			while (xEntry = visitor.Find(finder, xEntry))
+			const ExtraContainerChanges::EntryData* xEntry = NULL;
+			while (xEntry = xChanges->data->objList->Find(finder))
 			{
-				ExtraQuickKey* toRemove = static_cast<ExtraQuickKey*>(xEntry->data->extendData->data->GetByType(kExtraData_QuickKey));
+				ExtraQuickKey* toRemove = static_cast<ExtraQuickKey*>(xEntry->extendData->GetNthItem(0)->GetByType(kExtraData_QuickKey));
 				//if (toRemove && (quickKey->start->data->typeID != kFormType_Spell || toRemove->keyID > 7))
 				if (toRemove && toRemove->keyID > 7)
 				{
-					xEntry->data->extendData->data->Remove(toRemove);
+					xEntry->extendData->GetNthItem(0)->Remove(toRemove);
 					FormHeap_Free(toRemove);
 					xEntry = NULL;
 				}
@@ -3586,14 +3585,13 @@ static bool Cmd_SetHotKeyItem_Execute(COMMAND_ARGS)
 	if (xChanges)
 	{
 		ExtraQuickKeyFinder finder(UInt32(-1), qkForm);
-		ExtraEntryVisitor visitor(xChanges->data->objList);
-		const ExtraContainerChanges::Entry* xEntry;
-		if (xEntry = visitor.Find(finder))
+		const ExtraContainerChanges::EntryData* xEntry;
+		if (xEntry = xChanges->data->objList->Find(finder))
 		{
-			BSExtraData* toRemove = xEntry->data->extendData->data->GetByType(kExtraData_QuickKey);
+			BSExtraData* toRemove = xEntry->extendData->GetNthItem(0)->GetByType(kExtraData_QuickKey);
 			if (toRemove)
 			{
-				xEntry->data->extendData->data->Remove(toRemove);
+				xEntry->extendData->GetNthItem(0)->Remove(toRemove);
 				FormHeap_Free(toRemove);
 			}
 		}
@@ -3633,7 +3631,7 @@ static bool Cmd_SetHotKeyItem_Execute(COMMAND_ARGS)
 					xQKey->keyID = whichKey;
 				}
 
-				xEntry->extendData->data->Add(xQKey);
+				xEntry->extendData->GetNthItem(0)->Add(xQKey);
 			}
 			else
 				Console_Print("SetHotKeyItem >> Item not found in inventory");
