@@ -354,7 +354,7 @@ bool ContainerIterLoop::SetIterator()
 		// loop ends, ref will shortly be invalid so zero out the var
 		DEBUG_PRINT("It's the end of the war, HOLD THE CORRIDOR");
 		m_refVar->data = 0;
-		m_invRef->SetData(IRefData(nullptr, nullptr, nullptr));
+//		m_invRef->SetData(IRefData(nullptr, nullptr, nullptr));
 		return false;
 	}
 }

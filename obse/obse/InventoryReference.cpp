@@ -30,13 +30,9 @@ InventoryReference* InventoryReference::CreateInventoryRef(TESObjectREFR* contai
 	invRefr->m_tempEntry = false;
 	invRefr->m_bDoValidation = bValidate;
 	invRefr->m_bRemoved = false;
-	InventoryReference::s_refmap[refr->refID] = invRefr;
-	if (data.temporary) {
-		if (!data.entry) {
-			data.entry = CreateTempEntry(data.type, data.count, NULL);
-		} //DO we need also a xData?
-	}
+	invRefr->m_data = Data();
 	invRefr->SetData(data);
+	InventoryReference::s_refmap[refr->refID] = invRefr;
 	return invRefr;
 }
 
@@ -62,13 +58,13 @@ TESObjectREFR* InventoryReference::CreateInventoryRefEntry(TESObjectREFR* contai
 }
 
 InventoryReference::~InventoryReference(){
-	if (m_data.type) Release();
-	if (m_tempRef) m_tempRef->Destroy(true);
-	if (m_tempEntry) {}
-	if (m_containerRef) {
-		ExtraContainerChanges* xChanges = (ExtraContainerChanges*)m_containerRef->baseExtraList.GetByType(kExtraData_ContainerChanges);
-		if (xChanges) xChanges->Cleanup();
-	}
+//	if (m_data.type) Release();
+//	if (m_tempRef) m_tempRef->Destroy(true);
+//	if (m_tempEntry) {}
+//	if (m_containerRef) {
+//		ExtraContainerChanges* xChanges = (ExtraContainerChanges*)m_containerRef->baseExtraList.GetByType(kExtraData_ContainerChanges);
+//		if (xChanges) xChanges->Cleanup();
+//	}
 }
 
 void InventoryReference::Release(){
@@ -79,10 +75,45 @@ void InventoryReference::Release(){
 void InventoryReference::DoDeferredActions() { return; } //TODO implement when recreating DeferredActions
 
 bool InventoryReference::SetData(Data &data){
+	DEBUG_PRINT("HEy %u  %u", m_data.temporary, data.temporary);
+/*	if (m_data.temporary > 0 && m_data.xData) {
+		DEBUG_PRINT("Destroyng Extradata");
+		m_data.xData->RemoveAll();
+		m_data.entry->extendData->Remove(m_data.xData);
+		m_data.entry->Cleanup();
+		FormHeap_Free(m_data.xData);
+		m_data.xData = nullptr;
+		if (m_data.temporary == 2) {
+			FormHeap_Free(m_data.entry);
+			m_data.entry = nullptr;
+		}
+	}*/
+	DEBUG_PRINT("Set IR  %s", GetFullName(data.type));
 	m_bRemoved = false;
 	m_tempRef->baseForm = data.type;
 	m_data = data;
-	WriteToExtraDataList(data.xData, &m_tempRef->baseExtraList);
+	if (m_data.temporary > 0) {
+		DEBUG_PRINT("Allocating ExtraData");
+
+		if (!m_data.xData) {
+//			m_data.xData = ExtraDataList::Create();
+//			ExtraCount* xCount = ExtraCount::Create(m_data.count);
+			//TODO do we need an EntryData?
+//			m_data.xData->Add(xCount);
+		}
+		if (m_data.temporary == 2) {
+//			m_data.entry = ExtraContainerChanges::EntryData::Create(m_data.count, m_data.type);
+		}
+//		if (m_data.entry->extendData == NULL) {
+//			m_data.entry->extendData = (tList<ExtraDataList>*) tList<ExtraDataList>::Create();
+//		}
+//		m_data.entry->extendData->AddAt(m_data.xData, 0);
+//		m_data.xData->DebugDump();
+		DEBUG_PRINT("Finished Allocating ExtraData");
+	}
+	WriteToExtraDataList(m_data.xData, &m_tempRef->baseExtraList);
+	DEBUG_PRINT("Wrote data to ref");
+
 	return true;
 }
 
@@ -140,7 +171,8 @@ InventoryReference* InventoryReference::GetForRefID(UInt32 refID){
 
 void InventoryReference::Clean(){
 	for (auto iter = s_refmap.begin(); iter != s_refmap.end(); ++iter) {
-		delete iter->second;
+		iter->second->~InventoryReference();
+		FormHeap_Free(iter->second); //TODO override new and delete
 	}
 	s_refmap.clear();
 }
