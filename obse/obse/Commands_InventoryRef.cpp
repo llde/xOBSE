@@ -107,7 +107,7 @@ static bool Cmd_GetInvRefsForItem_Execute(COMMAND_ARGS)
 					if (baseCount) {
 						for (tList<ExtraDataList>::Iterator extend = ed->extendData->Begin(); !extend.End(); ++extend) {
 							if (!*extend) {
-								extend.SetInner(ExtraDataList::Create());
+								continue;
 							}
 							InventoryReference::Data data(item, ed, extend.Get());
 							InventoryReference* iref = InventoryReference::CreateInventoryRef(thisObj, data, false);
