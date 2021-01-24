@@ -449,7 +449,6 @@ public:
 		return (head == NULL || head->Item() == NULL);
 	}
 
-	typedef void * (* _allocator)(UInt32 size);
 	static tListBase<Item, _bHeadIsPtr> * Create()
 	{
 		tListBase<Item, _bHeadIsPtr>* list = (tListBase<Item, _bHeadIsPtr>*)FormHeap_Allocate(sizeof(tListBase<Item, _bHeadIsPtr>));
