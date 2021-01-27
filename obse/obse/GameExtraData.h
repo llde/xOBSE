@@ -455,7 +455,7 @@ public:
 	UInt8	pad[2];
 
 	static ExtraCount* Create();
-	static ExtraCount* Create(SInt16 count);
+	static ExtraCount* Create(SInt32 count);
 };
 
 UInt32 GetCountForExtraDataList(ExtraDataList* list);
