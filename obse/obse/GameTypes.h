@@ -214,7 +214,10 @@ private:
 
 public:
 
-	_Node* Head() const { return const_cast<_Node*>(&m_listHead); }
+	_Node* Head() const {
+		if (m_listHead.item == NULL && m_listHead.next == NULL) return nullptr;  //First node is empty, don't construct iterator
+		return const_cast<_Node*>(&m_listHead);
+	 }
 
 	class Iterator
 	{
