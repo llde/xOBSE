@@ -58,13 +58,20 @@ TESObjectREFR* InventoryReference::CreateInventoryRefEntry(TESObjectREFR* contai
 }
 
 InventoryReference::~InventoryReference(){
-//	if (m_data.type) Release();
-//	if (m_tempRef) m_tempRef->Destroy(true);
-//	if (m_tempEntry) {}
-//	if (m_containerRef) {
-//		ExtraContainerChanges* xChanges = (ExtraContainerChanges*)m_containerRef->baseExtraList.GetByType(kExtraData_ContainerChanges);
-//		if (xChanges) xChanges->Cleanup();
-//	}
+	DEBUG_PRINT("Destroying IR");
+	if (m_data.type) Release();
+	DEBUG_PRINT("Destroying IR1");
+
+	if (m_tempRef) m_tempRef->Destroy(true);
+	DEBUG_PRINT("Destroying IR2");
+
+	if (m_containerRef) {
+		DEBUG_PRINT("Destroying IR3");
+		ExtraContainerChanges* xChanges = (ExtraContainerChanges*)m_containerRef->baseExtraList.GetByType(kExtraData_ContainerChanges);
+		if (xChanges) xChanges->Cleanup();
+	}
+	DEBUG_PRINT("Destroying IR4");
+
 }
 
 void InventoryReference::Release(){
@@ -75,42 +82,43 @@ void InventoryReference::Release(){
 void InventoryReference::DoDeferredActions() { return; } //TODO implement when recreating DeferredActions
 
 bool InventoryReference::SetData(Data &data){
-	DEBUG_PRINT("HEy %u  %u", m_data.temporary, data.temporary);
-/*	if (m_data.temporary > 0 && m_data.xData) {
-		DEBUG_PRINT("Destroyng Extradata");
+	DEBUG_PRINT("Hey %u", m_data.temporary);
+	if (m_data.entry) DEBUG_PRINT("ED* B %0X  %s", m_data.entry->extendData, GetFullName(m_data.type));
+	if (m_data.temporary > 0 && m_data.xData) {
+		DEBUG_PRINT("Destroying Extradata");
 		m_data.xData->RemoveAll();
-		m_data.entry->extendData->Remove(m_data.xData);
-		m_data.entry->Cleanup();
-		FormHeap_Free(m_data.xData);
-		m_data.xData = nullptr;
-		if (m_data.temporary == 2) {
-			FormHeap_Free(m_data.entry);
-			m_data.entry = nullptr;
+		if (m_data.entry && m_data.entry->extendData /*&&  m_data.temporary != 2*/) { 
+			//extendData can acquire strange values the m_data.temporary != 2 check is a safeguard.
+			//and m_data.entry->extendData is NULL, causing it to be null no more and an invalid value
+			//This can happen in  a ContainerLoop if not setting Data(NULL,NULL,NULL) at loop end, waiting for the next mainloop tick.
+			//Maybe has other triggers
+			//TODO investigate why it happen. Maybe the gameplay hook, execute the successive frame? To be solid it should be executd just after the script runner  
+			m_data.entry->extendData->Remove(m_data.xData);
+//			m_data.entry->Cleanup();
 		}
-	}*/
+		m_data.xData->Destroy(true);
+//		FormHeap_Free(m_data.xData);
+		m_data.xData = nullptr;
+
+	}
 	DEBUG_PRINT("Set IR  %s", GetFullName(data.type));
 	m_bRemoved = false;
 	m_tempRef->baseForm = data.type;
 	m_data = data;
-	if (m_data.temporary > 0) {
+	if (m_data.temporary > 0  && m_data.type) {
 		DEBUG_PRINT("Allocating ExtraData");
-
 		if (!m_data.xData) {
-//			m_data.xData = ExtraDataList::Create();
-//			ExtraCount* xCount = ExtraCount::Create(m_data.count);
+			m_data.xData = ExtraDataList::Create();
+			ExtraCount* xCount = ExtraCount::Create(m_data.count);
 			//TODO do we need an EntryData?
-//			m_data.xData->Add(xCount);
+			m_data.xData->Add(xCount);
 		}
-		if (m_data.temporary == 2) {
-//			m_data.entry = ExtraContainerChanges::EntryData::Create(m_data.count, m_data.type);
+		if (m_data.entry && m_data.entry->extendData) {
+			m_data.entry->extendData->AddAt(m_data.xData, 0);
+			DEBUG_PRINT("Finished Allocating ExtraData");
 		}
-//		if (m_data.entry->extendData == NULL) {
-//			m_data.entry->extendData = (tList<ExtraDataList>*) tList<ExtraDataList>::Create();
-//		}
-//		m_data.entry->extendData->AddAt(m_data.xData, 0);
-//		m_data.xData->DebugDump();
-		DEBUG_PRINT("Finished Allocating ExtraData");
 	}
+	if (m_data.entry) DEBUG_PRINT("ED* %0X   %s", m_data.entry->extendData, GetFullName(m_data.type));
 	WriteToExtraDataList(m_data.xData, &m_tempRef->baseExtraList);
 	DEBUG_PRINT("Wrote data to ref");
 
@@ -172,6 +180,7 @@ InventoryReference* InventoryReference::GetForRefID(UInt32 refID){
 void InventoryReference::Clean(){
 	for (auto iter = s_refmap.begin(); iter != s_refmap.end(); ++iter) {
 		iter->second->~InventoryReference();
+	//	iter->second->Release();
 		FormHeap_Free(iter->second); //TODO override new and delete
 	}
 	s_refmap.clear();

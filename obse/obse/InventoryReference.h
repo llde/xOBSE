@@ -20,7 +20,7 @@ public:
 		Data(const Data& rhs) : type(rhs.type), entry(rhs.entry), xData(rhs.xData), count(rhs.count), temporary(rhs.temporary) { }
 		Data() : type(NULL), entry(NULL), xData(NULL),count(-1),temporary(0) { }
 		Data(TESForm* t, ExtraContainerChanges::EntryData* en, SInt32 count) : type(t), entry(en), xData(nullptr), count(count){ //if EntryData* NULL, it's an object in ther base container.
-			temporary = (en == nullptr) ? 2 : 1;
+			temporary = (en->extendData == nullptr) ? 2 : 1;
 			//TODO use flags
 		}  
     };
