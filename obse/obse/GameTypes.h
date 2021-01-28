@@ -155,7 +155,7 @@ private:
 		static UInt32 numFreed = 0;
 		static _Node* lastNode = NULL;
 		static bool bRemovedNext = false;
-
+		if (node == nullptr) return 0;
 		if (node->Next())
 		{
 			nodeCount++;
