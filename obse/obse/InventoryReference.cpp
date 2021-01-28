@@ -187,15 +187,130 @@ void InventoryReference::Clean(){
 }
 
 bool InventoryReference::RemoveFromContainer(){
+	if (m_containerRef && m_tempRef && Validate()) {
+		if (m_data.xData->IsWorn()) return false; //TODO deferred action
+		if (m_data.entry && m_data.entry->extendData && m_data.xData) {
+			ExtraCount* count = (ExtraCount*)m_data.xData->GetByType(kExtraData_Count);
+			m_data.entry->extendData->Remove(m_data.xData);  //TODO remember to free
+			m_data.entry->countDelta -= count != NULL ? count->count : 1;
+		}
+		if (m_data.entry) {
+			if (m_data.count > 0 && (m_data.entry->extendData == nullptr || m_data.entry->extendData->IsEmpty())) {
+				//USe the countDelta
+				m_data.entry->countDelta -= m_data.count;
+			}
+			if (m_data.entry->countDelta <= 0) {
+				ExtraContainerChanges* xChanges = ExtraContainerChanges::GetForRef(m_containerRef);
+				xChanges->data->objList->Remove(m_data.entry);
+			}
+		}
+		else if(m_data.count > 0){   //If m_data.count is 0 or negative then there is nothing to remove
+			//TODO also defer this?
+			//TODO free extradata
+			m_containerRef->RemoveItem(m_data.type, NULL, m_data.count, 0, 0, NULL, NULL, NULL, 0, 0);
+		}
+		SetRemoved();
+		return true;
+	}
     return false;
 }
 
 bool InventoryReference::MoveToContainer(TESObjectREFR* dest){
+	if (dest == nullptr || !dest->GetContainer()) return false; //Check if dest reference is a valid container
+	ExtraContainerChanges* destCont =  ExtraContainerChanges::GetForRef(dest);
+	if (destCont == nullptr) return false;
+	ExtraContainerChanges::EntryData* destEntry = destCont->GetByType(m_data.type);
 
+	if (m_containerRef && m_tempRef && Validate()) {
+		if (m_data.xData->IsWorn()) return false; //TODO deferred action
+		if (m_data.entry && m_data.entry->extendData && m_data.xData) {
+			ExtraCount* count = (ExtraCount*)m_data.xData->GetByType(kExtraData_Count);
+			m_data.entry->extendData->Remove(m_data.xData);  //TODO remember to free
+			m_data.entry->countDelta -= count != NULL ? count->count : 1;
+			
+			if (destEntry == nullptr) {
+				destEntry = ExtraContainerChanges::EntryData::Create(count != NULL ? count->count : 1, m_data.type);
+				destCont->data->objList->AddAt(destEntry, 0);
+			}
+			else {
+				destEntry->countDelta += count != NULL ? count->count : 1;
+			}
+			if (destEntry->extendData == nullptr) {
+				destEntry->extendData = (tList<ExtraDataList>*) tList<ExtraDataList>::Create();
+			}
+			destEntry->extendData->AddAt(m_data.xData, 0);
+		}
+		if (m_data.entry) {
+			if (m_data.count > 0 && (m_data.entry->extendData == nullptr || m_data.entry->extendData->IsEmpty())) {
+				//USe the countDelta
+				m_data.entry->countDelta -= m_data.count;
+			}
+			if (m_data.entry->countDelta <= 0) {
+				ExtraContainerChanges* xChanges = ExtraContainerChanges::GetForRef(m_containerRef);
+				xChanges->data->objList->Remove(m_data.entry);
+			}
+			if (destEntry == nullptr) {
+				destEntry = ExtraContainerChanges::EntryData::Create(m_data.count, m_data.type);
+				destCont->data->objList->AddAt(destEntry, 0);
+			}
+			else {
+				destEntry->countDelta += m_data.count;
+				if (destEntry->extendData != nullptr && !destEntry->extendData->IsEmpty())
+					destEntry->extendData->AddAt(m_data.xData, 0);  //TODO maybe unnecessary to add an explicit extraData*
+			}
+		}
+		else if (m_data.count > 0) {   //If m_data.count is 0 or negative then there is nothing to remove
+			//TODO also defer this?
+			//TODO free extradata
+			m_containerRef->RemoveItem(m_data.type, NULL, m_data.count, 0, 0, dest, NULL, NULL, 0, 0);
+		}
+		destCont->Cleanup();
+		SetRemoved();
+		return true;
+	}
 	return false;
 }
 
 bool InventoryReference::CopyToContainer(TESObjectREFR* dest){
+	if (dest == nullptr || !dest->GetContainer()) return false; //Check if dest reference is a valid container
+	ExtraContainerChanges* destCont = ExtraContainerChanges::GetForRef(dest);
+	if (destCont == nullptr) return false;
+	ExtraContainerChanges::EntryData* destEntry = destCont->GetByType(m_data.type);
+	if (m_containerRef && m_tempRef && Validate()) {
+		ExtraCount* xCount = nullptr;
+		SInt32 count = 0;
+		if (m_data.xData) {
+			xCount = (ExtraCount*)m_data.xData->GetByType(kExtraData_Count);
+			count = xCount != nullptr ? xCount->count : 1;
+		}
+		else {
+			count = m_data.count;
+		}
+		if (destEntry == nullptr) {
+			destEntry = ExtraContainerChanges::EntryData::Create(count , m_data.type);
+		}
+		else {
+			destEntry->countDelta += count;
+		}
+		if (m_data.xData) {
+			ExtraDataList* newData = ExtraDataList::Create();
+			newData->Copy(m_data.xData);
+			if (destEntry->extendData == nullptr) destEntry->extendData = (tList<ExtraDataList>*) tList<ExtraDataList>::Create();
+			newData->RemoveByType(kExtraData_Worn);
+			newData->RemoveByType(kExtraData_WornLeft);
+			destEntry->extendData->AddAt(newData, 0);
+		}
+		else {
+			if (destEntry->extendData != nullptr && !destEntry->extendData->IsEmpty()) {
+				ExtraDataList* newData = ExtraDataList::Create();
+				xCount = ExtraCount::Create(count);
+				newData->Add(xCount);
+				destEntry->extendData->AddAt(newData, 0);
+			}
+		}
+		destCont->Cleanup();
+		return true;
+	}
     return false;
 }
 
