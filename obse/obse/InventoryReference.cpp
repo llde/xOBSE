@@ -32,6 +32,7 @@ InventoryReference* InventoryReference::CreateInventoryRef(TESObjectREFR* contai
 	invRefr->m_bRemoved = false;
 	invRefr->m_data = Data();
 	invRefr->SetData(data);
+	invRefr->actions = new std::queue<DeferredAction*>();
 	InventoryReference::s_refmap[refr->refID] = invRefr;
 	return invRefr;
 }
@@ -59,6 +60,7 @@ TESObjectREFR* InventoryReference::CreateInventoryRefEntry(TESObjectREFR* contai
 
 InventoryReference::~InventoryReference(){
 	DEBUG_PRINT("Destroying IR");
+	delete actions;
 	if (m_data.type) Release();
 	DEBUG_PRINT("Destroying IR1");
 
@@ -79,7 +81,23 @@ void InventoryReference::Release(){
 	SetData(Data());
 }
 
-void InventoryReference::DoDeferredActions() { return; } //TODO implement when recreating DeferredActions
+void InventoryReference::DoDeferredActions() { 
+	DEBUG_PRINT("Mortacci1");
+	while (!actions->empty()) {
+		DEBUG_PRINT("Mortacci2");
+		DeferredAction* action = actions->front();
+		DEBUG_PRINT("Mortacci3");
+
+		if (!action->Execute(this)) {
+			_MESSAGE("[WARNING]: Deferred action failed");
+		}
+		DEBUG_PRINT("Mortacci4");
+		actions->pop();
+		DEBUG_PRINT("Mortacci5");
+		delete action;
+		DEBUG_PRINT("Mortacci6");
+	}
+}
 
 bool InventoryReference::SetData(Data &data){
 	DEBUG_PRINT("Hey %u", m_data.temporary);
@@ -188,7 +206,11 @@ void InventoryReference::Clean(){
 
 bool InventoryReference::RemoveFromContainer(){
 	if (m_containerRef && m_tempRef && Validate()) {
-		if (m_data.xData->IsWorn()) return false; //TODO deferred action
+		if (m_data.xData->IsWorn()) {
+			ExtraCount* count = (ExtraCount*)m_data.xData->GetByType(kExtraData_Count);
+			actions->push(new DeferredAction(Action_Remove, m_data, nullptr , count ? count->count : 1));
+			return true; //TODO deferred action
+		}
 		if (m_data.entry && m_data.entry->extendData && m_data.xData) {
 			ExtraCount* count = (ExtraCount*)m_data.xData->GetByType(kExtraData_Count);
 			m_data.entry->extendData->Remove(m_data.xData);  //TODO remember to free
@@ -205,9 +227,8 @@ bool InventoryReference::RemoveFromContainer(){
 			}
 		}
 		else if(m_data.count > 0){   //If m_data.count is 0 or negative then there is nothing to remove
-			//TODO also defer this?
 			//TODO free extradata
-			m_containerRef->RemoveItem(m_data.type, NULL, m_data.count, 0, 0, NULL, NULL, NULL, 0, 0);
+			actions->push(new DeferredAction(Action_Remove, m_data, nullptr, m_data.count));
 		}
 		SetRemoved();
 		return true;
@@ -222,7 +243,10 @@ bool InventoryReference::MoveToContainer(TESObjectREFR* dest){
 	ExtraContainerChanges::EntryData* destEntry = destCont->GetByType(m_data.type);
 
 	if (m_containerRef && m_tempRef && Validate()) {
-		if (m_data.xData->IsWorn()) return false; //TODO deferred action
+		if (m_data.xData->IsWorn()) {
+			ExtraCount* count = (ExtraCount*)m_data.xData->GetByType(kExtraData_Count);
+			actions->push(new DeferredAction(Action_Remove, m_data, dest, count ? count->count : 1));
+		}
 		if (m_data.entry && m_data.entry->extendData && m_data.xData) {
 			ExtraCount* count = (ExtraCount*)m_data.xData->GetByType(kExtraData_Count);
 			m_data.entry->extendData->Remove(m_data.xData);  //TODO remember to free
@@ -260,9 +284,8 @@ bool InventoryReference::MoveToContainer(TESObjectREFR* dest){
 			}
 		}
 		else if (m_data.count > 0) {   //If m_data.count is 0 or negative then there is nothing to remove
-			//TODO also defer this?
 			//TODO free extradata
-			m_containerRef->RemoveItem(m_data.type, NULL, m_data.count, 0, 0, dest, NULL, NULL, 0, 0);
+			actions->push(new DeferredAction(Action_Remove, m_data, dest, m_data.count));
 		}
 		destCont->Cleanup();
 		SetRemoved();
@@ -315,6 +338,43 @@ bool InventoryReference::CopyToContainer(TESObjectREFR* dest){
 }
 
 bool InventoryReference::SetEquipped(bool bEquipped){
-    return false;
+	if (m_data.xData && m_data.xData->IsWorn() == bEquipped) return false;
+	else if (bEquipped == false) return false;
+	SInt32 count = 1;
+	if (m_data.xData) {
+		ExtraCount* co = (ExtraCount*) m_data.xData->GetByType(kExtraData_Count);
+		count = co ? co->count : 1;
+	}
+	else {
+		count = m_data.count;
+	}
+	actions->push(new DeferredAction(Action_Equip, m_data, nullptr, count));
+    return true;
 }
 
+bool InventoryReference::DeferredAction::Execute(InventoryReference* iref) {
+	TESObjectREFR* cont = iref->GetContainer();
+	switch (type) {
+		case Action_Equip: {
+			if (!cont->IsActor())  return false;
+			Actor* actor = (Actor*)cont;
+			if (data.xData && data.xData->IsWorn()) {
+				actor->UnequipItem(data.type, count, data.xData, 0, 0, 0);
+			}
+			else {
+				//TODO check explicitly the stack count only for arrows?
+				actor->EquipItem(data.type, count, data.xData, 0, 0);
+			}
+			return true;
+		}
+		case Action_Remove: {
+			cont->RemoveItem(data.type, data.xData, count, 0, 0, dest, nullptr, nullptr, 1, 0);
+			iref->SetRemoved();
+			iref->SetData(InventoryReference::Data());
+			return true;
+		}
+		default: {
+			return false;
+		}
+	}
+}

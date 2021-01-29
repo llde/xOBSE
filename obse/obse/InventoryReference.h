@@ -25,14 +25,28 @@ public:
 		}  
     };
     
-    
+	enum DeferredActionType {
+		Action_Equip,
+		Action_Remove
+	};
+
+	class DeferredAction {
+		DeferredActionType	type;
+		Data				data;
+		TESObjectREFR*		dest;
+		SInt32				count;
+	public:
+		DeferredAction(DeferredActionType action, const Data& data, TESObjectREFR* dest, SInt32 count) : type(action), data(data), dest(dest), count(count){}
+		bool Execute(InventoryReference* iref);
+	};
+
     Data						m_data;
 	TESObjectREFR*				m_containerRef;
 	TESObjectREFR*				m_tempRef;
 	bool						m_bRemoved;
     bool                        m_tempEntry;  //If the current ExtraContainerChanges::EntryData* in Data is temporary.
 	bool						m_bDoValidation;
-    
+	std::queue<DeferredAction*>* actions;
     ~InventoryReference();
 
 	TESObjectREFR* GetContainer() { return m_containerRef; }
