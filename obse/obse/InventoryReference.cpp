@@ -159,8 +159,8 @@ bool InventoryReference::Validate()
 	// ExtraContainerChanges, potentially invalidating the InventoryReference::Data pointers
 	// if m_bValidate is true, check for this occurrence before doing stuff with the temp ref
 	// doing this in foreach loops is going to make them really slooooow.
-    if (m_bRemoved) return false;
 	if (!m_bDoValidation) return true;
+	if (m_bRemoved) return false;
 
 	ExtraContainerChanges* xChanges = (ExtraContainerChanges*)m_containerRef->baseExtraList.GetByType(kExtraData_ContainerChanges);
 	if (xChanges && xChanges->data) {

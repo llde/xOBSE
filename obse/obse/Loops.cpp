@@ -183,6 +183,7 @@ ContainerIterLoop::ContainerIterLoop(const ForEachContext* context)
                     }
                 }
 				if (countExtraData > 0) {//There are still leftovers items not associated with an ExtraDataList TODO does this case actually happen?
+					DEBUG_PRINT("Got remaining  stack of %d  for %s", countExtraData, GetFullName(form));
 					m_elements.push_back(IRefData(form, entry.Get(), countExtraData));
 					//TODO Add these to the baseContainer objects if any
 				}

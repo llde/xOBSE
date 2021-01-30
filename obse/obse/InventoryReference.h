@@ -52,7 +52,7 @@ public:
 	TESObjectREFR* GetContainer() { return m_containerRef; }
 	void SetContainer(TESObjectREFR* cont) { m_containerRef = cont; }
 	bool SetData(Data &data);
-	TESObjectREFR* GetRef() { return Validate() ? m_tempRef : NULL; }
+	TESObjectREFR* GetRef() { return m_tempRef; }
 	static TESObjectREFR* GetRefBySelf(InventoryReference* self) { return self ? self->GetRef() : NULL; }	// Needed to get convert the address to a void*
 
 	bool WriteRefDataToContainer();
