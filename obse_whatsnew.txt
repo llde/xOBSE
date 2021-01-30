@@ -2,12 +2,14 @@ xOBSE 22.0
     Global:
         - Added an AppVeyor CI. Build will be pushed from AppVeyor instead of using a local build.
         - This should also fix the slow start some people are experiencing, while keeping the CRT statically linked
-    Fix:
+    Fix/Changes:
         - GetByOpcode was using a linear search (O(n)) for know opcode, reimplement to constant time (O(1))
-        - Add a check for parentCell in GetParentCellOwner commnand. Should fix a CTD when the parentCell is NULL
+        - Add a check for parentCell in GetParentCellOwner command. Should fix a CTD when the parentCell is NULL
+        - Rewrote InventoryReference and ContainerForLoop code. Should fix some memory leaks and items that weren't removed properly from the containers. Also fix a crash when iteratating the inventory in menumode while having a soultrap event handled  
     API:
         - Decode more arguments for RemoveItem
         - Add 10 arguments ThisStdCall
+        - ExtraContianerChanges use tLsit for objList field, instead of rolling specialized version of a linked list everytime 
         
 xOBSE 21.8:
     Global:
