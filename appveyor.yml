@@ -35,3 +35,6 @@ artifacts:
 
     - name: "obse_command_doc.html"
       path: \**\obse_command_doc.html
+
+    - name: "obse.pdb"
+      path: \**\obse.pdb
