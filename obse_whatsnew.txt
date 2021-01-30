@@ -9,7 +9,7 @@ xOBSE 22.0
     API:
         - Decode more arguments for RemoveItem
         - Add 10 arguments ThisStdCall
-        - ExtraContianerChanges use tLsit for objList field, instead of rolling specialized version of a linked list everytime 
+        - ExtraContainerChanges use tList for objList field, instead of rolling specialized version of a linked list everytime 
         
 xOBSE 21.8:
     Global:
