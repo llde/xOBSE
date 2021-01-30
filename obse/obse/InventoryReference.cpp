@@ -82,20 +82,13 @@ void InventoryReference::Release(){
 }
 
 void InventoryReference::DoDeferredActions() { 
-	DEBUG_PRINT("Mortacci1");
 	while (!actions->empty()) {
-		DEBUG_PRINT("Mortacci2");
 		DeferredAction* action = actions->front();
-		DEBUG_PRINT("Mortacci3");
-
 		if (!action->Execute(this)) {
 			_MESSAGE("[WARNING]: Deferred action failed");
 		}
-		DEBUG_PRINT("Mortacci4");
 		actions->pop();
-		DEBUG_PRINT("Mortacci5");
 		delete action;
-		DEBUG_PRINT("Mortacci6");
 	}
 }
 
@@ -214,6 +207,7 @@ bool InventoryReference::RemoveFromContainer(){
 		if (m_data.entry && m_data.entry->extendData && m_data.xData) {
 			ExtraCount* count = (ExtraCount*)m_data.xData->GetByType(kExtraData_Count);
 			m_data.entry->extendData->Remove(m_data.xData);  //TODO remember to free
+			FormHeap_Free(m_data.xData);
 			m_data.entry->countDelta -= count != NULL ? count->count : 1;
 		}
 		if (m_data.entry) {
@@ -224,6 +218,7 @@ bool InventoryReference::RemoveFromContainer(){
 			if (m_data.entry->countDelta <= 0) {
 				ExtraContainerChanges* xChanges = ExtraContainerChanges::GetForRef(m_containerRef);
 				xChanges->data->objList->Remove(m_data.entry);
+				FormHeap_Free(m_data.entry);
 			}
 		}
 		else if(m_data.count > 0){   //If m_data.count is 0 or negative then there is nothing to remove
