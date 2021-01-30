@@ -60,10 +60,9 @@ TESObjectREFR* InventoryReference::CreateInventoryRefEntry(TESObjectREFR* contai
 
 InventoryReference::~InventoryReference(){
 	DEBUG_PRINT("Destroying IR");
-	delete actions;
 	if (m_data.type) Release();
 	DEBUG_PRINT("Destroying IR1");
-
+	delete actions;
 	if (m_tempRef) m_tempRef->Destroy(true);
 	DEBUG_PRINT("Destroying IR2");
 
