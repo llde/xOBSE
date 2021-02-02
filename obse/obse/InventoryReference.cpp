@@ -277,6 +277,7 @@ static void MoveToDestContainerEntry(InventoryReference::Data& data, ExtraContai
 	
 	if (data.entry->countDelta <= 0) {
 		from->data->objList->Remove(data.entry);
+		FormHeap_Free(data.entry);
 	}
 	if (destEntry == nullptr) {
 		destEntry = ExtraContainerChanges::EntryData::Create(data.count, data.type);
@@ -286,7 +287,7 @@ static void MoveToDestContainerEntry(InventoryReference::Data& data, ExtraContai
 		DEBUG_PRINT("Ma limorta5   %d", destEntry->countDelta);
 		destEntry->countDelta += data.count;
 		DEBUG_PRINT("Ma limorta5   %d", destEntry->countDelta);
-		if (destEntry->extendData != nullptr && data.count > 1)
+		if (destEntry->extendData != nullptr &&  data.xData && data.count > 1)
 			destEntry->extendData->AddAt(data.xData, 0);  //TODO maybe unnecessary to add an explicit extraData*
 	}
 }

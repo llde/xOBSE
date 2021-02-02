@@ -362,16 +362,13 @@ public:
 		return count;
 	}
 
-	class AcceptAll {
-	public:
-		bool Accept(Item* item) {
-			return true;
+	void RemoveAll() const {
+		_Node* head = Head();
+		if (head == nullptr || head->item == nullptr) return;  //Assume empty list if first element has null item 
+		_Node* n = head;
+		while (n->item != nullptr) {
+			n->RemoveMe();
 		}
-	};
-
-	void RemoveAll() const
-	{
-		FreeNodes(const_cast<_Node*>(Head()), AcceptAll());
 	}
 
 	Item* RemoveNth(SInt32 n)
@@ -400,26 +397,8 @@ public:
 	}
 
 	template <class Op>
-	UInt32 RemoveIf(Op& op)
-	{
+	UInt32 RemoveIf(Op& op) {
 		return FreeNodes(const_cast<_Node*>(Head()), op);
-	}
-
-	template <class Op>
-	SInt32 GetIndexOf(Op& op)
-	{
-		SInt32 idx = 0;
-		const _Node* pCur = Head();
-		while (pCur && pCur->Item() && !op.Accept(pCur->Item()))
-		{
-			idx++;
-			pCur = pCur->Next();
-		}
-
-		if (pCur && pCur->Item())
-			return idx;
-		else
-			return -1;
 	}
 
 	SInt32 IndexOf(_Node* node) {
@@ -429,22 +408,38 @@ public:
 			for (cur = Head(); cur; cur = cur->Next()) {
 				idx++;
 				if (cur == node) {
-					break;
+					return idx;
+				}
+			}
+		}
+		return -1;
+	}
+
+	SInt32 IndexOf(Item* item) {
+		SInt32 idx = -1;
+		_Node* cur = NULL;
+		if (item) {
+			for (cur = Head(); cur; cur = cur->Next()) {
+				idx++;
+				if (cur->item == item) {
+					return idx;
 				}
 			}
 		}
 
-		return (cur == node) ? idx : -1;
+		return -1;
 	}
 
-	SInt32 IndexOf(Item* item)
-	{
-		return GetIndexOf(AcceptEqual(item));
-	}
-
-	bool Remove(Item* item)
-	{
-		return RemoveIf(AcceptEqual(item)) > 0;
+	bool Remove(Item* item) {
+		_Node* head = Head();
+		if (head == nullptr || head->item == nullptr) return false;  //Assume empty list if first element has null item 
+		for (_Node* n = head; n != nullptr; n = n->next) {
+			if (item == n->item) {
+				n->RemoveMe();
+				return true;
+			}
+		}
+		return false;
 	}
 
 	bool IsEmpty() {
@@ -452,8 +447,7 @@ public:
 		return (head == NULL || head->Item() == NULL);
 	}
 
-	static tListBase<Item, _bHeadIsPtr> * Create()
-	{
+	static tListBase<Item, _bHeadIsPtr> * Create() {
 		tListBase<Item, _bHeadIsPtr>* list = (tListBase<Item, _bHeadIsPtr>*)FormHeap_Allocate(sizeof(tListBase<Item, _bHeadIsPtr>));
 		memset(list, 0, sizeof(tListBase<Item, _bHeadIsPtr>));
 		return list;
