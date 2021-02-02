@@ -123,7 +123,13 @@ bool InventoryReference::SetData(Data &data){
 bool InventoryReference::WriteRefDataToContainer(){  //IR operates directly on container, maybe non-IR aware commands can modifiy the XDataList  
 	if (m_bRemoved) return true;
 	if (!m_containerRef || !Validate()) return false;
-//	if (m_data.xData) WriteToExtraDataList(&m_tempRef->baseExtraList , m_data.xData);
+	if (m_data.xData) {
+		m_data.xData->RemoveAll();
+		//this->Copy(other) cause items to lose the IsWorn xData  from other, unless the this is an empty xDataList. WHY?
+		//Maybe it's the effect of ExtraDataList__RemoveAllCopyabgleExtraData at 0x0041E3D0?
+		m_data.xData->Copy(&m_tempRef->baseExtraList);   //TODO only do this if extradata is changed  
+	}
+	//TODO if the Xdata is changed and no xData was passed originally, create an xData and assing it to the corrispondent EntryData 
 	return true;
 }
 
