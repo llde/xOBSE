@@ -92,58 +92,43 @@ void InventoryReference::DoDeferredActions() {
 }
 
 bool InventoryReference::SetData(Data &data){
-	DEBUG_PRINT("Hey %u", m_data.temporary);
-	if (m_data.entry) DEBUG_PRINT("ED* B %0X  %s", m_data.entry->extendData, GetFullName(m_data.type));
-	if (m_data.temporary > 0 && m_data.xData) {
-		DEBUG_PRINT("Destroying Extradata");
-		m_data.xData->RemoveAll();
-		if (m_data.entry && m_data.entry->extendData /*&&  m_data.temporary != 2*/) { 
-			//extendData can acquire strange values the m_data.temporary != 2 check is a safeguard.
-			//and m_data.entry->extendData is NULL, causing it to be null no more and an invalid value
-			//This can happen in  a ContainerLoop if not setting Data(NULL,NULL,NULL) at loop end, waiting for the next mainloop tick.
-			//Maybe has other triggers
-			//TODO investigate why it happen. Maybe the gameplay hook, execute the successive frame? To be solid it should be executd just after the script runner  
-			m_data.entry->extendData->Remove(m_data.xData);
-//			m_data.entry->Cleanup();
-		}
-		m_data.xData->Destroy(true);
-//		FormHeap_Free(m_data.xData);
-		m_data.xData = nullptr;
-
-	}
 	DEBUG_PRINT("Set IR  %s", GetFullName(data.type));
 	m_bRemoved = false;
 	m_tempRef->baseForm = data.type;
 	m_data = data;
-	if (m_data.temporary > 0  && m_data.type) {
-		DEBUG_PRINT("Allocating ExtraData");
-		if (!m_data.xData) {
-			m_data.xData = ExtraDataList::Create();
+	if (!m_data.xData  && m_data.type) {
+		DEBUG_PRINT("Fixup REF stack  %d", m_data.count);
+		m_tempRef->baseExtraList.RemoveAll();
+		//	ZeroMemory(&m_tempRef->baseExtraList, sizeof(ExtraDataList));
+		if (m_data.count > 1) {
 			ExtraCount* xCount = ExtraCount::Create(m_data.count);
-			//TODO do we need an EntryData?
-			m_data.xData->Add(xCount);
-		}
-		if (m_data.entry && m_data.entry->extendData) {
-			m_data.entry->extendData->AddAt(m_data.xData, 0);
-			DEBUG_PRINT("Finished Allocating ExtraData");
+			m_tempRef->baseExtraList.Add(xCount);
 		}
 	}
+	else if (!m_data.xData && m_data.type == nullptr) {
+		DEBUG_PRINT("Free last node");
+		m_tempRef->baseExtraList.RemoveAll();
+	}
+	else {
+		m_tempRef->baseExtraList.RemoveAll();
+		m_tempRef->baseExtraList.Copy(m_data.xData);
+		m_tempRef->baseExtraList.DebugDump();
+		DEBUG_PRINT("Wrote data to ref");
+	}
 	if (m_data.entry) DEBUG_PRINT("ED* %0X   %s", m_data.entry->extendData, GetFullName(m_data.type));
-	WriteToExtraDataList(m_data.xData, &m_tempRef->baseExtraList);
-	DEBUG_PRINT("Wrote data to ref");
 
 	return true;
 }
 
-bool InventoryReference::WriteRefDataToContainer(){
+bool InventoryReference::WriteRefDataToContainer(){  //IR operates directly on container, maybe non-IR aware commands can modifiy the XDataList  
 	if (m_bRemoved) return true;
 	if (!m_containerRef || !Validate()) return false;
-	if (m_data.xData) WriteToExtraDataList(&m_tempRef->baseExtraList , m_data.xData);
+//	if (m_data.xData) WriteToExtraDataList(&m_tempRef->baseExtraList , m_data.xData);
 	return true;
 }
 
 SInt32 InventoryReference::GetCount(){
-    ExtraCount* xCount = (ExtraCount*)m_data.xData->GetByType(kExtraData_Count);
+    ExtraCount* xCount = (ExtraCount*)m_tempRef->baseExtraList.GetByType(kExtraData_Count);
     SInt32  count = xCount ? xCount->count : 1;
 	if (count < 0)
 	{
@@ -291,14 +276,14 @@ bool InventoryReference::MoveToContainer(TESObjectREFR* dest){
 	ExtraContainerChanges* destCont =  ExtraContainerChanges::GetForRef(dest);
 	if (destCont == nullptr) return false;
 	ExtraContainerChanges* xChanges = ExtraContainerChanges::GetForRef(m_containerRef);
-	m_data.xData->DebugDump();
-	DEBUG_PRINT("Porcoddio %d", m_data.temporary);
+	DEBUG_PRINT("Porcoddio %d  %0X   %0X   %0X", m_data.temporary, m_data.entry, m_data.xData , m_data.entry != NULL ? (SInt32)m_data.entry->extendData : -1);
 	if (m_containerRef && m_tempRef && Validate()) {
-		if (m_data.xData->IsWorn()) {
+		if (m_data.xData && m_data.xData->IsWorn()) {
 			ExtraCount* count = (ExtraCount*)m_data.xData->GetByType(kExtraData_Count);
 			actions->push(new DeferredAction(Action_Remove, m_data, dest, count ? count->count : 1));
 		}
-		else if (m_data.entry && m_data.entry->extendData && m_data.xData  && m_data.temporary == 0) {
+		else if (m_data.entry && m_data.entry->extendData && m_data.xData) {
+			m_data.xData->DebugDump();
 			MoveToDestContainerXData(m_data, xChanges, destCont);
 			destCont->Cleanup();
 		}
