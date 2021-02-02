@@ -26,7 +26,15 @@ NiTPointerList <TESForm>		* g_quickKeyList = (NiTPointerList <TESForm> *)0x00B3B
 #endif
 
 /*** BSStringT ***/
-
+/*
+          DEFINE_MEMBER_FN(Append,             void,       0x00412FA0, const char*);   //Verified  (thiscall)
+         DEFINE_MEMBER_FN(CopyValueFromOther, BSStringT*, 0x004FB4C0, BSStringT*); // returns self    //Not verified
+         DEFINE_MEMBER_FN(IsNotEqualTo,       bool,       0x00517B20, BSStringT*);  //Verified (thiscall)
+         DEFINE_MEMBER_FN(Replace_MinBufLen,  void,       0x004028D0, const char*, UInt32 minBufferLength);  //This is BSStringT_Set (thiscall)
+         DEFINE_MEMBER_FN(Replace,            void,       0x00488810, const char*);  //A function that call BSStringT_Set  
+         DEFINE_MEMBER_FN(Sprintf,            void,       0x00402D00, const char* format, UInt32* varArgs);  //BSStringT_Format (thiscall)
+ 
+ */
 bool BSStringT::Set(const char * src)
 {
 	if (!src) {
