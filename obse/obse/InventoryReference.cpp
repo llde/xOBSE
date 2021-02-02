@@ -126,7 +126,7 @@ bool InventoryReference::WriteRefDataToContainer(){  //IR operates directly on c
 	if (m_data.xData) {
 		m_data.xData->RemoveAll();
 		//this->Copy(other) cause items to lose the IsWorn xData  from other, unless the this is an empty xDataList. WHY?
-		//Maybe it's the effect of ExtraDataList__RemoveAllCopyabgleExtraData at 0x0041E3D0?
+		//Maybe it's the effect of ExtraDataList__RemoveAllCopyableExtraData at 0x0041E3D0?
 		m_data.xData->Copy(&m_tempRef->baseExtraList);   //TODO only do this if extradata is changed  
 	}
 	//TODO if the Xdata is changed and no xData was passed originally, create an xData and assing it to the corrispondent EntryData 
@@ -146,6 +146,7 @@ SInt32 InventoryReference::GetCount(){
 
 bool InventoryReference::Validate()
 {
+	//TODO remake Validate
 	// it is possible that an inventory reference is created, and then commands like RemoveItem are used which modify the 
 	// ExtraContainerChanges, potentially invalidating the InventoryReference::Data pointers
 	// if m_bValidate is true, check for this occurrence before doing stuff with the temp ref
@@ -186,6 +187,19 @@ void InventoryReference::Clean(){
 	}
 	s_refmap.clear();
 }
+
+/*
+	Assume m_data.entry m_data.entry->extendData and m_data.xData
+	This means that the xData is is derived from the EntryData for the specifici form instead of being constructed after
+*/
+static void RemoveFromContainerXData(InventoryReference::Data& data, ExtraContainerChanges* from) {}
+
+/*
+	Assume m_data.entry but not a valid or valid but empty m_data.entry->extendData
+	This means that the xData is constructed from the entryData countDelta.
+*/
+
+static void RemoveFromContainerEntry(InventoryReference::Data& data, ExtraContainerChanges* from) {}
 
 bool InventoryReference::RemoveFromContainer(){
 	if (m_containerRef && m_tempRef && Validate()) {
