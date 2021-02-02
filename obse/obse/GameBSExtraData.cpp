@@ -17,11 +17,12 @@ BSExtraData* BaseExtraList::GetByType(UInt32 type) const{
 	if (!hasType) return NULL;
 
 	EnterCriticalSection(BSExtraDataSection);
-	for(BSExtraData * traverse = m_data; traverse; traverse = traverse->next)
+	for (BSExtraData* traverse = m_data; traverse; traverse = traverse->next) {
 		if (traverse->type == type) {
 			LeaveCriticalSection(BSExtraDataSection);
 			return traverse;
 		}
+	}
 	LeaveCriticalSection(BSExtraDataSection);
 #ifdef _DEBUG
 	Console_Print("ExtraData HasType(%d) is true but it wasn't found!", type);
