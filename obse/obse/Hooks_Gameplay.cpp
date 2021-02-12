@@ -25,117 +25,6 @@
 
 static void HandleMainLoopHook(void);
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-
-static const UInt32 kMainLoopHookPatchAddr = 0x0040EC8E;
-static const UInt32 kMainLoopHookRetnAddr = 0x0040EC94;
-
-static const UInt32	kRefIDBugfixRetnAddr = 0x00443E6D;
-
-static __declspec(naked) void RefIDBugfix(void)
-{
-	__asm
-	{
-		mov	edx, [ebx+0x08B8]		// fetch the last-generated refid
-		inc	edx						// increment it
-		or	edx, 0xFF000000			// make sure we wrap from FFFFFFFF -> FF000000 instead of 00000000
-		jmp	[kRefIDBugfixRetnAddr]	// done
-	}
-}
-
-static void InstallRefIDBugfix(void)
-{
-	WriteRelJump(0x00443E66, (UInt32)&RefIDBugfix);
-}
-
-static __declspec(naked) void MainLoopHook(void)
-{
-	__asm
-	{
-		pushad
-		call	HandleMainLoopHook
-		popad
-		mov		ecx, [edx + 0x280]
-		jmp		[kMainLoopHookRetnAddr]
-	}
-}
-
-static const UInt32	kNewGamePatchAddr = 0x005A7727;
-
-static const UInt32 QUIMsgPatchAddr = 0x0056DF90;
-static const UInt8  QUIMsgData = 0x51;	//code overwritten by retn
-static const UInt32 QUIMsg_2PatchAddr = 0x0056E0A0;
-static const UInt8 QUIMsg_2Data = 0xD9;
-
-static const UInt32	kOriginalLoadCreatedObjectsAddr = 0x00461350;
-static const UInt32	kLoadCreatedObjectsHookAddr = 0x0046347B;
-
-static const UInt32 kEnchantItemHookPatchAddr = 0x0059562C;
-static const UInt32 kEnchantItemHookRetnAddr =  0x00595638;
-
-static const UInt32 kCreateSpellHookPatchAddr = 0x005C875A;
-static const UInt32 kCreateSpellHookRetnAddr =  0x005C8766;
-
-static const UInt32 kCreatePotionHookPatchAddr = 0x00587BD8;
-static const UInt32 kCreatePotionHookRetnAddr  = 0x00587BDD;
-static const UInt32 kCreatePotionHookCallAddr  = 0x00443EE0;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-
-static const UInt32 kMainLoopHookPatchAddr = 0x0040F16D;
-static const UInt32 kMainLoopHookRetnAddr = 0x0040F173;
-
-static const UInt32	kRefIDBugfixRetnAddr = 0x00448F76;
-
-static __declspec(naked) void RefIDBugfix(void)
-{
-	__asm
-	{
-		inc	dword ptr [ebx+0x8C0]					// increment the current refid
-		or	dword ptr [ebx+0x8C0], 0xFF000000		// make sure we wrap from FFFFFFFF -> FF000000 instead of 00000000
-		jmp	[kRefIDBugfixRetnAddr]					// done
-	}
-}
-
-static void InstallRefIDBugfix(void)
-{
-	WriteRelJump(0x00448F70, (UInt32)&RefIDBugfix);
-}
-
-static __declspec(naked) void MainLoopHook(void)
-{
-	__asm
-	{
-		pushad
-		call	HandleMainLoopHook
-		popad
-		mov		eax, [edx + 0x280]			// ### check this
-		jmp		[kMainLoopHookRetnAddr]
-	}
-}
-
-static const UInt32	kNewGamePatchAddr = 0x005B5D0D;
-
-static const UInt32 QUIMsgPatchAddr = 0x0057ABC0;
-static const UInt8  QUIMsgData = 0x51;	//code overwritten by retn
-static const UInt32 QUIMsg_2PatchAddr = 0x0057ACD0;
-static const UInt8 QUIMsg_2Data = 0xD9;
-
-static const UInt32	kOriginalLoadCreatedObjectsAddr = 0x00461350;
-static const UInt32	kLoadCreatedObjectsHookAddr = 0x0046347B;
-
-static const UInt32 kEnchantItemHookPatchAddr = 0x005A2DCB;
-static const UInt32 kEnchantItemHookRetnAddr =  0x005A2DD7;
-
-static const UInt32 kCreateSpellHookPatchAddr = 0x005D7CFE;
-static const UInt32 kCreateSpellHookRetnAddr =  0x005D7D0A;
-
-static const UInt32 kCreatePotionHookPatchAddr = 0x00594C5A;
-static const UInt32 kCreatePotionHookRetnAddr  = 0x00594C5F;
-static const UInt32 kCreatePotionHookCallAddr  = 0x0044A930;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-
 static const UInt32 kMainLoopHookPatchAddr = 0x0040F19D;
 static const UInt32 kMainLoopHookRetnAddr = 0x0040F1A3;
 
@@ -198,9 +87,7 @@ static const UInt32 kContainerMenuDanglingPointerPatchAddr = 0x00597D26;
 static const UInt32 kContainerMenuSecondDanglingPointerPatchAddr = 0x00599B41;
 static const UInt32 kContainerMenuSecondDanglingPointerRetnAddr = 0x00599B47;
 
-#else
-#error unsupported oblivion version
-#endif
+
 
 // this stores a pointer to the most recently enchanted item at the moment it is created
 TESForm* g_LastEnchantedItem = 0;
@@ -368,9 +255,9 @@ static void HandleMainLoopHook(void)
 	if (InventoryReference::HasData())
 		InventoryReference::Clean();
 
-	// currently unused
-	//if (TaskManager::HasTasks())
-	//	TaskManager::Run();
+	// execute queued tasks if any
+	if (TaskManager::HasTasks())
+		TaskManager::Run();
 
 	// Tick event manager
 	EventManager::Tick();
@@ -464,27 +351,16 @@ void TESSaveLoadGame::LoadCreatedObjectsHook(UInt32 unk0)
 	visitor.Visit(CallPostFixup());
 }
 
-bool TESSaveLoadGame::LoadGame(const char* filename)
-{
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	return (bool)ThisStdCall(0x0045EA60, this, 0, filename, 0);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	return (bool)ThisStdCall(0x00465760, this, 0, filename, 0);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
+bool TESSaveLoadGame::LoadGame(const char* filename){
+
 	bool bFileFound = ThisStdCall(0x00465860, this, 0, filename, 0) ? true : false;
 	return bFileFound;
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 
-UInt32 TESSaveLoadGame::ResetObject(TESForm* object, UInt32 changeFlags, UInt32 unk2)
-{
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
+UInt32 TESSaveLoadGame::ResetObject(TESForm* object, UInt32 changeFlags, UInt32 unk2){
 	return ThisStdCall(0x000045BDE0, this, object, changeFlags, unk2);
-#else
-#error unsupported oblivion version
-#endif
+
 }
 
 #define DEBUG_PRINT_CHANNEL(idx)								\
@@ -508,18 +384,8 @@ DEBUG_PRINT_CHANNEL(6)	// ignored
 // 8 - ingame
 
 // these are all ignored in-game
-static void Hook_DebugPrint(void)
-{
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	const UInt32	kMessageHandlerVtblBase = 0x00A0A468;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	const UInt32	kMessageHandlerVtblBase = 0x00A3DB18;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
+static void Hook_DebugPrint(void) {
 	const UInt32	kMessageHandlerVtblBase = 0x00A3DA08;
-#else
-#error unsupported oblivion version
-#endif
-
 	SafeWrite32(kMessageHandlerVtblBase + (0 * 4), (UInt32)DebugPrint0);
 	SafeWrite32(kMessageHandlerVtblBase + (1 * 4), (UInt32)DebugPrint1);
 	SafeWrite32(kMessageHandlerVtblBase + (2 * 4), (UInt32)DebugPrint2);
@@ -623,15 +489,7 @@ bool ToggleMenuShortcutKeys(bool bEnable, Menu* menu)
 
 // Hook GetIsRace function to allow scripters to define aliases for mod-added races
 // Only apply hook if SetRaceAlias command is actually called
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-static const UInt32 kGetIsRacePatchAddr = 0x004EB460;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-static const UInt32 kGetIsRacePatchAddr = 0x004F6FD0;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 static const UInt32 kGetIsRacePatchAddr = 0x004F6F40;
-#else
-#error unsupported oblivion version
-#endif
 
 // key is refID of aliased race, data is set of refID's of races using that race as an alias
 typedef std::set<UInt32> RefIDSet;
@@ -790,18 +648,15 @@ AlchemyItem* MatchPotion(AlchemyItem* toMatch)
 	return (AlchemyItem*)ThisStdCall(kDataHandler_GetCreatedPotion, *g_dataHandler, toMatch);
 }
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-	static const UInt32		kPlayer_GetActorValueAddr = 0x0065E030;
-	static const UInt32		kPlayer_GetActorValueVtblAddr = 0x00A73C90;
-	static const UInt32		kPlayer_GetActorValueRetnAddresses[] =
-	{	0x005E3818,		// run speed
-		0x005E39C7,		// swim speed
-		0x005E3B77,		// fast swim speed
-		0x005E363E,		// walk speed
-	};
-#else
-#error unsupported oblivion version
-#endif
+static const UInt32		kPlayer_GetActorValueAddr = 0x0065E030;
+static const UInt32		kPlayer_GetActorValueVtblAddr = 0x00A73C90;
+static const UInt32		kPlayer_GetActorValueRetnAddresses[] ={
+	0x005E3818,		// run speed
+	0x005E39C7,		// swim speed
+	0x005E3B77,		// fast swim speed
+	0x005E363E,		// walk speed
+};
+
 
 static double s_pcSpeedModifier = 0;
 static double s_recordedPCSpeedModifier = 0;
@@ -862,13 +717,9 @@ double GetPersistentPlayerMovementSpeedModifier()
 	return s_recordedPCSpeedModifier;
 }
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-	static const UInt32 kCreateReferenceCallAddr		= 0x0048FBC0;
-	static const UInt32 kCreateDroppedReferenceHookAddr = 0x004D87C7;
-	static const UInt32 kCreateDroppedReferenceRetnAddr = 0x004D87CC;
-#else
-#error unsupported Oblivion version
-#endif
+static const UInt32 kCreateReferenceCallAddr		= 0x0048FBC0;
+static const UInt32 kCreateDroppedReferenceHookAddr = 0x004D87C7;
+static const UInt32 kCreateDroppedReferenceRetnAddr = 0x004D87CC;
 
 static TESForm* s_lastDroppedItem = NULL;
 static TESObjectREFR* s_lastDroppedItemRef = NULL;
@@ -912,21 +763,18 @@ TESForm* GetPCLastDroppedItem()
 	return s_lastDroppedItem;
 }
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-	static const UInt32 kExitGameFromIngameMenuPatchAddr = 0x005BDE60;
-	static const UInt32 kExitGameFromIngameMenuRetnAddr  =  0x005BDE66;
+static const UInt32 kExitGameFromIngameMenuPatchAddr = 0x005BDE60;
+static const UInt32 kExitGameFromIngameMenuRetnAddr  =  0x005BDE66;
 
-	static const UInt32 kMainMenuFromIngameMenuPatchAddr = 0x005BDE23;
-	static const UInt32 kMainMenuFromIngameMenuRetnAddr  = 0x005BDE29;
+static const UInt32 kMainMenuFromIngameMenuPatchAddr = 0x005BDE23;
+static const UInt32 kMainMenuFromIngameMenuRetnAddr  = 0x005BDE29;
 
-	static const UInt32 kExitGameFromMainMenuPatchAddr   = 0x005B5A0D;
-	static const UInt32 kExitGameFromMainMenuRetnAddr    = 0x005B5A12;
+static const UInt32 kExitGameFromMainMenuPatchAddr   = 0x005B5A0D;
+static const UInt32 kExitGameFromMainMenuRetnAddr    = 0x005B5A12;
 
-	static const UInt32 kExitGameViaQQQPatchAddr		 = 0x005077F2;
-	static const UInt32 kExitGameViaQQQRetnAddr			 = 0x005077F7;
-#else
-#error unsupported oblivion version
-#endif
+static const UInt32 kExitGameViaQQQPatchAddr		 = 0x005077F2;
+static const UInt32 kExitGameViaQQQRetnAddr			 = 0x005077F7;
+
 
 enum QuitGameMessage
 {
@@ -1209,13 +1057,10 @@ static __declspec(naked) void Hook_ContainerMenuDanglingPointer(void)
 // fix by unequipping everything before removing all items
 // In both cases overwrite a call to BaseExtraList::RemoveAllItems (TESObjectREFR* from, TESObjectREFR* to, UInt32 unk2, bool bRetainOwnership, UInt32 unk4)
 // Could reasonably just patch that function instead, but don't want to mess with other code that may call it
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 static const UInt32 kRemoveAllItems_CallAddr	= 0x00492E70;
 static const UInt32 kRemoveAllItems_PatchAddr	= 0x00507578;
 static const UInt32 kGotoJail_PatchAddr			= 0x00670328;
-#else
-#error unsupported Oblivion version
-#endif
+
 
 static void __stdcall DoUnequipAllItems(TESObjectREFR* refr)
 {
@@ -1371,23 +1216,8 @@ void Hook_Gameplay_Init(void)
 	WriteRelJump(kMainLoopHookPatchAddr, (UInt32)&MainLoopHook);
 
 	// patch enchanted cloned item check
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	SafeWrite8(0x004590ED + 1, 0x20);	// more accurate to branch to 0045DED7
-	WriteRelJump(0x004591EC, 0x00459275);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	SafeWrite8(0x0045DEBD + 1, 0x20);	// more accurate to branch to 0045DED7
-	WriteRelJump(0x0045DFBF, 0x0045E04A);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	SafeWrite8(0x0045DEAD + 1, 0x20);	// more accurate to branch to 0045DED7
 	WriteRelJump(0x0045DFAF, 0x0045E03A);
-#else
-#error unsupported oblivion version
-#endif
-
-#if OBLIVION_VERSION < OBLIVION_VERSION_1_2_410
-	// patch dynamic refid rollover bug
-	InstallRefIDBugfix();
-#endif
 
 	WriteRelCall(kNewGamePatchAddr, (UInt32)&HandleNewGameHook);
 
@@ -1403,19 +1233,8 @@ void Hook_Gameplay_Init(void)
 	// and call the callback ourselves
 
 	// nop out post-load callback
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	SafeWrite8(0x0045B27F + 0, 0x90);
-	SafeWrite8(0x0045B27F + 1, 0x90);
-	SafeWrite8(0x0045B27F + 2, 0x90);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	SafeWrite8(0x004614F9 + 0, 0x90);
-	SafeWrite8(0x004614F9 + 1, 0x90);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	SafeWrite8(0x004614B9 + 0, 0x90);
 	SafeWrite8(0x004614B9 + 1, 0x90);
-#else
-#error unsupported oblivion version
-#endif
 
 	// hook the loader function
 	WriteRelCall(kLoadCreatedObjectsHookAddr, (UInt32)&_TESSaveLoadGame_LoadCreatedObjectsHook);
@@ -1475,15 +1294,12 @@ void Hook_Gameplay_Init(void)
 #endif
 }
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 static TESDescription** s_LastRetrievedDescription = (TESDescription**)0x00B33C04;
 static BSStringT*			s_LastRetrievedDescriptionText = (BSStringT*)0x00B33C08;
 static const UInt32		kTESDescription_GetText_Addr = 0x0046A710;
 static const UInt32		kTESDescriptionHook_RetnAddr = 0x0046A715;
 static const UInt32		kTlsIndex = 0x00BA9DE4;
-#else
-#error unsupported Oblivion version
-#endif
+
 
 static std::map<TESDescription*, std::string> s_descriptionChanges;
 static bool s_bHookInstalled = false;
@@ -1575,14 +1391,10 @@ void SetRetainExtraOwnership(bool bRetain)
 	SafeWrite8(kExtraOwnershipDefaultSetting2, retain);
 }
 
-bool ToggleBlockPerk(UInt32 mastery, bool bEnable)
-{
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
+bool ToggleBlockPerk(UInt32 mastery, bool bEnable){
 	static const UInt32 kJMPatchAddr = 0x005F5C67;
 	static const UInt16 kJMOverwrittenBytes = 0x6D7F;
-#else
-#error unsupported Oblivion version
-#endif
+
 
 	switch (mastery) {
 		case kMasteryLevel_Journeyman:
@@ -1598,17 +1410,12 @@ bool ToggleBlockPerk(UInt32 mastery, bool bEnable)
 	return false;
 }
 
-bool ToggleMercantilePerk (UInt32 mastery, bool bEnable)
-{
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
+bool ToggleMercantilePerk (UInt32 mastery, bool bEnable){
 	// for both, we replace a short 'jl' instruction with a 'jmp' to turn off the perk
 	static const UInt32 kJMPatchAddr = 0x00485627;
 	static const UInt32 kMSPatchAddr = 0x00488F81;
 	// master perk: extra 500 barter gold, replace jnz with jmp to toggle off
 	static const UInt32 kMSPatchAddr2 = 0x005FAAC5;
-#else
-#error unsupported Oblivion version
-#endif
 
 	switch (mastery) {
 		case kMasteryLevel_Journeyman:
@@ -1642,12 +1449,9 @@ bool ToggleSkillPerk(UInt32 actorVal, UInt32 mastery, bool bEnable)
 // quest log text is read from disk as needed
 // SetQuestStageText cmd allows changing the text, so we have to
 // hook QuestStageItem::GetLogText() to support that
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 static const UInt32 kQuestStageItem_GetLogText_RetnAddr = 0x0052AF46;
 static const UInt32 kQuestStageItem_GetLogText_PatchAddr = 0x0052AF40;
-#else
-#error unsupported Oblivion version
-#endif
+
 
 static std::map<QuestStageItem*, std::string> s_questStageTextMap;
 
