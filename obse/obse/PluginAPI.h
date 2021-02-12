@@ -1,6 +1,7 @@
 #pragma once
 
 #include "obse\CommandTable.h"
+#include "Tasks.h"
 
 struct CommandInfo;
 struct ParamInfo;
@@ -40,6 +41,8 @@ enum
 	kInterface_CommandTable,
 	kInterface_Script,
 
+    kInterface_Tasks,
+    kInterface_EventManager,
 	kInterface_Max
 };
 
@@ -574,6 +577,30 @@ struct OBSESerializationInterface
 	// functions the same as GetNextRecordInfo except it doesn't flush the current chunk
 	bool	(* PeekNextRecordInfo)(UInt32 * type, UInt32 * version, UInt32 * length);
 };
+
+
+
+/*
+ * An Interface to submit and remove tasks, functions that operates in the OBSE mainloop.
+ * USe this if you are in need to define an Hook into the OBlivion mainloop.
+ */
+#if OBLIVION
+struct OBSETasksInterface {
+	Task* (*EnqueueTask)(TaskFunc f);
+	void (*RemoveTask)(Task* f);
+	bool (*IsTaskPresent)(Task* f);
+};
+/*
+struct OBSEEventManagerInterface {
+	bool RegisterEvent();
+	bool UnregisterEvent();
+	bool IsEventRegistered();
+	bool DispatchEvent();
+	bool RegisterScriptCallback();
+	bool RegisterNativeCallback();
+};*/
+
+#endif
 
 struct PluginInfo
 {
