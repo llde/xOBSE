@@ -112,7 +112,7 @@ bool InventoryReference::SetData(Data &data){
 	else {
 		m_tempRef->baseExtraList.RemoveAll();
 		m_tempRef->baseExtraList.Copy(m_data.xData);
-		m_tempRef->baseExtraList.DebugDump();
+//		m_tempRef->baseExtraList.DebugDump();
 		DEBUG_PRINT("Wrote data to ref");
 	}
 	if (m_data.entry) DEBUG_PRINT("ED* %0X   %s", m_data.entry->extendData, GetFullName(m_data.type));
@@ -203,7 +203,7 @@ static void RemoveFromContainerEntry(InventoryReference::Data& data, ExtraContai
 
 bool InventoryReference::RemoveFromContainer(){
 	if (m_containerRef && m_tempRef && Validate()) {
-		if (m_data.xData->IsWorn()) {
+		if (m_data.xData &&  m_data.xData->IsWorn()) {
 			ExtraCount* count = (ExtraCount*)m_data.xData->GetByType(kExtraData_Count);
 			actions->push(new DeferredAction(Action_Remove, m_data, nullptr , count ? count->count : 1));
 			return true;
@@ -304,7 +304,6 @@ bool InventoryReference::MoveToContainer(TESObjectREFR* dest){
 			actions->push(new DeferredAction(Action_Remove, m_data, dest, count ? count->count : 1));
 		}
 		else if (m_data.entry && m_data.entry->extendData && m_data.xData) {
-			m_data.xData->DebugDump();
 			MoveToDestContainerXData(m_data, xChanges, destCont);
 			destCont->Cleanup();
 		}
