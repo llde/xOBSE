@@ -304,7 +304,6 @@ bool InventoryReference::MoveToContainer(TESObjectREFR* dest){
 			actions->push(new DeferredAction(Action_Remove, m_data, dest, count ? count->count : 1));
 		}
 		else if (m_data.entry && m_data.entry->extendData && m_data.xData) {
-			m_data.xData->DebugDump();
 			MoveToDestContainerXData(m_data, xChanges, destCont);
 			destCont->Cleanup();
 		}

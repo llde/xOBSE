@@ -72,6 +72,13 @@ static OBSEScriptInterface g_OBSEScriptInterface =
 	PluginAPI::IsUserFunction
 };
 
+
+static OBSETasksInterface g_TasksInterface = {
+	PluginAPI::EnqueueTask,
+	PluginAPI::Remove,
+	PluginAPI::IsTaskEnqueued,
+};
+
 #endif
 
 static OBSEMessagingInterface g_OBSEMessagingInterface =
@@ -114,6 +121,9 @@ static const OBSEInterface g_OBSEInterface =
 	PluginManager::GetPluginLoaded,
 	PluginManager::GetPluginVersion,
 };
+
+
+
 
 PluginManager::PluginManager()
 {
@@ -330,31 +340,34 @@ void * PluginManager::QueryInterface(UInt32 id)
 	{
 #ifdef OBLIVION
 		case kInterface_Console:
-			result = (void *)&g_OBSEConsoleInterface;
+			result = &g_OBSEConsoleInterface;
 			break;
 
 		case kInterface_Serialization:
-			result = (void *)&g_OBSESerializationInterface;
+			result = &g_OBSESerializationInterface;
 			break;
 
 		case kInterface_StringVar:
-			result = (void *)&g_OBSEStringVarInterface;
+			result = &g_OBSEStringVarInterface;
 			break;
 		case kInterface_ArrayVar:
-			result = (void*)&g_OBSEArrayVarInterface;
+			result = &g_OBSEArrayVarInterface;
 			break;
 		case kInterface_IO:
-			result = (void *)&g_OBSEIOInterface;
+			result = &g_OBSEIOInterface;
 			break;
 		case kInterface_Script:
-			result = (void *)&g_OBSEScriptInterface;
+			result = &g_OBSEScriptInterface;
+			break;
+		case kInterface_Tasks:
+			result = &g_TasksInterface;
 			break;
 #endif
 		case kInterface_Messaging:
-			result = (void *)&g_OBSEMessagingInterface;
+			result = &g_OBSEMessagingInterface;
 			break;
 		case kInterface_CommandTable:
-			result = (void*)&g_OBSECommandTableInterface;
+			result = &g_OBSECommandTableInterface;
 			break;
 		default:
 			_WARNING("unknown QueryInterface %08X", id);
