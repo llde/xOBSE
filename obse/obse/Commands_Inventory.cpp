@@ -19,32 +19,11 @@
 #include "obse_common/SafeWrite.h"
 #include "GameOSDepend.h"
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-
-static const _Cmd_Execute Cmd_AddItem_Execute = (_Cmd_Execute)0x004F6600;
-static const _Cmd_Execute Cmd_RemoveItem_Execute = (_Cmd_Execute)0x00508DF0;
-static const _Cmd_Execute Cmd_EquipItem_Execute = (_Cmd_Execute)0x0050B6B0;
-static const _Cmd_Execute Cmd_UnequipItem_Execute = (_Cmd_Execute)0x0050B8C0;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-
-static const _Cmd_Execute Cmd_AddItem_Execute = (_Cmd_Execute)0x00507470;
-static const _Cmd_Execute Cmd_RemoveItem_Execute = (_Cmd_Execute)0x00513A70;
-static const _Cmd_Execute Cmd_EquipItem_Execute = (_Cmd_Execute)0x00516510;
-static const _Cmd_Execute Cmd_UnequipItem_Execute = (_Cmd_Execute)0x00516720;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-
 static const _Cmd_Execute Cmd_AddItem_Execute = (_Cmd_Execute)0x00507320;
 static const _Cmd_Execute Cmd_RemoveItem_Execute = (_Cmd_Execute)0x00513810;
 static const _Cmd_Execute Cmd_EquipItem_Execute = (_Cmd_Execute)0x005162B0;
 static const _Cmd_Execute Cmd_UnequipItem_Execute = (_Cmd_Execute)0x005164C0;
 
-#else
-
-#error unsupported version of oblivion
-
-#endif
 
 static void PrintItemType(TESForm * form)
 {
@@ -139,39 +118,31 @@ static bool Cmd_GetNumItems_Execute(COMMAND_ARGS)
 	UInt32	count = 0;
 
 	// get pointers
-	ExtraContainerChanges	* containerChanges = static_cast <ExtraContainerChanges *>(thisObj->baseExtraList.GetByType(kExtraData_ContainerChanges));
+	ExtraContainerChanges* containerChanges = static_cast<ExtraContainerChanges*>(thisObj->baseExtraList.GetByType(kExtraData_ContainerChanges));
 
 	// initialize a map of the ExtraData information
 	// this will walk through the containerChanges once
 	ExtraContainerInfo info(containerChanges ? containerChanges->data->objList : NULL);
 
-	TESContainer			* container = NULL;
-	TESForm	* baseForm = thisObj->GetBaseForm();
-	if(baseForm)
-	{
-		container = (TESContainer *)Oblivion_DynamicCast(baseForm, 0, RTTI_TESForm, RTTI_TESContainer, 0);
-	}
+	TESContainer* container = thisObj->GetContainer();
 
 	// first walk the base container
-	if(container)
-	{
+	if(container) {
 		ContainerVisitor visitContainer(&container->list);
 		ContainerCountIf counter(info);
 		count = visitContainer.CountIf(counter);
 	}
-
+	DEBUG_PRINT("GetNumItems %d", count);
 	// now walk the remaining items
-	ExtraDataVec::iterator itEnd = info.m_vec.end();
-	ExtraDataVec::iterator it = info.m_vec.begin();
-	while (it != itEnd) {
-		ExtraContainerChanges::EntryData* extraData = (*it);
-		if (extraData && (extraData->countDelta > 0)) {
-			//PrintItemType(extraData->type);
-			count++;
+	if (containerChanges && containerChanges->data->objList) {
+		for (tList<ExtraContainerChanges::EntryData>::Iterator iter = containerChanges->data->objList->Begin(); !iter.End(); ++iter) {
+			if (*iter) {
+				DEBUG_PRINT("%s  %d", GetFullName(iter->type), iter->countDelta);
+				if (iter->countDelta > 0) count++;
+			}
 		}
-		++it;
 	}
-
+	DEBUG_PRINT("GetNumItems 1 %d", count);
 	*result = count;
 
 	LeaveCriticalSection(g_extraListMutex);
