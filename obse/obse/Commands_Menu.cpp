@@ -15,15 +15,6 @@
 #include "GameData.h"
 
 typedef void (* _CloseAllMenus)(void);
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-
-static _CloseAllMenus CloseAllMenus = (_CloseAllMenus)0x0056C910;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-
-static _CloseAllMenus CloseAllMenus = (_CloseAllMenus)0x00579670;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 
 static _CloseAllMenus CloseAllMenus = (_CloseAllMenus)0x00579770;
 
@@ -33,12 +24,6 @@ const _ShowMessageBox_Callback PoisonConfirmCallback =	(_ShowMessageBox_Callback
 const _ShowMessageBox_Callback OverwriteSaveGameCallback = (_ShowMessageBox_Callback)0x005D3390;
 const _ShowMessageBox_Callback LoadGameCallback =		(_ShowMessageBox_Callback)0x005AE190;
 const _ShowMessageBox_Callback MissingContentCallback = (_ShowMessageBox_Callback)0x00578DC0;
-
-#else
-
-#error unsupported oblivion version
-
-#endif
 
 static bool Cmd_GetActiveMenuMode_Execute(COMMAND_ARGS)
 {
@@ -77,8 +62,9 @@ union MenuInfo {
 static bool GetActiveMenuElement(COMMAND_ARGS, eMenuValue whichValue, MenuInfo* out, UInt32 whichMenu = 0)
 {
 	InterfaceManager* intfc = InterfaceManager::GetSingleton();
-	Menu* activeMenu = intfc->activeMenu;
-	Tile* activeTile = intfc->activeTile;
+	Tile* activeTile = intfc->activeTile ? intfc->activeTile : intfc->altActiveTile;
+	Menu* activeMenu = intfc->activeMenu ? intfc->activeMenu : activeTile->GetContainingMenu();
+
 	if (!activeTile) {
 		// theoretically this is active tile if user is navigating by keyboard - for this to work user must pass whichMenu arg
 		activeTile = intfc->altActiveTile;
