@@ -313,6 +313,9 @@ Tile * Tile::ReadXML(const char * xmlPath)
 #error unsupported Oblivion version
 #endif
 }
+Menu* Tile::GetContainingMenu() {
+	return (Menu*)ThisStdCall(0x005898F0, this);
+}
 
 Tile * Tile::GetRoot(void)
 {

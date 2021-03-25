@@ -393,8 +393,10 @@ public:
 	typedef NiTListBase <Tile>	RefList;
 	typedef NiTListBase <Value>	ValueList;
 
-	Tile *	ReadXML(const char * xmlPath);
-	Tile *	GetRoot(void);
+	Tile*	ReadXML(const char * xmlPath);
+	Tile*	GetRoot(void);
+	Menu*   GetContainingMenu();
+
 
 	Value * GetValueByType(UInt32 valueType);
 	Value * GetValueByName(char * name);
