@@ -62,13 +62,10 @@ union MenuInfo {
 static bool GetActiveMenuElement(COMMAND_ARGS, eMenuValue whichValue, MenuInfo* out, UInt32 whichMenu = 0)
 {
 	InterfaceManager* intfc = InterfaceManager::GetSingleton();
+	//activeTile is used when using mouse selection, is NULL when using keyboard. altActiveTile contain the keyboard selection, is NULL using mouse 
 	Tile* activeTile = intfc->activeTile ? intfc->activeTile : intfc->altActiveTile;
+	//ActiveMenu is NULL when using keyboard, get the menu form the tile
 	Menu* activeMenu = intfc->activeMenu ? intfc->activeMenu : activeTile->GetContainingMenu();
-
-	if (!activeTile) {
-		// theoretically this is active tile if user is navigating by keyboard - for this to work user must pass whichMenu arg
-		activeTile = intfc->altActiveTile;
-	}
 
 	bool gotValue = false;
 	UInt32 intArg = -1;

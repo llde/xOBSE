@@ -6,10 +6,16 @@ xOBSE 22.0
         - GetByOpcode was using a linear search (O(n)) for know opcode, reimplement to constant time (O(1))
         - Add a check for parentCell in GetParentCellOwner command. Should fix a CTD when the parentCell is NULL
         - Rewrote InventoryReference and ContainerForLoop code. Should fix some memory leaks and items that weren't removed properly from the containers. Also fix a crash when iteratating the inventory in menumode while having a soultrap event handled  
+        -Fix an issue with GetActiveMenuElement where it wasn't working on keyboard selected elements
     API:
         - Decode more arguments for RemoveItem
         - Add 10 arguments ThisStdCall
         - ExtraContainerChanges use tList for objList field, instead of rolling specialized version of a linked list everytime 
+        - General fixes to tList and its Iterator class
+        - Add Tile::GetContainingMenu member function, thanks @DavidJCobb
+        - Some bits of PlayerCharacter from @EchoEclipse
+    PluginAPI:
+        - Add a TasksInterface, to enqueue functions to operate on the OBSE mainloop.
         
 xOBSE 21.8:
     Global:
