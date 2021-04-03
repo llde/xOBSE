@@ -155,10 +155,10 @@ ContainerIterLoop::ContainerIterLoop(const ForEachContext* context)
 			}
 		}
 		ExtraContainerChanges* xChanges = (ExtraContainerChanges*)contRef->baseExtraList.GetByType(kExtraData_ContainerChanges);
-        if(xChanges && xChanges->data){
+        if(xChanges && xChanges->data && xChanges->data->objList){
             for (tList<ExtraContainerChanges::EntryData>::Iterator entry = xChanges->data->objList->Begin(); !entry.End(); ++entry){
                 if(! *entry){
-                    DEBUG_PRINT("Warning: encountered NULL ExtraContainerChanges::EntryData pointer in ContainerIterLoop constructor.");
+                    _MESSAGE("Warning: encountered NULL ExtraContainerChanges::EntryData pointer in ContainerIterLoop constructor.");
                     continue;
                 }
                 TESForm* form = entry->type;
@@ -178,7 +178,8 @@ ContainerIterLoop::ContainerIterLoop(const ForEachContext* context)
 							SInt32 count = xCount != NULL ? xCount->count : 1;
 							DEBUG_PRINT("Got stack of %d  for %s", count, GetFullName(form));
 							countExtraData -= count;
-							m_elements.push_back(IRefData(form, entry.Get(), iter.Get()));
+							InventoryReference::Data data = IRefData(form, entry.Get(), iter.Get());
+							m_elements.push_back(data);
 						}
                     }
                 }

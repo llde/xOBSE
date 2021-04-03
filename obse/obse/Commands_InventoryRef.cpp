@@ -80,7 +80,7 @@ static bool Cmd_GetInvRefsForItem_Execute(COMMAND_ARGS)
 
 	if (thisObj && ExtractArgs(PASS_EXTRACT_ARGS, &item) && item) {
 		double arrIndex = 0.0;
-
+		DEBUG_PRINT("%s", GetFullName(item));
 		// get count for base container
 		TESContainer* cont = OBLIVION_CAST(thisObj->baseForm, TESForm, TESContainer);
 		if (cont) {
@@ -89,10 +89,10 @@ static bool Cmd_GetInvRefsForItem_Execute(COMMAND_ARGS)
 			if (data) {
 				baseCount = (data->count > 0) ? data->count : 0;
 			}
-
+			DEBUG_PRINT("%d", baseCount);
 			// get container changes for refr
 			ExtraContainerChanges* xChanges = (ExtraContainerChanges*)thisObj->baseExtraList.GetByType(kExtraData_ContainerChanges);
-			if (xChanges && xChanges->data) {
+			if (xChanges &&  xChanges->data && xChanges->data->objList) {
 				// locate entry for this item type
 				ExtraContainerChanges::EntryData* ed = nullptr;
 				for (tList<ExtraContainerChanges::EntryData>::Iterator iter = xChanges->data->objList->Begin(); !iter.End(); ++iter) {
@@ -104,8 +104,11 @@ static bool Cmd_GetInvRefsForItem_Execute(COMMAND_ARGS)
 				// create temp refs for each stack
 				if (ed) {
 					baseCount += ed->countDelta;
-					if (baseCount) {
+					DEBUG_PRINT("%d", baseCount);
+					DEBUG_PRINT("%0X", ed->extendData);
+					if (baseCount > 0  && ed->extendData) {  //Investigate why this may be null
 						for (tList<ExtraDataList>::Iterator extend = ed->extendData->Begin(); !extend.End(); ++extend) {
+							DEBUG_PRINT("%0X", extend);
 							if (!*extend) {
 								continue;
 							}

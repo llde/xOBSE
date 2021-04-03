@@ -3433,78 +3433,57 @@ public:
 		return entryData->type == m_whichForm;
 	}
 };
-class ExtraQuickKeyFinder
-{
-public:
-	UInt32 m_whichKey;
-	TESForm* m_whichForm;
 
-	ExtraQuickKeyFinder(UInt32 whichKey, TESForm* whichForm = NULL) : m_whichKey(whichKey), m_whichForm(whichForm)
-		{ }
-
-	bool Accept(ExtraContainerChanges::EntryData* entryData)
-	{
-		//check if TESForm matches
-		if (m_whichForm && entryData->type != m_whichForm)
-			return false;
-//		if (m_whichForm && entryData->type == m_whichForm)
-//			return true;
-
-		//check if it looks like a hotkey
-		if (!entryData->extendData || !entryData->extendData)
-			return false;
-		ExtraQuickKey* qKey = (ExtraQuickKey*)entryData->extendData->GetNthItem(0)->GetByType(kExtraData_QuickKey);//TODO this check only the first extradatalist, but more may be present in the EntryData 
-		if (!qKey)
-			return false;
-
-		//check if hotkey # matches
-		if (m_whichKey != UInt32(-1) && qKey->keyID != m_whichKey)
-			return false;
-
-		//passed all checks, return true:
-		return true;
-	}
-};
 
 static void _ClearHotKey ( UInt32 whichKey ) {
+	DEBUG_PRINT("%u", whichKey);
 	if (whichKey > 7)
 		return;
 
 	//remove ExtraQuickKey from container changes
 	ExtraContainerChanges* xChanges = static_cast <ExtraContainerChanges*>((*g_thePlayer)->baseExtraList.GetByType(kExtraData_ContainerChanges));
-	if (xChanges)
-	{
-		ExtraQuickKeyFinder finder(whichKey);
-		const ExtraContainerChanges::EntryData* xEntry;
-		while (xEntry = xChanges->data->objList->Find(finder)){
-			BSExtraData* toRemove = xEntry->extendData->GetNthItem(0)->GetByType(kExtraData_QuickKey); //take only the 1 EDL, but more may be present
-			if (toRemove)
-			{
-				xEntry->extendData->GetNthItem(0)->Remove(toRemove);  //merge the Ge
-				FormHeap_Free(toRemove);
+	_MESSAGE("Mortacci");
+	if (xChanges && xChanges->data && xChanges->data->objList) {
+		DEBUG_PRINT("Mortacci 2");
+		for (tList<ExtraContainerChanges::EntryData>::Iterator xData = xChanges->data->objList->Begin(); !xData.End(); ++xData) {
+			if (*xData && xData->extendData &&  !xData->extendData->IsEmpty()) {
+				tList<ExtraDataList>::_Node* rem = xData->extendData->Head();
+				if (!rem || !rem->item) {
+					_MESSAGE("[WARNING]  Element  is invalid");
+					continue;
+				}
+				ExtraQuickKey* qKey = (ExtraQuickKey*)rem->item->GetByType(kExtraData_QuickKey);//TODO this check only the first extradatalist, but more may be present in the EntryData 
+				if (qKey && qKey->keyID == whichKey || whichKey == UInt32(-1)) {
+					rem->item->Remove(qKey);  //merge the Ge
+					FormHeap_Free(qKey);
+				}
+
 			}
 		}
 	}
 	//clear quickkey
+	DEBUG_PRINT("Mortacci 3");
 	NiTPointerList <TESForm> * quickKey = &g_quickKeyList[whichKey];
-	if (quickKey->start && quickKey->start->data)
-	{
-		if (xChanges)
-		{
-			ExtraQuickKeyFinder finder(UInt32(-1), quickKey->start->data);
-			const ExtraContainerChanges::EntryData* xEntry = NULL;
-			while (xEntry = xChanges->data->objList->Find(finder))
-			{
-				ExtraQuickKey* toRemove = static_cast<ExtraQuickKey*>(xEntry->extendData->GetNthItem(0)->GetByType(kExtraData_QuickKey));
-				//if (toRemove && (quickKey->start->data->typeID != kFormType_Spell || toRemove->keyID > 7))
-				if (toRemove && toRemove->keyID > 7)
-				{
-					xEntry->extendData->GetNthItem(0)->Remove(toRemove);
-					FormHeap_Free(toRemove);
-					xEntry = NULL;
+	if (quickKey->start && quickKey->start->data) {
+		if (xChanges && xChanges->data && xChanges->data->objList) {
+			DEBUG_PRINT("Mortacci 4");
+			for (tList<ExtraContainerChanges::EntryData>::Iterator xData = xChanges->data->objList->Begin(); !xData.End(); ++xData) {
+				if (*xData && xData->type == quickKey->start->data && xData->extendData && !xData->extendData->IsEmpty()) {
+					tList<ExtraDataList>::_Node* rem = xData->extendData->Head();
+					if (!rem || !rem->item) {
+						_MESSAGE("[WARNING]  Element  is invalid");
+						continue;
+					}
+					ExtraQuickKey* qKey = (ExtraQuickKey*)rem->item->GetByType(kExtraData_QuickKey);//TODO this check only the first extradatalist, but more may be present in the EntryData 
+					if (qKey && qKey->keyID > 7) {
+						rem->item->Remove(qKey);  //merge the Ge
+						FormHeap_Free(qKey);
+					}
+
 				}
 			}
 		}
+		DEBUG_PRINT("Mortacci 5");
 
 		quickKey->FreeNode(quickKey->start);
 		quickKey->numItems = 0;
@@ -3553,21 +3532,26 @@ static bool Cmd_SetHotKeyItem_Execute(COMMAND_ARGS)
 		return true;
 
 	ExtraContainerChanges* xChanges = static_cast <ExtraContainerChanges *>((*g_thePlayer)->baseExtraList.GetByType(kExtraData_ContainerChanges));
-	if (xChanges)
-	{
-		ExtraQuickKeyFinder finder(UInt32(-1), qkForm);
-		const ExtraContainerChanges::EntryData* xEntry;
-		if (xEntry = xChanges->data->objList->Find(finder))
-		{
-			BSExtraData* toRemove = xEntry->extendData->GetNthItem(0)->GetByType(kExtraData_QuickKey);
-			if (toRemove)
-			{
-				xEntry->extendData->GetNthItem(0)->Remove(toRemove);
-				FormHeap_Free(toRemove);
+	DEBUG_PRINT("Mortacci   %u  %0X", whichKey, qkForm);
+	if (xChanges && xChanges->data && xChanges->data->objList) {
+		DEBUG_PRINT("Mortacci 2");
+		for (tList<ExtraContainerChanges::EntryData>::Iterator xData = xChanges->data->objList->Begin(); !xData.End(); ++xData) {
+			if (*xData && xData->type == qkForm && xData->extendData && !xData->extendData->IsEmpty()) {
+				tList<ExtraDataList>::_Node* rem = xData->extendData->Head();
+				if (!rem || !rem->item) {
+					_MESSAGE("[WARNING]  Element  is invalid");
+					continue;
+				}
+				ExtraQuickKey* qKey = (ExtraQuickKey*)rem->item->GetByType(kExtraData_QuickKey);//TODO this check only the first extradatalist, but more may be present in the EntryData 
+				if (qKey) {
+					rem->item->Remove(qKey);  //merge the Ge
+					FormHeap_Free(qKey);
+				}
+
 			}
 		}
 	}
-
+	DEBUG_PRINT("Mortacci 3");
 	NiTPointerList <TESForm> * quickKey = &g_quickKeyList[whichKey];
 	NiTPointerList <TESForm>::Node * qkNode = quickKey->start;
 	if (!quickKey->numItems || !qkNode)	// quick key not yet assigned
@@ -3581,14 +3565,14 @@ static bool Cmd_SetHotKeyItem_Execute(COMMAND_ARGS)
 	qkNode->next = NULL;
 	qkNode->prev = NULL;
 	qkNode->data = qkForm;
-
+	DEBUG_PRINT("Mortacci 4");
 	ExtraQuickKey* xQKey = NULL;
 
 	if (qkForm->typeID != kFormType_Spell)	//add ExtraQuickKey to new item's extra data list
 	{
-		ExtraContainerChanges* xChanges = static_cast <ExtraContainerChanges *>((*g_thePlayer)->baseExtraList.GetByType(kExtraData_ContainerChanges));
-		if (xChanges)		//look up form in player's inventory
+		if (xChanges && xChanges->data && xChanges->data->objList)		//look up form in player's inventory
 		{
+			DEBUG_PRINT("Mortacci 5");
 			ExtraContainerChangesEntryFinder finder(qkForm);
 			ExtraContainerChanges::EntryData* xEntry = xChanges->data->objList->Find(finder);
 			if (xEntry)	{
@@ -3608,7 +3592,7 @@ static bool Cmd_SetHotKeyItem_Execute(COMMAND_ARGS)
 				Console_Print("SetHotKeyItem >> Item not found in inventory");
 		}
 	}
-
+	DEBUG_PRINT("Mortacci 6");
 	return true;
 }
 

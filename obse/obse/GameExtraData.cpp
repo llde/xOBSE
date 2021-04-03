@@ -238,7 +238,7 @@ UInt32 ExtraContainerChanges::GetAllEquipped(std::vector<EntryData*>& outEntryDa
 {
 	if (data) {
 		for (tList<ExtraContainerChanges::EntryData>::Iterator entry = data->objList->Begin(); !entry.End(); ++entry) {
-			if (*entry) {
+			if (*entry && entry->extendData) {
 				for (tList<ExtraDataList>::Iterator extend = entry->extendData->Begin(); !extend.End(); ++extend) {
 					if (*extend) {
 						if (extend->IsWorn()) {
