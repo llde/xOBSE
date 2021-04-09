@@ -901,7 +901,15 @@ static bool Cmd_GetBaseAV2_Execute(COMMAND_ARGS)
 static double GetBaseAV3(UInt32 actorValue, Actor* actor){
 	double val = actor->GetBaseActorValue(actorValue);  //In a perfect world we should try to fix this function directly instead of workaroundin this.
 	MagicTarget::EffectNode* list = actor->GetMagicTarget()->GetEffectList();
+	/*
+		If the EffectList is empty or not initialized MagicTarget->GetEffectList() still return  a MagicTarget::EffectNode* with a null data and next field.
+	*/
 	while(list){
+		if (list->data == NULL) {
+			DEBUG_PRINT("Null list data");
+			list = list->next;
+			continue;
+		}
 		if(list->data->spellType == SpellItem::kType_Ability){
 			if(actorValue <= kActorVal_Luck){
 				if(list->data->effectItem->actorValueOrOther == actorValue){
