@@ -4,6 +4,7 @@ xOBSE 22.1
 	- Fix a serious regression in GetInvRefsForItem where it didn't correctly handle anymore objects with no ExtendData (for example some objects stack that should have only xCount property have the extendData compeltly null after reload), causing the game to crash. Enhanced Hotkeys users that were using a binded hotkey to equip bow and arrows were affected.
 	- Made changes to improve robustness of overall ExtendData and ExtraData usages.
 	- Using .0 minor revision was causing a mod with a bad obse check to fail. Using always revisions >= 1 solve this issue and should solve issues with similarly bugged mods.
+	- Fix an issue with GetBaseAV3 that was causing crashes
 
 xOBSE 22.0
     Global:
