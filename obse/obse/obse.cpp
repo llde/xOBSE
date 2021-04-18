@@ -1,6 +1,6 @@
 #include "obse.h"
 #include "CommandTable.h"
-#include "Hooks_DirectInput8Create.h"
+#include "Hooks_Input.h"
 #include "Hooks_Gameplay.h"
 #include "Hooks_Memory.h"
 #include "Hooks_SaveLoad.h"
@@ -43,8 +43,7 @@ void OBSE_Initialize(void)
 		MersenneTwister::init_genrand(GetTickCount());
 
 		CommandTable::Init();
-
-		Hook_DirectInput8Create_Init();
+		Hook_Input_Init();
 		Hook_Gameplay_Init();
 		Hook_Memory_Init();
 		Hook_SaveLoad_Init();

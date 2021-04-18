@@ -40,7 +40,6 @@ extern CommandInfo kCommandInfo_SetInputText;
 #include "GameObjects.h"
 #include "GameMenus.h"
 #include "Hooks_Gameplay.h"
-#include "Hooks_DirectInput8Create.h"
 #include "GameOSDepend.h"
 
 // base class for various text input menus

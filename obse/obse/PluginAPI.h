@@ -138,7 +138,7 @@ struct OBSEIOInterface
 	};
 
 	UInt32		version;
-	bool		(* IsKeyPressed)(UInt32 scancode);
+	UInt8		(* IsKeyPressed)(UInt16 scancode);
 };
 
 /**** Messaging API docs ********************************************************************

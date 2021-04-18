@@ -6,7 +6,6 @@
 
 #include "GameAPI.h"
 #include "Hooks_SaveLoad.h"
-#include "Hooks_DirectInput8Create.h"
 #include "GameForms.h"
 #include "obse/Commands_Input.h"
 #include "obse/GameMenus.h"
@@ -290,19 +289,11 @@ struct TimeInfo
 	UInt32	gameStartTime;	// 14
 };
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-TimeInfo	* g_timeInfo = (TimeInfo *)0x00AEEAB8;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
 TimeInfo	* g_timeInfo = (TimeInfo *)0x00B33E90;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-TimeInfo	* g_timeInfo = (TimeInfo *)0x00B33E90;
-#else
-#error unsupported oblivion version
-#endif
 
 static bool Cmd_GetFPS_Execute(COMMAND_ARGS)
 {
-#if 0
+#if 1
 	float			frameTime = g_timeInfo->frameTime;
 #else
 	float			frameTime = GetAverageFrameTime();
@@ -319,9 +310,10 @@ static bool Cmd_GetFPS_Execute(COMMAND_ARGS)
 	return true;
 }
 
+//Undocumented and deprecated?
 static bool Cmd_GetCurrentFrameIndex_Execute(COMMAND_ARGS)
 {
-	*result = GetCurrentFrameIndex();
+	*result = 30; //GetCurrentFrameIndex();
 	return true;
 }
 

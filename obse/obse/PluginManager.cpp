@@ -11,7 +11,6 @@
 #include "Serialization.h"
 #include "StringVar.h"
 #include "ArrayVar.h"
-#include "Hooks_DirectInput8Create.h"
 #include "FunctionScripts.h"
 
 #else
@@ -19,6 +18,7 @@
 #include "Hooks_Script.h"
 
 #endif
+#include <obse/GameOSDepend.h>
 
 PluginManager	g_pluginManager;
 
@@ -43,10 +43,10 @@ static OBSEStringVarInterface g_OBSEStringVarInterface =
 	AssignToStringVar
 };
 
-static OBSEIOInterface g_OBSEIOInterface = 
+static OBSEIOInterface g_OBSEIOInterface =
 {
 	OBSEIOInterface::kVersion,
-	Plugin_IsKeyPressed
+	OSInputGlobals::Plugin_IsKeyPressed,
 };
 
 static OBSEArrayVarInterface g_OBSEArrayVarInterface =

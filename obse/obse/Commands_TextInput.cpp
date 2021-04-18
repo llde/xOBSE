@@ -536,7 +536,7 @@ TextInputHandler::TextInputHandler(TextInputMenu* menu)
 	: m_menu(menu), m_cursorTimer(GetTickCount()), m_lastControlCharPressed(-1), m_cursorChar('|'), m_bControlKeysDisabled(false),
 	m_controlHandler(NULL)
 {
-	memcpy(m_prevKeyboardState, DI_data.LastBytes, 256);
+	memcpy(m_prevKeyboardState, OSInputGlobals::GetInstance()->CurrentKeyState, 256);  //TODO or Previous state? Why not using directly the previous state?
 	m_menu->Init();
 	m_cursorPos = m_menu->GetInputLength();		// we want cursor at end of starting text
 }
@@ -575,20 +575,20 @@ void TextInputHandler::Update()
 {
 	if (!m_menu->IsOpen() || IsConsoleOpen())
 		return;
-
+	OSInputGlobals* input = OSInputGlobals::GetInstance();
 	//find first key pressed since last time we checked
 	UInt8 keyCode = 0;
 	for (UInt32 idx = 0; idx <= 0x100; idx++)
 	{
-		if (DI_data.LastBytes[idx] && !m_prevKeyboardState[idx])
+		if (input->CurrentKeyState[idx] && !m_prevKeyboardState[idx])
 		{
 			keyCode = idx; 
 			break;
 		}
 	}
 
-	bool bControlPressed = DI_data.LastBytes[DIK_LCONTROL] || DI_data.LastBytes[DIK_RCONTROL];
-	bool bShifted = DI_data.LastBytes[DIK_LSHIFT] || DI_data.LastBytes[DIK_RSHIFT];
+	bool bControlPressed = input->CurrentKeyState[DIK_LCONTROL] || input->CurrentKeyState[DIK_RCONTROL];
+	bool bShifted = input->CurrentKeyState[DIK_LSHIFT] || input->CurrentKeyState[DIK_RSHIFT];
 	bool bUpdateText = false;
 
 	if (keyCode)
@@ -687,7 +687,7 @@ void TextInputHandler::Update()
 	}
 
 	//store current state of keyboard for next update
-	memcpy(m_prevKeyboardState, DI_data.LastBytes, 256);
+	memcpy(m_prevKeyboardState, input->CurrentKeyState, 256); //Againg use input previous state directly?
 
 	if (BlinkCursor())
 		bUpdateText = true;
