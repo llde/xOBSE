@@ -3442,7 +3442,7 @@ static void _ClearHotKey ( UInt32 whichKey ) {
 
 	//remove ExtraQuickKey from container changes
 	ExtraContainerChanges* xChanges = static_cast <ExtraContainerChanges*>((*g_thePlayer)->baseExtraList.GetByType(kExtraData_ContainerChanges));
-	_MESSAGE("Mortacci");
+	DEBUG_PRINT("Mortacci");
 	if (xChanges && xChanges->data && xChanges->data->objList) {
 		DEBUG_PRINT("Mortacci 2");
 		for (tList<ExtraContainerChanges::EntryData>::Iterator xData = xChanges->data->objList->Begin(); !xData.End(); ++xData) {
@@ -3509,7 +3509,7 @@ class InvDumper
 public:
 	bool Accept(ExtraContainerChanges::EntryData* entryData)
 	{
-		_MESSAGE("%08x -> %s", entryData->type, GetFullName(entryData->type));
+		DEBUG_PRINT("%08x -> %s", entryData->type, GetFullName(entryData->type));
 		return true;
 	}
 };
