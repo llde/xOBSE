@@ -43,11 +43,13 @@
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v142</PlatformToolset>
     <EnableASAN>false</EnableASAN>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_416|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v142</PlatformToolset>
+    <UseDebugLibraries>true</UseDebugLibraries>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_214|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -262,7 +264,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;OBSE_EXPORTS;OBLIVION=1;OBLIVION_VERSION=0x010201A0;OBSE_CORE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;OBSE_EXPORTS;OBLIVION=1;OBLIVION_VERSION=OBLIVION_VERSION_1_2_416;OBSE_CORE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -277,7 +279,7 @@
     </ClCompile>
     <Link>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>DebugFull</GenerateDebugInformation>
       <ProgramDatabaseFile>$(OutDir)obse.pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
       <EntryPointSymbol>
@@ -296,7 +298,7 @@
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir);$(SolutionDir)\..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;OBSE_EXPORTS;OBLIVION=1;OBLIVION_VERSION=0x010201A0;OBSE_CORE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -354,6 +356,7 @@
     <ClCompile Include="GameTasks.cpp" />
     <ClCompile Include="GameTiles.cpp" />
     <ClCompile Include="GameTypes.cpp" />
+    <ClCompile Include="Hooks_Input.cpp" />
     <ClCompile Include="Script.cpp" />
     <ClCompile Include="NiAPI.cpp" />
     <ClCompile Include="NiCollision.cpp" />
@@ -412,7 +415,6 @@
     <ClCompile Include="Commands_String.cpp" />
     <ClCompile Include="Commands_TextInput.cpp" />
     <ClCompile Include="Commands_Weather.cpp" />
-    <ClCompile Include="Hooks_DirectInput8Create.cpp" />
     <ClCompile Include="Hooks_Gameplay.cpp" />
     <ClCompile Include="Hooks_Memory.cpp" />
     <ClCompile Include="Hooks_NetImmerse.cpp" />
@@ -466,6 +468,7 @@
     <ClInclude Include="GameThreads.h" />
     <ClInclude Include="GameTiles.h" />
     <ClInclude Include="GameTypes.h" />
+    <ClInclude Include="Hooks_Input.h" />
     <ClInclude Include="Script.h" />
     <ClInclude Include="NiAPI.h" />
     <ClInclude Include="NiCollision.h" />
@@ -525,7 +528,6 @@
     <ClInclude Include="Commands_TextInput.h" />
     <ClInclude Include="Commands_Weather.h" />
     <ClInclude Include="ParamInfos.h" />
-    <ClInclude Include="Hooks_DirectInput8Create.h" />
     <ClInclude Include="Hooks_Gameplay.h" />
     <ClInclude Include="Hooks_Memory.h" />
     <ClInclude Include="Hooks_NetImmerse.h" />

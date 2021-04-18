@@ -243,9 +243,6 @@
     <ClCompile Include="Commands_Weather.cpp">
       <Filter>commands</Filter>
     </ClCompile>
-    <ClCompile Include="Hooks_DirectInput8Create.cpp">
-      <Filter>hooks</Filter>
-    </ClCompile>
     <ClCompile Include="Hooks_Gameplay.cpp">
       <Filter>hooks</Filter>
     </ClCompile>
@@ -316,6 +313,9 @@
     <ClCompile Include="..\StdAfx.cpp" />
     <ClCompile Include="Settings.cpp">
       <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="Hooks_Input.cpp">
+      <Filter>hooks</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -544,9 +544,6 @@
     <ClInclude Include="ParamInfos.h">
       <Filter>commands</Filter>
     </ClInclude>
-    <ClInclude Include="Hooks_DirectInput8Create.h">
-      <Filter>hooks</Filter>
-    </ClInclude>
     <ClInclude Include="Hooks_Gameplay.h">
       <Filter>hooks</Filter>
     </ClInclude>
@@ -625,6 +622,9 @@
     <ClInclude Include="..\StdAfx.h" />
     <ClInclude Include="Settings.h">
       <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="Hooks_Input.h">
+      <Filter>hooks</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
