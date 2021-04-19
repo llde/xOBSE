@@ -4,28 +4,10 @@
 #include "GameAPI.h"
 #include "GameObjects.h"
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-
-HUDInfoMenu	** g_HUDInfoMenu = (HUDInfoMenu**)0x00AFC094;
-NiTArray<TileMenu*> * g_TileMenuArray = (NiTArray<TileMenu*> *)0x00AD4458;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-
-HUDInfoMenu	** g_HUDInfoMenu = (HUDInfoMenu**)0x00B3B33C;
-NiTArray<TileMenu*> * g_TileMenuArray = (NiTArray<TileMenu*> *)0x00B13970;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-
 HUDInfoMenu	** g_HUDInfoMenu = (HUDInfoMenu**)0x00B3B33C;
 NiTArray<TileMenu*> * g_TileMenuArray = (NiTArray<TileMenu*> *)0x00B13970;
 static const UInt32* g_ContainerMenu_Quantity = (const UInt32*)0x00B13E94;
 static NiTListBase<MagicItemAndIndex> * g_MagicMenuMagicItemList = (NiTListBase<MagicItemAndIndex>*)0x00B1435C;
-
-#else
-
-#error unsupported version of oblivion
-
-#endif
 
 Menu* GetMenuByType(UInt32 menuType)
 {
@@ -41,28 +23,12 @@ Menu* GetMenuByType(UInt32 menuType)
 
 void Menu::RegisterTile(TileMenu * tileMenu)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	ThisStdCall(0x005779A0, this, tileMenu);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	ThisStdCall(0x00584870, this, tileMenu);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x00584880, this, tileMenu);
-#else
-#error unsupported Oblivion version
-#endif
 }
 
 void Menu::EnableMenu(bool unk)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	ThisStdCall(0x005785D0, this, unk);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	ThisStdCall(0x00585160, this, unk);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x00585190, this, unk);
-#else
-#error unsupported Oblivion version
-#endif
 }
 
 IngredientItem* AlchemyMenu::GetIngredientItem(UInt32 whichIngred)

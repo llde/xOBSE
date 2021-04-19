@@ -9,11 +9,8 @@ struct ScriptBuffer;
 #if OBLIVION
 
 #define SCRIPT_SIZE 0x50
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-	static const UInt32 kScript_ExecuteFnAddr = 0x004FBE00;
-#else
-#error unsupported oblivion version
-#endif
+static const UInt32 kScript_ExecuteFnAddr = 0x004FBE00;
+
 
 #else
 

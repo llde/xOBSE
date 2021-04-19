@@ -22,7 +22,7 @@ void OBSE_Initialize(void)
 #ifndef _DEBUG
 	__try {
 #endif
-		_MESSAGE("OBSE: initialize (version = %d.%d %08X)", OBSE_VERSION_INTEGER, OBSE_VERSION_INTEGER_MINOR, OBLIVION_VERSION);
+		_MESSAGE("OBSE: initialize (version = %d.%d %08X)", OBSE_VERSION_INTEGER, OBSE_VERSION_INTEGER_MINOR, OBLIVION_VERSION_1_2_416);
 
 #ifdef _DEBUG
 		SetPriorityClass(GetCurrentProcess(), IDLE_PRIORITY_CLASS);

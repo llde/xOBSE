@@ -376,7 +376,7 @@ void HandleSaveGame(const char * path)
 			s_fileHeader.formatVersion =	Header::kVersion;
 			s_fileHeader.obseVersion =		OBSE_VERSION_INTEGER;
 			s_fileHeader.obseMinorVersion =	OBSE_VERSION_INTEGER_MINOR;
-			s_fileHeader.oblivionVersion =	OBLIVION_VERSION;
+			s_fileHeader.oblivionVersion =  OBLIVION_VERSION_1_2_416;
 			s_fileHeader.numPlugins =		0;
 
 			s_currentFile.Skip(sizeof(s_fileHeader));

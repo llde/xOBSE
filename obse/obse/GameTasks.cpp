@@ -4,16 +4,10 @@
 #include "GameObjects.h"
 #include "Hooks_Gameplay.h"
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	IOManager** g_ioManager = (IOManager**)0x00AEBE80;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	IOManager** g_ioManager = (IOManager**)0x00B33A10;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-	IOManager** g_ioManager = (IOManager**)0x00B33A10;
-	ModelLoader** g_modelLoader = (ModelLoader**)0x00B33A1C;
-#else
-#error unsupported Oblivion version
-#endif
+
+IOManager** g_ioManager = (IOManager**)0x00B33A10;
+ModelLoader** g_modelLoader = (ModelLoader**)0x00B33A1C;
+
 
 bool IOManager::IsInQueue(TESObjectREFR *refr) 
 {

@@ -116,20 +116,13 @@ struct NiTArray
 
 template <typename T> void NiTArray<T>::AddAtIndex(UInt32 index, T* item)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x0042BB90, this, index, item);
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 
 template <typename T> void NiTArray<T>::SetCapacity(UInt16 newCapacity)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x004E4A10, this, newCapacity);
-#else
-#error unsupported Oblivion version
-#endif
 }
 
 #endif

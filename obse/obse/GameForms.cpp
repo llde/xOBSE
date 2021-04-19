@@ -6,16 +6,7 @@
 #include <string>			//for strcpy_s()
 #include "InternalSerialization.h"
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-static const UInt32 TESCreature_vtbl = 0x00A1FFEC;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-static const UInt32 TESCreature_vtbl = 0x00A5340C;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 static const UInt32 TESCreature_vtbl = 0x00A5324C;
-
-#else
-#error unsupported Oblivion version
-#endif
 
 static const UInt32 kSEFF = Swap32('SEFF');
 

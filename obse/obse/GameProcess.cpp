@@ -1,11 +1,8 @@
 #include "GameProcess.h"
 #include <algorithm>
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-	ActorProcessManager * g_actorProcessManager = (ActorProcessManager*)0x00B3BD00;
-#else
-#error unsupported Oblivion version
-#endif
+ActorProcessManager * g_actorProcessManager = (ActorProcessManager*)0x00B3BD00;
+
 
 bhkCharacterController* MiddleHighProcess::GetCharacterController()
 {

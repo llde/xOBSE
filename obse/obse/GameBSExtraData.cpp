@@ -108,11 +108,8 @@ bool BaseExtraList::Add(BSExtraData* toAdd)
 
 void BaseExtraList::Copy(BaseExtraList* from)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x00428920, this, from);
-#else
-#error unsupported oblivion version
-#endif
+
 }
 
 bool BaseExtraList::IsWorn()

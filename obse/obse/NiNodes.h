@@ -451,11 +451,7 @@ class TESEffectShader;
 
 // member fn addresses
 #if OBLIVION
-	#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-		const UInt32 kNiObjectNET_GetExtraData = 0x006FF9C0;
-	#else
-		#error unsupported oblivion version
-	#endif
+	const UInt32 kNiObjectNET_GetExtraData = 0x006FF9C0;
 #endif
 
 // 008

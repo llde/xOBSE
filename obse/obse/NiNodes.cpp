@@ -8,14 +8,11 @@ void TextureFormat::InitFromD3DFMT(UInt32 fmt)
 	D3DFMTToTextureFormat(fmt, this);
 }
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 static const UInt32 kNiObjectNET_SetNameAddr = 0x006FF420;
 
 // an array of structs describing each of the game's anim groups
 static const TESAnimGroup::AnimGroupInfo* s_animGroupInfos = (const TESAnimGroup::AnimGroupInfo*)0x00B102E0;
-#else
-#unsupported Oblivion version
-#endif
+
 
 void NiObjectNET::SetName(const char* newName)
 {

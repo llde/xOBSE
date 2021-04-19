@@ -18,12 +18,9 @@ void ActorValues::ModAV(UInt32 avCode, float modBy, bool bAllowPositive)
 
 float GetLuckModifiedSkill(SInt32 skill, SInt32 luck, bool capped)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	typedef float (* _fn)(SInt32 skill, SInt32 luck);
 	static _fn fn = (_fn)0x00547B90;
-#else
-#error unsupported Oblivion version
-#endif
+
 
 	if (capped == false)
 		return fn(skill, luck);
@@ -53,11 +50,7 @@ float GetLuckModifiedSkill(SInt32 skill, SInt32 luck, bool capped)
 UInt32 GetSkillMasteryLevel( UInt32 level )
 {
 	typedef UInt32 (* _fn)(UInt32 level);
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static _fn fn = (_fn)0x0056A300;
-#else
-#error unsupported Oblivion version
-#endif
 
 	return fn(level);
 

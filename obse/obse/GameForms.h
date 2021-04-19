@@ -293,14 +293,11 @@ class TESWaterForm;
 
 // member fn addresses
 #if OBLIVION
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-	static const UInt32 kTESObjectCELL_SetDetachTimeAddr = 0x004CA9C0;
-	static const UInt32 kTESContainer_CtorAddr = 0x00469690;
-	static const UInt32 kTESContainer_DtorAddr = 0x0046A010;
-	static const UInt32 kTESLeveledList_CalcItemForContainerAddr = 0x0046CDE0;
-#else
-#error unsupported oblivion version
-#endif
+static const UInt32 kTESObjectCELL_SetDetachTimeAddr = 0x004CA9C0;
+static const UInt32 kTESContainer_CtorAddr = 0x00469690;
+static const UInt32 kTESContainer_DtorAddr = 0x0046A010;
+static const UInt32 kTESLeveledList_CalcItemForContainerAddr = 0x0046CDE0;
+
 #endif
 
 // 004

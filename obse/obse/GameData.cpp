@@ -108,33 +108,14 @@ TESQuest* DataHandler::GetQuestByEditorName(const char* questName, UInt32 nameLe
 
 bool DataHandler::ConstructObject(ModEntry::Data* tesFile, bool unk1)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	return ThisStdCall(0x0044DCF0, this, tesFile, unk1) ? true : false;
-#else
-#error unsupported oblivion version
-#endif
 }
-
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-
-FileFinder** g_FileFinder = (FileFinder**)0xAEBE0C;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-
-FileFinder** g_FileFinder = (FileFinder**)0xB33A04;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 
 FileFinder** g_FileFinder = (FileFinder**)0xB33A04;
 TimeGlobals* g_TimeGlobals = (TimeGlobals*)0x00B332E0;
 UInt32* s_iHoursToRespawnCell = (UInt32*)0x00B35C1C;
 UInt16* s_firstDayOfMonths = (UInt16*)0x00B06728;
 UInt16* s_numDaysPerMonths = (UInt16*)0x00B06710;
-#else
-
-#error unsupported Oblivion version
-
-#endif
 
 TimeGlobals* TimeGlobals::Singleton()
 {

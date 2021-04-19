@@ -221,16 +221,10 @@ const char * Tile::StrIDToStr(UInt32 id)
 
 typedef UInt32 (* _TileStrToStrID)(const char * str);
 typedef const char * (* _TileStrIDToStr)(UInt32 ID);
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	const _TileStrToStrID TileStrToStrID = (_TileStrToStrID)0x0057C790;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	const _TileStrToStrID TileStrToStrID = (_TileStrToStrID)0x00588E80;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-	const _TileStrToStrID TileStrToStrID = (_TileStrToStrID)0x00588EF0;
-	const _TileStrIDToStr TileStrIDToStr = (_TileStrIDToStr)0x00589080;
-#else
-#error unsupported oblivion version
-#endif
+
+const _TileStrToStrID TileStrToStrID = (_TileStrToStrID)0x00588EF0;
+const _TileStrIDToStr TileStrIDToStr = (_TileStrIDToStr)0x00589080;
+
 
 UInt32 Tile::StrToStrID(const char * str)
 {
@@ -303,15 +297,8 @@ void Tile::DebugDump()
 
 Tile * Tile::ReadXML(const char * xmlPath)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	return (Tile *)ThisStdCall(0x00583410, this, xmlPath);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	return (Tile *)ThisStdCall(0x00590420, this, xmlPath);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	return (Tile *)ThisStdCall(0x00590380, this, xmlPath);
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 Menu* Tile::GetContainingMenu() {
 	return (Menu*)ThisStdCall(0x005898F0, this);

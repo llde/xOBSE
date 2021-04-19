@@ -8,32 +8,6 @@
 
 typedef Sky * (* _Sky_GetSingleton)(void);
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-
-PlayerCharacter ** g_thePlayer = (PlayerCharacter **)0x00AEAAE4;
-
-static const UInt32	s_Actor_EquipItem =					0x005E6380;
-static const UInt32	s_Actor_GetBaseActorValue =			0x005E4D30;
-
-static const UInt32	s_PlayerCharacter_SetActiveSpell =	0x00650C30;
-
-static const _Sky_GetSingleton	Sky_GetSingleton = (_Sky_GetSingleton)0x00537420;
-static const UInt32				s_Sky_RefreshClimate = 0x00537C00;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-
-PlayerCharacter ** g_thePlayer = (PlayerCharacter **)0x00B333C4;
-
-static const UInt32	s_Actor_EquipItem =					0x005FACE0;
-static const UInt32	s_Actor_GetBaseActorValue =			0x005F1750;
-
-static const UInt32	s_PlayerCharacter_SetActiveSpell =	0x006641B0;
-
-static const _Sky_GetSingleton	Sky_GetSingleton = (_Sky_GetSingleton)0x00542F10;
-static const UInt32				s_Sky_RefreshClimate = 0x00543270;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-
 PlayerCharacter **  g_thePlayer =				(PlayerCharacter **)0x00B333C4;
 static UInt8*		g_bUpdatePlayerModel =		(UInt8*)0x00B33D80;	// this is set to true when player confirms change of race in RaceSexMenu -
 																	// IF requires change of skeleton - and back to false when model updated
@@ -56,11 +30,7 @@ static const _UpdatePlayerHead UpdatePlayerHead = (_UpdatePlayerHead)0x005C2F20;
 static const _Sky_GetSingleton	Sky_GetSingleton =		(_Sky_GetSingleton)0x00542EA0;
 static const UInt32				s_Sky_RefreshClimate = 0x00543200;
 
-#else
 
-#error unsupported version of oblivion
-
-#endif
 
 void Actor::EquipItem(TESForm * objType, UInt32 unk1, BaseExtraList* itemExtraList, UInt32 unk3, bool lockEquip)
 {
