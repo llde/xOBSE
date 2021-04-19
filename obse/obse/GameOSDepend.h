@@ -226,7 +226,6 @@ public:
 	UInt32 QueryControlState(MappableControl control, KeyQuery query) {return ThisStdCall<MappableControl, KeyQuery>(0x00403520, this, control, query);}
 
 	static bool IsKeycodeValid(UInt32 id) { return id < kMaxMacros; } //I don't know why there was a -2 causing the wheels motion to not be picked up.
-	static OSInputGlobals* GetInstance();
 
 	bool IsKeyPressed(UInt16 keycode, KeyQuery query) {
 		if (keycode >= 256) return QueryMouseKeyState( (MouseControl) (keycode - 256), query);

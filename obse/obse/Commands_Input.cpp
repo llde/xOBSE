@@ -39,7 +39,7 @@ static bool Cmd_GetControl_Execute(COMMAND_ARGS)
 
 	if(controlId >=kControlsMapped) return true;
 
-	*result = OSInputGlobals::GetInstance()->KeyboardInputControls[controlId];
+	*result = g_inputGlobal->KeyboardInputControls[controlId];
 
 	return true;
 }
@@ -54,9 +54,8 @@ static bool Cmd_GetAltControl2_Execute(COMMAND_ARGS)
 
 	if (ExtractArgs(EXTRACT_ARGS, &controlId) && controlId < kControlsMapped)
 	{
-		OSInputGlobals* input = (*g_osGlobals)->input;
-		if (input->MouseInputControls[controlId] != 0xFF)	//0xFF = unassigned
-			*result = input->MouseInputControls[controlId] + 256;
+		if (g_inputGlobal->MouseInputControls[controlId] != 0xFF)	//0xFF = unassigned
+			*result = g_inputGlobal->MouseInputControls[controlId] + 256;
 	}
 	return true;
 }
@@ -107,7 +106,7 @@ static bool Cmd_GetAltControl_Execute(COMMAND_ARGS)
 	if(controlId >= kControlsMapped) return true;
 
 
-	*result = OSInputGlobals::GetInstance()->MouseInputControls[controlId] * 256 + 255;
+	*result = g_inputGlobal->MouseInputControls[controlId] * 256 + 255;
 	return true;
 }
 
@@ -129,9 +128,9 @@ static bool Cmd_IsKeyPressed2_Execute(COMMAND_ARGS)
 
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keycode)) return true;
 	if(keycode < kMaxMacros) {
-		*result = OSInputGlobals::GetInstance()->IsKeyPressed(keycode, OSInputGlobals::KeyQuery::kKeyQuery_Tap);
+		*result = g_inputGlobal->IsKeyPressed(keycode, OSInputGlobals::KeyQuery::kKeyQuery_Tap);
 		if (*result == 0) {
-			*result = GetSignalStatus(keycode);
+			*result = g_inputGlobal->GetSignalStatus(keycode);
 		}
 	}
 
@@ -255,7 +254,7 @@ static bool Cmd_DisableKey_Execute(COMMAND_ARGS)
 	UInt32	keycode = 0;
 
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keycode)) return true;
-	if (OSInputGlobals::IsKeycodeValid(keycode)) SetMaskKey(keycode);
+	if (OSInputGlobals::IsKeycodeValid(keycode)) g_inputGlobal->SetMaskKey(keycode);
 	return true;
 }
 
@@ -265,7 +264,7 @@ static bool Cmd_EnableKey_Execute(COMMAND_ARGS)
 	UInt32	keycode = 0;
 	
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keycode)) return true;
-	if (OSInputGlobals::IsKeycodeValid(keycode)) SetUnmaskKey(keycode);
+	if (OSInputGlobals::IsKeycodeValid(keycode)) g_inputGlobal->SetUnmaskKey(keycode);
 
 	return true;
 }
@@ -277,7 +276,7 @@ static bool Cmd_IsKeyDisabled_Execute(COMMAND_ARGS)
 
 	if (ExtractArgs(PASS_EXTRACT_ARGS, &keycode))
 	{
-		if(OSInputGlobals::IsKeycodeValid(keycode) && GetMaskStatusKey(keycode))
+		if(OSInputGlobals::IsKeycodeValid(keycode) && g_inputGlobal->GetMaskStatusKey(keycode))
 			*result = 1;
 	}
 
@@ -391,8 +390,8 @@ static bool Cmd_IsKeyPressed3_Execute(COMMAND_ARGS)
 	{
 		return true;
 	}
-	*result = OSInputGlobals::GetInstance()->IsKeyPressed(keyCode, OSInputGlobals::KeyQuery::kKeyQuery_Tap);
-	if (*result == 0) *result = GetSignalStatus(keyCode);
+	*result = g_inputGlobal->IsKeyPressed(keyCode, OSInputGlobals::KeyQuery::kKeyQuery_Tap);
+	if (*result == 0) *result = g_inputGlobal->GetSignalStatus(keyCode);
 	return true;
 }
 
@@ -401,9 +400,8 @@ static bool Cmd_IsControlPressed_Execute(COMMAND_ARGS)
 	*result = 0;
 	UINT ctrl;
 	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &ctrl))	return true;
-	OSInputGlobals* input = OSInputGlobals::GetInstance();
-	*result = (input->QueryControlState((OSInputGlobals::MappableControl)ctrl, OSInputGlobals::KeyQuery::kKeyQuery_Tap) >= 1 ? 1 : 0);
-	if (*result == 0) *result = GetSignalStatus(input->KeyboardInputControls[ctrl]);  //TODO operate direclty on control
+	*result = (g_inputGlobal->QueryControlState((OSInputGlobals::MappableControl)ctrl, OSInputGlobals::KeyQuery::kKeyQuery_Tap) >= 1 ? 1 : 0);
+	if (*result == 0) *result = g_inputGlobal->GetSignalStatus(g_inputGlobal->KeyboardInputControls[ctrl]);  //TODO operate direclty on control
 	return true;
 }
 
@@ -413,15 +411,14 @@ static bool Cmd_DisableControl_Execute(COMMAND_ARGS)
 	UInt32	ctrl = 0;
 
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &ctrl))	return true;
-	OSInputGlobals* input = OSInputGlobals::GetInstance();
-	UInt32 dxCode = input->KeyboardInputControls[ctrl];
+	UInt32 dxCode = g_inputGlobal->KeyboardInputControls[ctrl];
 	if (dxCode != NOKEY) {
-		SetMaskKey(dxCode);
+		g_inputGlobal->SetMaskKey(dxCode);
 	}
 
-	dxCode = input->MouseInputControls[ctrl];
+	dxCode = g_inputGlobal->MouseInputControls[ctrl];
 	if (dxCode != NOKEY){
-		SetMaskMouse(dxCode);
+		g_inputGlobal->SetMaskMouse(dxCode);
 	}
 	return true;
 }
@@ -432,15 +429,14 @@ static bool Cmd_IsControlDisabled_Execute(COMMAND_ARGS)
 	UInt32 ctrl = 0;
 
 	if (ExtractArgs(PASS_EXTRACT_ARGS, &ctrl) && ctrl < kControlsMapped) {
-		OSInputGlobals* input = OSInputGlobals::GetInstance();
-		UInt32 dxCode = input->KeyboardInputControls[ctrl];
+		UInt32 dxCode = g_inputGlobal->KeyboardInputControls[ctrl];
 		if (dxCode != NOKEY) {
-			*result = GetMaskStatusKey(dxCode);
+			*result = g_inputGlobal->GetMaskStatusKey(dxCode);
 		}
 
-		dxCode = input->MouseInputControls[ctrl];
+		dxCode = g_inputGlobal->MouseInputControls[ctrl];
 		if (dxCode != NOKEY) {
-			*result += GetMaskStatusMouse(dxCode);
+			*result += g_inputGlobal->GetMaskStatusMouse(dxCode);
 		}
 	}
 	return true;
@@ -452,15 +448,14 @@ static bool Cmd_EnableControl_Execute(COMMAND_ARGS)
 	UInt32	ctrl = 0;
 
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &ctrl)) return true;
-	OSInputGlobals* input = OSInputGlobals::GetInstance();
-	UInt32 dxCode = input->KeyboardInputControls[ctrl];
+	UInt32 dxCode = g_inputGlobal->KeyboardInputControls[ctrl];
 	if (dxCode != NOKEY) {
-		SetUnmaskKey(dxCode);
+		g_inputGlobal->SetUnmaskKey(dxCode);
 	}
 
-	dxCode = input->MouseInputControls[ctrl];
+	dxCode = g_inputGlobal->MouseInputControls[ctrl];
 	if (dxCode != NOKEY) {
-		SetUnmaskMouse(dxCode);
+		g_inputGlobal->SetUnmaskMouse(dxCode);
 	}
 
 	return true;
@@ -474,10 +469,9 @@ static bool Cmd_OnKeyDown_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keyCode))	return true;
-	OSInputGlobals* input = OSInputGlobals::GetInstance();
 
-	*result = input->IsKeyPressed(keyCode, OSInputGlobals::KeyQuery::kKeyQuery_Down);
-	if (*result == 0) *result = GetSignalStatusKey(keyCode); //TODO mouse and joypad
+	*result = g_inputGlobal->IsKeyPressed(keyCode, OSInputGlobals::KeyQuery::kKeyQuery_Down);
+	if (*result == 0) *result = g_inputGlobal->GetSignalStatusKey(keyCode); //TODO mouse and joypad
 	//TODO make a Query_Down functionality
 	return true;
 }
@@ -490,13 +484,12 @@ static bool Cmd_OnControlDown_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &ctrl))	return true;
-	OSInputGlobals* input = OSInputGlobals::GetInstance();
 	if (scriptObj) {
 		//TODO for now handle only keyboard signals
-		if(input->QueryControlState((OSInputGlobals::MappableControl)ctrl, OSInputGlobals::KeyQuery::kKeyQuery_Down)){
+		if(g_inputGlobal->QueryControlState((OSInputGlobals::MappableControl)ctrl, OSInputGlobals::KeyQuery::kKeyQuery_Down)){
 			*result = 1;
 		}
-		else if (GetSignalStatusKey(input->KeyboardInputControls[ctrl])) {
+		else if (g_inputGlobal->GetSignalStatusKey(g_inputGlobal->KeyboardInputControls[ctrl])) {
 			*result = 1;
 		}
 	}
@@ -595,7 +588,7 @@ static bool Cmd_IsControl_Execute(COMMAND_ARGS)
 
 	if (!ExtractArgs(PASS_EXTRACT_ARGS, &key))
 		return true;
-	UInt16 control = OSInputGlobals::GetInstance()->GetControlFromKeycode(key);
+	UInt16 control = g_inputGlobal->GetControlFromKeycode(key);
 	if (control != 0xFFFF) *result = control;
 	// check mod custom controls
 	if (control == 0xFFFF && registeredControls[key].size()) *result = 2;

@@ -1,48 +1,50 @@
 #include "Hooks_Input.h" 
 #include "obse_common/SafeWrite.h"
 
-void SetMaskKey(UInt16 keycode) {
-	KeyState[keycode] |= kStateDisabled;
+OSInputGlobalsEx* g_inputGlobal = nullptr;
+
+void OSInputGlobalsEx::SetMaskKey(UInt16 keycode) {
+	KeyMaskState[keycode] |= kStateDisabled;
 }
 
-void SetUnmaskKey(UInt16 keycode) {
-	KeyState[keycode] &= ~kStateDisabled;
+void OSInputGlobalsEx::SetUnmaskKey(UInt16 keycode) {
+	KeyMaskState[keycode] &= ~kStateDisabled;
 }
 
-UInt8 GetMaskStatusKey(UInt8 keycode) {
-	return KeyState[keycode];
+UInt8 OSInputGlobalsEx::GetMaskStatusKey(UInt8 keycode) {
+	return KeyMaskState[keycode];
 }
 
-UInt8 GetSignalStatusKey(UInt16 keycode) {
-	return (KeyState[keycode] & kStateSignalled) == kStateSignalled;
+UInt8 OSInputGlobalsEx::GetSignalStatusKey(UInt16 keycode) {
+	return (KeyMaskState[keycode] & kStateSignalled) == kStateSignalled;
 }
-UInt8 GetSignalStatus(UInt16 keycode) {
-	return (KeyState[keycode] & kStateSignalled) == kStateSignalled;
+UInt8 OSInputGlobalsEx::GetSignalStatus(UInt16 keycode) {
+	return (KeyMaskState[keycode] & kStateSignalled) == kStateSignalled;
 }
-UInt8 GetSignalStatusMouse(UInt8 keycode) {
-	return 0; // (KeyState[keycode] & kStateSignalled) == kStateSignalled;
+UInt8 OSInputGlobalsEx::GetSignalStatusMouse(UInt8 keycode) {
+	return 0; 
 }
 
 
 //TODO Tap and Hammer keys
-void __fastcall InputPollFakeHandle(OSInputGlobals* input) {
+void OSInputGlobalsEx::InputPollFakeHandle() {
 	for (UInt16 idx = 0; idx <= 255; idx++) {
-		KeyState[idx] &= ~kStateSignalled;
-		if (KeyState[idx] == 0) { 
+		KeyMaskState[idx] &= ~kStateSignalled;
+		if (KeyMaskState[idx] == 0) {
 			continue;
 		}
-		if(KeyState[idx] == kStateDisabled){
-			if (input->CurrentKeyState[idx] != 0) {  //Presses are 0x80 ?
-				input->CurrentKeyState[idx] = 0;
-				KeyState[idx] |= kStateSignalled;
+		if(KeyMaskState[idx] == kStateDisabled){
+			if (CurrentKeyState[idx] != 0) {  //Presses are 0x80 ?
+				CurrentKeyState[idx] = 0;
+				KeyMaskState[idx] |= kStateSignalled;
 			}
 		}
 	}
+
 }
 
-void __fastcall InputPollFakeHandleNoMouse(OSInputGlobals* input) { _MESSAGE("Mache è sto porccoddio"); }
+void __fastcall InputPollFakeHandleNoMouse(OSInputGlobals* input) { _MESSAGE("Macche è sto porccoddio"); }
 
-const UInt32 kLoc_403C40 = 0x00403C40;
 
 __declspec(naked) void PollInputHook() {
 	__asm {
@@ -50,7 +52,7 @@ __declspec(naked) void PollInputHook() {
 		pop edi
 		pop esi
 		pushad
-		call InputPollFakeHandle
+		call OSInputGlobalsEx::InputPollFakeHandle
 		popad
 		retn
 
@@ -74,7 +76,19 @@ __declspec(naked) void PollInputNoMouseHook() {
 	}
 
 }
+OSInputGlobalsEx* __thiscall OSInputGlobalsEx::InitializeEx(IDirectInputDevice8* device) {
+	ThisStdCall(kInitializeInputGlobals, this, device);
+	ZeroMemory(this + sizeof(OSInputGlobals), sizeof(DIMOUSESTATE2) + 256);
+	g_inputGlobal = this;
+	return this;
+}
+
 void Hook_Input_Init() {
+	SafeWrite32(kInputGlobalAllocSize, sizeof(OSInputGlobals) + sizeof(UInt8[256]) + sizeof(DIMOUSESTATE2));
+	OSInputGlobalsEx* (__thiscall OSInputGlobalsEx::* InitializeExCall)(IDirectInputDevice8*) = &OSInputGlobalsEx::InitializeEx;
+	WriteRelCall(kInputInitializeCallAddr, (UInt32) *((void**) &InitializeExCall));
 	WriteRelJump(kPollEndHook, (UInt32) &PollInputHook);
 	WriteRelJump(kPollEndNoMouseHook, (UInt32)&PollInputNoMouseHook); //TODO clean leftovers
 }
+
+
