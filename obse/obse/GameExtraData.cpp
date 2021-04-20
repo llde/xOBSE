@@ -5,12 +5,8 @@
 #include "obse/Hooks_Gameplay.h"
 #include <obse\Settings.h>
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 typedef ExtraContainerChanges* (* _GetOrCreateExtraContainerChanges)(TESObjectREFR* refr);
 _GetOrCreateExtraContainerChanges GetOrCreateExtraContainerChanges = (_GetOrCreateExtraContainerChanges)0x00485E00;
-#else
-#error unsupported Oblivion version
-#endif
 
 ExtraContainerChanges::EntryData * ExtraContainerChanges::GetByType(TESForm * type)
 {
@@ -135,11 +131,8 @@ ExtraContainerChanges::Entry* ExtraContainerChanges::Entry::Create()
 */
 void ExtraContainerChanges::EntryData::Cleanup()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x00484660, this);
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 
 UInt32 GetCountForExtraDataList(ExtraDataList* list)
@@ -227,11 +220,8 @@ ExtraContainerChanges* ExtraContainerChanges::GetForRef(TESObjectREFR* refr)
 
 ExtraDataList* ExtraContainerChanges::SetEquipped(TESForm* obj, bool bEquipped)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	return (ExtraDataList*)ThisStdCall(0x00485FA0, this, obj, bEquipped);
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 
 UInt32 ExtraContainerChanges::GetAllEquipped(std::vector<EntryData*>& outEntryData, std::vector<ExtraDataList*>& outExtendData)
@@ -253,53 +243,6 @@ UInt32 ExtraContainerChanges::GetAllEquipped(std::vector<EntryData*>& outEntryDa
 
 	return outEntryData.size();
 }
-
-
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-
-static const UInt32 s_ExtraHealthSize = 0x10;
-static const UInt32 s_ExtraHealthVtbl = 0x00A02294;
-static const UInt32 s_ExtraChargeSize = 0x10;
-static const UInt32 s_ExtraChargeVtbl = 0x00A022B8;
-static const UInt32 s_ExtraUsesSize = 0x10;
-static const UInt32 s_ExtraUsesVtbl = 0x00A022A0;
-static const UInt32 s_ExtraPoisonSize = 0x10;
-static const UInt32 s_ExtraPoisonVtbl = 0x00A02420;
-static const UInt32 s_ExtraTravelHorseSize = 0x10;
-static const UInt32 s_ExtraTravelHorseVtbl = 0x00A023FC;
-static const UInt32 s_ExtraLockSize = 0x10;
-static const UInt32 s_ExtraLockVtbl = 0x00A02210;
-static const UInt32 s_ExtraSoulSize = 0x10;
-static const UInt32 s_ExtraSoulVtbl = 0x00A022C4;
-static const UInt32 s_ExtraCountSize = 0x10;
-static const UInt32 s_ExtraCountVtbl = 0xA02288;
-static const UInt32 s_ExtraQuickKeySize = 0x10;
-static const UInt32 s_ExtraQuickKeyVtbl = 0x00A02330;
-static const UInt32 s_ExtraDataListVtbl = 0x00A01A98;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-
-static const UInt32 s_ExtraHealthSize = 0x10;
-static const UInt32 s_ExtraHealthVtbl = 0x00A358B0;
-static const UInt32 s_ExtraChargeSize = 0x10;
-static const UInt32 s_ExtraChargeVtbl = 0x00A358D4;
-static const UInt32 s_ExtraUsesSize = 0x10;
-static const UInt32 s_ExtraUsesVtbl = 0x00A358BC;
-static const UInt32 s_ExtraPoisonSize = 0x10;
-static const UInt32 s_ExtraPoisonVtbl = 0x00A35A48;
-static const UInt32 s_ExtraTravelHorseSize = 0x10;
-static const UInt32 s_ExtraTravelHorseVtbl = 0x00A35A24;
-static const UInt32 s_ExtraLockSize = 0x10;
-static const UInt32 s_ExtraLockVtbl = 0x00A35820;
-static const UInt32 s_ExtraSoulSize = 0x10;
-static const UInt32 s_ExtraSoulVtbl = 0x00A358E0;
-static const UInt32 s_ExtraCountSize = 0x10;
-static const UInt32 s_ExtraCountVtbl = 0x00A358A4;
-static const UInt32 s_ExtraQuickKeySize = 0x10;
-static const UInt32 s_ExtraQuickKeyVtbl = 0x00A3594C;
-static const UInt32 s_ExtraDataListVtbl = 0x00A35160;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 
 static const UInt32 s_ExtraHealthSize = 0x10;
 static const UInt32 s_ExtraHealthVtbl = 0x00A35848;
@@ -330,9 +273,7 @@ static const UInt32 s_ExtraOwnershipSize = 0x10;
 static const UInt32 s_ExtraOwnershipVtbl = 0x00A35818;
 static const UInt32 s_ExtraCannotWearVtbl = 0x00A358CC;
 static const UInt32 s_ExtraCannotWearSize = 0x0C;
-#else
-#error unsupported oblivion version
-#endif
+
 
 // static
 BSExtraData* BSExtraData::Create(UInt8 xType, UInt32 size, UInt32 vtbl)
@@ -383,11 +324,8 @@ ExtraTravelHorse* ExtraTravelHorse::Create()
 ExtraWaterHeight* ExtraWaterHeight::Create(float height)
 {
 	ExtraWaterHeight* xHeight = (ExtraWaterHeight*)FormHeap_Allocate(sizeof(ExtraWaterHeight));
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x0041D920, xHeight, height);		// constructor
-#else
-#error unsupported Oblivion version
-#endif
+
 	return xHeight;
 }
 
@@ -455,11 +393,8 @@ ExtraContainerChanges::Data* ExtraContainerChanges::Data::Create(TESObjectREFR* 
 
 void ExtraContainerChanges::Data::RunScripts()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x0048E060, this);
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 
 ExtraContainerChanges::EntryData* ExtraContainerChanges::EntryData::Create(SInt32 countDelta, TESForm* type)
@@ -514,22 +449,16 @@ ExtraTimeLeft* ExtraTimeLeft::Create(float timeLeft)
 {
 	ExtraTimeLeft* xTime = (ExtraTimeLeft*)FormHeap_Allocate(sizeof(ExtraTimeLeft));
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x00429EC0, xTime, timeLeft);		// constructor
-#else
-#error unsupported Oblivion version
-#endif
+
 
 	return xTime;
 }
 
 ExtraCellWaterType* ExtraCellWaterType::Create(TESWaterForm* water)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const UInt32 s_ctrAddr = 0x0041D9A0;
-#else
-#error unsupported Oblivion version
-#endif
+
 
 	ExtraCellWaterType* xWater = (ExtraCellWaterType*)FormHeap_Allocate(sizeof(ExtraCellWaterType));
 	ThisStdCall(s_ctrAddr, xWater);
@@ -539,11 +468,7 @@ ExtraCellWaterType* ExtraCellWaterType::Create(TESWaterForm* water)
 
 ExtraCellMusicType* ExtraCellMusicType::Create(UInt32 _musicType)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const UInt32 s_ctrAddr = 0x0041D960;
-#else
-#error unsupported Oblivion version
-#endif
 
 	ASSERT(_musicType < kMusicType_MAX);
 	ExtraCellMusicType* xMusic = (ExtraCellMusicType*)FormHeap_Allocate(sizeof(ExtraCellMusicType));

@@ -517,20 +517,6 @@ public:
 
 	void SetName(const char* newName);
 
-#if OBLIVION && OBLIVION_VERSION <= OBLIVION_VERSION_1_1
-
-	// this padding is probably in NiObjectNET but might actually be in NiAVObject
-	// it went away in runtime 1.2 (and probably in cs 1.2 as well)
-	UInt32				unk018[(0x080 - 0x018) >> 2];	// 018
-	CRITICAL_SECTION	critSection;					// 080
-	UInt32				unk098[(0x0AC - 0x098) >> 2];	// 098
-	NiTArray <NiAVObject>	unk0AC;						// 0AC
-	UInt32				unk0BC[(0x0F8 - 0x0BC) >> 2];	// 0BC
-	UInt32				unk0F8;							// 0F8
-	UInt32				unk0FC;							// 0FC
-	// 100
-
-#endif
 };
 STATIC_ASSERT(sizeof(NiObjectNET) == 0x18);
 

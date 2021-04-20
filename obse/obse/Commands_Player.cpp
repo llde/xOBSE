@@ -16,27 +16,9 @@
 #include "GameData.h"
 #include "GameMagicEffects.h"
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-
-static const _Cmd_Execute Cmd_AddSpell_Execute = (_Cmd_Execute)0x00509F10;
-static const _Cmd_Execute Cmd_RemoveSpell_Execute = (_Cmd_Execute)0x005047A0;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-
-static const _Cmd_Execute Cmd_AddSpell_Execute = (_Cmd_Execute)0x00514BB0;
-static const _Cmd_Execute Cmd_RemoveSpell_Execute = (_Cmd_Execute)0x00510CE0;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-
 static const _Cmd_Execute Cmd_AddSpell_Execute = (_Cmd_Execute)0x00514950;
 static const _Cmd_Execute Cmd_RemoveSpell_Execute = (_Cmd_Execute)0x00510B90;
 static const _Cmd_Execute Cmd_GetBaseAV_Execute = (_Cmd_Execute)0x00501A00;
-
-#else
-
-#error unsupported version of oblivion
-
-#endif
 
 static bool Cmd_GetActiveSpell_Execute(COMMAND_ARGS)
 {

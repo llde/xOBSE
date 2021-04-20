@@ -39,11 +39,8 @@ void Actor::EquipItem(TESForm * objType, UInt32 unk1, BaseExtraList* itemExtraLi
 
 void Actor::UnequipItem(TESForm* objType, UInt32 unk1, BaseExtraList* itemExtraList, UInt32 unk3, bool lockUnequip, UInt32 unk5)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x005F2E70, this, objType, unk1, itemExtraList, unk3, lockUnequip, unk5);
-#else
-#error unsupported oblivion version
-#endif
+
 }
 
 UInt32 Actor::GetBaseActorValue(UInt32 value)
@@ -99,24 +96,12 @@ bool PlayerCharacter::SetActiveSpell(MagicItem * item)
 
 void PlayerCharacter::TogglePOV(bool bFirstPerson)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	ThisStdCall(0x00655560, this, bFirstPerson);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	ThisStdCall(0x0066C040, this, bFirstPerson);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x0066C580, this, bFirstPerson);
-#else
-#error unsupported Oblivion version
-#endif
 }
 
 void PlayerCharacter::SetBirthSign(BirthSign* birthSign)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x0066A400, this, birthSign);
-#else
-#error unsupported oblivion version
-#endif
 }
 
 float GetGameSettingFloat(char* settingName)
@@ -334,16 +319,7 @@ TESForm* TESObjectREFR::GetInventoryItem(UInt32 itemIndex, bool bGetWares)
 	//if getWares == true, looks up info in g_DataHandler->unkCDC
 
 	ExtraContainerChanges::EntryData* data;
-
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	data = (ExtraContainerChanges::EntryData*)ThisStdCall(0x4CEB10, this, itemIndex, bGetWares);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	data = (ExtraContainerChanges::EntryData*)ThisStdCall(0x4D88E0, this, itemIndex, bGetWares);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	data = (ExtraContainerChanges::EntryData*)ThisStdCall(0x4D88F0, this, itemIndex, bGetWares);
-#else
-	#error unsupported Oblivion version
-#endif
 
 	if (data)
 		return data->type;
@@ -354,18 +330,9 @@ TESForm* TESObjectREFR::GetInventoryItem(UInt32 itemIndex, bool bGetWares)
 typedef void (*_DisableRef)(TESObjectREFR *refr);
 typedef void (*_EnableRef)(TESObjectREFR *refr);
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-const _DisableRef DisableRef = (_DisableRef)0x004F16A0;
-const _EnableRef EnableRef = (_EnableRef)0x004F0650;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-const _DisableRef DisableRef = (_DisableRef)0x004FBC80;
-const _EnableRef EnableRef = (_EnableRef)0x004FA5F0;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 const _DisableRef DisableRef = (_DisableRef)0x004FBB30;
 const _EnableRef EnableRef = (_EnableRef)0x004FA540;
-#else
-#error unsupported version of oblivion
-#endif
+
 
 void TESObjectREFR::Disable()
 {
@@ -379,15 +346,8 @@ void TESObjectREFR::Enable()
 
 bool TESObjectREFR::RunScripts()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-#error unsupported Oblivion version
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-#error unsupported Oblivion version
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	return ThisStdCall(0x004D7190, this) ? true : false;
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 
 bool TESObjectREFR::IsDeleted() const
@@ -403,11 +363,8 @@ bool TESObjectREFR::IsDeleted() const
 
 ExtraTeleport::Data* TESObjectREFR::GetExtraTeleportData()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	return (ExtraTeleport::Data*)ThisStdCall(0x004D7630, this);
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 
 TESPackage* Actor::GetCurrentPackage()
@@ -432,12 +389,11 @@ TESPackage* Actor::GetCurrentPackage()
 
 bool TESObjectREFR::GetTeleportCellName(BSStringT* outName)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ExtraTeleport* xTele = (ExtraTeleport*)baseExtraList.GetByType(kExtraData_Teleport);
 	if (xTele && xTele->data && xTele->data->linkedDoor) {
 		return ThisStdCall(0x004DE8D0, xTele->data->linkedDoor, outName) ? true : false;
 	}
-#endif
+
 
 	outName->Set("");
 	return false;
@@ -503,11 +459,8 @@ bool TESObjectREFR::Update3D()
 TESObjectREFR* TESObjectREFR::Create(bool bTemp)
 {
 	TESObjectREFR* refr = (TESObjectREFR*)FormHeap_Allocate(sizeof(TESObjectREFR));
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x004D9A70, refr);
-#else
-#error unsupported Oblivion version
-#endif
+
 	if (bTemp)
 		refr->MarkAsTemporary();
 
@@ -516,20 +469,13 @@ TESObjectREFR* TESObjectREFR::Create(bool bTemp)
 
 TESContainer* TESObjectREFR::GetContainer()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	return (TESContainer*)ThisStdCall(0x004D6D40, this);
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 
 bool TESObjectREFR::IsMapMarker()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const TESForm** g_MapMarkerForm = (const TESForm**)0x00B35EA8;
-#else
-#error unsupported Oblivion version
-#endif
 
 	if (baseForm && *g_MapMarkerForm) {
 		return baseForm->refID == (*g_MapMarkerForm)->refID;
@@ -541,23 +487,16 @@ bool TESObjectREFR::IsMapMarker()
 
 float TESObjectREFR::GetDistance(TESObjectREFR* other, bool bIncludeDisabled)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	float result;
 	ThisStdCall(0x004D7E90, this, other, bIncludeDisabled);
 	__asm { fstp	[result] }
-#else
-#error unsupported Oblivion version
-#endif
 	return result;
 }
 
 bool Actor::IsObjectEquipped(TESForm* object)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	return ThisStdCall(0x004D8880, this, object) ? true : false;
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 
 float Actor::GetAVModifier(eAVModifier mod, UInt32 avCode)
@@ -568,12 +507,9 @@ float Actor::GetAVModifier(eAVModifier mod, UInt32 avCode)
 		return result;
 
 	if (PlayerCharacter* pc = OBLIVION_CAST(this, Actor, PlayerCharacter)) {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 		ThisStdCall(0x0065D270, pc, mod, avCode);
 		__asm { fstp	[result] }
-#else
-#error unsupported Oblivion version
-#endif
+
 	}
 	else {		// non-player actors
 		switch (mod)
@@ -603,47 +539,29 @@ float Actor::GetCalculatedBaseAV(UInt32 avCode)
 {
 	float result = 0;
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x005EAD00, this, avCode);
 	__asm { fstp [result] }
 	return result;
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 
 bool Actor::IsAlerted()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	return ThisStdCall(0x005E0E30, this) ? true : false;
-#else
-#error unsupported Oblivion version
-#endif
 }
 
 void Actor::SetAlerted(bool bAlerted)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x005E0E10, this, bAlerted);
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 
 void Actor::EvaluatePackage()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x00601B80, this);
-#else
-#error unsupported Oblivion version
-#endif
 }
 
 MagicItem* PlayerCharacter::GetActiveMagicItem()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	return (MagicItem*)ThisStdCall(0x0065D4A0, this);
-#else
-#error unsupported Oblivion version
-#endif
 }

@@ -14,7 +14,6 @@ char s_ExpressionParserAltBuffer[0x500] = {0};
 
 #include "StringVar.h"
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	const UInt32 ExtractStringPatchAddr = 0x004FB1EB;
 	const UInt32 ExtractStringRetnAddr = 0x004FB1F4;
 
@@ -40,9 +39,7 @@ char s_ExpressionParserAltBuffer[0x500] = {0};
 	static const UInt32 kScriptRunner_RunRetnAddr = kScriptRunner_RunHookAddr + 5;
 	static const UInt32 kScriptRunner_RunCallAddr = 0x005792E0;			// overwritten call
 	static const UInt32 kScriptRunner_RunEndProcAddr = 0x00517637;		// retn 0x20
-#else
-#error unsupported Oblivion version
-#endif	// OBLIVION_VERSION
+
 
 static void __stdcall DoExtractString(char* scriptData, UInt32 dataLen, char* dest, ScriptEventList* eventList)
 {

@@ -11,11 +11,8 @@
 #include "ArrayVar.h"
 #include "Script.h"
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 static const _Cmd_Execute Cmd_RemoveMe_Execute = (_Cmd_Execute)0x00500450;
-#else
-#error unsupported oblivion version
-#endif
+
 
 static bool Cmd_RemoveMeIR_Execute(COMMAND_ARGS)
 {

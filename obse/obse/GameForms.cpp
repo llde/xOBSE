@@ -446,16 +446,7 @@ const char* TESSkill::GetLevelQuoteText(UInt32 level)
 void TESForm::MarkAsTemporary(void)
 {
 	// only tested for Script objects in 'con_bat'
-
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	ThisStdCall(0x004658C0, this);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	ThisStdCall(0x0046B490, this);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x0046B590, this);
-#else
-#error unsupported oblivion version
-#endif
 }
 
 TESFullName* TESForm::GetFullName()
@@ -518,13 +509,10 @@ const char* TESForm::GetEditorID()
 
 bool TESForm::IsInventoryObject() const
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	typedef bool (* _IsInventoryObjectType)(UInt32 formType);
 	static _IsInventoryObjectType IsInventoryObjectType = (_IsInventoryObjectType)0x00469520;
 	return IsInventoryObjectType(typeID);
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 
 TESForm* TESSpellList::GetNthSpell(UInt32 whichSpell) const
@@ -759,11 +747,7 @@ void EffectItem::SetActorValue(UInt32 actorValue)
 
 void EffectItem::CopyFrom(const EffectItem* copyFrom)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x00413FC0, this, (void*)copyFrom);
-#else
-#error unsupported Oblivion version
-#endif
 }
 
 EffectItem* EffectItem::Clone() const
@@ -869,11 +853,7 @@ bool EffectItem::operator<(EffectItem* rhs) const
 
 void EffectItem::GetQualifiedName(char* outBuf)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x00413A90, this, outBuf);
-#else
-#error unsupported Oblivion version
-#endif
 }
 
 typedef std::map<UInt32, EffectItem> EffectProxyMap;
@@ -1294,42 +1274,28 @@ bool EffectItemList::RemoveItem(UInt32 whichItem)
 		return false;
 	}
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x00414BC0, this, toRemove);
-#else
-#error unsupported Oblivion version
-#endif
 
 	return true;
 }
 
 void EffectItemList::RemoveAllItems()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x00414C70, this);
-#else
-#error unsupported Oblivion version
-#endif
 }
 
 float EffectItemList::CalcGoldValue()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	float result = 0;
 	ThisStdCall(0x004151C0, this, NULL);
 	__asm { fstp [result] }
 	return result;
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 
 UInt32 EffectItemList::GetSchoolSkillAV() {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	return ThisStdCall(0x00415360, this);
-#else
-#error unsupported oblivion version
-#endif
+
 }
 
 UInt32 EffectItemList::GetSchoolCode() {
@@ -1365,21 +1331,15 @@ public:
 
 bool EffectItemList::HasNonHostileItem() const
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	// i.e. return !HasOnlyHostileEffects()
 	return ThisStdCall(0x00414EB0, (void*)this) ? false : true;
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 
 bool EffectItemList::HasHostileItem() const
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	return ThisStdCall(0x004149F0, (void*)this) ? true : false;
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 
 UInt32 EffectItemList::CountItems() const
@@ -1461,11 +1421,7 @@ UInt32 EffectItemList::GetMagickaCost(TESForm* form) const
 
 UInt32 EffectItemList::AddItem(EffectItem* effectItem)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x00414B90, this, effectItem);
-#else
-#error unsupported Oblivion version
-#endif
 
 	return CountItems() - 1;	// the index of the new node
 }
@@ -1501,11 +1457,7 @@ const char* EffectItemList::GetNthEIName(UInt32 whichEffect) const
 
 bool AlchemyItem::IsPoison() const
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	return (ThisStdCall(0x00414EB0, (void*)(&this->magicItem.list)) & 0x000000FF) ? true : false;
-#else
-#error unsupported Oblivion version
-#endif
 }
 
 float AlchemyItem::GetGoldValue()
@@ -1825,11 +1777,7 @@ bool TESObjectCELL::SetWaterType(TESWaterForm* type)
 
 void TESObjectCELL::SetInteriorClimate(TESClimate* climate)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x00424380, &extraData, climate);
-#else
-#error unsupported Oblivion version
-#endif
 }
 
 void TESObjectCELL::SetIsPublic(bool bSet)
@@ -2342,15 +2290,8 @@ void SpellItem::SetHostile(bool bHostile)
 
 void TESObjectBOOK::Constructor(void)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	ThisStdCall(0x004ACF90, this);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	ThisStdCall(0x004B5770, this);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x004B59F0, this);
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 
 const char* TESPackage::TargetData::StringForTargetCode(UInt8 targetCode)
@@ -2545,11 +2486,8 @@ UInt8 TESPackage::ObjectCodeForString(const char* objString)
 
 const char* TESPackage::StringForProcedureCode(eProcedure proc, bool bRemovePrefix)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const char** s_procNames = (const char**)0x00B15020;
-#else
-#error unsupported Oblivion version
-#endif
+
 	static size_t prefixLen = strlen("PROCEDURE_");
 
 	const char* name = NULL;
@@ -2699,11 +2637,7 @@ bool TESPathGridPoint::SetEdgeEnabled(TESPathGridPoint* target, bool bEnable)
 
 void TESPathGrid::SetLinkedPointsEnabled(TESObjectREFR* linkedRefr, bool bEnablePoints)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x004E5170, this, linkedRefr, bEnablePoints);
-#else
-#error unsupported Oblivion version
-#endif
 }
 
 bool TESPathGrid::SetPointDisabled(UInt16 index, bool bDisabled)

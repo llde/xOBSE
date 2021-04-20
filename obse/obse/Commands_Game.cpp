@@ -319,24 +319,8 @@ static bool Cmd_GetCurrentFrameIndex_Execute(COMMAND_ARGS)
 
 typedef void (* _ToggleGlobalCollision)(void);
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-
-UInt8							* g_isCollisionOff = (UInt8 *)0x00AED364;
-const _ToggleGlobalCollision	ToggleGlobalCollision = (_ToggleGlobalCollision)0x0043ED30;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-
-UInt8							* g_isCollisionOff = (UInt8 *)0x00B33A34;
-const _ToggleGlobalCollision	ToggleGlobalCollision = (_ToggleGlobalCollision)0x00444A90;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-
 UInt8							* g_isCollisionOff = (UInt8 *)0x00B33A34;
 const _ToggleGlobalCollision	ToggleGlobalCollision = (_ToggleGlobalCollision)0x004447F0;
-
-#else
-#error unsupported oblivion version
-#endif
 
 bool IsGlobalCollisionDisabled(void)
 {
@@ -880,15 +864,11 @@ static bool Cmd_GetWaterShader_Execute(COMMAND_ARGS)
 	return true;
 }
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 static UInt32* kuGridsToLoadAddr = (UInt32*)0x00B06A2C;
 static Cmd_Execute Cmd_OutputLocalMapPictures_Execute = (Cmd_Execute)0x0050E6A0;
 static const UInt32 kOLMPPatchAddr = 0x0050E763;	// call GridCellArray::GetGridEntry(x, y)
 static const UInt32 kOLMPRetnAddr = 0x0050E768;
 static const UInt32 kGridCellArray_GetGridEntry = 0x00482150;
-#else
-#error unsupported oblivion version
-#endif
 
 static UInt32 uGridsToLoad_Override = -1;
 

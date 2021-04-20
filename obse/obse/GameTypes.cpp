@@ -4,26 +4,10 @@
 #include <algorithm>
 #include "Utilities.h"
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-
-NiTPointerMap <TESForm>			* g_formTable = (NiTPointerMap <TESForm> *)0x00AEDE44;
-NiTPointerMap <EffectSetting>	* g_EffectSettingCollection = (NiTPointerMap <EffectSetting> *)0x00AEB380;
-NiTPointerList <TESForm>		* g_quickKeyList = (NiTPointerList <TESForm> *)0x00AFC8E0;	//TEMP!!!
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-
 NiTPointerMap <TESForm>			* g_formTable = (NiTPointerMap <TESForm> *)0x00B0613C;
 NiTPointerMap <EffectSetting>	* g_EffectSettingCollection = (NiTPointerMap <EffectSetting> *)0x00B33508;
 NiTPointerList <TESForm>		* g_quickKeyList = (NiTPointerList <TESForm> *)0x00B3B440;
 
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-
-NiTPointerMap <TESForm>			* g_formTable = (NiTPointerMap <TESForm> *)0x00B0613C;
-NiTPointerMap <EffectSetting>	* g_EffectSettingCollection = (NiTPointerMap <EffectSetting> *)0x00B33508;
-NiTPointerList <TESForm>		* g_quickKeyList = (NiTPointerList <TESForm> *)0x00B3B440;
-#else
-#error unsupported version of oblivion
-#endif
 
 /*** BSStringT ***/
 /*

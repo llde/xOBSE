@@ -25,13 +25,10 @@ typedef void (__cdecl * _LinkDoors)(TESObjectREFR* door1, TESObjectREFR* door2);
 // Remove ExtraTeleport from door and its linked door, and removes from LowPathWorld.
 typedef void (__cdecl * _RemoveExtraTeleportFromDoorRef)(TESObjectREFR* doorRef);
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 static const _LinkDoors LinkDoors = (_LinkDoors)0x004B80E0;
 static const _RemoveExtraTeleportFromDoorRef RemoveExtraTeleportFromDoorRef = (_RemoveExtraTeleportFromDoorRef)0x004B6D50;
 static LowPathWorld** g_LowPathWorld = (LowPathWorld**)0x00B3BE00;
-#else
-#error unsupported Oblivion version
-#endif
+
 
 static const _Cmd_Execute Cmd_Activate_Execute = (_Cmd_Execute)0x00507650;
 
@@ -2180,17 +2177,13 @@ struct Cmd_OverrideChangeFlag_Info {
 	UInt8				changeFlag;
 };
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-
 static const Cmd_OverrideChangeFlag_Info s_tempCommandInfos[3] = {
 	{	(const Cmd_Execute)0x00508FC0,	0x004D8A4B,	0x04	},
 	{	(const Cmd_Execute)0x005075A0,	0x00507610,	0x80	},
 	{	(const Cmd_Execute)0x00507620,	0x00507637, 0x80	},
 };
 
-#else
-#error unsupported Oblivion version
-#endif
+
 
 static bool Cmd_OverrideChangeFlag_Execute(COMMAND_ARGS, UInt32 index)
 {
@@ -2296,11 +2289,8 @@ static bool Cmd_GetTimeLeft_Execute(COMMAND_ARGS)
 
 void SetExtraTimeLeft(BaseExtraList* list, float time)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x0041EDF0, list, time);
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 
 static bool Cmd_SetTimeLeft_Execute(COMMAND_ARGS)

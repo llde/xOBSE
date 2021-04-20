@@ -3,11 +3,8 @@
 #include "FunctionScripts.h"
 #include "Loops.h"
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 static const UInt32 kBackgroundLoaderThreadHookAddr = 0x0047CF3E;
-#else
-#error unsupported Oblivion version
-#endif
+
 
 void __stdcall HandleThreadExit()
 {

@@ -208,19 +208,12 @@ WaterShaderProperty s_WaterShaderProperties[kNumWaterShaderProperties] =
 	{	"displacedampener",		0x00B45F40,  false  },
 };
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 TES** g_TES = (TES**)0x00B333A0;
-#else
-#error unsupported oblivion version
-#endif
+
 
 GridCellArray::GridEntry* GridCellArray::GetGridEntry(UInt32 x, UInt32 y)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	return (GridEntry*)ThisStdCall(0x00482150, this, x, y);
-#else
-#error unsupported oblivion version
-#endif
 }
 
 TES* TES::GetSingleton()
@@ -230,11 +223,8 @@ TES* TES::GetSingleton()
 
 bool TES::GetTerrainHeight(float* posVec3, float* outHeight)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	return ThisStdCall(0x00440590, this, posVec3, outHeight) ? true : false;
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 
 bool GetWaterShaderProperty(const char* propName, float& out)

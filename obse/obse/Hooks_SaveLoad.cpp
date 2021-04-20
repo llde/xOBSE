@@ -13,34 +13,6 @@
 
 UInt32 g_gameLoaded = 0;
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-
-static const UInt32	kLoadGamePatchAddr =	0x0045FAA5;
-static const UInt32	kLoadGameRetnAddr =		0x0045FAAA;
-#define	kLoadGameEBPOffset					0x44
-
-static const UInt32	kSaveGamePatchAddr =	0x00460813;
-static const UInt32	kSaveGameRetnAddr =		0x00460818;
-
-static const UInt32	kDeleteGamePatchAddr =	0x00453ED6;
-
-static const UInt32	kRenameGamePatchAddr =	0x0045C1DA;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-
-static const UInt32	kLoadGamePatchAddr =	0x00466833;
-static const UInt32	kLoadGameRetnAddr =		0x00466838;
-#define	kLoadGameEBPOffset					0x40
-
-static const UInt32	kSaveGamePatchAddr =	0x004656D8;
-static const UInt32	kSaveGameRetnAddr =		0x004656DD;
-
-static const UInt32	kDeleteGamePatchAddr =	0x00453496;
-
-static const UInt32	kRenameGamePatchAddr =	0x0045F600;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-
 static const UInt32	kLoadGamePatchAddr =	0x00466995;
 static const UInt32	kLoadGameRetnAddr =		0x0046699A;
 
@@ -73,11 +45,6 @@ static const UInt8 Script_RunOverwrittenInstructions[] =
 	0x56, 0x8B, 0xF1, 0x8B, 0x4C
 };
 
-#else
-
-#error unsupported oblivion version
-
-#endif
 
 /*
 	When loading a saved game, scripts attached to references are executed as soon as the refr

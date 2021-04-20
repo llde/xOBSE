@@ -233,15 +233,8 @@ bool Cmd_SaveIP_Execute(COMMAND_ARGS)
 
 bool Cmd_RestoreIP_Execute(COMMAND_ARGS)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	static const UInt32 kDataDeltaStackOffset = 480;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
+
 	static const UInt32 kDataDeltaStackOffset = 482;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-	static const UInt32 kDataDeltaStackOffset = 482;
-#else
-#error unsupported oblivion version
-#endif
 
 	UInt32	_esi;
 
@@ -472,16 +465,8 @@ bool Cmd_Default_Parse(UInt32 numParams, ParamInfo* paramInfo, ScriptLineBuffer*
 
 	#ifdef OBLIVION
 
-	#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	static const Cmd_Parse g_defaultParseCommand = (Cmd_Parse)0x004F38C0;
-	#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	static const Cmd_Parse g_defaultParseCommand = (Cmd_Parse)0x004FDF80;
-	#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const Cmd_Parse g_defaultParseCommand = (Cmd_Parse)0x004FDE30;
-	#else
-	#error unsupported version of oblivion
-	#endif
-
+	
 	#else
 
 	#if CS_VERSION == CS_VERSION_1_0
@@ -780,170 +765,6 @@ struct PatchLocation
 
 #ifdef OBLIVION
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-
-// ### TODO: command dumper at 004F848F
-// asserts at 004F25C0
-
-static const PatchLocation kPatch_ScriptCommands_Start[] =
-{
-	{	0x004F263C + 3,	0x00 },
-	{	0x004F2693 + 1,	0x04 },
-	{	0x004F272A + 3,	0x08 },
-	{	0x004F5ED7 + 3,	0x00 },
-	{	0x0055E199 + 2,	0x20 },
-	{	0x0055E1A7 + 2,	0x10 },
-	{	0x0055E5DE + 3,	0x20 },
-	{	0x0055E6F3 + 3,	0x00 },
-	{	0x0055E8D1 + 4,	0x12 },
-	{	0x0055E8F9 + 3,	0x12 },
-	{	0x0055E905 + 2,	0x14 },
-	{	0x0055E939 + 3,	0x12 },
-	{	0x0055E945 + 2,	0x14 },
-	{	0x0055E980 + 3,	0x12 },
-	{	0x0055E98B + 2,	0x14 },
-	{	0x0055EA56 + 4,	0x12 },
-	{	0x0055EAA8 + 3,	0x12 },
-	{	0x0055EABB + 2,	0x14 },
-	{	0x0055EB72 + 3,	0x12 },
-	{	0x0055EB81 + 2,	0x14 },
-	{	0 },
-};
-
-static const PatchLocation kPatch_ScriptCommands_End[] =
-{
-	{	0x004F26BD + 2, 4 },
-	{	0 },
-};
-
-// search for 16Ch, stopped at 0x005FA012
-
-static const PatchLocation kPatch_ScriptCommands_MaxIdx[] =
-{
-	{	0x004E8DB9 + 3,	1, 1 },
-//	{	0x004F25C0 + 6,	1 },	// assert
-	{	0x004F262D + 2, 1 },
-	{	0x004F5EC9 + 1,	1 },
-	{	0x0055E33D + 1,	1 },
-	{	0x0055E354 + 1, (UInt32)(-0x1000) + 1 },
-	{	0x0055E368 + 2, (UInt32)(-0x1000) + 1 },
-	{	0x0055E8C6 + 2, (UInt32)(-0x1000) + 1 },
-	{	0x0055E8E6 + 2, (UInt32)(-0x1000) + 1 },
-	{	0x0055E926 + 2, (UInt32)(-0x1000) + 1 },
-	{	0x0055E96B + 1, (UInt32)(-0x1000) + 1 },
-	{	0x0055EA48 + 1, (UInt32)(-0x1000) + 1 },
-	{	0x0055EA97 + 1,	(UInt32)(-0x1000) + 1 },
-	{	0x0055EB61 + 1,	(UInt32)(-0x1000) + 1 },
-
-	{	0 },
-};
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-
-static const PatchLocation kPatch_ScriptCommands_Start[] =
-{
-	// 004FCB80
-	{	0x004FCBB8 + 3,	0x00 },
-
-	// 004FCBC0
-	{	0x004FCC09 + 1,	0x04 },
-	{	0x004FCCA2 + 3,	0x08 },
-
-	// 004FDC40
-	{	0x004FDDC9 + 3,	0x00 },
-
-	// 004FF860
-	{	0x005000BE + 3,	0x00 },
-
-	// 00501690 - print console/script command help
-	{	0x00501724 + 2,	0x0C },
-	{	0x00501740 + 2,	0x04 },
-	{	0x0050175F + 2,	0x00 },
-	{	0x00501775 + 2,	0x00 },
-
-	// 0056ABD0
-	{	0x0056AC25 + 3,	0x20 },
-	{	0x0056AC36 + 2,	0x10 },
-
-	// 0056ADA0
-	{	0x0056AE02 + 3,	0x20 },
-	{	0x0056AF16 + 3,	0x00 },
-
-	// 0056B0F0
-	{	0x0056B101 + 4,	0x12 },
-
-	// 0056B110
-	{	0x0056B12C + 3,	0x12 },
-	{	0x0056B138 + 2,	0x14 },
-
-	// 0056B150
-	{	0x0056B16C + 3,	0x12 },
-	{	0x0056B178 + 2,	0x14 },
-
-	// 0056B1A0
-	{	0x0056B1C1 + 4,	0x12 },
-	{	0x0056B1CF + 2,	0x14 },
-
-	// 0056B260
-	{	0x0056B2B2 + 4,	0x12 },
-	{	0x0056B305 + 4,	0x12 },
-	{	0x0056B317 + 2,	0x14 },
-	{	0x0056B3CD + 3,	0x14 },
-	{	0x0056B471 + 4,	0x12 },
-	{	0x0056B483 + 2,	0x14 },
-
-	{	0 },
-};
-
-static const PatchLocation kPatch_ScriptCommands_End[] =
-{
-	// 004FCBC0
-	{	0x004FCC37 + 2,	0x04 },
-
-	{	0 },
-};
-
-// check 00863EF2, unlikely
-
-static const PatchLocation kPatch_ScriptCommands_MaxIdx[] =
-{
-	// 004F3380
-	{	0x004F3404 + 3,	1,	1 },
-
-	// 004FCB80
-	{	0x004FCBA9 + 2,	(UInt32)(-0x1000) },
-
-	// 004FCE30 - assert
-//	{	0x004FCE30 + 6,	1 },
-
-	// 004FDC40
-	{	0x004FDDBB + 1,	(UInt32)(-0x1000) },
-
-	// 004FF860
-	{	0x005000B3 + 2,	(UInt32)(-0x1000) },
-
-	// 0056B0F0
-	{	0x0056B0F6 + 2, (UInt32)(-0x1000) + 1 },
-
-	// 0056B110
-	{	0x0056B116 + 2,	(UInt32)(-0x1000) + 1 },
-
-	// 0056B150
-	{	0x0056B156 + 2,	(UInt32)(-0x1000) + 1 },
-
-	// 0056B1A0
-	{	0x0056B1AB + 1, (UInt32)(-0x1000) + 1 },
-
-	// 0056B260
-	{	0x0056B2A4 + 1, (UInt32)(-0x1000) + 1 },
-	{	0x0056B2F3 + 1, (UInt32)(-0x1000) + 1 },
-	{	0x0056B45F + 1, (UInt32)(-0x1000) + 1 },
-
-	{	0 },
-};
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-
 static const PatchLocation kPatch_ScriptCommands_Start[] =
 {
 	// 004FCA30
@@ -1046,11 +867,6 @@ static const PatchLocation kPatch_ScriptCommands_MaxIdx[] =
 	{	0 },
 };
 
-#else
-
-#error unsupported oblivion version
-
-#endif
 
 #else // OBLIVION (CS stuff goes here)
 
@@ -1335,20 +1151,10 @@ void CommandTable::Init(void)
 	static CommandInfo* kCmdInfo_OnYield;
 #ifdef OBLIVION
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	g_consoleCommands.Read((CommandInfo *)0x00ACC4E0, (CommandInfo *)0x00ACD930);
-	g_scriptCommands.Read((CommandInfo *)0x00ACD958, (CommandInfo *)0x00AD1238);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	g_consoleCommands.Read((CommandInfo *)0x00B0B420, (CommandInfo *)0x00B0C898);
-	g_scriptCommands.Read((CommandInfo *)0x00B0C8C0, (CommandInfo *)0x00B10268);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	g_consoleCommands.Read((CommandInfo *)0x00B0B420, (CommandInfo *)0x00B0C898);
 	g_scriptCommands.Read((CommandInfo *)0x00B0C8C0, (CommandInfo *)0x00B10268);
 
 	kCmdInfo_OnYield = (CommandInfo*)0x00B0B060;
-#else
-#error unsupported oblivion version
-#endif
 
 #else
 

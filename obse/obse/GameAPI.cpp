@@ -96,64 +96,13 @@ ScriptEventList* EventListFromForm(TESForm* form)
 
 void ScriptEventList::Destructor()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x004FB4E0, this);
-#else
-#error unsupported oblivion version
-#endif
+
 }
 
 // arg1 = 1, ignored if canCreateNew is false, passed to 'init' function if a new object is created
 typedef void * (* _GetSingleton)(bool canCreateNew, bool arg1);
 typedef bool (* _IsMenuMode)(void);
-
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-
-const _Console_Print Console_Print = (_Console_Print)0x0056CDAD;
-const _ExtractArgs ExtractArgs = (_ExtractArgs)0x004F0F10;
-const _CreateFormInstance CreateFormInstance = (_CreateFormInstance)0x00442040;
-const _LookupFormByID LookupFormByID = (_LookupFormByID)0x00465750;
-const _FormHeap_Allocate FormHeap_Allocate = (_FormHeap_Allocate)0x00401FA0;
-const _FormHeap_Free FormHeap_Free = (_FormHeap_Free)0x00401FC0;
-const _GetGlobalScriptStateObj GetGlobalScriptStateObj = (_GetGlobalScriptStateObj)0x005790C0;
-const _GetSingleton InterfaceManager_GetSingleton = (_GetSingleton)0x00575230;
-const _ShowMessageBox ShowMessageBox = (_ShowMessageBox)0x0056CE20;
-const _ShowMessageBox_Callback ShowMessageBox_Callback = (_ShowMessageBox_Callback)0x004F6520;
-const _ShowMessageBox_pScriptRefID ShowMessageBox_pScriptRefID = (_ShowMessageBox_pScriptRefID)0x00AF3F40;
-const _QueueUIMessage QueueUIMessage = (_QueueUIMessage)0x0056DF90;
-const _QueueUIMessage_2 QueueUIMessage_2 = (_QueueUIMessage_2)0x0056E0A0;
-const _ShowMessageBox_button ShowMessageBox_button = (_ShowMessageBox_button)0x00ACAF04;
-MemoryHeap * g_formHeap = (MemoryHeap *)0x00AC3EC0;
-const bool * g_bConsoleMode = (bool*)0x00AF3F24;
-const _IsGodMode IsGodMode = (_IsGodMode)0x00649840;
-const bool * g_bIsConsoleOpen = (bool*)0x00AEAD39;
-const _ScancodeToChar ScancodeToChar = (_ScancodeToChar)0x00403110;
-static const UInt32 g_IniSettingCollection = 0x00AF1898;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-
-const _Console_Print Console_Print = (_Console_Print)0x00579A9B;
-const _ExtractArgs ExtractArgs = (_ExtractArgs)0x004FAF30;
-const _CreateFormInstance CreateFormInstance = (_CreateFormInstance)0x00448000;
-const _LookupFormByID LookupFormByID = (_LookupFormByID)0x0046B150;
-const _FormHeap_Allocate FormHeap_Allocate = (_FormHeap_Allocate)0x00401F10;
-const _FormHeap_Free FormHeap_Free = (_FormHeap_Free)0x00401F30;
-const _GetGlobalScriptStateObj GetGlobalScriptStateObj = (_GetGlobalScriptStateObj)0x00585BE0;
-const _GetSingleton InterfaceManager_GetSingleton = (_GetSingleton)0x005820B0;
-const _ShowMessageBox ShowMessageBox = (_ShowMessageBox)0x00579B10;
-const _ShowMessageBox_Callback ShowMessageBox_Callback = (_ShowMessageBox_Callback)0x00500530;
-const _ShowMessageBox_pScriptRefID ShowMessageBox_pScriptRefID = (_ShowMessageBox_pScriptRefID)0x00B361C8;
-const _QueueUIMessage QueueUIMessage = (_QueueUIMessage)0x0057ABC0;
-const _QueueUIMessage_2 QueueUIMessage_2 = (_QueueUIMessage_2)0x0057ACD0;
-const _ShowMessageBox_button ShowMessageBox_button = (_ShowMessageBox_button)0x00B09E24;
-MemoryHeap * g_formHeap = (MemoryHeap *)0x00B02020;
-const bool * g_bConsoleMode = (bool*)0x00B361AC;
-const _IsGodMode IsGodMode = (_IsGodMode)0x0065D2D0;
-const bool * g_bIsConsoleOpen = (bool*)0x00B33415;
-const _ScancodeToChar ScancodeToChar = (_ScancodeToChar)0x00403D00;
-static const UInt32 g_IniSettingCollection = 0x00B07BF0;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 
 const _Console_Print Console_Print = (_Console_Print)0x00579B9B;
 const _ExtractArgs ExtractArgs = (_ExtractArgs)0x004FAE80;
@@ -186,11 +135,6 @@ const _FontManager_GetSingleton FontManager_GetSingleton = (_FontManager_GetSing
 const NiTMapBase<const char*, NiFormArray*>**  g_IdleAnimationMap = (const NiTMapBase<const char*, NiFormArray*>**)0x00B362C0;
 const _GetFormModelPath GetFormModelPath = (_GetFormModelPath)0x0046D3F0;
 
-#else
-
-#error unsupported version of oblivion
-
-#endif
 
 // make sure this doesn't get optimized
 #pragma optimize("", off)
@@ -235,72 +179,6 @@ __declspec(naked) UInt32 __cdecl ThisCall(UInt32 function, void * _this, ...)
 
 #pragma optimize("", on)
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-
-UInt32 AddFormToDataHandler(DataHandler * dataHandler, TESForm * form)
-{
-	return ThisStdCall(0x00448B50, dataHandler, form);
-}
-
-DataHandler ** g_dataHandler = (DataHandler **)0x00AED734;
-
-void AddFormToCreatedBaseObjectsList(TESSaveLoadGame * objList, TESForm * form)
-{
-	ThisStdCall(0x004559B0, objList, form);
-}
-
-TESSaveLoadGame ** g_createdBaseObjList = (TESSaveLoadGame **)0x00AED900;
-
-UInt32 NiTPointerMap_Lookup(void * map, void * key, void ** data)
-{
-	return ThisStdCall(0x00469F90, map, key, data);
-}
-
-void * g_gameSettingsTable = (void *)0x00AF182C;
-char*** g_baseActorValueNames = (char***)0x00AD33A0;
-char** g_extraActorValueNames = (char**)0x00AD3550;
-
-#include "obse/GameRTTI_1_1.inl"
-
-const _Oblivion_DynamicCast Oblivion_DynamicCast = (_Oblivion_DynamicCast)0x009619CE;
-
-CRITICAL_SECTION * g_extraListMutex = (CRITICAL_SECTION *)0x00AEB900;
-CRITICAL_SECTION * g_pathingMutex = (CRITICAL_SECTION *)0x00AFE780;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-
-UInt32 AddFormToDataHandler(DataHandler * dataHandler, TESForm * form)
-{
-	return ThisStdCall(0x0044DB30, dataHandler, form);
-}
-
-DataHandler ** g_dataHandler = (DataHandler **)0x00B33A98;
-
-void AddFormToCreatedBaseObjectsList(TESSaveLoadGame * objList, TESForm * form)
-{
-	ThisStdCall(0x004597F0, objList, form);
-}
-
-TESSaveLoadGame ** g_createdBaseObjList = (TESSaveLoadGame **)0x00B33B00;
-
-UInt32 NiTPointerMap_Lookup(void * map, void * key, void ** data)
-{
-	return ThisStdCall(0x004E8670, map, key, data);
-}
-
-void * g_gameSettingsTable = (void *)0x00B35574;
-char*** g_baseActorValueNames = (char***)0x00B12758;
-char** g_extraActorValueNames = (char**)0x00B12908;
-
-#include "obse/GameRTTI_1_2.inl"
-
-const _Oblivion_DynamicCast Oblivion_DynamicCast = (_Oblivion_DynamicCast)0x0098AC46;
-
-CRITICAL_SECTION * g_extraListMutex = (CRITICAL_SECTION *)0x00B33800;
-CRITICAL_SECTION * g_pathingMutex = (CRITICAL_SECTION *)0x00B3BE80;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-
 UInt32 AddFormToDataHandler(DataHandler * dataHandler, TESForm * form)
 {
 	return ThisStdCall(0x0044D950, dataHandler, form);
@@ -332,11 +210,6 @@ const _Oblivion_DynamicCast Oblivion_DynamicCast = (_Oblivion_DynamicCast)0x0098
 CRITICAL_SECTION * g_extraListMutex = (CRITICAL_SECTION *)0x00B33800;
 CRITICAL_SECTION * g_pathingMutex = (CRITICAL_SECTION *)0x00B3BE80;
 
-#else
-
-#error unsupported version of oblivion
-
-#endif
 
 const char * GetFullName(TESForm * baseForm)
 {
@@ -1525,30 +1398,15 @@ bool ScriptFormatStringArgs::Arg(FormatStringArgs::argType asType, void * outRes
 
 bool InterfaceManager::CreateTextEditMenu(const char* promptText, const char* defaultText)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	return ThisStdCall(0x005CEAA0, this, promptText, defaultText) ? true : false;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	return ThisStdCall(0x005DCD10, this, promptText, defaultText) ? true : false;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	return ThisStdCall(0x005DCF20, this, promptText, defaultText) ? true : false;
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 
 float InterfaceManager::GetDepth()
 {
 	float depth = 0;
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	ThisStdCall(0x0057BC60, this);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	ThisStdCall(0x00588860, this);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x00588890, this);
-#else
-#error unsupported oblivion version
-#endif
 
 	__asm {
 		fstp	[depth]
@@ -1559,15 +1417,7 @@ float InterfaceManager::GetDepth()
 
 bool InterfaceManager::MenuModeHasFocus(UInt32 menuType)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	UInt8 bMenuMode = (UInt8)ThisStdCall(0x0056F500, this, menuType);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	UInt8 bMenuMode = (UInt8)ThisStdCall(0x0057C040, this, menuType);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	UInt8 bMenuMode = (UInt8)ThisStdCall(0x0057C140, this, menuType);
-#else
-#error unsupported oblivion version
-#endif
 
 	return bMenuMode ? true : false;
 }
@@ -1579,12 +1429,8 @@ bool InterfaceManager::IsGameMode()
 
 void InterfaceManager::ToggleDebugText()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	typedef void (* _fn)();
 	((_fn)0x0057C200)();
-#else
-#error unsupported Oblivion version
-#endif
 }
 
 Script* GetCurrentExecutingScript(void)
@@ -1619,11 +1465,8 @@ void SettingInfo::Set(const char* str)
 {
 	if (Type() == kSetting_String)
 	{
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 		ThisStdCall(0x004A7980, this, str);
-#else
-#error unsupported Oblivion version
-#endif
+
 	}
 }
 
@@ -1634,12 +1477,8 @@ FontManager* FontManager::GetSingleton()
 
 FontManager::FontInfo* FontManager::FontInfo::Load(const char* path, UInt32 ID)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	FontInfo* info = (FontInfo*)FormHeap_Allocate(sizeof(FontInfo));
 	return (FontManager::FontInfo*)ThisStdCall(0x005757A0, info, ID, path, 1);
-#else
-#error unsupported Oblivion version
-#endif
 }
 
 bool FontManager::FontInfo::GetName(char* out)

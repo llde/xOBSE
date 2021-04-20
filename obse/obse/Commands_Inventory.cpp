@@ -4090,12 +4090,8 @@ static bool Cmd_IsEquipped_Execute(COMMAND_ARGS)
 
 static bool OverrideGameSounds_Execute(Cmd_Execute cmd, COMMAND_ARGS)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const UInt16 s_overwrittenInstructions = 0x0675;	// jnz [rel8]
 	static const UInt32 s_patchAddr = 0x005E96E7l;			// in fn char* GetItemUpDownSound(TESForm* item, bool bUpSound, arg2)
-#else
-#error unsupported Oblivion version
-#endif
 
 	// nop out a jnz rel8 at beginning of fn to make it always return NULL (indicating no sound for specified item)
 	SafeWrite16(s_patchAddr, 0x9090);

@@ -104,7 +104,7 @@ static const OBSEInterface g_OBSEInterface =
 	OBSE_VERSION_INTEGER,
 
 #ifdef OBLIVION
-	OBLIVION_VERSION,
+	OBLIVION_VERSION_1_2_416,
 	0,
 	0,
 #else

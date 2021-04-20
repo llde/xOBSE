@@ -13,11 +13,8 @@
 #include "Utilities.h"
 #include "NiHavok.h"
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-	static bhkWorldM** g_bhkWorldM = (bhkWorldM**)0x00B35C24;
-#else
-#error unsupported Oblivion version
-#endif
+static bhkWorldM** g_bhkWorldM = (bhkWorldM**)0x00B35C24;
+
 
 static hkWorld* GethkWorld()
 {

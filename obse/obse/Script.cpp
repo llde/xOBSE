@@ -85,63 +85,28 @@ void Script::RefVariable::Resolve(ScriptEventList * eventList)
 
 void Script::Constructor(void)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	ThisStdCall(0x004F05D0, this);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	ThisStdCall(0x004FBBF0, this);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x004FBAA0, this);
-#else
-#error unsupported oblivion version
-#endif
+
 }
 
 void Script::StaticDestructor(void)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	ThisStdCall(0x004F24B0, this);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	ThisStdCall(0x004FCAD0, this);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x004FC980, this);
-#else
-#error unsupported oblivion version
-#endif
 }
 
 void Script::SetText(const char * buf)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	ThisStdCall(0x004EFA60, this, buf);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	ThisStdCall(0x004F9EE0, this, buf);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x004F9E50, this, buf);
-#else
-#error unsupported oblivion version
-#endif
 }
 
 bool Script::CompileAndRun(void * unk0, UInt32 unk1, void * unk2)
-{
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	return ThisStdCall(0x004F1A20, this, unk0, unk1, unk2) ? true : false;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	return ThisStdCall(0x004FC050, this, unk0, unk1, unk2) ? true : false;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
+{	
 	return ThisStdCall(0x004FBF00, this, unk0, unk1, unk2) ? true : false;
-#else
-#error unsupported oblivion version
-#endif
 }
 
 ScriptEventList* Script::CreateEventList(void)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	return (ScriptEventList*)ThisStdCall(0x004FBDC0, this);
-#else
-#error unsupported Oblivion version
-#endif
 }
 
 Script::RefVariable* ScriptBuffer::ResolveRef(const char* refName)
@@ -152,24 +117,17 @@ Script::RefVariable* ScriptBuffer::ResolveRef(const char* refName)
 
 const char* QuestStageItem::GetLogText() const
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	// returns pointer to static buffer
 	// text most recently looked up is cached
 	return (const char*)ThisStdCall(0x0052AF40, const_cast<QuestStageItem*>(this), owningQuest);
-#else
-#error unsupported Oblivion version
-#endif
 }
 
 void QuestStageItem::LogDate::Get(UInt16& d, UInt32& m, UInt16 &y)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	d = ThisStdCall(0x0047D3C0, this);
 	m = ThisStdCall(0x0047D3E0, this);
 	y = ThisStdCall(0x0047D2A0, this);
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 
 bool QuestStageItem::LogDate::Set(UInt32 d, UInt32 m, UInt32 y)

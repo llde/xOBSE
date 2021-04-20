@@ -51,10 +51,7 @@ bool ActorAnimData::FindAnimInRange(UInt32 lowBound, UInt32 highBound)
 PathBuilder* PathBuilder::GetSingleton()
 {
 	typedef PathBuilder* (* _GetPathBuilderSingleton)(void);
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static _GetPathBuilderSingleton func = (_GetPathBuilderSingleton)0x00683030;
 	return func();
-#else
-#error unsupported Oblivion version
-#endif
+
 }

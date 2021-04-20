@@ -165,26 +165,8 @@ std::string GetOblivionDirectory(void)
 
 #if OBLIVION
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-
-const char*** g_KeyNames = (const char***)0xAF8B10;
-const char*** g_ButtonNames = (const char***)0xAF8AE8;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-
 const char*** g_KeyNames = (const char***)0xB39578;
 const char*** g_ButtonNames = (const char***)0xB39554;
-
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-
-const char*** g_KeyNames = (const char***)0xB39578;
-const char*** g_ButtonNames = (const char***)0xB39554;
-
-#else
-
-#error unsupported version of oblivion
-
-#endif
 
 const char* GetDXDescription(UInt32 keycode)
 {

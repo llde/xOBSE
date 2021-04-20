@@ -170,7 +170,6 @@ static UInt8 kEventParams_OneArray[1] =
 void __stdcall HandleEvent(UInt32 id, void * arg0, void * arg1);
 void __stdcall HandleGameEvent(UInt32 eventMask, TESObjectREFR* source, TESForm* object);
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 static const UInt32 kVtbl_PlayerCharacter = 0x00A73A0C;
 static const UInt32 kVtbl_Character = 0x00A6FC9C;
 static const UInt32 kVtbl_Creature = 0x00A710F4;
@@ -188,10 +187,6 @@ static const UInt32 kActivate_HookAddr = 0x004DD286;
 static const UInt32 kActivate_RetnAddr = 0x004DD28C;
 
 static UInt32 s_PlayerCharacter_SetVampireHasFed_OriginalFn = 0x0066B120;
-
-#else
-#error unsupported Oblivion version
-#endif
 
 
 // cheap check to prevent duplicate events being processed in immediate succession
@@ -310,11 +305,7 @@ static __declspec(naked) void OnActorEquipHook(void)
 
 static __declspec(naked) void OnActorEquipHook(void)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const UInt32 s_callAddr = 0x00489C30;	// ExtraContainerChanges::Data::EquipForActor()
-#else
-#error unsupported Oblivion version
-#endif
 
 	static const UInt32 kEventMask = ScriptEventList::kEvent_OnActorEquip;
 
@@ -332,11 +323,8 @@ static __declspec(naked) void OnActorEquipHook(void)
 
 static void InstallOnActorEquipHook()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const UInt32 patchAddr = 0x00489C6E;
-#else
-#error unsupported Oblivion version
-#endif
+
 	if (s_MainEventHook) {
 		// OnActorEquip event also (unreliably) passes through main hook, so install that
 		s_MainEventHook();
@@ -394,12 +382,9 @@ void __stdcall OnVampireFeedHook(bool bHasFed)
 
 void InstallOnVampireFeedHook()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const UInt32 vtblEntry = 0x00A73C70;
 	SafeWrite32(vtblEntry, (UInt32)OnVampireFeedHook);
-#else
-#error unsupported Oblivion version
-#endif
+
 }
 
 static __declspec(naked) void OnSkillUpHook(void)
@@ -407,12 +392,9 @@ static __declspec(naked) void OnSkillUpHook(void)
 	// on entry: edi = TESSkill*
 	// retn addr determined by zero flag (we're overwriting a jnz rel32 instruction)
 	// ecx, eax volatile
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const UInt32 s_jnzAddr = 0x00668129;		// if zero flag set
 	static const UInt32 s_jzAddr = 0x006680A6;		// if zero flag not set
-#else
-#error unsupported Oblivion version
-#endif
+
 
 	__asm {
 		jnz	ZeroFlagSet
@@ -434,11 +416,7 @@ static __declspec(naked) void OnSkillUpHook(void)
 
 void InstallOnSkillUpHook()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const UInt32 hookAddr = 0x006680A0;
-#else
-#error unsupported Oblivion version
-#endif
 
 	WriteRelJump(hookAddr, (UInt32)&OnSkillUpHook);
 }
@@ -448,13 +426,10 @@ static __declspec(naked) void ModPCSHook(void)
 	// on entry: esi = TESSkill*, [esp+0x21C-0x20C] = amount. amount may be zero or negative.
 	// hook overwrites a jz instruction following a comparison of amount to zero
 	// eax, edx volatile
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const UInt32 jz_retnAddr = 0x0050D1CA;
 	static const UInt32 jnz_retnAddr = 0x0050D0ED;
 	static const UInt32 amtStackOffset = 0x10;
-#else
-#error unsupported Oblivion version
-#endif
+
 
 	__asm {
 		mov edx, esp
@@ -484,11 +459,8 @@ static __declspec(naked) void ModPCSHook(void)
 	
 void InstallModPCSHook()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const UInt32 hookAddr = 0x0050D0E7;
-#else
-#error unsupported Oblivion version
-#endif
+
 
 	WriteRelJump(hookAddr, (UInt32)&ModPCSHook);
 }
@@ -499,12 +471,8 @@ static __declspec(naked) void OnMapMarkerAddHook(void)
 	// ecx: ExtraMapMarker::Data* mapMarkerData
 	// Only report event if marker was not *already* visible
 	// This can be called from 3 locations in game code, 2 of which we're interested in
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const UInt32 s_HUDMainMenuRetnAddr = 0x005A7058;		// from HUDMainMenu when player discovers a new marker
 	static const UInt32 s_ShowMapRetnAddr = 0x0050AD95;			// from Cmd_ShowMap_Execute
-#else
-#error unsupported Oblivion  version
-#endif
 
 	__asm {
 		// is marker already visible?
@@ -543,11 +511,7 @@ static __declspec(naked) void OnMapMarkerAddHook(void)
 
 void InstallMapMarkerHook()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const UInt32 patchAddr = 0x0042B327;
-#else
-#error unsupported Oblivion version
-#endif
 
 	WriteRelJump(patchAddr, (UInt32)&OnMapMarkerAddHook);
 }
@@ -581,23 +545,16 @@ static __declspec(naked) void OnSpellCastHook(void)
 
 static void InstallOnSpellCastHook()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	// overwriting jnz rel32 when MagicCaster->CanCast() returns true
 	static const UInt32 s_patchAddr = 0x005F3E71;
-#else
-#error unsupported Oblivion version
-#endif
+
 	
 	WriteRelJnz(s_patchAddr, (UInt32)&OnSpellCastHook);
 }
 
 static __declspec(naked) void OnFallImpactHook(void)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const UInt32 s_retnAddr = 0x005EFD57;
-#else
-#error unsupported Oblivion version
-#endif
 
 	// on entry: esi=Actor*
 	__asm {
@@ -616,22 +573,14 @@ static __declspec(naked) void OnFallImpactHook(void)
 
 static void InstallOnFallImpactHook()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const UInt32 s_patchAddr = 0x005EFD4D;
-#else
-#error unsupported Oblivion version
-#endif
 
 	WriteRelJump(s_patchAddr, (UInt32)&OnFallImpactHook);
 }
 
 static __declspec(naked) void OnDrinkPotionHook(void)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const UInt32 s_arg2StackOffset = 0x18;
-#else
-#error unsupported Oblivion version
-#endif
 
 	// hooks bool Actor::UseAlchemyItem(AlchemyItem*, UInt32, bool)
 	// is called recursively for player - on second call boolean arg is true
@@ -675,22 +624,16 @@ static __declspec(naked) void OnDrinkPotionHook(void)
 
 static void InstallOnDrinkPotionHook()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const UInt32 s_hookAddr = 0x005E0968;
-#else
-#error unsupported Oblivion version
-#endif
+
 
 	WriteRelJump(s_hookAddr, (UInt32)&OnDrinkPotionHook);
 }
 
 static __declspec(naked) void OnEatIngredientHook(void)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const UInt32 arg2StackOffset = 0x00000024;
-#else
-#error unsupported Oblivion version
-#endif
+
 
 	// on entry:
 	//	esi: 'eater' refr Actor*
@@ -721,11 +664,7 @@ static __declspec(naked) void OnEatIngredientHook(void)
 
 static void InstallOnEatIngredientHook()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const UInt32 s_hookAddr = 0x005E4515;	// overwrite call to MarkScriptEventList(actor, baseExtraList, kEvent_Equip)
-#else
-#error unsupported Oblivion version
-#endif
 
 	WriteRelCall(s_hookAddr, (UInt32)&OnEatIngredientHook);
 }
@@ -742,12 +681,8 @@ static __declspec(naked) void OnHealthDamageHook(void)
 	//	arg0: Actor* attacker (may be null)
 	//	arg1: float damage (has been modified for game difficulty if applicable)
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const UInt32 argsOffset = 0x00000008;
 	static const UInt32 retnAddr = 0x006034D1;
-#else
-#error unsupported Oblivion version
-#endif
 
 	__asm {
 		mov eax, esp
@@ -772,11 +707,7 @@ static __declspec(naked) void OnHealthDamageHook(void)
 
 static void InstallOnHealthDamageHook()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const UInt32 patchAddr = 0x006034CB;
-#else
-#error unsupported Oblivion version
-#endif
 
 	WriteRelJump(patchAddr, (UInt32)&OnHealthDamageHook);
 }
@@ -838,11 +769,7 @@ static __declspec(naked) void OnActionChangeHook(void)
 
 static void InstallOnActionChangeHook(UInt32 action)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	static const UInt32 patchAddr = 0x005F01A5;
-#else
-#error unsupported Oblivion version
-#endif
 
 	ASSERT_STR((action >= HighProcess::kAction_Attack && action <= HighProcess::kAction_Dodge),
 		"Invalid action supplied to InstallOnActionChangeHook()");
@@ -898,7 +825,6 @@ static void InstallOnDodgeHook()
 	InstallOnActionChangeHook(HighProcess::kAction_Dodge);
 }
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	// when player successfully traps a soul
 	static const UInt32 s_soulTrapPatchAddr = 0x006A4EC8;	
 
@@ -915,9 +841,7 @@ static void InstallOnDodgeHook()
 
 	// void BaseExtraList::SetExtraSoulLevel (UInt32 soulLevel)
 	static const UInt32 s_BaseExtraList_SetExtraSoulLevel = 0x0041EF30;
-#else
-#error unsupported Oblivion version
-#endif
+
 
 // temp ref (InventoryReference) created for most recently populated soul gem in player's inventory, valid only for a single frame
 static TESObjectREFR* s_lastFilledSoulgem = NULL;
@@ -1021,13 +945,10 @@ static void InstallIniHook()
 	SafeWrite32((UInt32)(vtbl+7), (UInt32)(&SaveIniHook));
 }
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 static const UInt32 kChargenPatchAddr = 0x005C2B36;
 static const UInt32 kChargenCallAddr  = 0x0066C580;
 static const UInt32 kChargenRetnAddr  = 0x005C2B3B;
-#else
-#error unsupported Oblivion version
-#endif
+
 
 static __declspec (naked) void OnRaceSelectionCompleteHook (void)
 {
@@ -1048,12 +969,9 @@ static void InstallOnRaceSelectionCompleteHook()
 	WriteRelJump (kChargenPatchAddr, (UInt32)&OnRaceSelectionCompleteHook);
 }
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 static const UInt32 kQuestCompletePatchAddr = 0x00529847;
 static const UInt32 kQuestCompleteRetnAddr  = 0x00529851;
-#else
-#error unsupported Oblivion version
-#endif
+
 
 static __declspec (naked) void OnQuestCompleteHook (void)
 {
@@ -1075,7 +993,6 @@ static void InstallOnQuestCompleteHook()
 	WriteRelJump (kQuestCompletePatchAddr, (UInt32)&OnQuestCompleteHook);
 }
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 static const UInt32 kMagicCasterCastMagicItemFnAddr = 0x00699190;
 static const UInt32 kMagicCasterCastMagicItemCallSites[13]  = 
 {
@@ -1090,9 +1007,6 @@ static const UInt32 kMagicTargetAddEffectCallSites[13]  =
 {
 	0x005E560F, 0x006A2D7F
 };
-#else
-#error unsupported Oblivion version
-#endif
 
 static bool PerformMagicCasterTargetHook(UInt32 eventID, MagicCaster* caster, MagicItem* magicItem, MagicTarget* target, UInt32 noHitVFX, ActiveEffect* av)
 {
@@ -1179,15 +1093,12 @@ static void InstallOnMagicApplyHook()
 
 //max swimming breath is calculated each frame based on actor's endurance
 //hook the two calls to the function that does this
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 static const UInt32 kActorSwimBreath_CalcMax_CallAddr	= 0x00548960;	// original function for calculating max breath 
 static const UInt32 kActorSwimBreath_CalcMax1_PatchAddr = 0x00604559;
 static const UInt32 kActorSwimBreath_CalcMax1_RetnAddr	= 0x0060455E;
 static const UInt32 kActorSwimBreath_CalcMax2_PatchAddr = 0x005E01C4;
 static const UInt32 kActorSwimBreath_CalcMax2_RetnAddr	= 0x005E01C9;
-#else
-#error unsupported Oblivion version
-#endif
+
 static __declspec(naked) void Hook_ActorSwimBreath_CalcMax1()
 {
 	__asm
@@ -1263,16 +1174,12 @@ float __stdcall GetActorMaxSwimBreath(Actor* actor)
 }
 
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 static const UInt32 kActorSwimBreath_Override_PatchAddr = 0x006045CA;
 static const UInt32 kActorSwimBreath_Override_RetnCanBreathAddr = 0x006045DF; // code for actor that can breath, sets currentBreath to maxBreath
 static const UInt32 kActorSwimBreath_Override_RetnNoBreathAddr	= 0x006045F9; // code for actor that cannot breath 
 static const UInt32 kActorSwimBreath_Override_RetnNoTickAddr	= 0x00604635; // skips code that ticks the current breath when underwater while keeping the rest
 static const UInt32 kActorSwimBreath_Override_RetnSkipAddr		= 0x00604763; // jumps to the end of the breath code
 static const UInt32 kActorSwimBreath_Override_RetnSkip2Addr		= 0x00604879; // also skips breathing menu code if actor is player
-#else
-#error unsupported Oblivion version
-#endif
 
 enum 
 {

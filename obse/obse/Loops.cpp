@@ -6,15 +6,8 @@
 #include "GameAPI.h"
 #include "GameObjects.h"
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	static const UInt32 kDataDeltaStackOffset = 480;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	static const UInt32 kDataDeltaStackOffset = 482;
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
-	static const UInt32 kDataDeltaStackOffset = 482;
-#else
-#error unsupported oblivion version
-#endif
+static const UInt32 kDataDeltaStackOffset = 482;
+
 
 LoopManager* LoopManager::GetSingleton()
 {

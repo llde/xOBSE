@@ -409,11 +409,6 @@ bool Tile::DeleteValue(UInt32 valueType)
 
 void Tile::UpdateFloat(UInt32 valueType, float newValue)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	ThisStdCall(0x57FEF0, this, valueType, newValue);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	ThisStdCall(0x58CE10, this, valueType, newValue);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	//	ThisStdCall() doesn't handle floating point args correctly
 	// do it in asm
 
@@ -427,31 +422,16 @@ void Tile::UpdateFloat(UInt32 valueType, float newValue)
 		push	[valueType]
 		call	[callAddr]
 	}
-#else
-#error unsupported Oblivion version
-#endif
 }
 
 void Tile::UpdateString(UInt32 valueType, const char* newValue)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-	ThisStdCall(0x57FF10, this, valueType, newValue);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2
-	ThisStdCall(0x58CE30, this, valueType, newValue);
-#elif OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x58CED0, this, valueType, newValue);
-#else
-#error unsupported Oblivion version
-#endif
 }
 
 void Tile::DoActionEnumeration()
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	ThisStdCall(0x58BEE0, this, 1);
-#else
-#error unsupported Oblivion version
-#endif
 }
 
 Tile * Tile::GetChildByName(const char * name)
