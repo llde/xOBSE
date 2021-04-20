@@ -231,6 +231,11 @@ public:
 		if (keycode >= 256) return QueryMouseKeyState( (MouseControl) (keycode - 256), query);
 		return QueryKeyboardKeyState(keycode, query);
 	}
+
+	bool WasKeyPressed(UInt16 keycode) {
+		if (keycode >= 256) return PreviousMouseState.rgbButtons[keycode - 256] != 0;
+		return PreviousKeyState[keycode] != 0;
+	}
 	//TODO set / tap keys and controls
 
 	//TODO allow passign type of binding

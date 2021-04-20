@@ -133,70 +133,6 @@ struct ModEntry
 
 STATIC_ASSERT(sizeof(ModEntry::Data) == 0x41C);
 
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_1
-
-// ### duplication of this class definition is ugly but several offsets changed between 1.1 and 1.2
-
-// CDC
-class DataHandler
-{
-public:
-	DataHandler();
-	~DataHandler();
-
-	template <tData> struct Node
-	{
-		tData		* data;
-		Node<tData>	* next;
-	};
-
-	BoundObjectListHead		* boundObjects;					// 000
-	Node<TESPackage>		packages;						// 004
-	Node<TESWorldSpace>		worldSpaces;					// 00C
-	Node<TESClimate>		climates;						// 014
-	Node<TESWeather>		weathers;						// 01C
-	Node<EnchantmentItem>	enchantmentItems;				// 024
-	Node<SpellItem>			spellitems;						// 02C
-	Node<TESHair>			hairs;							// 034
-	Node<TESEyes>			eyes;							// 03C
-	Node<TESRace>			races;							// 044
-	Node<TESLandTexture>	landTextures;					// 04C
-	Node<TESClass>			classes;						// 054
-	Node<TESFaction>		factions;						// 05C
-	Node<Script>			scripts;						// 064
-	Node<TESSound>			sounds;							// 06C
-	Node<TESGlobal>			globals;						// 074
-	Node<TESTopic>			topics;							// 07C
-	Node<TESQuest>			quests;							// 084
-	Node<Birthsign>			birthsigns;						// 08C
-	Node<TESCombatStyle>	combatStyles;					// 094
-	Node<TESLoadScreen>		loadScreens;					// 09C
-	Node<TESWaterForm>		waterForms;						// 0A4
-	Node<TESEffectShader>	effectShaders;					// 0AC
-	Node<TESObjectANIO>		objectAnios;					// 0B4
-	TESRegionList			* regionList;					// 0BC
-	NiTArray <TESObjectCELL *>	cellArray;					// 0C0
-	TESSkill				skills[0x15];					// 0D0
-	UInt32					unk8B0[(0x8C0 - 0x8B0) >> 2];	// 8B0
-	ModEntry				modList;						// 8C0
-	UInt32					numLoadedMods;					// 8C8
-	ModEntry::Data			* modsByID[0xFF];				// 8CC
-	UInt32					unkCC8[(0xCD4 - 0xCC8) >> 2];	// CC8
-	TESRegionDataManager	* regionDataManager;			// CD4
-	UInt32					unkCD8;							// CD8
-
-	const ModEntry * LookupModByName(const char * modName);
-	const ModEntry ** GetActiveModList();		// returns array of modEntry* corresponding to loaded mods sorted by mod index
-	UInt8 GetModIndex(const char* modName);
-	UInt8 GetActiveModCount();
-	const char* GetNthModName(UInt32 modIndex);
-	TESGlobal* GetGlobalVarByName(const char* varName, UInt32 nameLen = -1);
-	TESQuest* GetQuestByEditorName(const char* questName, UInt32 nameLen = -1);
-};
-
-STATIC_ASSERT(sizeof(DataHandler) == 0xCDC);
-
-#else
 
 // CE0 / 1220 (editor, due entirely to difference in size of TESSkill)
 class DataHandler
@@ -266,7 +202,6 @@ STATIC_ASSERT(sizeof(DataHandler) == 0xCE0);
 STATIC_ASSERT(sizeof(DataHandler) == 0x1220);
 #endif
 
-#endif
 
 typedef Visitor<ModEntry, ModEntry::Data> ModEntryVisitor;
 

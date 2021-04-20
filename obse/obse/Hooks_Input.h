@@ -21,15 +21,14 @@ public:
 
 	void SetMaskKey(UInt16 keycode);
 	void SetUnmaskKey(UInt16 keycode);
-	static void SetMaskMouse(UInt8 keycode) {}
-	static void SetUnmaskMouse(UInt8 keycode) {}
-	UInt8 GetMaskStatusKey(UInt8 keycode);
-	static UInt8 GetMaskStatusMouse(UInt8 keycode) { return 0; }
-
+	void SetMaskMouse(UInt8 keycode);
+	void SetUnmaskMouse(UInt8 keycode);
+	UInt8 GetMaskStatusKey(UInt16 keycode);
+	UInt8 GetMaskStatusMouse(UInt8 keycode);
 	UInt8 GetSignalStatusKey(UInt16 keycode);
 	UInt8 GetSignalStatusMouse(UInt8 keycode);
-	UInt8 GetSignalStatus(UInt16 keycode);
-
+	void SetTapKey(UInt16 keycode);
+	void SetTapMouse(UInt8 keycode);
 	OSInputGlobalsEx* InitializeEx(IDirectInputDevice8* device);
 	void InputPollFakeHandle();
 };
@@ -37,8 +36,9 @@ public:
 STATIC_ASSERT(sizeof(OSInputGlobalsEx) == sizeof(OSInputGlobals) + sizeof(DIMOUSESTATE2) + sizeof(UInt8[256]));
 
 enum  KeyControlState : UInt8 {
-	kStateDisabled =  1 << 0,
-	kStateSignalled = 1 << 1
+	kStateDisabled  = 1 << 0,
+	kStateSignalled = 1 << 1,
+	kStateTapped    = 1 << 2
 };
 
 void Hook_Input_Init();
