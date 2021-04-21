@@ -29,6 +29,10 @@ public:
 	UInt8 GetSignalStatusMouse(UInt8 keycode);
 	void SetTapKey(UInt16 keycode);
 	void SetTapMouse(UInt8 keycode);
+	void SetHoldKey(UInt16 keycode);
+	void SetHoldMouse(UInt8 keycode);
+	void SetUnHoldKey(UInt16 keycode);
+	void SetUnHoldMouse(UInt8 keycode);
 	OSInputGlobalsEx* InitializeEx(IDirectInputDevice8* device);
 	void InputPollFakeHandle();
 };
@@ -38,7 +42,10 @@ STATIC_ASSERT(sizeof(OSInputGlobalsEx) == sizeof(OSInputGlobals) + sizeof(DIMOUS
 enum  KeyControlState : UInt8 {
 	kStateDisabled  = 1 << 0,
 	kStateSignalled = 1 << 1,
-	kStateTapped    = 1 << 2
+	kStateTapped    = 1 << 2,
+	kStateHolded    = 1 << 3,
+	kStateHammered  = 1 << 4,
+	kStateAHammered = 1 << 5
 };
 
 void Hook_Input_Init();

@@ -146,15 +146,17 @@ static bool Cmd_TapKey_Execute(COMMAND_ARGS)
 	
 	return true;
 }
-
+#include "obse/GameData.h"
 static bool Cmd_MenuTapKey_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	UInt32	keycode = 0;
-	/*
+
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keycode))
 		return true;
 
+	_WARNING("MenuTapKey doesn't seem to work called from mod %s" , (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+	/*
     if(keycode<256)
 		DInput_FakeBufferedKeyTap(keycode);
 	*/
@@ -189,6 +191,7 @@ static bool Cmd_MenuHoldKey_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	UInt32	keycode = 0;
+	_WARNING("MenuHoldKey doesn't seem to work called from mod %s", (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 /*
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keycode)) return true;
     if(keycode<256) DInput_FakeBufferedKeyPress(keycode);
@@ -284,27 +287,27 @@ static bool Cmd_IsKeyDisabled_Execute(COMMAND_ARGS)
 static bool Cmd_GetNumKeysPressed_Execute(COMMAND_ARGS)
 {
 	DWORD count=0;
-	/*
-	for(DWORD d=0;d<256;d++) if(IsKeycodeValid(d)&&DI_data.LastBytes[d]) count++;
-	*result = count;*/
+	for (UInt32 d = 0; d < 256; d++) if (g_inputGlobal->CurrentKeyState[d]) count++;
+	*result = count;
 	return true;
 }
+//TODO this family of function return Disabled keys. check signal state
 static bool Cmd_GetKeyPress_Execute(COMMAND_ARGS)
 {
 	*result = 0xFFFF;
 	UInt32 count=0;
-/* if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &count)) return true;
-	for(DWORD d=0;d<256;d++) if(IsKeycodeValid(d)&&DI_data.LastBytes[d]&&(!count--)) {
+	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &count)) return true;
+
+	for(UInt32 d = 0; d < 256; d++) if(g_inputGlobal->CurrentKeyState[d] && (!count--)) {
 		*result = d;
 		break;
-	} */
+	}
 	return true;
 }
 static bool Cmd_GetNumMouseButtonsPressed_Execute(COMMAND_ARGS)
 {
 	DWORD count=0;
-	//Include mouse wheel? Probably not...
-//	for(DWORD d=256;d<kMaxMacros -2;d++) if(IsKeycodeValid(d)&&DI_data.LastBytes[d]) count++;
+	for (UInt32 d = 0; d < 8; d++) if(g_inputGlobal->CurrentMouseState.rgbButtons[d]) count++;
 	*result = count;
 	return true;
 }
@@ -312,11 +315,11 @@ static bool Cmd_GetMouseButtonPress_Execute(COMMAND_ARGS)
 {
 	*result = 0xFFFF;
 	UInt32 count=0;
-/*	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &count)) return true;
-	for(DWORD d=256;d<kMaxMacros - 2;d++) if(DI_data.LastBytes[d]&&(!count--)) {
+	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &count)) return true;
+	for (UInt32 d = 0; d < 8; d++) if(g_inputGlobal->CurrentMouseState.rgbButtons[d] && (!count--)){
 		*result = d;
 		break;
-	}*/
+	}
 	return true;
 }
 static bool Cmd_MoveMouseX_Execute(COMMAND_ARGS)
@@ -476,7 +479,6 @@ static bool Cmd_OnKeyDown_Execute(COMMAND_ARGS)
 static bool Cmd_OnControlDown_Execute(COMMAND_ARGS)
 {
 	// key is refID, data is a set of key events that have been returned for that script
-	static std::map< UINT, std::set<UINT> > CtrlListeners;
 	UINT ctrl = 0;
 	*result = 0;
 
@@ -501,26 +503,20 @@ static bool Cmd_TapControl_Execute(COMMAND_ARGS)
 	UINT keyCode = 0;
 
 	if (!(ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &ctrl)))	return true;
-	/*
-	if (ctrl >= CONTROLSMAPPED)	return true;
-	if (!InputControls)			GetControlMap();
-
-	keyCode = InputControls[ctrl];
-    if (IsKeycodeValid(keyCode))
-	{
-		DI_data.TapStates[keyCode] = 0x80;
+	
+	keyCode = g_inputGlobal->KeyboardInputControls[ctrl];
+	if (OSInputGlobals::IsKeycodeValid(keyCode)){
 		*result = 1;
+		g_inputGlobal->SetTapKey(keyCode);
 	}
-	else
-	{
-		keyCode = AltInputControls[ctrl] + 256;
-		if (IsKeycodeValid(keyCode))
-		{
-			DI_data.TapStates[keyCode] = 0x80;
+	else {
+		keyCode = g_inputGlobal->MouseInputControls[ctrl];
+		if (keyCode < 8) {
+			g_inputGlobal->SetTapMouse(keyCode);
 			*result = 1;
 		}
 	}
-	*/
+
 	return true;
 }
 
@@ -536,7 +532,7 @@ static bool Cmd_GetCursorPos_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	InterfaceManager* intfc = InterfaceManager::GetSingleton();
-	if (intfc->IsGameMode())		// can crash during gamemode if playing full-screen
+	if (intfc->IsGameMode())		// can crash during gamemode if playing full-screen  //TODO WHY?
 		return true;
 
 	if (ExtractArgs(PASS_EXTRACT_ARGS, &axis))

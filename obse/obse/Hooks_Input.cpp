@@ -54,6 +54,22 @@ void OSInputGlobalsEx::SetTapMouse(UInt8 keycode){
 	MouseMaskState.rgbButtons[keycode] |= kStateTapped;
 }
 
+void OSInputGlobalsEx::SetHoldKey(UInt16 keycode)
+{
+}
+
+void OSInputGlobalsEx::SetHoldMouse(UInt8 keycode)
+{
+}
+
+void OSInputGlobalsEx::SetUnHoldKey(UInt16 keycode)
+{
+}
+
+void OSInputGlobalsEx::SetUnHoldMouse(UInt8 keycode)
+{
+}
+
 
 //TODO Hold,Release and Hammer keys. Mouse states
 void OSInputGlobalsEx::InputPollFakeHandle() {

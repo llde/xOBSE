@@ -186,9 +186,9 @@ public:
 	UInt8		KeyboardInputControls[29];				    // 1B7E - ini control >> 16
 	UInt8		MouseInputControls[29];						// 1B9B - ini control >> 8
 	UInt8		JoystickInputControls[29];					// 1BB8 - ini control >> 0 
-	UInt8		unk1BD5;									// 1BD5  (relevant to as AlwaysRun, but it's assigned as a button in ResetBinding function as JoystickInputControls[29] = 0xB)
-	UInt8		pad1BD6[2];									// 1BD6
-
+	UInt8		alwaysRunControlMaybe;						// 1BD5  (relevant to as AlwaysRun, but it's assigned as a button in ResetBinding function as JoystickInputControls[29] = 0xB)
+	UInt8		FrameIndex;									// 1BD6  (Repurposed as FrameIndex, originally Unused)
+	UInt8		MouseDisabled;								// 1BD7  (Repurposed as MouseDisabled,  originally Unused)
 	//Methods
 	MEMBER_FN_PREFIX(OSInputGlobals);
     DEFINE_MEMBER_FN(FlushKeyboardBuffer,        void,   0x00403160);
