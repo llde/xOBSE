@@ -61,25 +61,25 @@ void OSInputGlobalsEx::InputPollFakeHandle() {
 		if (idx < 8) {
 			MouseMaskState.rgbButtons[idx] &= ~kStateSignalled;
 			if ((MouseMaskState.rgbButtons[idx] & kStateDisabled) == kStateDisabled) {
-				if (CurrentMouseState.rgbButtons[idx] != 0) {  //Presses are 0x80 ?
+				if (CurrentMouseState.rgbButtons[idx] != 0) {  //Presses are 0x80 
 					CurrentMouseState.rgbButtons[idx] = 0;
 					MouseMaskState.rgbButtons[idx] |= kStateSignalled;
 				}
 			}
 			if ((MouseMaskState.rgbButtons[idx] & kStateTapped) == kStateTapped) {
-				CurrentMouseState.rgbButtons[idx] = 0x80;   //Presses are 0x80
+				CurrentMouseState.rgbButtons[idx] = 0x80;   
 				MouseMaskState.rgbButtons[idx] &= ~kStateTapped;
 			}
 		}
 		KeyMaskState[idx] &= ~kStateSignalled;
 		if((KeyMaskState[idx] & kStateDisabled) == kStateDisabled){
-			if (CurrentKeyState[idx] != 0) {  //Presses are 0x80 ?
+			if (CurrentKeyState[idx] != 0) {
 				CurrentKeyState[idx] = 0;
 				KeyMaskState[idx] |= kStateSignalled;
 			}
 		}
 		if ((KeyMaskState[idx] & kStateTapped) == kStateTapped) {
-			CurrentKeyState[idx] = 0x80;   //Presses are 0x80
+			CurrentKeyState[idx] = 0x80;
 			KeyMaskState[idx] &= ~kStateTapped;
 		}
 	}

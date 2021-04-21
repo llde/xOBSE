@@ -228,11 +228,7 @@ public:
 	TESSaveLoadGame();
 	~TESSaveLoadGame();
 
-#if OBLIVION_VERSION >= OBLIVION_VERSION_1_2
 	UInt32	unk000[0x28 >> 2];	// 000 (1.2)
-#else
-	UInt32	unk000[0x2C >> 2];	// 000 (1.1)
-#endif
 
 	struct CreatedObject
 	{
@@ -260,9 +256,7 @@ public:
 	UInt32	ResetObject(TESForm* object, UInt32 changeFlags, UInt32 unk2);
 };
 
-#ifdef OBLIVION_VERSION
-STATIC_ASSERT(offsetof(TESSaveLoadGame, numMods) == ((OBLIVION_VERSION >= OBLIVION_VERSION_1_2) ? 0x48 : 0x4C));
-#endif
+STATIC_ASSERT(offsetof(TESSaveLoadGame, numMods) ==  0x48);
 
 void AddFormToCreatedBaseObjectsList(TESSaveLoadGame * objList, TESForm * form);
 extern TESSaveLoadGame ** g_createdBaseObjList;	// a TESSaveLoadGame
