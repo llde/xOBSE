@@ -121,7 +121,11 @@ __declspec(naked) void PollInputNoMouseHook() {
 }
 OSInputGlobalsEx* __thiscall OSInputGlobalsEx::InitializeEx(IDirectInputDevice8* device) {
 	ThisStdCall(kInitializeInputGlobals, this, device);
-	ZeroMemory(this + sizeof(OSInputGlobals), sizeof(DIMOUSESTATE2) + 256);
+	ZeroMemory(this->KeyMaskState, 256);
+	ZeroMemory(this->MouseMaskState.rgbButtons, 8);
+	this->MouseMaskState.lX = 0;
+	this->MouseMaskState.lY = 0;
+	this->MouseMaskState.lZ = 0;
 	g_inputGlobal = this;
 	return this;
 }
