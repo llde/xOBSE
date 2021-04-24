@@ -109,6 +109,10 @@ void OSInputGlobalsEx::SetUnHammerMouse(UInt8 keycode){
 *  THIS IS MADNESS, Even undocumented PORCODDIO.
 */
 void OSInputGlobalsEx::InputPollFakeHandle() {
+	if (MouseDisabled) {
+		CurrentMouseState.lX = 0;
+		CurrentMouseState.lY = 0;
+	}
 	for (UInt16 idx = 0; idx <= 255; idx++) {
 		if (idx < 8) {
 			MouseMaskState.rgbButtons[idx] &= ~kStateSignalled;

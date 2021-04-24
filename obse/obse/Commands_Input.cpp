@@ -66,14 +66,13 @@ static bool Cmd_SetControl_Execute(COMMAND_ARGS)
 	UInt32 keycode = 0;
 	UInt32 whichControl = 0;
 
-/*	if (ExtractArgs(PASS_EXTRACT_ARGS, &whichControl, &keycode) && whichControl < kControlsMapped)
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &whichControl, &keycode) && whichControl < kControlsMapped)
 	{
-		UInt32 curControl = GetCurrentControl(keycode, false);
-		if (curControl != -1)
-			InputControls[curControl] = InputControls[whichControl];	//swap control mappings
+		UInt16 curControl = g_inputGlobal->GetControlFromKeycode(keycode);
+		if (curControl != 0xFFFF) g_inputGlobal->KeyboardInputControls[curControl] = g_inputGlobal->KeyboardInputControls[whichControl];	//swap control mappings
 
-		InputControls[whichControl] = keycode;
-	}*/
+		g_inputGlobal->KeyboardInputControls[whichControl] = keycode - 256;
+	}
 	return true;
 }
 
@@ -82,15 +81,14 @@ static bool Cmd_SetAltControl_Execute(COMMAND_ARGS)
 	*result = 0;
 	UInt32 keycode = 0;
 	UInt32 whichControl = 0;
-	/*
-	if (ExtractArgs(PASS_EXTRACT_ARGS, &whichControl, &keycode) && whichControl < CONTROLSMAPPED && keycode > 255)
+	
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &whichControl, &keycode) && whichControl < kControlsMapped && keycode > 255)
 	{
-		UInt32 curControl = GetCurrentControl(keycode, true);
-		if (curControl != -1)
-			AltInputControls[curControl] = AltInputControls[whichControl];
+		UInt16 curControl = g_inputGlobal->GetControlFromKeycode(keycode);
+		if (curControl != 0xFFFF) g_inputGlobal->MouseInputControls[curControl] = g_inputGlobal->MouseInputControls[whichControl];	//swap control mappings
 
-		AltInputControls[whichControl] = keycode - 256;
-	}*/
+		g_inputGlobal->MouseInputControls[whichControl] = keycode;
+	}
 	return true;
 }
 
@@ -104,7 +102,6 @@ static bool Cmd_GetAltControl_Execute(COMMAND_ARGS)
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &controlId)) return true;
 
 	if(controlId >= kControlsMapped) return true;
-
 
 	*result = g_inputGlobal->MouseInputControls[controlId] * 256 + 255;
 	return true;
@@ -360,7 +357,7 @@ static bool Cmd_SetMouseSpeedY_Execute(COMMAND_ARGS)
 static bool Cmd_DisableMouse_Execute(COMMAND_ARGS)
 {
 	*result=0;
-//    DI_data.MouseDisable=true;
+	g_inputGlobal->MouseDisabled = 1;
 
 	return true;
 }
@@ -368,7 +365,7 @@ static bool Cmd_DisableMouse_Execute(COMMAND_ARGS)
 static bool Cmd_EnableMouse_Execute(COMMAND_ARGS)
 {
 	*result=0;
- //   DI_data.MouseDisable=false;
+	g_inputGlobal->MouseDisabled = 0;
 
 	return true;
 }
