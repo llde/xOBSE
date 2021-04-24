@@ -194,6 +194,8 @@ OSInputGlobalsEx* __thiscall OSInputGlobalsEx::InitializeEx(IDirectInputDevice8*
 	this->MouseMaskState.lX = 0;
 	this->MouseMaskState.lY = 0;
 	this->MouseMaskState.lZ = 0;
+	this->MouseDisabled = 0;
+	this->FrameIndex = 0;
 	g_inputGlobal = this;
 	return this;
 }
