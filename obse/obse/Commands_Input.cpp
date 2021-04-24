@@ -142,7 +142,7 @@ static bool Cmd_TapKey_Execute(COMMAND_ARGS)
 	*result = 0;
 	UInt32	keycode = 0;
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keycode)) return true;
-    if(OSInputGlobals::IsKeycodeValid(keycode)) g_inputGlobal->SetTapKey(keycode);
+    g_inputGlobal->SetTapKey(keycode);
 	
 	return true;
 }
@@ -167,11 +167,10 @@ static bool Cmd_HoldKey_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	UInt32	keycode = 0;
-	/*
+
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keycode)) return true;
-	if(keycode%256==255&&keycode<2048) keycode=255+(keycode+1)/256;
-    if(IsKeycodeValid(keycode)) DI_data.FakeStates[keycode]=0x80;
-	*/
+    g_inputGlobal->SetHoldKey(keycode);
+
 	return true;
 }
 
@@ -179,11 +178,9 @@ static bool Cmd_ReleaseKey_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	UInt32	keycode = 0;
-	/*
+	
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keycode)) return true;
-	if(keycode%256==255&&keycode<2048) keycode=255+(keycode+1)/256;
-    if(IsKeycodeValid(keycode)) DI_data.FakeStates[keycode]=0x00;
-*/
+	g_inputGlobal->SetUnHoldKey(keycode);
 	return true;
 }
 
@@ -214,11 +211,10 @@ static bool Cmd_HammerKey_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	UInt32	keycode = 0;
-	/*
+	
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keycode)) return true;
-	if(keycode%256==255&&keycode<2048) keycode=255+(keycode+1)/256;
-    if(IsKeycodeValid(keycode)) DI_data.HammerStates[keycode]=0x80;
-	*/
+	g_inputGlobal->SetHammerKey(keycode, false);
+
 	return true;
 }
 
@@ -226,11 +222,10 @@ static bool Cmd_AHammerKey_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	UInt32	keycode = 0;
-/*
+
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keycode)) return true;
-	if(keycode%256==255&&keycode<2048) keycode=255+(keycode+1)/256;
-    if(IsKeycodeValid(keycode)) DI_data.AHammerStates[keycode]=0x80;
-	*/
+	g_inputGlobal->SetHammerKey(keycode, true);
+
 	return true;
 }
 
@@ -238,14 +233,10 @@ static bool Cmd_UnHammerKey_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	UInt32	keycode = 0;
-	/*
+	
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keycode)) return true;
-	if(keycode%256==255&&keycode<2048) keycode=255+(keycode+1)/256;
-	if(IsKeycodeValid(keycode)) {
-		DI_data.HammerStates[keycode]=0x00;
-		DI_data.AHammerStates[keycode]=0x00;
-	}
-*/
+	g_inputGlobal->SetUnHammerKey(keycode);
+
 	return true;
 }
 
@@ -255,7 +246,7 @@ static bool Cmd_DisableKey_Execute(COMMAND_ARGS)
 	UInt32	keycode = 0;
 
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keycode)) return true;
-	if (OSInputGlobals::IsKeycodeValid(keycode)) g_inputGlobal->SetMaskKey(keycode);
+	g_inputGlobal->SetMaskKey(keycode);
 	return true;
 }
 
@@ -265,7 +256,7 @@ static bool Cmd_EnableKey_Execute(COMMAND_ARGS)
 	UInt32	keycode = 0;
 	
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keycode)) return true;
-	if (OSInputGlobals::IsKeycodeValid(keycode)) g_inputGlobal->SetUnmaskKey(keycode);
+	g_inputGlobal->SetUnmaskKey(keycode);
 
 	return true;
 }
@@ -277,7 +268,7 @@ static bool Cmd_IsKeyDisabled_Execute(COMMAND_ARGS)
 
 	if (ExtractArgs(PASS_EXTRACT_ARGS, &keycode))
 	{
-		if(OSInputGlobals::IsKeycodeValid(keycode) && g_inputGlobal->GetMaskStatusKey(keycode))
+		if(g_inputGlobal->GetMaskStatusKey(keycode))
 			*result = 1;
 	}
 

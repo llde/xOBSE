@@ -54,28 +54,67 @@ void OSInputGlobalsEx::SetTapMouse(UInt8 keycode){
 	MouseMaskState.rgbButtons[keycode] |= kStateTapped;
 }
 
-void OSInputGlobalsEx::SetHoldKey(UInt16 keycode)
-{
+void OSInputGlobalsEx::SetHoldKey(UInt16 keycode) {
+	if (keycode >= 256) SetHoldMouse(keycode - 256);
+	else KeyMaskState[keycode] |= kStateHolded;
 }
 
-void OSInputGlobalsEx::SetHoldMouse(UInt8 keycode)
-{
+void OSInputGlobalsEx::SetHoldMouse(UInt8 keycode){
+	if (keycode >= 8) return;
+	MouseMaskState.rgbButtons[keycode] |= kStateHolded;
 }
 
-void OSInputGlobalsEx::SetUnHoldKey(UInt16 keycode)
-{
+void OSInputGlobalsEx::SetUnHoldKey(UInt16 keycode){
+	if (keycode >= 256) SetUnHoldMouse(keycode - 256);
+	else KeyMaskState[keycode] &= ~kStateHolded;
+
 }
 
-void OSInputGlobalsEx::SetUnHoldMouse(UInt8 keycode)
-{
+void OSInputGlobalsEx::SetUnHoldMouse(UInt8 keycode){
+	if (keycode >= 8) return;
+	MouseMaskState.rgbButtons[keycode] &= ~kStateHolded;
+}
+
+void OSInputGlobalsEx::SetHammerKey(UInt16 keycode, bool AHammer){
+	if (keycode >= 256) SetHammerMouse(keycode - 256, AHammer);
+	else KeyMaskState[keycode] |= (AHammer ?  kStateAHammered : kStateHammered);
+}
+
+void OSInputGlobalsEx::SetHammerMouse(UInt8 keycode, bool AHammer){
+	if (keycode >= 8) return;
+	MouseMaskState.rgbButtons[keycode] |= (AHammer ? kStateAHammered : kStateHammered);
+}
+
+void OSInputGlobalsEx::SetUnHammerKey(UInt16 keycode){
+	if (keycode >= 256) SetUnHammerMouse(keycode - 256);
+	else {
+		KeyMaskState[keycode] &= ~kStateHammered;
+		KeyMaskState[keycode] &= ~kStateAHammered;
+	}
+}
+
+void OSInputGlobalsEx::SetUnHammerMouse(UInt8 keycode){
+	if (keycode >= 8) return;
+	KeyMaskState[keycode] &= ~kStateHammered;
+	KeyMaskState[keycode] &= ~kStateAHammered;
+
 }
 
 
-//TODO Hold,Release and Hammer keys. Mouse states
+//TODO Mouse states
+/*
+*  The old DInput hook use this order: Hammer (depending on the frame), Hold (DI_data.FakeState) , Disabled, Tap 
+*  So a Disabled key win on hold and hamer but it lose on Tap. So Tap is seen as a proper input
+*  Hammer is used for even frames, AHammer for odd ones.
+*  THIS IS MADNESS, Even undocumented PORCODDIO.
+*/
 void OSInputGlobalsEx::InputPollFakeHandle() {
 	for (UInt16 idx = 0; idx <= 255; idx++) {
 		if (idx < 8) {
 			MouseMaskState.rgbButtons[idx] &= ~kStateSignalled;
+			if (FrameIndex == 0 && (MouseMaskState.rgbButtons[idx] & kStateHammered) == kStateHammered) MouseMaskState.rgbButtons[idx] = 0x80;
+			if (FrameIndex == 1 && (MouseMaskState.rgbButtons[idx] & kStateAHammered) == kStateAHammered) MouseMaskState.rgbButtons[idx] = 0x80;
+			if ((MouseMaskState.rgbButtons[idx] & kStateHolded) == kStateHolded) MouseMaskState.rgbButtons[idx] = 0x80;
 			if ((MouseMaskState.rgbButtons[idx] & kStateDisabled) == kStateDisabled) {
 				if (CurrentMouseState.rgbButtons[idx] != 0) {  //Presses are 0x80 
 					CurrentMouseState.rgbButtons[idx] = 0;
@@ -88,6 +127,9 @@ void OSInputGlobalsEx::InputPollFakeHandle() {
 			}
 		}
 		KeyMaskState[idx] &= ~kStateSignalled;
+		if (FrameIndex == 0 && (KeyMaskState[idx] & kStateHammered) == kStateHammered) CurrentKeyState[idx] = 0x80;
+		if (FrameIndex == 1 && (KeyMaskState[idx] & kStateAHammered) == kStateAHammered) CurrentKeyState[idx] = 0x80;
+		if ((KeyMaskState[idx] & kStateHolded) == kStateHolded) CurrentKeyState[idx] = 0x80;
 		if((KeyMaskState[idx] & kStateDisabled) == kStateDisabled){
 			if (CurrentKeyState[idx] != 0) {
 				CurrentKeyState[idx] = 0;
@@ -99,6 +141,7 @@ void OSInputGlobalsEx::InputPollFakeHandle() {
 			KeyMaskState[idx] &= ~kStateTapped;
 		}
 	}
+	FrameIndex = (FrameIndex + 1) % 2;
 
 }
 

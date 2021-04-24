@@ -33,6 +33,10 @@ public:
 	void SetHoldMouse(UInt8 keycode);
 	void SetUnHoldKey(UInt16 keycode);
 	void SetUnHoldMouse(UInt8 keycode);
+	void SetHammerKey(UInt16 keycode, bool AHammer);
+	void SetHammerMouse(UInt8 keycode, bool AHammer);
+	void SetUnHammerKey(UInt16 keycode);
+	void SetUnHammerMouse(UInt8 keycode);
 	OSInputGlobalsEx* InitializeEx(IDirectInputDevice8* device);
 	void InputPollFakeHandle();
 };
