@@ -71,7 +71,7 @@ static bool Cmd_SetControl_Execute(COMMAND_ARGS)
 		UInt16 curControl = g_inputGlobal->GetControlFromKeycode(keycode);
 		if (curControl != 0xFFFF) g_inputGlobal->KeyboardInputControls[curControl] = g_inputGlobal->KeyboardInputControls[whichControl];	//swap control mappings
 
-		g_inputGlobal->KeyboardInputControls[whichControl] = keycode - 256;
+		g_inputGlobal->KeyboardInputControls[whichControl] = keycode;
 	}
 	return true;
 }
@@ -87,7 +87,7 @@ static bool Cmd_SetAltControl_Execute(COMMAND_ARGS)
 		UInt16 curControl = g_inputGlobal->GetControlFromKeycode(keycode);
 		if (curControl != 0xFFFF) g_inputGlobal->MouseInputControls[curControl] = g_inputGlobal->MouseInputControls[whichControl];	//swap control mappings
 
-		g_inputGlobal->MouseInputControls[whichControl] = keycode;
+		g_inputGlobal->MouseInputControls[whichControl] = keycode - 256;
 	}
 	return true;
 }
@@ -316,7 +316,8 @@ static bool Cmd_MoveMouseX_Execute(COMMAND_ARGS)
 	int pixels = 0;
 
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &pixels)) return true;
- //   DI_data.MouseXMov+=pixels;
+
+	g_inputGlobal->MouseMaskState.lX += pixels;
 
 	return true;
 }
@@ -327,7 +328,8 @@ static bool Cmd_MoveMouseY_Execute(COMMAND_ARGS)
 	int pixels = 0;
 
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &pixels)) return true;
- //   DI_data.MouseYMov+=pixels;
+
+	g_inputGlobal->MouseMaskState.lY += pixels;
 
 	return true;
 }

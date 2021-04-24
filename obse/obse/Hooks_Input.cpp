@@ -101,7 +101,7 @@ void OSInputGlobalsEx::SetUnHammerMouse(UInt8 keycode){
 }
 
 
-//TODO Mouse states
+//TODO Speed and wheel to button translation
 /*
 *  The old DInput hook use this order: Hammer (depending on the frame), Hold (DI_data.FakeState) , Disabled, Tap 
 *  So a Disabled key win on hold and hamer but it lose on Tap. So Tap is seen as a proper input
@@ -113,6 +113,9 @@ void OSInputGlobalsEx::InputPollFakeHandle() {
 		CurrentMouseState.lX = 0;
 		CurrentMouseState.lY = 0;
 	}
+	CurrentMouseState.lX += MouseMaskState.lX;
+	CurrentMouseState.lY += MouseMaskState.lY;
+
 	for (UInt16 idx = 0; idx <= 255; idx++) {
 		if (idx < 8) {
 			MouseMaskState.rgbButtons[idx] &= ~kStateSignalled;
@@ -194,7 +197,7 @@ OSInputGlobalsEx* __thiscall OSInputGlobalsEx::InitializeEx(IDirectInputDevice8*
 }
 
 void Hook_Input_Init() {
-	SafeWrite32(kInputGlobalAllocSize, sizeof(OSInputGlobals) + sizeof(UInt8[256]) + sizeof(DIMOUSESTATE2));
+	SafeWrite32(kInputGlobalAllocSize, sizeof(OSInputGlobalsEx));
 	OSInputGlobalsEx* (__thiscall OSInputGlobalsEx::* InitializeExCall)(IDirectInputDevice8*) = &OSInputGlobalsEx::InitializeEx;
 	WriteRelCall(kInputInitializeCallAddr, (UInt32) *((void**) &InitializeExCall));
 	WriteRelJump(kPollEndHook, (UInt32) &PollInputHook);
