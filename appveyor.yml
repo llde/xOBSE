@@ -6,8 +6,8 @@ platform:
     - Win32
 
 configuration:
-    - Release 1_2_0_416
-    - Debug 1_2_0_416
+    - Release
+    - Debug
 
 install:
     - if "%platform%"=="Win32" set archi=x86
