@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/IErrors.h"
+#include "IErrors.h"
 
 #pragma warning(push)
 #pragma warning(disable: 4311 4312)

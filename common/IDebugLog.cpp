@@ -1,6 +1,6 @@
-#include "common/IDebugLog.h"
+#include "IDebugLog.h"
 #include <share.h>
-#include "common/IFileStream.h"
+#include "IFileStream.h"
 #include <shlobj.h>
 
 std::FILE			* IDebugLog::logFile = NULL;

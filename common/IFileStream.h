@@ -1,6 +1,6 @@
 #pragma once
 
-#include "common/IDataStream.h"
+#include "IDataStream.h"
 
 /**
  *	An input file stream

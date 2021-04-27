@@ -16,10 +16,10 @@
 #include <cstdio>
 #include <cstring>
 #include <string>
-#include "common/ITypes.h"
-#include "common/IErrors.h"
-#include "common/IDynamicCreate.h"
-#include "common/IDebugLog.h"
-#include "common/ISingleton.h"
+#include "ITypes.h"
+#include "IErrors.h"
+#include "IDynamicCreate.h"
+#include "IDebugLog.h"
+#include "ISingleton.h"
 #include <winsock2.h>
 #include <Windows.h>

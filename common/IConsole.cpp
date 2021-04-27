@@ -1,4 +1,4 @@
-#include "common/IConsole.h"
+#include "IConsole.h"
 #include <cstdarg>
 #include <cstring>
 #include <Windows.h>

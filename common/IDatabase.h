@@ -1,8 +1,8 @@
 #pragma once
 
 #include <map>
-#include "common/IDataStream.h"
-#include "common/IFilestream.h"
+#include "IDataStream.h"
+#include "IFilestream.h"
 
 template <class DataType>
 class IDatabase
@@ -113,4 +113,4 @@ class IDatabase
 		UInt64		newKeyHint;
 };
 
-#include "common/IDatabase.inc"
+#include "IDatabase.inc"

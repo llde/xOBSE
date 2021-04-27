@@ -1,8 +1,8 @@
 #pragma once
 
 #include <map>
-#include "common/IDataStream.h"
-#include "common/IErrors.h"
+#include "IDataStream.h"
+#include "IErrors.h"
 
 // this screws with edit-and-continue and we don't use it
 #define ENABLE_IDYNAMICCREATE 0
