@@ -628,17 +628,8 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="GameRTTI_1_1.inl">
-      <Filter>api\game</Filter>
-    </None>
-    <None Include="GameRTTI_1_2.inl">
-      <Filter>api\game</Filter>
-    </None>
     <None Include="GameRTTI_1_2_416.inl">
       <Filter>api\game</Filter>
-    </None>
-    <None Include="NiRTTI_1_1.inl">
-      <Filter>api\netimmerse</Filter>
     </None>
     <None Include="NiRTTI_1_2_416.inl">
       <Filter>api\netimmerse</Filter>
