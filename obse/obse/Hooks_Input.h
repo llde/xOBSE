@@ -27,6 +27,9 @@ public:
 	UInt8 GetMaskStatusMouse(UInt8 keycode);
 	UInt8 GetSignalStatusKey(UInt16 keycode);
 	UInt8 GetSignalStatusMouse(UInt8 keycode);
+	UInt8 GetPreSignalStatusKey(UInt16 keycode);
+	UInt8 GetPreSignalStatusMouse(UInt8 keycode);
+
 	void SetTapKey(UInt16 keycode);
 	void SetTapMouse(UInt8 keycode);
 	void SetHoldKey(UInt16 keycode);
@@ -49,7 +52,8 @@ enum  KeyControlState : UInt8 {
 	kStateTapped    = 1 << 2,
 	kStateHolded    = 1 << 3,
 	kStateHammered  = 1 << 4,
-	kStateAHammered = 1 << 5
+	kStateAHammered = 1 << 5,
+	kStatePSignalled= 1 << 6
 };
 
 void Hook_Input_Init();

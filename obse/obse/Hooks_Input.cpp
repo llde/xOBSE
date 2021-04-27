@@ -44,6 +44,18 @@ UInt8 OSInputGlobalsEx::GetSignalStatusMouse(UInt8 keycode) {
 	return (MouseMaskState.rgbButtons[keycode] & kStateSignalled) == kStateSignalled;
 }
 
+
+
+UInt8 OSInputGlobalsEx::GetPreSignalStatusKey(UInt16 keycode) {
+	if (keycode >= 256) return GetPreSignalStatusMouse(keycode - 256);
+	return (KeyMaskState[keycode] & kStatePSignalled) == kStatePSignalled;
+}
+
+UInt8 OSInputGlobalsEx::GetPreSignalStatusMouse(UInt8 keycode) {
+	if (keycode >= 8) return 0;
+	return (MouseMaskState.rgbButtons[keycode] & kStatePSignalled) == kStatePSignalled;
+}
+
 void OSInputGlobalsEx::SetTapKey(UInt16 keycode){
 	if (keycode >= 256) SetTapMouse(keycode - 256);
 	else KeyMaskState[keycode] |= kStateTapped;
@@ -95,8 +107,8 @@ void OSInputGlobalsEx::SetUnHammerKey(UInt16 keycode){
 
 void OSInputGlobalsEx::SetUnHammerMouse(UInt8 keycode){
 	if (keycode >= 8) return;
-	KeyMaskState[keycode] &= ~kStateHammered;
-	KeyMaskState[keycode] &= ~kStateAHammered;
+	MouseMaskState.rgbButtons[keycode] &= ~kStateHammered;
+	MouseMaskState.rgbButtons[keycode] &= ~kStateAHammered;
 
 }
 
@@ -120,7 +132,12 @@ void OSInputGlobalsEx::InputPollFakeHandle() {
 
 	for (UInt16 idx = 0; idx <= 255; idx++) {
 		if (idx < 8) {
-			MouseMaskState.rgbButtons[idx] &= ~kStateSignalled;
+			if ((MouseMaskState.rgbButtons[idx] & kStateSignalled) == kStateSignalled) {
+				MouseMaskState.rgbButtons[idx] &= ~kStateSignalled;
+				MouseMaskState.rgbButtons[idx] |= kStatePSignalled;
+			}
+			else { MouseMaskState.rgbButtons[idx] &= ~kStatePSignalled; }
+			//	_MESSAGE("%u mouse key mask  %0X, status %0X", idx,  MouseMaskState.rgbButtons[idx]  , CurrentMouseState.rgbButtons[idx]);
 			if (FrameIndex == 0 && (MouseMaskState.rgbButtons[idx] & kStateHammered) == kStateHammered) MouseMaskState.rgbButtons[idx] = 0x80;
 			if (FrameIndex == 1 && (MouseMaskState.rgbButtons[idx] & kStateAHammered) == kStateAHammered) MouseMaskState.rgbButtons[idx] = 0x80;
 			if ((MouseMaskState.rgbButtons[idx] & kStateHolded) == kStateHolded) MouseMaskState.rgbButtons[idx] = 0x80;
@@ -135,7 +152,11 @@ void OSInputGlobalsEx::InputPollFakeHandle() {
 				MouseMaskState.rgbButtons[idx] &= ~kStateTapped;
 			}
 		}
-		KeyMaskState[idx] &= ~kStateSignalled;
+		if ((KeyMaskState[idx] & kStateSignalled) == kStateSignalled) {
+			KeyMaskState[idx] &= ~kStateSignalled;
+			KeyMaskState[idx] |= kStatePSignalled;
+		}
+		else { KeyMaskState[idx] &= ~kStatePSignalled; }
 		if (FrameIndex == 0 && (KeyMaskState[idx] & kStateHammered) == kStateHammered) CurrentKeyState[idx] = 0x80;
 		if (FrameIndex == 1 && (KeyMaskState[idx] & kStateAHammered) == kStateAHammered) CurrentKeyState[idx] = 0x80;
 		if ((KeyMaskState[idx] & kStateHolded) == kStateHolded) CurrentKeyState[idx] = 0x80;

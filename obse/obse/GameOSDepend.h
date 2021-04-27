@@ -217,8 +217,8 @@ public:
     //  - if we wanna add gamepad support, we'd need to patch this to poll XInput
 
 
-	bool QueryMouseKeyState(MouseControl keycode, KeyQuery query) { return ThisStdCall<MouseControl, KeyQuery>(0x004031E0, this, keycode, query); }
-	bool QueryKeyboardKeyState(UInt16 keycode, KeyQuery query) { return ThisStdCall<UInt16, KeyQuery>(0x004032D0, this, keycode, query); }
+	bool QueryMouseKeyState(UInt8 keycode, KeyQuery query) { return ThisStdCall<UInt32, KeyQuery>(0x004031E0, this, keycode, query); }
+	bool QueryKeyboardKeyState(UInt16 keycode, KeyQuery query) { return ThisStdCall<UInt32, KeyQuery>(0x004032D0, this, keycode, query); }
 
 /**  - loops over each scheme and calls QueryInputState for the key the control is mapped to
 *    - for special keycodes (1D, 1E, 1F), skips that and uses special fields 
@@ -228,7 +228,11 @@ public:
 	static bool IsKeycodeValid(UInt32 id) { return id < kMaxMacros; } //I don't know why there was a -2 causing the wheels motion to not be picked up.
 
 	bool IsKeyPressed(UInt16 keycode, KeyQuery query) {
-		if (keycode >= 256) return QueryMouseKeyState( (MouseControl) (keycode - 256), query);
+		if (keycode >= 256   && keycode < kMaxMacros) {
+			UInt8 res = QueryMouseKeyState(keycode - 256, query);
+			_MESSAGE("%0X", res);
+			return res;
+		}
 		return QueryKeyboardKeyState(keycode, query);
 	}
 
