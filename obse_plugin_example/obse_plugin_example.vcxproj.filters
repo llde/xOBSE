@@ -102,12 +102,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\obse\obse\GameRTTI_1_1.inl">
-      <Filter>obse</Filter>
-    </None>
-    <None Include="..\obse\obse\GameRTTI_1_2.inl">
-      <Filter>obse</Filter>
-    </None>
     <None Include="..\obse\obse\GameRTTI_1_2_416.inl">
       <Filter>obse</Filter>
     </None>
