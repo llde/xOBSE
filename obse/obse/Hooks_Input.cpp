@@ -113,7 +113,8 @@ void OSInputGlobalsEx::SetUnHammerMouse(UInt8 keycode){
 }
 
 
-//TODO Speed and wheel to button translation (Ma davvero vogliamo sto' bordello?)
+//TODO Speed(Ma davvero vogliamo sto' bordello?)
+//TODO wheel to button translation
 /*
 *  The old DInput hook use this order: Hammer (depending on the frame), Hold (DI_data.FakeState) , Disabled, Tap 
 *  So a Disabled key win on hold and hamer but it lose on Tap. So Tap is seen as a proper input

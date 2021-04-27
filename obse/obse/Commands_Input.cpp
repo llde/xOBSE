@@ -476,20 +476,19 @@ static bool Cmd_EnableControl_Execute(COMMAND_ARGS)
 static bool Cmd_OnKeyDown_Execute(COMMAND_ARGS)
 {
 	// key is refID, data is a set of key events that have been returned for that script
-	static std::map< UINT, std::set<UINT> > KeyListeners;
 	UINT keyCode = 0;
 	*result = 0;
 
 	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keyCode))	return true;
-	_MESSAGE("Key  %0X mask %0X  %0X  %0X", keyCode, g_inputGlobal->GetMaskStatusKey(keyCode), g_inputGlobal->oldMouseButtonSwap, g_inputGlobal->MouseDisabled);
+//	_MESSAGE("Key  %0X mask %0X", keyCode, g_inputGlobal->GetMaskStatusKey(keyCode));
 	*result = g_inputGlobal->IsKeyPressed(keyCode, OSInputGlobals::KeyQuery::kKeyQuery_Down);
-	_MESSAGE("%0X %f", keyCode, *result);
+//	_MESSAGE("%0X %f", keyCode, *result);
 	bool wasPressed = g_inputGlobal->WasKeyPressed(keyCode);
 	bool wasPres = g_inputGlobal->GetPreSignalStatusKey(keyCode);
-	_MESSAGE("signal %0X, wasPres  %0X, WasPressed %0X", g_inputGlobal->GetSignalStatusKey(keyCode), wasPres, wasPressed);
+//	_MESSAGE("signal %0X, wasPres  %0X, WasPressed %0X", g_inputGlobal->GetSignalStatusKey(keyCode), wasPres, wasPressed);
 	if (*result == 0) *result = (g_inputGlobal->GetSignalStatusKey(keyCode)  && !(wasPressed || wasPres))  ; //TODO joypad
 	//TODO make a Query_Down functionality
-	_MESSAGE("OnKeyDown  %0X   %f  %s" , keyCode,*result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+//	_MESSAGE("OnKeyDown  %0X   %f  %s" , keyCode,*result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 
 	return true;
 }
