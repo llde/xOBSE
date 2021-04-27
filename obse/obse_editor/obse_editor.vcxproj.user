@@ -10,16 +10,6 @@
     <LocalDebuggerAttach>true</LocalDebuggerAttach>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug 1_0_0_303|Win32'">
-    <LocalDebuggerCommand>$(OblivionPath)TESConstructionSet.exe</LocalDebuggerCommand>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug 1_0_0_303|Win32'">
-    <LocalDebuggerWorkingDirectory>$(OblivionPath)</LocalDebuggerWorkingDirectory>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug 1_0_0_303|Win32'">
-    <LocalDebuggerAttach>true</LocalDebuggerAttach>
-    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_0|Win32'">
     <LocalDebuggerCommand>$(OblivionPath)TESConstructionSet.exe</LocalDebuggerCommand>
   </PropertyGroup>
@@ -27,16 +17,6 @@
     <LocalDebuggerWorkingDirectory>$(OblivionPath)</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_0|Win32'">
-    <LocalDebuggerAttach>true</LocalDebuggerAttach>
-    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release 1_0_0_303|Win32'">
-    <LocalDebuggerCommand>$(OblivionPath)TESConstructionSet.exe</LocalDebuggerCommand>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release 1_0_0_303|Win32'">
-    <LocalDebuggerWorkingDirectory>$(OblivionPath)</LocalDebuggerWorkingDirectory>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release 1_0_0_303|Win32'">
     <LocalDebuggerAttach>true</LocalDebuggerAttach>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
