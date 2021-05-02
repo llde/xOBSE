@@ -230,7 +230,6 @@ public:
 	bool IsKeyPressed(UInt16 keycode, KeyQuery query) {
 		if (keycode >= 256   && keycode < kMaxMacros) {
 			UInt8 res = QueryMouseKeyState(keycode - 256, query);
-			_MESSAGE("%0X", res);
 			return res;
 		}
 		return QueryKeyboardKeyState(keycode, query);
