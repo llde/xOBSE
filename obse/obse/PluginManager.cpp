@@ -424,7 +424,6 @@ void PluginManager::InstallPlugins(void)
 
 			plugin.query = (_OBSEPlugin_Query)GetProcAddress(plugin.handle, "OBSEPlugin_Query");
 			plugin.load = (_OBSEPlugin_Load)GetProcAddress(plugin.handle, "OBSEPlugin_Load");
-
 			if(plugin.query && plugin.load)
 			{
 				const char	* loadStatus = NULL;
@@ -484,7 +483,9 @@ void PluginManager::InstallPlugins(void)
 		else
 		{
 			DWORD errCode = GetLastError();
-			_ERROR("couldn't load plugin %s (Error code %d (%08X)", pluginPath.c_str(), errCode, errCode);
+			if (errCode == ERROR_MOD_NOT_FOUND) _ERROR("Couldn't load plugin %s, missing dependant DLL(s)", pluginPath.c_str());
+			else if(errCode == ERROR_PROC_NOT_FOUND) _ERROR("Couldn't load plugin %s, a dependant DLL doesn't provide a linked export, possible version mismatch", pluginPath.c_str());
+			else _ERROR("Couldn't load plugin %s (Error code %d (%08X)", pluginPath.c_str(), errCode, errCode);
 		}
 	}
 
