@@ -129,10 +129,7 @@ static bool Cmd_IsKeyPressed2_Execute(COMMAND_ARGS)
 
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keycode)) return true;
 	if(keycode < kMaxMacros) {
-		*result = g_inputGlobal->IsKeyPressed(keycode, OSInputGlobals::KeyQuery::kKeyQuery_Tap);
-		if (*result == 0) {
-			*result = g_inputGlobal->GetSignalStatusKey(keycode);
-		}
+		*result = g_inputGlobal->IsKeyPressed(keycode);
 	}
 	//_MESSAGE("IsKeyPRessed2 %0X   %f %s", keycode, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 
@@ -281,7 +278,7 @@ static bool Cmd_IsKeyDisabled_Execute(COMMAND_ARGS)
 		if(g_inputGlobal->GetMaskStatusKey(keycode))
 			*result = 1;
 	}
-	//_MESSAGE("IsKeyDisabled %0X   %f   %s" , keycode, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+//	_MESSAGE("IsKeyDisabled %0X   %f   %s" , keycode, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 
 	return true;
 }
@@ -317,6 +314,7 @@ static bool Cmd_GetMouseButtonPress_Execute(COMMAND_ARGS)
 {
 	*result = 0xFFFF;
 	UInt32 count=0;
+	//TODO avoid reporting tapped keys?
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &count)) return true;
 	for (UInt32 d = 0; d < 8; d++) if(g_inputGlobal->CurrentMouseState.rgbButtons[d] && (!count--)){
 		*result = d;
@@ -396,9 +394,8 @@ static bool Cmd_IsKeyPressed3_Execute(COMMAND_ARGS)
 	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &keyCode)) {
 		return true;
 	}
-	*result = g_inputGlobal->IsKeyPressed(keyCode, OSInputGlobals::KeyQuery::kKeyQuery_Tap);
-	if (*result == 0) *result = g_inputGlobal->GetSignalStatusKey(keyCode);
-	//_MESSAGE("IsKeyPressed3 %0X  %f %s", keyCode, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+	*result = g_inputGlobal->IsKeyPressed(keyCode);
+//	_MESSAGE("IsKeyPressed3 %0X  %f %s", keyCode, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 	return true;
 }
 
@@ -407,9 +404,16 @@ static bool Cmd_IsControlPressed_Execute(COMMAND_ARGS)
 	*result = 0;
 	UINT ctrl;
 	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &ctrl))	return true;
-	*result = (g_inputGlobal->QueryControlState((OSInputGlobals::MappableControl)ctrl, OSInputGlobals::KeyQuery::kKeyQuery_Tap) >= 1 ? 1 : 0);
-	if (*result == 0) *result = g_inputGlobal->GetSignalStatusKey(g_inputGlobal->KeyboardInputControls[ctrl]);  //TODO operate direclty on control
-	//_MESSAGE("IsControlPressed %0X  %f %s", ctrl, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+	UInt8 keyCode = g_inputGlobal->KeyboardInputControls[ctrl];
+	if (keyCode != NOKEY) {
+		*result = g_inputGlobal->IsKeyPressedKeyboard(keyCode);
+		if (*result != 0) return true;
+	}
+	UInt8 mouseCode = g_inputGlobal->MouseInputControls[ctrl];
+	if (mouseCode != NOKEY) {
+		*result = g_inputGlobal->IsKeyPressedMouse(mouseCode);
+	}
+//	_MESSAGE("IsControlPressed %0X  %f %s", ctrl, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 	return true;
 }
 
@@ -419,7 +423,7 @@ static bool Cmd_DisableControl_Execute(COMMAND_ARGS)
 	UInt32	ctrl = 0;
 
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &ctrl))	return true;
-	UInt32 dxCode = g_inputGlobal->KeyboardInputControls[ctrl];
+	UInt8 dxCode = g_inputGlobal->KeyboardInputControls[ctrl];
 	if (dxCode != NOKEY) {
 		g_inputGlobal->SetMaskKey(dxCode);
 	}
@@ -438,7 +442,7 @@ static bool Cmd_IsControlDisabled_Execute(COMMAND_ARGS)
 	UInt32 ctrl = 0;
 
 	if (ExtractArgs(PASS_EXTRACT_ARGS, &ctrl) && ctrl < kControlsMapped) {
-		UInt32 dxCode = g_inputGlobal->KeyboardInputControls[ctrl];
+		UInt8 dxCode = g_inputGlobal->KeyboardInputControls[ctrl];
 		if (dxCode != NOKEY) {
 			*result = g_inputGlobal->GetMaskStatusKey(dxCode);
 		}
@@ -459,7 +463,7 @@ static bool Cmd_EnableControl_Execute(COMMAND_ARGS)
 	UInt32	ctrl = 0;
 
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &ctrl)) return true;
-	UInt32 dxCode = g_inputGlobal->KeyboardInputControls[ctrl];
+	UInt8 dxCode = g_inputGlobal->KeyboardInputControls[ctrl];
 	if (dxCode != NOKEY) {
 		g_inputGlobal->SetUnmaskKey(dxCode);
 	}
@@ -480,15 +484,8 @@ static bool Cmd_OnKeyDown_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keyCode))	return true;
-//	_MESSAGE("Key  %0X mask %0X", keyCode, g_inputGlobal->GetMaskStatusKey(keyCode));
-	*result = g_inputGlobal->IsKeyPressed(keyCode, OSInputGlobals::KeyQuery::kKeyQuery_Down);
-//	_MESSAGE("%0X %f", keyCode, *result);
-	bool wasPressed = g_inputGlobal->WasKeyPressed(keyCode);
-	bool wasPres = g_inputGlobal->GetPreSignalStatusKey(keyCode);
-//	_MESSAGE("signal %0X, wasPres  %0X, WasPressed %0X", g_inputGlobal->GetSignalStatusKey(keyCode), wasPres, wasPressed);
-	if (*result == 0) *result = (g_inputGlobal->GetSignalStatusKey(keyCode)  && !(wasPressed || wasPres))  ; //TODO joypad
-	//TODO make a Query_Down functionality
-//	_MESSAGE("OnKeyDown  %0X   %f  %s" , keyCode,*result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+	*result = g_inputGlobal->IsKeyPressed(keyCode) && !g_inputGlobal->WasKeyPressed(keyCode);
+	_MESSAGE("OnKeyDown  %0X   %u   %u %s", keyCode, g_inputGlobal->IsKeyPressed(keyCode), g_inputGlobal->WasKeyPressed(keyCode), (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 
 	return true;
 }
@@ -500,18 +497,17 @@ static bool Cmd_OnControlDown_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &ctrl))	return true;
-	if (scriptObj) {
-		//TODO for now handle only keyboard signals
-		if(g_inputGlobal->QueryControlState((OSInputGlobals::MappableControl)ctrl, OSInputGlobals::KeyQuery::kKeyQuery_Down)){
-			*result = 1;
-		}
-		else if (g_inputGlobal->GetSignalStatusKey(g_inputGlobal->KeyboardInputControls[ctrl]) &&
-			!(g_inputGlobal->WasKeyPressed(g_inputGlobal->KeyboardInputControls[ctrl]) || g_inputGlobal->GetPreSignalStatusKey(g_inputGlobal->KeyboardInputControls[ctrl]))) {
-
-			*result = 1;
-		}
+	UInt8 keyCode = g_inputGlobal->KeyboardInputControls[ctrl];
+	if (keyCode != NOKEY) {
+		*result = (g_inputGlobal->IsKeyPressedKeyboard(keyCode) && !g_inputGlobal->WasKeyPressedKeyboard(keyCode));
+		if(*result != 0) return true;
 	}
-	//_MESSAGE("OnControlDown  %0X   %f %s", ctrl, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+	UInt8 mouseCode = g_inputGlobal->MouseInputControls[ctrl];
+	if (mouseCode != NOKEY) {
+		*result = (g_inputGlobal->IsKeyPressedMouse(mouseCode) && !g_inputGlobal->WasKeyPressedMouse(mouseCode));
+	}
+
+//	_MESSAGE("OnControlDown  %0X   %f %s", ctrl, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 
 	return true;
 }

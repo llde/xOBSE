@@ -12,12 +12,30 @@ static const UInt32 kInitializeInputGlobals = 0x00404150;
 
 static UInt8 ControlsState[kControlsMapped] = {0};
 
+enum  KeyControlState : UInt16 {
+	kStateDisabled = 1 << 0,
+	kStateSignalled = 1 << 1,
+	kStateTapped = 1 << 2,
+	kStateHolded = 1 << 3,
+	kStateHammered = 1 << 4,
+	kStateAHammered = 1 << 5,
+	kStatePSignalled = 1 << 6,
+	kStatePTapped = 1 << 7,
+	kStateTap = 1 << 8,
+};
+DEFINE_ENUM_FLAG_OPERATORS(KeyControlState)
 
+struct DIMOUSESTATEInn {
+	LONG    lX;
+	LONG    lY;
+	LONG    lZ;
+	KeyControlState    rgbButtons[8];
+};
 
 class OSInputGlobalsEx : public OSInputGlobals {
 public:
-	UInt8	KeyMaskState[256];
-	DIMOUSESTATE2 MouseMaskState;
+	KeyControlState	KeyMaskState[256];
+	DIMOUSESTATEInn MouseMaskState;
 
 	void SetMaskKey(UInt16 keycode);
 	void SetUnmaskKey(UInt16 keycode);
@@ -29,7 +47,6 @@ public:
 	UInt8 GetSignalStatusMouse(UInt8 keycode);
 	UInt8 GetPreSignalStatusKey(UInt16 keycode);
 	UInt8 GetPreSignalStatusMouse(UInt8 keycode);
-
 	void SetTapKey(UInt16 keycode);
 	void SetTapMouse(UInt8 keycode);
 	void SetHoldKey(UInt16 keycode);
@@ -40,21 +57,19 @@ public:
 	void SetHammerMouse(UInt8 keycode, bool AHammer);
 	void SetUnHammerKey(UInt16 keycode);
 	void SetUnHammerMouse(UInt8 keycode);
+	bool IsKeyPressed(UInt16 keycode);
+	bool IsKeyPressedKeyboard(UInt16 keycode);
+	bool IsKeyPressedMouse(UInt8 keycode);
+	bool WasKeyPressed(UInt16 keycode);
+	bool WasKeyPressedKeyboard(UInt16 keycode);
+	bool WasKeyPressedMouse(UInt8 keycode);
+
 	OSInputGlobalsEx* InitializeEx(IDirectInputDevice8* device);
 	void InputPollFakeHandle();
 };
 
-STATIC_ASSERT(sizeof(OSInputGlobalsEx) == sizeof(OSInputGlobals) + sizeof(DIMOUSESTATE2) + sizeof(UInt8[256]));
+STATIC_ASSERT(sizeof(OSInputGlobalsEx) == sizeof(OSInputGlobals) + sizeof(DIMOUSESTATEInn) + sizeof(KeyControlState[256]));
 
-enum  KeyControlState : UInt8 {
-	kStateDisabled  = 1 << 0,
-	kStateSignalled = 1 << 1,
-	kStateTapped    = 1 << 2,
-	kStateHolded    = 1 << 3,
-	kStateHammered  = 1 << 4,
-	kStateAHammered = 1 << 5,
-	kStatePSignalled= 1 << 6
-};
 
 void Hook_Input_Init();
 

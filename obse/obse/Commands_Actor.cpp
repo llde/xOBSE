@@ -15,8 +15,7 @@
 #include "Hooks_Gameplay.h"
 #include "EventManager.h"
 
-static bool Cmd_HasSpell_Execute(COMMAND_ARGS)
-{
+static bool Cmd_HasSpell_Execute(COMMAND_ARGS){
 	*result = 0;
 
 	if (!thisObj) return true;
@@ -28,10 +27,9 @@ static bool Cmd_HasSpell_Execute(COMMAND_ARGS)
 
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &form)) return true;
 
-	if(form)
-	{
+	if(form){
 		SpellItem* spell = (SpellItem*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_SpellItem, 0);
-
+		if (spell == nullptr) return true;
 		TESSpellList& spellList = npc->spellList;
 		TESSpellList::Entry* curEntry = &spellList.spellList;
 		while (curEntry && curEntry->type != NULL) {

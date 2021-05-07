@@ -227,20 +227,6 @@ public:
 
 	static bool IsKeycodeValid(UInt32 id) { return id < kMaxMacros; } //I don't know why there was a -2 causing the wheels motion to not be picked up.
 
-	bool IsKeyPressed(UInt16 keycode, KeyQuery query) {
-		if (keycode >= 256   && keycode < kMaxMacros) {
-			UInt8 res = QueryMouseKeyState(keycode - 256, query);
-			return res;
-		}
-		return QueryKeyboardKeyState(keycode, query);
-	}
-
-	bool WasKeyPressed(UInt16 keycode) {
-		if (keycode >= 256) return PreviousMouseState.rgbButtons[keycode - 256] != 0;
-		return PreviousKeyState[keycode] != 0;
-	}
-	//TODO set / tap keys and controls
-
 	//TODO allow passign type of binding
 	UInt16 GetControlFromKeycode(UInt16 keycode) {
 		UInt8* controlArray = KeyboardInputControls; 
