@@ -48,6 +48,13 @@ void WriteRelCall(UInt32 jumpSrc, UInt32 jumpTgt)
 	SafeWrite32(jumpSrc + 1, jumpTgt - jumpSrc - 1 - 4);
 }
 
+void WriteRelJz(UInt32 jumpSrc, UInt32 jumpTgt)
+{
+	// jz rel32
+	SafeWrite16(jumpSrc, 0x840F);
+	SafeWrite32(jumpSrc + 2, jumpTgt - jumpSrc - 2 - 4);
+}
+
 void WriteRelJnz(UInt32 jumpSrc, UInt32 jumpTgt)
 {
 	// jnz rel32

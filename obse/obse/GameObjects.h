@@ -342,25 +342,25 @@ public:
 	MagicCaster();
 	~MagicCaster();
 
-	virtual void	Unk_00(UInt32 arg0, UInt32 arg1);
-	virtual void	Unk_01(UInt32 arg0, UInt32 arg1, UInt32 arg2);
-	virtual void	Unk_02(UInt32 arg0, UInt32 arg1, UInt32 arg2);
-	virtual void	Unk_03(void);
-	virtual void	Unk_04(void);
-	virtual void	Unk_05(void);
-	virtual void	Unk_06(void);
+	virtual void	AddAbility(MagicItemForm* ability, bool noHitFX);
+	virtual void	AddDisease(MagicItemForm* disease, MagicTarget* target, bool noHitFX);
+	virtual void	AddObjectEnchantment(MagicItem* arg0, TESBoundObject* sourceObj, bool noHitFX);
+	virtual MagicTarget*	FindTouchTarget(void);
+	virtual void	PlayTargettedCastAnim(void);
+	virtual void	PlayCastingAnim(void);
+	virtual void	ApplyMagicItemCost(MagicItem* ite, bool applyStatChanges);
 
 	// looks like returns true if can use magicItem, filling out type (and arg1 is magicka cost?)
-	virtual bool	Unk_07(MagicItem* magicItem, float* arg1, UInt32* outMagicItemType, UInt32 arg3);
+	virtual bool	IsMagicItemUsable(MagicItem* magicItem, float* wortcraftSkill, UInt32* faliureCode, bool useBaseMagicka);
 	virtual TESObjectREFR*	GetParentRefr(void);
 	virtual NiNode	* GetMagicNode(void);	// looks up "magicnode" node in caster's NiNode
-	virtual void	Unk_0A(void);
-	virtual float	GetSpellEffectiveness(float arg0, float arg1);	// seen (0, 0)
-	virtual MagicItem * GetQueuedMagicItem(void);		// calls through to MiddleHighProcess
-	virtual void	Unk_0D(void);
-	virtual void	Unk_0E(void);
-	virtual void	Unk_0F(void);
-	virtual void	Unk_10(MagicItem* magicItem, UInt32 mgefCode, UInt32 unk2);	// activate effect?
+	virtual void	AddEffectToSelf(ActiveEffect* effect);
+	virtual float	GetSpellEffectiveness(bool ignoreFatigue, float currentFatigue);	// seen (0, 0)
+	virtual MagicItem * GetActiveMagicItem(void);		// calls through to MiddleHighProcess
+	virtual void	SetActiveMagicItem(MagicItem* item);
+	virtual MagicTarget	GetCastingTarget(void);
+	virtual void	SetCastingTarget(MagicTarget* target);
+	virtual ActiveEffect*	CreateActiveMagicEffect(MagicItem* magicItem, EffectItem* effect, TESBoundObject* src);	// activate effect?
 
 	enum {
 		kState_Inactive			= 0,
@@ -399,7 +399,7 @@ public:
 	virtual void	Destructor(void);
 	virtual TESObjectREFR *	GetParent(void);
 	virtual EffectNode *	GetEffectList(void);
-
+	//TODO incomplete VTBL
 //	void	** _vtbl;	// 000
 	UInt8	unk04;		// 004
 	UInt8	pad05[3];
@@ -541,33 +541,33 @@ public:
 	TESObjectREFR();
 	~TESObjectREFR();
 
-	virtual void	Unk_37(void) = 0;
-	virtual void	Unk_38(void) = 0;	// 38
-	virtual void	Unk_39(void) = 0;
-	virtual void	Unk_3A(void) = 0;
+	virtual void	Unk_37(TESTopic* topic, TESObjectREFR* speaker, bool arg2, bool arg3, UInt32 arg4) = 0;  //Say/SayTo????? 
+	virtual bool	CanCastShadows(void) = 0;	// 38
+	virtual void	SetCanCastShadows(void) = 0;
+	virtual void	IsProjectile(void) = 0;
 	virtual float	GetScale(void) = 0;
 	virtual void	GetStartingAngle(float * pos) = 0;
 	virtual void	GetStartingPos(float * pos) = 0;
-	virtual void	Unk_3E(void) = 0;
-	virtual void	Unk_3F(void) = 0;
+	virtual void	MoveInitialPosition(float* pos) = 0;
+	virtual bool	UpdateLights(void) = 0;
 	virtual void	RemoveItem(TESForm* toRemove, BaseExtraList* extraList, UInt32 quantity, UInt32 useContainerOwnership, UInt32 drop, TESObjectREFR* destRef,
 		float* dropPos, float* dropRot, UInt32 unk8, UInt8 useExistingEntryData) = 0;	// 40
-	virtual void	Unk_41(void) = 0;
-	virtual void	Unk_42(void) = 0;
-	virtual void	Unk_43(void) = 0;
+	virtual void	RemoveItemByType(UInt32 formType, bool useContainerOwnership, UInt32 count) = 0;
+	virtual void	Equip(TESForm* toEquip, UInt32 quantity, BaseExtraList* extraList, UInt32 unk4 ) = 0;  //Quantity used for arrows? 
+	virtual void	Unequip(TESForm* toUnEquip, UInt32 quantity, BaseExtraList* extraList) = 0;
 	virtual void	Unk_44(void) = 0;
-	virtual void	AddItem(TESForm* item, ExtraDataList* xDataList) = 0;
+	virtual void	AddItem(TESForm* item, ExtraDataList* xDataList, UInt32 count) = 0;
 	virtual void	Unk_46(void) = 0;
 	virtual void	Unk_47(void) = 0;
-	virtual void	Unk_48(void) = 0;
-	virtual MagicTarget *	GetMagicTarget(void) = 0;
-	virtual void	Unk_4A(void) = 0;
-	virtual void	Unk_4B(void) = 0;
-	virtual void	Unk_4C(void) = 0;
-	virtual void	Unk_4D(void) = 0;
-	virtual void	Unk_4E(void) = 0;
-	virtual void	Unk_4F(void) = 0;
-	virtual void	Unk_50(void) = 0;	// 50
+	virtual MagicCaster*	GetMagicCaster(void) = 0;
+	virtual MagicTarget*	GetMagicTarget(void) = 0;
+	virtual TESForm*	GetTemplateForm(void) = 0;  //Reported inlined
+	virtual void	SetTemplateForm(TESForm* form) = 0; //Reported inlined
+	virtual BSFaceGenNiNode*	GetFacegenNiNodeBiped(NiNode arg0) = 0;   //arg seem ignored for all 4 methods
+	virtual BSFaceGenNiNode* GetFacegenNiNodeSkinned(NiNode arg0) = 0;
+	virtual BSFaceGenNiNode* GetFacegenNiNode(NiNode arg0) = 0;  //Call Skinned variant?
+	virtual NiAVObject* GetFacegenAnimData(NiNode arg0) = 0;   // return BSFaceGenAnimationDatA*
+	virtual bool	MoveToGroundLevel(void) = 0;	// 50
 	virtual void	Unk_51(void) = 0;
 	virtual void	Unk_52(void) = 0;			// inits animation-related data, and more
 	virtual NiNode*	GenerateNiNode(void) = 0;
@@ -575,24 +575,24 @@ public:
 	virtual NiNode *	GetNiNode(void) = 0;
 	virtual void	Unk_56(void) = 0;
 	virtual void	Unk_57(UInt32 arg0) = 0;
-	virtual void	Unk_58(void) = 0;
-	virtual void	Unk_59(void) = 0;
+	virtual void	UpdateNiNode(void) = 0;
+	virtual ActorAnimData*	GetAnimData(void) = 0;
 	virtual void	Unk_5A(void) = 0;
 	virtual void	Unk_5B(void) = 0;
 	virtual TESForm *	GetBaseForm(void) = 0;	// returns type this object references
 	virtual float *	GetPos(void) = 0;
 	virtual void	Unk_5E(void) = 0;
 	virtual void	Unk_5F(void) = 0;
-	virtual void	Unk_60(void) = 0;	// 60
+	virtual void	Unk_60(UInt32 unk0) = 0;	// 60  //Get SOmetihng from ridden actor
 	virtual void	Unk_61(void) = 0;
-	virtual void	Unk_62(void) = 0;
-	virtual UInt8	GetSleepState(void) = 0;
+	virtual bool	IsMobileObject(void) = 0;
+	virtual UInt8	GetSitSleepState(void) = 0;
 	virtual bool	IsActor(void) = 0;
 	virtual void	ChangeCell(TESObjectCELL * newCell) = 0;
 	virtual bool	IsDead(bool arg0) = 0;
-	virtual void	Unk_67(void) = 0;
-	virtual void	Unk_68(void) = 0;
-	virtual void	Unk_69(void) = 0;
+	virtual UInt8	GetKnockedState(void) = 0;  //Calls Process::GetKnockedState
+	virtual void	Unk_68(void) = 0; //HasFatigue
+	virtual void	Unk_69(void) = 0;  //IsParalized
 
 	TESChildCell	childCell;		// 018
 	TESForm	* baseForm;				// 01C
@@ -653,7 +653,7 @@ public:
 	virtual void	Unk_6A(void) = 0;	// 6A
 	virtual void	Unk_6B(void) = 0;
 	virtual void	Unk_6C(void) = 0;
-	virtual void	Move(void) = 0;
+	virtual void	Move(float arg0, float* pos, UInt32 arg2) = 0;  //TODO check
 	virtual void	Jump(void) = 0;	// jump?
 	virtual void	Unk_6F(void) = 0;
 	virtual void	Unk_70(void) = 0;	// 70
@@ -664,7 +664,7 @@ public:
 	virtual void	Unk_75(void) = 0;
 	virtual void	Unk_76(void) = 0;
 	virtual void	Unk_77(void) = 0;
-	virtual void	Unk_78(void) = 0;
+	virtual float	GetZRotation(void) = 0;
 	virtual void	Unk_79(void) = 0;
 	virtual void	Unk_7A(void) = 0;
 	virtual void	Unk_7B(void) = 0;
@@ -673,7 +673,7 @@ public:
 	virtual void	Unk_7E(void) = 0;
 	virtual void	Unk_7F(void) = 0;
 	virtual void	Unk_80(void) = 0;	// 80
-	virtual void	Unk_81(void) = 0;
+	virtual SInt32	GetFame(void) = 0;  //TODO Do this belong to Actor vtbl?
 
 	BaseProcess	* process;			// 058
 };
@@ -689,7 +689,7 @@ public:
 	~Actor();
 
 	virtual SInt32	GetInfamy(void) = 0;	// 82
-	virtual void	Unk_83(void) = 0;
+	virtual void	Resurrect(UInt8 unk1, UInt8 unk2, UInt8 unk3) = 0;
 	virtual void	Unk_84(void) = 0;
 	virtual void	Unk_85(void) = 0;
 	virtual void	Unk_86(void) = 0;
@@ -699,9 +699,9 @@ public:
 	// invoked for fall damage (attacker == NULL), melee attacks, not spell damage.
 	virtual void	ApplyDamage(float damage, float arg1, Actor* attacker) = 0;
 	virtual void	Unk_89(void) = 0;
-	virtual void	Unk_8A(void) = 0;	// handles input for PlayerCharacter
+	virtual void	ProcessControl(void) = 0;	// handles input for PlayerCharacter
 	virtual void	Unk_8B(void) = 0;
-	virtual void	Unk_8C(void) = 0;
+	virtual void	SetPackageDismount(void) = 0;
 	virtual void	Unk_8D(void) = 0;
 	virtual void	Unk_8E(void) = 0;
 	virtual void	Unk_8F(void) = 0;
@@ -715,7 +715,7 @@ public:
 	virtual void	Unk_97(void) = 0;
 	virtual bool	HasVampireFed(void) = 0;
 	virtual void	SetVampireHasFed(bool bFed) = 0;
-	virtual void	Unk_9A(void) = 0;
+	virtual void	Unk_9A(void) = 0;  //GetBirthsign?
 	virtual void	Unk_9B(void) = 0;
 	virtual void	Unk_9C(void) = 0;
 	virtual void	Unk_9D(void) = 0;
@@ -757,11 +757,11 @@ public:
 	virtual void	Unk_C1(void) = 0;
 	virtual void	Unk_C2(void) = 0;
 	virtual void	Unk_C3(void) = 0;
-	virtual void	Unk_C4(void) = 0;
+	virtual void	ManageAlarm(void) = 0;  //TODO check
 	virtual void	Unk_C5(void) = 0;
 	virtual void	Unk_C6(void) = 0;
 	virtual void	Unk_C7(void) = 0;
-	virtual void	Unk_C8(void) = 0;
+	virtual void	AddPackageWakeUp(void) = 0;
 	virtual void	Unk_C9(void) = 0;
 	virtual void	Unk_CA(void) = 0;
 	virtual void	Unk_CB(void) = 0;
@@ -854,7 +854,9 @@ public:
 	ActorValues		avModifiers;					// 088
 	PowerListEntry  greaterPowerList;				// 09C
 	Unk0A4			unk0A4;							// 0A4
-	UInt32			unk0AC[(0x0CC - 0x0AC) >> 2];	// 0AC
+	float			unk0AC;							// 0AC
+	UInt32			DeadState;						// 0B0
+	UInt32			unk0B4[(0x0CC - 0x0B4) >> 2];	// 0B4
 	TESObjectREFR	* unk0CC;						// 0CC
 	UInt32			unk0D0;							// 0D0
 	Actor			* horseOrRider;					// 0D4 - For Character, currently ridden horse
@@ -871,7 +873,7 @@ public:
 	bool IsAlerted();
 	void SetAlerted(bool bAlerted);
 	void EvaluatePackage();
-	bool IsTalking();
+//	bool IsTalking();
 };
 
 #if OBLIVION
@@ -1020,7 +1022,7 @@ public:
 	UInt8		pad612[2];						// 612
 	UInt32		unk614[(0x624 - 0x614) >> 2];	// 614
 	MagicItem	* activeMagicItem;				// 624
-	TESObjectBOOK	* book;						// 628
+	TESObjectBOOK	* book;						// 628 //Last acitvated/read book?
 	UInt32		unk62C[(0x644 - 0x62C) >> 2];	// 62C
 	BirthSign	* birthSign;					// 644
 	UInt32		unk648[(0x650 - 0x648) >> 2];	// 648
@@ -1110,11 +1112,11 @@ public:
 	void	RefreshClimate(TESClimate * climate, UInt32 unk1);	// pass 1 for unk1 to pick new random weather etc
 
 //	void		** _vtbl;						// 000
-	NiNode*		niNode004;						// 004
-	NiNode*		niNode008;						// 008
+	NiNode*		nodeSkyRoot;					// 004
+	NiNode*		nodeMoonRoot;					// 008
 	TESClimate	* firstClimate;					// 00C
 	TESWeather	* firstWeather;					// 010
-	UInt32		unk014;							// 014
+	TESWeather* weather014;						// 014  //tansition?
 	TESWeather*	weather018;						// 018
 	TESWeather* weatherOverride;				// 01C
 	Atmosphere* atmosphere;						// 020

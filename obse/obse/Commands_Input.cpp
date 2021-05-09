@@ -395,7 +395,7 @@ static bool Cmd_IsKeyPressed3_Execute(COMMAND_ARGS)
 		return true;
 	}
 	*result = g_inputGlobal->IsKeyPressed(keyCode);
-	_MESSAGE("IsKeyPressed3 %0X  %f %s", keyCode, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+//	_MESSAGE("IsKeyPressed3 %0X  %f %s", keyCode, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 	return true;
 }
 

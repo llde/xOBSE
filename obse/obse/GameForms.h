@@ -355,7 +355,7 @@ public:
 	virtual void	Unk_0B(void);
 	virtual void	Unk_0C(void);
 	virtual void	Unk_0D(void);
-	virtual void	Unk_0E(void);
+	virtual TESForm*	Clone(bool autoEditorID, NiTMapBase<TESForm*, TESForm*>* cloneMap);
 	virtual void	Unk_0F(void);
 	virtual void	MarkAsModified(UInt32 mask);	// 10
 	virtual void	ClearModified(UInt32 mask);
@@ -369,27 +369,27 @@ public:
 	virtual void	Unk_19(void);
 	virtual void	Unk_1A(void);
 	virtual void	DoPostFixup(void);	// initialize form after other forms loaded
-	virtual void	Unk_1C(void);
+	virtual FormType	GetFormType(void);
 	virtual void	GetDescription(BSStringT * dst);
-	virtual void	Unk_1E(void);
-	virtual void	Unk_1F(void);
-	virtual void	Unk_20(void);	// 20
-	virtual void	Unk_21(void);
-	virtual void	Unk_22(void);
-	virtual void	Unk_23(void);
-	virtual void	Unk_24(UInt8 arg);
+	virtual bool	IsQuestItem(void);
+	virtual bool	IsBorderRegion(void);
+	virtual bool	Unk_20(void);	// 20 //flags 1<<16
+	virtual bool	IsOffLimits(void);
+	virtual bool	IsDangerous(void);  //same flag TODO check
+	virtual void	SetDeleted(bool bSet);
+	virtual void	SetFromActiveFile(bool fromActiveFile);
 	virtual void	SetQuestItem(bool isQuestItem);
-	virtual void	Unk_26(void);
-	virtual void	Unk_27(void);
-	virtual void	Unk_28(void);
+	virtual void	SetBorderRegion(bool bSet);
+	virtual void	Unk_27(bool bSet);  //set flag 1 <<16
+	virtual void	SetDangerous_OffLimits(void); //Doesn't call MArkAsModified
 	virtual bool	Unk_29(void);
-	virtual bool	Unk_2A(void);	// return true if the form is a reference?
-	virtual bool	Unk_2B(void);
-	virtual void	Unk_2C(void);
+	virtual bool	IsReferenceBoh(void);	// return true if the form is a reference?
+	virtual bool	IsMagicItem(void);
+	virtual UInt32	GetObjectREFCount(void);  //count only statically placed refs?
 	virtual void	CopyFrom(TESForm * form);
 	virtual bool	Compare(TESForm * form);
-	virtual void	Unk_2F(void);
-	virtual void	Unk_30(void);	// 30
+	virtual void	MatchGroupRecord(void);
+	virtual void	CreateGroupRecord(void);	// 30
 	virtual void	Unk_31(void);
 	virtual void	Unk_32(void);
 	virtual bool	Unk_33(TESObjectREFR* refr0, TESObjectREFR* refr1, UInt32 unk2); // related to activate, refr1 is activating refr, refr0 is a reference to this TESForm being activated, seen unk2 == 0
@@ -472,16 +472,16 @@ public:
 	virtual void	Unk_37(void);
 	virtual void	Unk_38(void);
 	virtual void	Unk_39(void);
-	virtual void	Unk_3A(void);
-	virtual void	Unk_3B(void);
+	virtual bool	IsObjectAutoCalc(void);
+	virtual void	SetObjectAutoCalc(bool set);
 	virtual void	Unk_3C(void);
 	virtual void	Unk_3D(void);
 	virtual void	Unk_3E(void);
 	virtual void	Unk_3F(void);
 	virtual void	Unk_40(void);
 	virtual void	Unk_41(void);
-	virtual void	Unk_42(void);
-	virtual void	Unk_43(void);
+	virtual UInt32	IncrObjectREFCount(void);
+	virtual UInt32	DecrObjectREFCount(void);
 	virtual void	Unk_44(void);
 
 	// 018
@@ -1356,14 +1356,14 @@ public:
 	TESActorBase();
 	~TESActorBase();
 
-	virtual void	Unk_48(void) = 0;
-	virtual void	Unk_49(void) = 0;
+	virtual TESCombatStyle*	GetCombatStyle(void) = 0;
+	virtual void	SetCombatStyle(TESCombatStyle* style) = 0;
 	virtual UInt32	GetActorValue(UInt32 avCode) = 0;
-	virtual void	Unk_4B(void) = 0;
-	virtual void	Unk_4C(void) = 0;
-	virtual void	Unk_4D(void) = 0;
-	virtual void	Unk_4E(void) = 0;
-	virtual void	Unk_4F(void) = 0;
+	virtual float	GetActorValue_F(UInt32 avCode) = 0;
+	virtual void	SetActorValue_F(UInt32 avCode, float value) = 0;
+	virtual void	SetActorValue(UInt32 avCode, SInt32 value) = 0;
+	virtual void	ModActorValue_F(UInt32 avCode, float value) = 0;
+	virtual void	ModActorValue(UInt32 avCode, SInt32 value) = 0;
 
 	// base classes
 	TESActorBaseData	actorBaseData;	// 024
@@ -1624,7 +1624,7 @@ public:
 	virtual float	GetMagickaCost(Actor* actor);
 	virtual UInt32	Unk_01(void);					// returns NULL in base class impl
 	virtual UInt32	GetMasteryLevel(void);
-
+	//TODO different VTBL from COEF.
 	// void			** _vtbl;				// 000
 	Entry			effectList;				// 004 BSSimpleList<EffectItem>, from which this class is derived
 	UInt32			hostileEffectCount;		// 00C missing from original OBSE class definition
@@ -1667,6 +1667,8 @@ public:
 		kType_Ingredient = 4,
 	};
 	EType Type() const;
+
+	//TODO MAgicItem vtbl.
 };
 
 // 040
@@ -3253,7 +3255,7 @@ public:
 	// members
 	UInt8			flags0;			// 024
 	UInt8			flags1;			// 025
-	UInt8			flags2;			// 026
+	UInt8			cellProcessLevel;			// 026
 	UInt8			pad27;			// 027
 	ExtraDataList	extraData;		// 028 includes ExtraEditorID
 	union {

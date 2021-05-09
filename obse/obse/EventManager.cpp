@@ -518,7 +518,7 @@ void InstallMapMarkerHook()
 
 static void DoSpellCastHook(MagicCaster* caster)
 {
-	MagicItemForm* magicItemForm = OBLIVION_CAST(caster->GetQueuedMagicItem(), MagicItem, MagicItemForm);
+	MagicItemForm* magicItemForm = OBLIVION_CAST(caster->GetActiveMagicItem(), MagicItem, MagicItemForm);
 	TESObjectREFR* casterRef = OBLIVION_CAST(caster, MagicCaster, TESObjectREFR);
 	if (magicItemForm && casterRef) {
 		UInt32 eventID = OBLIVION_CAST(magicItemForm, MagicItemForm, EnchantmentItem) ? kEventID_OnScrollCast : kEventID_OnSpellCast;

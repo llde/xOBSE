@@ -10,5 +10,6 @@ void WriteRelJump(UInt32 jumpSrc, UInt32 jumpTgt);
 void WriteRelCall(UInt32 jumpSrc, UInt32 jumpTgt);
 
 // 6 bytes
+void WriteRelJz(UInt32 jumpSrc, UInt32 jumpTgt);
 void WriteRelJnz(UInt32 jumpSrc, UInt32 jumpTgt);
 void WriteRelJle(UInt32 jumpSrc, UInt32 jumpTgt);
