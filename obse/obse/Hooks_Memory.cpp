@@ -463,7 +463,6 @@ UInt32 GetPoolAllocationSize(void * buf)
 
 bool Cmd_DebugMemDump_Execute(COMMAND_ARGS)
 {
-#if OBLIVION_VERSION == OBLIVION_VERSION_1_2_416
 	for(UInt32 i = 0; i <= 0x81; i++)
 	{
 		MemoryPool	* pool = g_memoryHeap_poolsBySize[i];
@@ -492,7 +491,6 @@ bool Cmd_DebugMemDump_Execute(COMMAND_ARGS)
 
 		gLog.Outdent();
 	}
-#endif
 
 	return true;
 }

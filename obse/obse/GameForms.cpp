@@ -1792,6 +1792,18 @@ void TESObjectCELL::SetIsPublic(bool bSet)
 	}
 }
 
+void TESObjectCELL::SetInvertFastTravel(bool bSet)
+{
+	if (bSet) flags0 |= kFlags0_InvertFastTravelBeheviour;
+	else flags0 &= ~kFlags0_InvertFastTravelBeheviour;
+}
+
+void TESObjectCELL::SetCantWait(bool bSet)
+{
+	if (bSet) flags |= kFormFlags_CantWait;
+	else flags &= ~kFormFlags_CantWait;
+}
+
 void TESObjectCELL::SetBehavesLikeExterior(bool bSet)
 {
 	if (bSet) {

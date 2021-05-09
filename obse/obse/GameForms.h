@@ -310,6 +310,7 @@ public:
 	virtual void	Destructor(void);	// 00
 	virtual void	Unk_01(void);
 	virtual void	CopyFromBase(BaseFormComponent * component);
+	virtual bool	CompareToBase(BaseFormComponent* arg);	// return false if equal - compares names, typeID, flags
 
 	//	void		** _vtbl;	// 000
 };
@@ -344,8 +345,6 @@ public:
 		kModified_Name = 0x80
 	};
 
-	// TODO: determine which of these are in BaseFormComponent
-	virtual bool	Unk_03(BaseFormComponent * arg);	// return false if equal - compares names, typeID, flags
 	virtual void	Destroy(bool Dealloc);	// delete form, pass true to deallocate?
 	virtual void	Unk_05(void);	// destroy form components
 	virtual void	Unk_06(void);	// call unk01 on form components
@@ -404,7 +403,7 @@ public:
 		TrackingData		unk08;
 	};
 
-	enum
+	enum FormFlags
 	{
 		kFormFlags_FromMaster           = 0x00000001,   // form is from an esm file
         kFormFlags_FromActiveFile       = 0x00000002,   // form is overriden by active mod or save file
@@ -413,14 +412,14 @@ public:
         kFormFlags_Deleted              = 0x00000020,   // set on deletion, not saved in CS, probably game as well
         kFormFlags_BorderRegion         = 0x00000040,   // ?? (from TES4Edit)
         kFormFlags_TurnOffFire          = 0x00000080,   // ?? (from TES4Edit)
-        kFormFlags_CastShadows          = 0x00000200,   // ?? (from TES4Edit)
+        kFormFlags_CastShadows          = 0x00000200,   // ?? (from TES4Edit), Unused, Don't cast shadows from TESR.
 		kFormFlags_QuestItem            = 0x00000400,   // aka Quest Item, Persistent Reference, Essenstial Actor
 		kFromFlags_Essential            = kFormFlags_QuestItem, 
         kFormFlags_InitiallyDisabled    = 0x00000800,   // ?? (from TES4Edit)
         kFormFlags_Ignored              = 0x00001000,   // record is not loaded by CS, perhaps game as well
         kFormFlags_Temporary            = 0x00004000,   // not saved in CS, probably game as well
         kFormFlags_VisibleWhenDistant   = 0x00008000,   // ?? (from TES4Edit)
-        kFormFlags_OffLimits            = 0x00020000,   // ?? (from TES4Edit) //Offlimits for TESObjectCELL
+        kFormFlags_OffLimits            = 0x00020000,   // ?? (from TES4Edit) //Offlimits for TESObjectCELL, Dangerous for TESObjectACTV?
         kFormFlags_Compressed           = 0x00040000,   // ?? (from TES4Edit)
         kFormFlags_CantWait             = 0x00080000,   // ?? (from TES4Edit) //For TESObjectCELL can't wait. Unknown for others TESForm
         kFormFlags_IgnoresFriendlyHits  = 0x00100000,
@@ -577,8 +576,7 @@ public:
 	TESModel();
 	~TESModel();
 
-	virtual void			Unk_03(void);
-	virtual void			Unk_04(void);
+	virtual void			Destroy(void);
 	virtual const char *	GetModelPath(void);
 	virtual void			SetModelPath(const char* path);
 
@@ -654,15 +652,16 @@ public:
 class TESDescription : public BaseFormComponent
 {
 public:
-	virtual void Unk_3(void);
 	virtual const char * GetText(TESForm* parentForm, UInt32 recordCode); // books, classes, and most others: arg0:NULL, arg1:'DESC'
 																		  // levelup quotes: arg0:TESSkill, arg1:'(A/J/E/M)NAM'
 
 	TESDescription();
 	~TESDescription();
 
+
 	EDITOR_SPECIFIC(BSStringT description);
 	UInt32	formDiskOffset;	// 04 / 0C
+
 
 	const char* GetDescription() { return GetText(0, 0x43534544); }	// this will not work for skill levelup quotes
 };
@@ -679,7 +678,7 @@ public:
 		UInt32	unk04;		// init'd to 0x414
 		UInt32	unk08;		// init'd to 0x422
 	};
-
+	//TODO define VTBL
 	BSStringT ddsPath;		// 04
 	EDITOR_SPECIFIC(EditorData editorData);
 };
@@ -1126,11 +1125,9 @@ public:
 	};
 
 	Entry	modelList;	// 004
-
-#if OBLIVION_VERSION >= OBLIVION_VERSION_1_2
 	UInt32	unk0C;	// 00C
 	UInt32	unk10;	// 010
-#endif
+
 
 	const Entry* FindNifPath(char* path);
 	bool RemoveEntry(char* nifToRemove);
@@ -3282,6 +3279,11 @@ public:
 	bool GetIsPublic() const { return IsInterior() && (flags0 & kFlags0_Public); }
 	void SetIsPublic(bool bSet);
 	bool IsOblivionInterior() const { return IsInterior() && (flags0 & kFlags0_OblivionInterior); }
+	bool IsInvertFastTravel() { return (flags0 & kFlags0_InvertFastTravelBeheviour) == kFlags0_InvertFastTravelBeheviour; }
+	void SetInvertFastTravel(bool bSet);
+	bool IsCantWait() { return (flags & kFormFlags_CantWait) == kFormFlags_CantWait; }
+	void SetCantWait(bool bSet);
+
 };
 
 typedef Visitor<TESObjectCELL::ObjectListEntry, TESObjectREFR> CellListVisitor;

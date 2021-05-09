@@ -45,10 +45,10 @@ void OBSE_Initialize(void)
 		CommandTable::Init();
 		Hook_Input_Init();
 		Hook_Gameplay_Init();
-		Hook_Memory_Init();
+//		Hook_Memory_Init();
 		Hook_SaveLoad_Init();
 		Hook_Script_Init();
-		Hook_NetImmerse_Init();
+//		Hook_NetImmerse_Init();
 
 //		HavokReflection_Init();
 
@@ -75,8 +75,8 @@ void OBSE_DeInitialize(void)
 
 	g_pluginManager.DeInit();
 
-	Hook_NetImmerse_DeInit();
-	Hook_Memory_DeInit();
+//	Hook_NetImmerse_DeInit();
+//	Hook_Memory_DeInit();
 
 	ThreadLocalData::DeInit();
 }
