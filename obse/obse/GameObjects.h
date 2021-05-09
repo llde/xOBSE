@@ -553,7 +553,7 @@ public:
 	virtual void	RemoveItem(TESForm* toRemove, BaseExtraList* extraList, UInt32 quantity, UInt32 useContainerOwnership, UInt32 drop, TESObjectREFR* destRef,
 		float* dropPos, float* dropRot, UInt32 unk8, UInt8 useExistingEntryData) = 0;	// 40
 	virtual void	RemoveItemByType(UInt32 formType, bool useContainerOwnership, UInt32 count) = 0;
-	virtual void	Equip(TESForm* toEquip, UInt32 quantity, BaseExtraList* extraList, UInt32 unk4 ) = 0;  //Quantity used for arrows? 
+	virtual void	Equip(TESForm* toEquip, UInt32 quantity, BaseExtraList* extraList, UInt32 noUnequip ) = 0;  //Quantity used for arrows? noUnequip is ignored
 	virtual void	Unequip(TESForm* toUnEquip, UInt32 quantity, BaseExtraList* extraList) = 0;
 	virtual void	Unk_44(void) = 0;
 	virtual void	AddItem(TESForm* item, ExtraDataList* xDataList, UInt32 count) = 0;
@@ -591,8 +591,8 @@ public:
 	virtual void	ChangeCell(TESObjectCELL * newCell) = 0;
 	virtual bool	IsDead(bool arg0) = 0;
 	virtual UInt8	GetKnockedState(void) = 0;  //Calls Process::GetKnockedState
-	virtual void	Unk_68(void) = 0; //HasFatigue
-	virtual void	Unk_69(void) = 0;  //IsParalized
+	virtual bool	HasFatigue(void) = 0; //
+	virtual bool	IsParalized(void) = 0;  //
 
 	TESChildCell	childCell;		// 018
 	TESForm	* baseForm;				// 01C
@@ -673,7 +673,6 @@ public:
 	virtual void	Unk_7E(void) = 0;
 	virtual void	Unk_7F(void) = 0;
 	virtual void	Unk_80(void) = 0;	// 80
-	virtual SInt32	GetFame(void) = 0;  //TODO Do this belong to Actor vtbl?
 
 	BaseProcess	* process;			// 058
 };
@@ -688,6 +687,7 @@ public:
 	Actor();
 	~Actor();
 
+	virtual SInt32	GetFame(void) = 0; // 81
 	virtual SInt32	GetInfamy(void) = 0;	// 82
 	virtual void	Resurrect(UInt8 unk1, UInt8 unk2, UInt8 unk3) = 0;
 	virtual void	Unk_84(void) = 0;
