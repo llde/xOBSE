@@ -13,15 +13,17 @@ static const UInt32 kInitializeInputGlobals = 0x00404150;
 static UInt8 ControlsState[kControlsMapped] = {0};
 
 enum  KeyControlState : UInt16 {
-	kStateDisabled = 1 << 0,
-	kStateSignalled = 1 << 1,
-	kStateTapped = 1 << 2,
-	kStateHolded = 1 << 3,
-	kStateHammered = 1 << 4,
-	kStateAHammered = 1 << 5,
+	kStateUnmodified = 0,
+	kStateDisabled   = 1 << 0,
+	kStateSignalled  = 1 << 1,
+	kStateTapped	 = 1 << 2,
+	kStateHolded	 = 1 << 3,
+	kStateHammered   = 1 << 4,
+	kStateAHammered  = 1 << 5,
 	kStatePSignalled = 1 << 6,
-	kStatePTapped = 1 << 7,
-	kStateTap = 1 << 8,
+	kStatePTapped	 = 1 << 7,
+	kStateTap		 = 1 << 8,
+	kStateReal		 = 1 << 9, 
 };
 DEFINE_ENUM_FLAG_OPERATORS(KeyControlState)
 

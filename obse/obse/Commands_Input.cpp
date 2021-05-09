@@ -118,7 +118,7 @@ static bool Cmd_IsKeyPressed_Execute(COMMAND_ARGS)
 
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keycode)) return true;
 	if(GetAsyncKeyState(keycode) & 0x8000) *result = 1;
-	//_MESSAGE("IsKeyPRessed %0X   %f  %s", keycode, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+//	_MESSAGE("IsKeyPRessed %0X   %f  %s", keycode, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 	return true;
 }
 
@@ -131,7 +131,7 @@ static bool Cmd_IsKeyPressed2_Execute(COMMAND_ARGS)
 	if(keycode < kMaxMacros) {
 		*result = g_inputGlobal->IsKeyPressed(keycode);
 	}
-	//_MESSAGE("IsKeyPRessed2 %0X   %f %s", keycode, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+//	_MESSAGE("IsKeyPressed2 %0X   %f %s", keycode, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 
 	return true;
 }
@@ -142,7 +142,7 @@ static bool Cmd_TapKey_Execute(COMMAND_ARGS)
 	UInt32	keycode = 0;
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keycode)) return true;
     g_inputGlobal->SetTapKey(keycode);
-	//_MESSAGE("TapKey %0X %s" ,keycode , (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+//	_MESSAGE("TapKey %0X %s" ,keycode , (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 
 	return true;
 }
@@ -169,7 +169,7 @@ static bool Cmd_HoldKey_Execute(COMMAND_ARGS)
 
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keycode)) return true;
     g_inputGlobal->SetHoldKey(keycode);
-	//_MESSAGE("HoldKey %0X %s", keycode, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+//	_MESSAGE("HoldKey %0X %s", keycode, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 
 	return true;
 }
@@ -181,7 +181,7 @@ static bool Cmd_ReleaseKey_Execute(COMMAND_ARGS)
 	
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keycode)) return true;
 	g_inputGlobal->SetUnHoldKey(keycode);
-	//_MESSAGE("ReleaseKey %0X %s", keycode, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+//	_MESSAGE("ReleaseKey %0X %s", keycode, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 	return true;
 }
 
@@ -215,7 +215,7 @@ static bool Cmd_HammerKey_Execute(COMMAND_ARGS)
 	
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keycode)) return true;
 	g_inputGlobal->SetHammerKey(keycode, false);
-	//_MESSAGE("HammerKey %0X %s", keycode, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+//	_MESSAGE("HammerKey %0X %s", keycode, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 
 	return true;
 }
@@ -227,7 +227,7 @@ static bool Cmd_AHammerKey_Execute(COMMAND_ARGS)
 
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keycode)) return true;
 	g_inputGlobal->SetHammerKey(keycode, true);
-	//_MESSAGE("AHammerKey %0X %s", keycode, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+//	_MESSAGE("AHammerKey %0X %s", keycode, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 
 	return true;
 }
@@ -239,7 +239,7 @@ static bool Cmd_UnHammerKey_Execute(COMMAND_ARGS)
 	
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keycode)) return true;
 	g_inputGlobal->SetUnHammerKey(keycode);
-	//_MESSAGE("UnHammerKey %0X %s", keycode, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+//	_MESSAGE("UnHammerKey %0X %s", keycode, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 
 	return true;
 }
@@ -317,7 +317,7 @@ static bool Cmd_GetMouseButtonPress_Execute(COMMAND_ARGS)
 	//TODO avoid reporting tapped keys?
 	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &count)) return true;
 	for (UInt32 d = 0; d < 8; d++) if(g_inputGlobal->CurrentMouseState.rgbButtons[d] && (!count--)){
-		*result = d;
+		*result = d + 256;
 		break;
 	}
 	return true;
@@ -395,7 +395,7 @@ static bool Cmd_IsKeyPressed3_Execute(COMMAND_ARGS)
 		return true;
 	}
 	*result = g_inputGlobal->IsKeyPressed(keyCode);
-//	_MESSAGE("IsKeyPressed3 %0X  %f %s", keyCode, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+	_MESSAGE("IsKeyPressed3 %0X  %f %s", keyCode, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 	return true;
 }
 
@@ -407,10 +407,10 @@ static bool Cmd_IsControlPressed_Execute(COMMAND_ARGS)
 	UInt8 keyCode = g_inputGlobal->KeyboardInputControls[ctrl];
 	if (keyCode != NOKEY) {
 		*result = g_inputGlobal->IsKeyPressedKeyboard(keyCode);
-		if (*result != 0) return true;
+//		if (*result != 0) return true;
 	}
 	UInt8 mouseCode = g_inputGlobal->MouseInputControls[ctrl];
-	if (mouseCode != NOKEY) {
+	if (mouseCode != NOKEY && *result == 0) {
 		*result = g_inputGlobal->IsKeyPressedMouse(mouseCode);
 	}
 //	_MESSAGE("IsControlPressed %0X  %f %s", ctrl, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
@@ -432,7 +432,7 @@ static bool Cmd_DisableControl_Execute(COMMAND_ARGS)
 	if (dxCode != NOKEY){
 		g_inputGlobal->SetMaskMouse(dxCode);
 	}
-	//_MESSAGE("DisableControl  %0X  %s", ctrl, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+//	_MESSAGE("DisableControl  %0X  %s", ctrl, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 	return true;
 }
 
@@ -452,7 +452,7 @@ static bool Cmd_IsControlDisabled_Execute(COMMAND_ARGS)
 			*result += g_inputGlobal->GetMaskStatusMouse(dxCode);
 		}
 	}
-	//_MESSAGE("IsControlDisabled  %0X  %f  %s", ctrl, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+//	_MESSAGE("IsControlDisabled  %0X  %f  %s", ctrl, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 
 	return true;
 }
@@ -472,7 +472,7 @@ static bool Cmd_EnableControl_Execute(COMMAND_ARGS)
 	if (dxCode != NOKEY) {
 		g_inputGlobal->SetUnmaskMouse(dxCode);
 	}
-	//_MESSAGE("EnableControl  %0X %s", ctrl, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+//	_MESSAGE("EnableControl  %0X %s", ctrl, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 
 	return true;
 }
@@ -485,7 +485,7 @@ static bool Cmd_OnKeyDown_Execute(COMMAND_ARGS)
 
 	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keyCode))	return true;
 	*result = g_inputGlobal->IsKeyPressed(keyCode) && !g_inputGlobal->WasKeyPressed(keyCode);
-	_MESSAGE("OnKeyDown  %0X   %u   %u %s", keyCode, g_inputGlobal->IsKeyPressed(keyCode), g_inputGlobal->WasKeyPressed(keyCode), (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+//	_MESSAGE("OnKeyDown  %0X   %f %s", keyCode, *result , (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 
 	return true;
 }
@@ -500,10 +500,10 @@ static bool Cmd_OnControlDown_Execute(COMMAND_ARGS)
 	UInt8 keyCode = g_inputGlobal->KeyboardInputControls[ctrl];
 	if (keyCode != NOKEY) {
 		*result = (g_inputGlobal->IsKeyPressedKeyboard(keyCode) && !g_inputGlobal->WasKeyPressedKeyboard(keyCode));
-		if(*result != 0) return true;
+//		if(*result != 0) return true;
 	}
 	UInt8 mouseCode = g_inputGlobal->MouseInputControls[ctrl];
-	if (mouseCode != NOKEY) {
+	if (mouseCode != NOKEY  && *result == 0) {
 		*result = (g_inputGlobal->IsKeyPressedMouse(mouseCode) && !g_inputGlobal->WasKeyPressedMouse(mouseCode));
 	}
 
@@ -533,7 +533,7 @@ static bool Cmd_TapControl_Execute(COMMAND_ARGS)
 			*result = 1;
 		}
 	}
-	//_MESSAGE("TapControl %0X %s", ctrl, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+//	_MESSAGE("TapControl %0X %s", ctrl, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 	return true;
 }
 
