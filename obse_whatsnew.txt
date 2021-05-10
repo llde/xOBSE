@@ -1,11 +1,18 @@
 xOBSE 22.2
+    General:
+        - Better message for failed plugins in case of missing or mismatched dependancies
+        
     Changes/Fix:
-    - Rewrote from scratch the input handling system of OBSE switching from the old and kludgy DInput hook to a proper OSInputGlobal hook. This should overall simplify the code, be faster and more robust, and more easily to interact with OBSE plugins in the future.
-    
+        - Rewrote from scratch the input handling system of OBSE switching from the old and kludgy DInput hook to a proper OSInputGlobal hook. This should overall simplify the code, be faster and more robust, and more easily to interact with OBSE plugins in the future.
+        - The above change also fix these instances were input handling routines weren't working on some system if bBackground Keyboard = 0 (Oblivion.ini)
+        - Backport 3 fixes for Menu functions ignoring keyboard selection tiles, from NorthenerUI + 1 fix not covered by NUI
     API:
-    - Documented a lot of the struct fields for OSInputGlobals, and documented at least some of it's member functions 
-    - Removed code for older version  of Oblivion then the last version (1_2_416)
-    
+        - Documented a lot of the struct fields for OSInputGlobals, and documented at least some of it's member functions 
+        - Removed code for older version  of Oblivion then the last version (1_2_416)
+        - GetFame() is now correctly placed into Actor vtbl instead of MobileObject
+        - CompareTo is now correctly in BaseFormComponent vtbl instead of being repeated in TESForm, TESModel and TesAttackDamage.  
+        - Decoded some virtual functions and members on game structures, thanks to COEF and OR
+
 xOBSE 22.1
     Fix:
     - Fix a serious regression in xOBSE 22.0 where using the hotkeys functions could cause crashes (thanks @Laulajatar for report). Enhanced Hotkeys users were affected by this.

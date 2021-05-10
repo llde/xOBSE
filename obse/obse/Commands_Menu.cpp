@@ -29,8 +29,13 @@ static bool Cmd_GetActiveMenuMode_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	InterfaceManager* intfc = InterfaceManager::GetSingleton();
-	if (intfc && intfc->activeMenu)
+	if (!intfc) return true;
+	if (intfc->activeMenu)
 		*result = intfc->activeMenu->id;
+	//Try to use the tile containing menu, as activeMenu is null using keyboard
+	Tile* activeTile = intfc->activeTile ? intfc->activeTile : intfc->altActiveTile;
+	if (activeTile)
+		*result = activeTile->GetContainingMenu()->id;
 
 	return true;
 }
@@ -645,9 +650,10 @@ static bool Cmd_GetActiveUIComponentName_Execute(COMMAND_ARGS)
 	const char* name = "";
 
 	InterfaceManager* intfc = InterfaceManager::GetSingleton();
-	if (intfc->activeTile)
-		name = intfc->activeTile->name.m_data;
-
+	Tile* actTile = intfc->activeTile ? intfc->activeTile : intfc->altActiveTile;
+	if (actTile) {
+		name = actTile->name.m_data;
+	}
 	AssignToStringVar(PASS_COMMAND_ARGS, name);
 	return true;
 }
@@ -658,9 +664,9 @@ static bool Cmd_GetActiveUIComponentFullName_Execute(COMMAND_ARGS)
 	std::string nameStr;
 
 	InterfaceManager* intfc = InterfaceManager::GetSingleton();
-	if (intfc->activeTile)
-	{
-		nameStr = intfc->activeTile->GetQualifiedName();
+	Tile* actTile = intfc->activeTile ? intfc->activeTile : intfc->altActiveTile;
+	if (actTile) {
+		nameStr = actTile->GetQualifiedName();
 		name = nameStr.c_str();
 	}
 
@@ -673,10 +679,12 @@ static bool Cmd_GetActiveUIComponentID_Execute(COMMAND_ARGS)
 	*result = -1;
 
 	InterfaceManager* intfc = InterfaceManager::GetSingleton();
-	if (intfc->activeTile)
+	Tile* actTile = intfc->activeTile ? intfc->activeTile : intfc->altActiveTile;
+
+	if (actTile)
 	{
 		float id;
-		if (intfc->activeTile->GetFloatValue(kTileValue_id, &id))
+		if (actTile->GetFloatValue(kTileValue_id, &id))
 			*result = id;
 	}
 
@@ -946,7 +954,8 @@ static bool Cmd_PrintTileInfo_Execute(COMMAND_ARGS)
 
 static bool Cmd_PrintActiveTileInfo_Execute(COMMAND_ARGS)
 {
-	return PrintTileInfo("< Active Tile >", InterfaceManager::GetSingleton()->activeTile);
+	Tile* activeTile = InterfaceManager::GetSingleton()->activeTile ? InterfaceManager::GetSingleton()->activeTile : InterfaceManager::GetSingleton()->altActiveTile;
+	return PrintTileInfo("< Active Tile >", activeTile);
 }
 
 static bool Cmd_GetMapMenuMarkerName_Execute(COMMAND_ARGS)
@@ -1163,9 +1172,8 @@ static bool Cmd_GetClassMenuHighlightedClass_Execute(COMMAND_ARGS)
 			Console_Print("GetHighlightedClass >> Class menu not open");
 		return true;
 	}
-
-	Tile* tile = NULL;
-	tile = InterfaceManager::GetSingleton()->activeTile;
+	InterfaceManager* intfc = InterfaceManager::GetSingleton();
+	Tile* tile = intfc->activeTile ? intfc->activeTile : intfc->altActiveTile;
 	if (!tile){
 		if(IsConsoleMode())
 			Console_Print("GetHighlightedClass >> Not selecting a class");
