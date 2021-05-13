@@ -323,6 +323,7 @@ ArrayVar::~ArrayVar()
 
 ArrayElement* ArrayVar::Get(ArrayKey key, bool bCanCreateNew)
 {
+	//TODO what do this?
 	if (IsPacked() && key.KeyType() == kDataType_Numeric)
 	{
 		double idx = key.Key().num;
@@ -352,6 +353,55 @@ ArrayElement* ArrayVar::Get(ArrayKey key, bool bCanCreateNew)
 	}
 
 	return NULL;
+}
+
+bool ArrayVar::SetElementNumber(const ArrayKey* key, double num)
+{
+	ArrayElement* elem = this->Get(*key, true);
+	if (!elem || !elem->SetNumber(num))
+		return false;
+
+	return true;
+}
+
+bool ArrayVar::SetElementString(const ArrayKey* key, const char* str)
+{
+	ArrayElement* elem = this->Get(*key, true);
+	if (!elem || !elem->SetString(str))
+		return false;
+
+	return true;
+}
+
+
+bool ArrayVar::SetElementFormID(const ArrayKey* key, UInt32 refID)
+{
+	ArrayElement* elem = this->Get(*key, true);
+	if (!elem || !elem->SetFormID(refID))
+		return false;
+
+	return true;
+}
+
+bool ArrayVar::SetElementArray(const ArrayKey* key, ArrayID srcID)
+{
+	ArrayElement* elem = this->Get(*key, true);
+	if (!elem || !elem->SetArray(srcID, this->m_owningModIndex))
+		return false;
+
+	return true;
+}
+
+bool ArrayVar::GetElementNumber(const ArrayKey* key, double* out)
+{
+	ArrayElement* elem = this->Get(*key, false);
+	return (elem && elem->GetAsNumber(out));
+}
+
+bool ArrayVar::GetElementString(const ArrayKey* key, std::string& out)
+{
+	ArrayElement* elem = this->Get(*key, false);
+	return (elem && elem->GetAsString(out));
 }
 
 UInt32 ArrayVar::GetUnusedIndex()

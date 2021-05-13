@@ -150,21 +150,25 @@ class ArrayVar
 	bool				m_bPacked;
 	std::vector<UInt8>	m_refs;		// data is modIndex of referring object; size() is number of references
 
-	UInt32 GetUnusedIndex();
 
 	explicit ArrayVar(UInt8 modIndex);
 	ArrayVar(UInt32 keyType, bool packed, UInt8 modIndex);
 
-	ArrayElement* Get(ArrayKey key, bool bCanCreateNew);
-
-	UInt32 ID()		{ return m_ID;	}
-	void Pack();
-
-	void Dump();
 
 public:
 	~ArrayVar();
 
+	UInt32 GetUnusedIndex();
+	ArrayElement* Get(ArrayKey key, bool bCanCreateNew);
+	UInt32 ID() { return m_ID; }
+	void Pack();
+	void Dump();
+	bool SetElementNumber(const ArrayKey* key, double number);
+	bool SetElementString(const ArrayKey* key, const char* str);
+	bool SetElementFormID(const ArrayKey* key, UInt32 refID);
+	bool SetElementArray(const ArrayKey* key, ArrayID srcID);
+	bool GetElementNumber(const ArrayKey* key, double* out);
+	bool GetElementString(const ArrayKey* key, std::string& out);
 	UInt8 KeyType() const	{ return m_keyType; }
 	bool IsPacked() const	{ return m_bPacked; }
 	UInt32 Size() const		{ return m_elements.size(); }

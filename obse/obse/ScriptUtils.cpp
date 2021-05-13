@@ -345,45 +345,72 @@ ScriptToken* Eval_Assign_Array(OperatorType op, ScriptToken* lh, ScriptToken* rh
 ScriptToken* Eval_Assign_Elem_Number(OperatorType op, ScriptToken* lh, ScriptToken* rh, ExpressionEvaluator* context)
 {
 	const ArrayKey* key = lh->GetArrayKey();
-	if (!key)
-		return NULL;
-
-	return g_ArrayMap.SetElementNumber(lh->GetOwningArrayID(), *key, rh->GetNumber()) ? ScriptToken::Create(rh->GetNumber()) : NULL;
+	if (!key) {
+		context->Error("Array Element is invalid");
+		return nullptr;
+	}
+	ArrayVar* array = g_ArrayMap.Get(lh->GetOwningArrayID());
+	if (!array) {
+		context->Error("Invalid Array Access - The array was not initialized");
+		return nullptr;
+	}
+	if (array->SetElementNumber(key, rh->GetNumber())) return ScriptToken::Create(rh->GetNumber());
+	context->Error("Element with key not found or wrong type");
+	return nullptr;
 }
 
 ScriptToken* Eval_Assign_Elem_String(OperatorType op, ScriptToken* lh, ScriptToken* rh, ExpressionEvaluator* context)
 {
 	const ArrayKey* key = lh->GetArrayKey();
-	if (!key)
+	if (!key) {
+		context->Error("Array Element is invalid");
 		return NULL;
-
-	return g_ArrayMap.SetElementString(lh->GetOwningArrayID(), *key, rh->GetString()) ? ScriptToken::Create(rh->GetString()) : NULL;
+	}
+	ArrayVar* array = g_ArrayMap.Get(lh->GetOwningArrayID());
+	if (!array) {
+		context->Error("Invalid Array Access - The array was not initialized");
+		return nullptr;
+	}
+	if (array->SetElementString(key, rh->GetString())) return ScriptToken::Create(rh->GetString());
+	context->Error("Element with key not found or wrong type"); 
+	return nullptr;
 }
 
 ScriptToken* Eval_Assign_Elem_Form(OperatorType op, ScriptToken* lh, ScriptToken* rh, ExpressionEvaluator* context)
 {
 	const ArrayKey* key = lh->GetArrayKey();
-	if (!key)
+	if (!key) {
+		context->Error("Array Element is invalid");
 		return NULL;
-
-	return g_ArrayMap.SetElementFormID(lh->GetOwningArrayID(), *key, rh->GetFormID()) ? ScriptToken::CreateForm(rh->GetFormID()) : NULL;
+	}
+	ArrayVar* array = g_ArrayMap.Get(lh->GetOwningArrayID());
+	if (!array) {
+		context->Error("Invalid Array Access - The array was not initialized");
+		return nullptr;
+	}
+	if (array->SetElementFormID(key, rh->GetFormID())) return ScriptToken::CreateForm(rh->GetFormID());
+	context->Error("Element with key not found or wrong type"); 
+	return nullptr;
 }
 
 ScriptToken* Eval_Assign_Elem_Array(OperatorType op, ScriptToken* lh, ScriptToken* rh, ExpressionEvaluator* context)
 {
 	const ArrayKey* key = lh->GetArrayKey();
-	if (!key)
+	if (!key) {
+		context->Error("Array Element is invalid");
 		return NULL;
+	}
+	ArrayVar* array = g_ArrayMap.Get(lh->GetOwningArrayID());
+	if (!array) {
+		context->Error("Invalid Array Access - The array was not initialized");
+		return nullptr;
+	}
 
-	if (g_ArrayMap.SetElementArray(lh->GetOwningArrayID(), *key, rh->GetArray()))
-	{
-	//	ArrayID newID;
-	//	// this is pre-reference-counting code; no longer necessary
-	//	if (g_ArrayMap.GetElementArray(lh->GetOwningArrayID(), *key, &newID))
-	//		return ScriptToken::Create(newID, kTokenType_Array);
+	if (array->SetElementArray(key, rh->GetArray()))	{
 		return ScriptToken::CreateArray(rh->GetArray());
 	}
 
+	context->Error("Element with key not found or wrong type");
 	return NULL;
 }
 
@@ -521,41 +548,83 @@ ScriptToken* Eval_Multiply_String_Number(OperatorType op, ScriptToken* lh, Scrip
 ScriptToken* Eval_PlusEquals_Elem_Number(OperatorType op, ScriptToken* lh, ScriptToken* rh, ExpressionEvaluator* context)
 {
 	const ArrayKey* key = lh->GetArrayKey();
-	double elemVal;
-	if (!key || !g_ArrayMap.GetElementNumber(lh->GetOwningArrayID(), *key, &elemVal))
+	if (!key) {
+		context->Error("Array Element is invalid");
 		return NULL;
+	}
+	ArrayVar* array = g_ArrayMap.Get(lh->GetOwningArrayID());
+	if (!array) {
+		context->Error("Invalid Array Access - The array was not initialized");
+		return nullptr;
+	}
 
-	return g_ArrayMap.SetElementNumber(lh->GetOwningArrayID(), *key, elemVal + rh->GetNumber()) ? ScriptToken::Create(elemVal + rh->GetNumber()) : NULL;
+	double elemVal;
+	if (!key || !array->GetElementNumber(key, &elemVal)) {
+		context->Error("Array Element is invalid");
+		return NULL;
+	}
+
+	return array->SetElementNumber(key, elemVal + rh->GetNumber()) ? ScriptToken::Create(elemVal + rh->GetNumber()) : NULL;
 }
 
 ScriptToken* Eval_MinusEquals_Elem_Number(OperatorType op, ScriptToken* lh, ScriptToken* rh, ExpressionEvaluator* context)
 {
 	const ArrayKey* key = lh->GetArrayKey();
-	double elemVal;
-	if (!key || !g_ArrayMap.GetElementNumber(lh->GetOwningArrayID(), *key, &elemVal))
+	if (!key) {
+		context->Error("Array Element is invalid");
 		return NULL;
-
-	return g_ArrayMap.SetElementNumber(lh->GetOwningArrayID(), *key, elemVal - rh->GetNumber()) ? ScriptToken::Create(elemVal - rh->GetNumber()) : NULL;
+	}
+	ArrayVar* array = g_ArrayMap.Get(lh->GetOwningArrayID());
+	if (!array) {
+		context->Error("Invalid Array Access - The array was not initialized");
+		return nullptr;
+	}
+	double elemVal;
+	if (!key || !array->GetElementNumber(key, &elemVal)) {
+		context->Error("Array Element is invalid");
+		return NULL;
+	}
+	return array->SetElementNumber(key, elemVal - rh->GetNumber()) ? ScriptToken::Create(elemVal - rh->GetNumber()) : NULL;
 }
 
 ScriptToken* Eval_TimesEquals_Elem(OperatorType op, ScriptToken* lh, ScriptToken* rh, ExpressionEvaluator* context)
 {
 	const ArrayKey* key = lh->GetArrayKey();
-	double elemVal;
-	if (!key || !g_ArrayMap.GetElementNumber(lh->GetOwningArrayID(), *key, &elemVal))
+	if (!key) {
+		context->Error("Array Element is invalid");
 		return NULL;
-
+	}
+	ArrayVar* array = g_ArrayMap.Get(lh->GetOwningArrayID());
+	if (!array) {
+		context->Error("Invalid Array Access - The array was not initialized");
+		return nullptr;
+	}
+	double elemVal;
+	if (!array->GetElementNumber(key, &elemVal)) {
+		context->Error("Array Element is invalid");
+		return NULL;
+	}
 	double result = elemVal * rh->GetNumber();
-	return g_ArrayMap.SetElementNumber(lh->GetOwningArrayID(), *key, result) ? ScriptToken::Create(result) : NULL;
+	return array->SetElementNumber(key, result) ? ScriptToken::Create(result) : NULL;
 }
 
 ScriptToken* Eval_DividedEquals_Elem(OperatorType op, ScriptToken* lh, ScriptToken* rh, ExpressionEvaluator* context)
 {
 	const ArrayKey* key = lh->GetArrayKey();
-	double elemVal;
-	if (!key || !g_ArrayMap.GetElementNumber(lh->GetOwningArrayID(), *key, &elemVal))
+	if (!key) {
+		context->Error("Array Element is invalid");
 		return NULL;
-
+	}
+	ArrayVar* array = g_ArrayMap.Get(lh->GetOwningArrayID());
+	if (!array) {
+		context->Error("Invalid Array Access - The array was not initialized");
+		return nullptr;
+	}
+	double elemVal;
+	if (!key || !array->GetElementNumber(key, &elemVal)) {
+		context->Error("Array Element is invalid");
+		return NULL;
+	}
 	double result = rh->GetNumber();
 	if (result == 0.0)
 	{
@@ -564,29 +633,49 @@ ScriptToken* Eval_DividedEquals_Elem(OperatorType op, ScriptToken* lh, ScriptTok
 	}
 
 	result = elemVal / rh->GetNumber();
-	return g_ArrayMap.SetElementNumber(lh->GetOwningArrayID(), *key, result) ? ScriptToken::Create(result) : NULL;
+	return array->SetElementNumber(key, result) ? ScriptToken::Create(result) : NULL;
 }
 
 ScriptToken* Eval_ExponentEquals_Elem(OperatorType op, ScriptToken* lh, ScriptToken* rh, ExpressionEvaluator* context)
 {
 	const ArrayKey* key = lh->GetArrayKey();
-	double elemVal;
-	if (!key || !g_ArrayMap.GetElementNumber(lh->GetOwningArrayID(), *key, &elemVal))
+	if (!key) {
+		context->Error("Array Element is invalid");
 		return NULL;
-
+	}
+	ArrayVar* array = g_ArrayMap.Get(lh->GetOwningArrayID());
+	if (!array) {
+		context->Error("Invalid Array Access - The array was not initialized");
+		return nullptr;
+	}
+	double elemVal;
+	if (!array->GetElementNumber(key, &elemVal)) {
+		context->Error("Array Element is invalid");
+		return NULL;
+	}
 	double result = pow(elemVal,rh->GetNumber());
-	return g_ArrayMap.SetElementNumber(lh->GetOwningArrayID(), *key, result) ? ScriptToken::Create(result) : NULL;
+	return array->SetElementNumber(key, result) ? ScriptToken::Create(result) : NULL;
 }
 
 ScriptToken* Eval_PlusEquals_Elem_String(OperatorType op, ScriptToken* lh, ScriptToken* rh, ExpressionEvaluator* context)
 {
 	std::string elemStr;
 	const ArrayKey* key = lh->GetArrayKey();
-	if (!key || !g_ArrayMap.GetElementString(lh->GetOwningArrayID(), *key, elemStr))
+	if (!key) {
+		context->Error("Array Element is invalid");
 		return NULL;
-
+	}
+	ArrayVar* array = g_ArrayMap.Get(lh->GetOwningArrayID());
+	if (!array) {
+		context->Error("Invalid Array Access - The array was not initialized");
+		return nullptr;
+	}
+	if (!array->GetElementString(key, elemStr)) {
+		context->Error("Array Element is invalid");
+		return NULL;
+	}
 	elemStr += rh->GetString();
-	return g_ArrayMap.SetElementString(lh->GetOwningArrayID(), *key, elemStr.c_str()) ? ScriptToken::Create(elemStr) : NULL;
+	return array->SetElementString(key, elemStr.c_str()) ? ScriptToken::Create(elemStr) : NULL;
 }
 
 ScriptToken* Eval_Negation(OperatorType op, ScriptToken* lh, ScriptToken* rh, ExpressionEvaluator* context)
@@ -619,13 +708,18 @@ ScriptToken* Eval_Subscript_Array_Number(OperatorType op, ScriptToken* lh, Scrip
 ScriptToken* Eval_Subscript_Elem_Number(OperatorType op, ScriptToken* lh, ScriptToken* rh, ExpressionEvaluator* context)
 {
 	UInt32 idx = rh->GetNumber();
+	//TODO xNVSE fixed a bug in case of n on existant strings as first index in testexpr: arr["boh"][0]. TEST.
 	return ScriptToken::Create(dynamic_cast<ArrayElementToken*>(lh), idx, idx);
 }
 
 ScriptToken* Eval_Subscript_Elem_Slice(OperatorType op, ScriptToken* lh, ScriptToken* rh, ExpressionEvaluator* context)
 {
 	const Slice* slice = rh->GetSlice();
-	return (slice && !slice->bIsString) ? ScriptToken::Create(dynamic_cast<ArrayElementToken*>(lh), slice->m_lower, slice->m_upper) : NULL;
+	if (!slice || slice->bIsString) {
+		context->Error("Invalid array slice operation - array is unitialized or suuplied index doesn't match key type");
+		return nullptr;
+	}
+	return ScriptToken::Create(dynamic_cast<ArrayElementToken*>(lh), slice->m_lower, slice->m_upper);
 }
 
 ScriptToken* Eval_Subscript_Array_String(OperatorType op, ScriptToken* lh, ScriptToken* rh, ExpressionEvaluator* context)
@@ -664,6 +758,7 @@ ScriptToken* Eval_Subscript_StringVar_Number(OperatorType op, ScriptToken* lh, S
 	if (var) {
 		StringVar* strVar = g_StringMap.Get(var->data);
 		if (!strVar) {
+			context->Error("String var is uninitialized");
 			return NULL;	// uninitialized
 		}
 
@@ -671,9 +766,12 @@ ScriptToken* Eval_Subscript_StringVar_Number(OperatorType op, ScriptToken* lh, S
 			// negative index counts from end of string
 			idx += strVar->GetLength();
 		}
+		return ScriptToken::Create(var->data, idx, idx);
 	}
-
-	return var ? ScriptToken::Create(var->data, idx, idx) : NULL;
+	else {
+		context->Error("Invalid variable");
+		return nullptr;
+	}
 }
 
 ScriptToken* Eval_Subscript_StringVar_Slice(OperatorType op, ScriptToken* lh, ScriptToken* rh, ExpressionEvaluator* context)
@@ -684,6 +782,7 @@ ScriptToken* Eval_Subscript_StringVar_Slice(OperatorType op, ScriptToken* lh, Sc
 	double lower = slice->m_lower;
 	StringVar* strVar = g_StringMap.Get(var->data);
 	if (!strVar) {
+		context->Error("String var is uninitialized");
 		return NULL;
 	}
 
@@ -699,6 +798,7 @@ ScriptToken* Eval_Subscript_StringVar_Slice(OperatorType op, ScriptToken* lh, Sc
 	if (var && slice && !slice->bIsString) {
 		return ScriptToken::Create(var->data, lower, upper);
 	}
+	context->Error("Invalid string var slice operation - variable invalid or variable is not a stirng var");
 	return NULL;
 }
 
@@ -782,8 +882,14 @@ ScriptToken* Eval_ToString_Form(OperatorType op, ScriptToken* lh, ScriptToken* r
 ScriptToken* Eval_ToString_Array(OperatorType op, ScriptToken* lh, ScriptToken* rh, ExpressionEvaluator* context)
 {
 	char buf[0x20];
-	sprintf_s(buf, sizeof(buf), "Array ID %d", lh->GetArray());
-	return ScriptToken::Create(std::string(buf));
+	ArrayID id = lh->GetArray();
+	ArrayVar* arr = g_ArrayMap.Get(id);
+	if (arr) {
+		//TODO ArrayVar::GetStringRepresentation
+		sprintf_s(buf, sizeof(buf), "Array ID %d", id);
+		return ScriptToken::Create(buf);
+	}
+	return ScriptToken::Create("Array Id " + std::to_string(id) + " (Invalid)");
 }
 
 ScriptToken* Eval_ToNumber(OperatorType op, ScriptToken* lh, ScriptToken* rh, ExpressionEvaluator* context)
@@ -824,16 +930,19 @@ ScriptToken* Eval_In(OperatorType op, ScriptToken* lh, ScriptToken* rh, Expressi
 		}
 	case Script::eVarType_Ref:
 		{
-			TESObjectREFR* src = OBLIVION_CAST(rh->GetTESForm(), TESForm, TESObjectREFR);
+			TESForm* form = rh->GetTESForm();
+			TESObjectREFR* src = OBLIVION_CAST(form, TESForm, TESObjectREFR);
+//			if (!src && form && form->refID == (*g_thePlayer)->refID) src = *g_thePlayer;  //From xNVSE, check if actually useful
 			if (src) {
 				ForEachContext con((UInt32)src, 0, Script::eVarType_Ref, lh->GetVar());
 				ScriptToken* forEach = ScriptToken::Create(&con);
 				return forEach;
 			}
+			context->Error("Source is a base form, must be a reference");
 			return NULL;
 		}
 	}
-
+	context->Error("Unsupported variable type, only array_Var, string_var and ref are supported");
 	return NULL;
 }
 
@@ -865,6 +974,7 @@ ScriptToken* Eval_Dereference(OperatorType op, ScriptToken* lh, ScriptToken* rh,
 	if (g_ArrayMap.GetFirstElement(arrID, &elem, &valueKey))
 		return ScriptToken::Create(arrID, &valueKey);
 
+	context->Error("Invalid array access - the array was not initialized.");
 	return NULL;
 }
 
@@ -1547,7 +1657,7 @@ void ExpressionEvaluator::PrintStackTrace() {
 
 void PrintCompiledCode(ScriptLineBuffer* buf)
 {
-#if _DEBUG && 0		// unused, ShowCompilerError() will break build due to shademe's updates to it
+#ifdef OBLIVION
 	std::string bytes;
 	char byte[5];
 
@@ -3353,6 +3463,12 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 			}
 
 			TESObjectREFR* contObj = callingRef ? NULL : m_containingObj;
+			if (!callingObj && !contObj) {
+				delete curToken;
+				curToken = nullptr;
+				Error("Attempting to call a function without a reference or containing object, maybe a bad user defined function?");
+				break;
+			}
 			double cmdResult = 0;
 
 			UInt16 argsLen = Read16();
@@ -3360,7 +3476,6 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 			UInt8* scrData = Data();
 
 			ExpectReturnType(kRetnType_Default);	// expect default return type unless called command specifies otherwise
-
 			bool bExecuted = cmdInfo->execute(cmdInfo->params, scrData, callingObj, (UInt32)contObj, script, eventList, &cmdResult, &numBytesRead);
 
 			if (!bExecuted)
@@ -3479,7 +3594,7 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 		}
 		return NULL;
 	}
-
+	//TODO port xNVSE code for printing errors
 	return operands.top();
 }
 
@@ -3520,7 +3635,11 @@ ScriptToken* Operator::Evaluate(ScriptToken* lhs, ScriptToken* rhs, ExpressionEv
 		if (bRuleMatches)
 			return bSwapOrder ? rule->eval(type, rhs, lhs, context) : rule->eval(type, lhs, rhs, context);
 	}
-
+//TODO rely errors
+// 	   //TODO require proper methods.
+//	ArrayElementToken* token_lhs = dynamic_cast<ArrayElementToken*>(lhs);
+//	ArrayElementToken* token_rhs = dynamic_cast<ArrayElementToken*>(rhs);
+	context->Error("Cannot evaluate token  (Incomplete info)");
 	return NULL;
 }
 
