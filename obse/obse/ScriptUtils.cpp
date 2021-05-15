@@ -708,8 +708,16 @@ ScriptToken* Eval_Subscript_Array_Number(OperatorType op, ScriptToken* lh, Scrip
 ScriptToken* Eval_Subscript_Elem_Number(OperatorType op, ScriptToken* lh, ScriptToken* rh, ExpressionEvaluator* context)
 {
 	UInt32 idx = rh->GetNumber();
-	//TODO xNVSE fixed a bug in case of n on existant strings as first index in testexpr: arr["boh"][0]. TEST.
-	return ScriptToken::Create(dynamic_cast<ArrayElementToken*>(lh), idx, idx);
+	ArrayElementToken* element = dynamic_cast<ArrayElementToken*>(lh);
+	if (!element || !element->IsGood()) {
+		context->Error("Invalid element");
+		return nullptr;
+	}
+	if (!element->CanConvertTo(kTokenType_String)) {
+		context->Error("Invalid subscript operation");
+		return nullptr;
+	}
+	return ScriptToken::Create(element, idx, idx);
 }
 
 ScriptToken* Eval_Subscript_Elem_Slice(OperatorType op, ScriptToken* lh, ScriptToken* rh, ExpressionEvaluator* context)
@@ -1616,7 +1624,7 @@ void ExpressionEvaluator::Error(const char* fmt, ...)
 	vsprintf_s(errorMsg, 0x400, fmt, args);
 
 	// include script data offset and command name/opcode
-	UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + m_baseOffset);
+	UInt16* opcodePtr = (UInt16*)((UInt8*)m_scriptData + m_baseOffset);
 	CommandInfo* cmd = g_scriptCommands.GetByOpcode(*opcodePtr);
 
 	// include mod filename, save having to ask users to figure it out themselves
@@ -1639,7 +1647,7 @@ void ExpressionEvaluator::PrintStackTrace() {
 
 	ExpressionEvaluator* eval = this;
 	while (eval) {
-		CommandInfo* cmd = g_scriptCommands.GetByOpcode(*((UInt16*)((UInt8*)eval->script->data + eval->m_baseOffset)));
+		CommandInfo* cmd = g_scriptCommands.GetByOpcode(*((UInt16*)((UInt8*)eval->m_scriptData + eval->m_baseOffset)));
 		sprintf_s(output, sizeof(output), "  %s @%04X script %08X", cmd ? cmd->longName : "<unknown>", eval->m_baseOffset, eval->script->refID);
 		_MESSAGE(output);
 		Console_Print(output);
@@ -3463,12 +3471,12 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 			}
 
 			TESObjectREFR* contObj = callingRef ? NULL : m_containingObj;
-			if (!callingObj && !contObj) {
+		/*	if (!callingObj && !contObj) {
 				delete curToken;
 				curToken = nullptr;
 				Error("Attempting to call a function without a reference or containing object, maybe a bad user defined function?");
 				break;
-			}
+			} */
 			double cmdResult = 0;
 
 			UInt16 argsLen = Read16();

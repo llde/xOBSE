@@ -3191,7 +3191,7 @@ CommandInfo* CommandTable::GetByOpcode(UInt32 opcode)
 		return command;
 	}
 	catch(std::out_of_range&) {
-		_MESSAGE("ERROR: opcode %X out of range (end is %X) when executing CommandTable:GetByOpcode", opcode, m_commands.end()->opcode);
+		_MESSAGE("ERROR: opcode %X out of range (end is %X) when executing CommandTable:GetByOpcode", opcode, m_commands.back().opcode);
 		return nullptr;
 	}
 }

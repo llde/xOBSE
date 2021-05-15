@@ -30,8 +30,10 @@ static bool Cmd_GetActiveMenuMode_Execute(COMMAND_ARGS)
 	*result = 0;
 	InterfaceManager* intfc = InterfaceManager::GetSingleton();
 	if (!intfc) return true;
-	if (intfc->activeMenu)
+	if (intfc->activeMenu) {
 		*result = intfc->activeMenu->id;
+		return true;
+	}
 	//Try to use the tile containing menu, as activeMenu is null using keyboard
 	Tile* activeTile = intfc->activeTile ? intfc->activeTile : intfc->altActiveTile;
 	if (activeTile)
