@@ -244,7 +244,7 @@ struct CommandInfo
 	const char	* shortName;	//  4
 	UInt32		opcode;			//  8
 	const char	* helpText;		//  C
-	UInt16		needsParent;	// 10
+	UInt16		needsParent;	// 10   //Reference thisObj required
 	UInt16		numParams;		// 12
 	ParamInfo	* params;		// 14
 

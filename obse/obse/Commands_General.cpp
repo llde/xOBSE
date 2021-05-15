@@ -12,6 +12,7 @@
 #include "InventoryReference.h"
 #include "FunctionScripts.h"
 #include "Loops.h"
+#include <obse/Settings.h>
 
 #define GET_EXECUTION_STATE(STATE)			\
 {											\
@@ -44,12 +45,14 @@ static bool Cmd_eval_Execute(COMMAND_ARGS)
 }
 
 // attempts to evaluate an expression. Returns false if error occurs, true otherwise. Suppresses error messages
+//The suppression is now controlled with the bTestExprComplainsOnError in the obse.ini. This allow modders that want to check explicitly for error to do so
 static bool Cmd_testexpr_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	ExpressionEvaluator eval(PASS_COMMAND_ARGS);
-	eval.ToggleErrorSuppression(true);
-
+	if (NoisyTestExpr == 0) {
+		eval.ToggleErrorSuppression(true);
+	}
 	if (eval.ExtractArgs() && eval.Arg(0) && eval.Arg(0)->IsGood() && !eval.HasErrors())
 	{
 		if (eval.Arg(0)->Type() == kTokenType_ArrayElement)		// is it an array elem with valid index?

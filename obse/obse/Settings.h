@@ -14,5 +14,6 @@ extern UInt8 installCrashdump;
 extern UInt8 warningUnquotedString;
 extern UInt8 warningUDFRefVar;
 extern bool FreeRef;
+extern bool NoisyTestExpr;
 
 bool InitializeSettings();

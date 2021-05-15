@@ -813,7 +813,7 @@ namespace ExtractArgsOverride {
 			// context should be available
 			ExecutingScriptContext* context = GetCurrentContext();
 			if (!context) {
-				g_ErrOut.Show("ERROR: Could not get execution context in DoExtractExtendedArgs()");
+				_MESSAGE("ERROR: Could not get execution context in DoExtractExtendedArgs()");
 				return false;
 			}
 			else {
@@ -821,7 +821,7 @@ namespace ExtractArgsOverride {
 				containingObj = context->containerRef;
 			}
 		}
-
+	//	_MESSAGE("OVERRIDE  %08X   %08X", scriptObj->refID, thisObj ? thisObj->refID : 0);
 		// extract
 		ExpressionEvaluator eval(paramInfo, scriptData, thisObj, (UInt32)containingObj, scriptObj, eventList, NULL, opcodeOffsetPtr);
 		if (eval.ExtractDefaultArgs(varArgs, bConvertTESForms)) {

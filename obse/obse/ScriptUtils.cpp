@@ -709,10 +709,7 @@ ScriptToken* Eval_Subscript_Elem_Number(OperatorType op, ScriptToken* lh, Script
 {
 	UInt32 idx = rh->GetNumber();
 	ArrayElementToken* element = dynamic_cast<ArrayElementToken*>(lh);
-	if (!element || !element->IsGood()) {
-		context->Error("Invalid element");
-		return nullptr;
-	}
+
 	if (!element->CanConvertTo(kTokenType_String)) {
 		context->Error("Invalid subscript operation");
 		return nullptr;
@@ -1624,6 +1621,7 @@ void ExpressionEvaluator::Error(const char* fmt, ...)
 	vsprintf_s(errorMsg, 0x400, fmt, args);
 
 	// include script data offset and command name/opcode
+	_MESSAGE("%08X     %08X", (UInt16*)((UInt8*)m_scriptData + m_baseOffset), (UInt16*)((UInt8*)script->data + m_baseOffset));
 	UInt16* opcodePtr = (UInt16*)((UInt8*)m_scriptData + m_baseOffset);
 	CommandInfo* cmd = g_scriptCommands.GetByOpcode(*opcodePtr);
 
@@ -1637,8 +1635,8 @@ void ExpressionEvaluator::Error(const char* fmt, ...)
 	}
 
 	ShowRuntimeError(script, "%s\n    File: %s Offset: 0x%04X Command: %s", errorMsg, modName, m_baseOffset, cmd ? cmd->longName : "<unknown>");
-	if (m_flags.IsSet(kFlag_StackTraceOnError))
-		PrintStackTrace();
+//	if (m_flags.IsSet(kFlag_StackTraceOnError))
+	PrintStackTrace();
 }
 
 void ExpressionEvaluator::PrintStackTrace() {
@@ -3469,8 +3467,11 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 					break;
 				}
 			}
-
+	//		_MESSAGE("%0X    %0X  %s", cmdInfo->needsParent, callingObj, cmdInfo->longName);
 			TESObjectREFR* contObj = callingRef ? NULL : m_containingObj;
+			if (cmdInfo->needsParent && !callingObj) {
+				Error("Attempting to call a function without a reference");
+			}
 		/*	if (!callingObj && !contObj) {
 				delete curToken;
 				curToken = nullptr;

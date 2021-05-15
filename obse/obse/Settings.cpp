@@ -5,6 +5,7 @@ UInt8 installCrashdump;
 UInt8 warningUnquotedString;
 UInt8 warningUDFRefVar;
 bool FreeRef;
+bool NoisyTestExpr;
 
 bool InitializeSettings() {
 	std::string	runtimePath = GetOblivionDirectory();
@@ -20,6 +21,7 @@ bool InitializeSettings() {
 	warningUDFRefVar = GetPrivateProfileInt(INI_SECTION_COMPILER, INI_COMPILER_WARNFUNCTPTR, 1, s_configPath.c_str());
 	warningUnquotedString = GetPrivateProfileInt(INI_SECTION_COMPILER, INI_COMPILER_WARNUNQUOTEDSTRING, 1, s_configPath.c_str());
 	FreeRef = GetPrivateProfileInt(INI_SECTION_RUNTIME, "bDeallocateReferences", 0, s_configPath.c_str());
+	NoisyTestExpr = GetPrivateProfileInt(INI_SECTION_RUNTIME, "bTestExprComplainsOnError", 0, s_configPath.c_str());
 
     return true;
 }
