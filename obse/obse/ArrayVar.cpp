@@ -1272,15 +1272,17 @@ void ArrayVarMap::Load(OBSESerializationInterface* intfc)
 			break;
 		case 'ARVR':
 			{
+				bool isUnloaded = false;
 				intfc->ReadRecordData(&modIndex, sizeof(modIndex));
-				if (!intfc->ResolveRefID(modIndex << 24, &tempRefID))
+				if (modIndex != 0 && !intfc->ResolveRefID(modIndex << 24, &tempRefID))
 				{
 					// owning mod was removed, but there may be references to it from other mods
 					// assign ownership to the first mod which refers to it and is still loaded
 					// if no loaded mods refer to it, discard
 					// we handle all of that below
 					_MESSAGE("Mod owning array was removed from load order; will attempt to assign ownership to a referring mod.");
-					modIndex = 0;
+					modIndex = 0;  //index 0 by itself don't indicate an unloaded mod mod. 
+					isUnloaded = true;  
 				}
 				else
 					modIndex = (tempRefID >> 24);
@@ -1294,29 +1296,24 @@ void ArrayVarMap::Load(OBSESerializationInterface* intfc)
 				UInt8* refs = NULL;		// mod indexes of mods referring to this array
 
 				// reference-counting implemented in v1
-				if (version >= 1)
-				{
+				if (version >= 1){
 					intfc->ReadRecordData(&numRefs, sizeof(numRefs));
-					if (numRefs)
-					{
+					if (numRefs){
 						refs = new UInt8[numRefs];
 						UInt32 tempRefID = 0;
 						UInt8 curModIndex = 0;
 						UInt32 refIdx = 0;
-						for (UInt32 i = 0; i < numRefs; i++)
-						{
+						for (UInt32 i = 0; i < numRefs; i++) {
 							intfc->ReadRecordData(&curModIndex, sizeof(curModIndex));
-							if (!modIndex)
-							{
-								if (intfc->ResolveRefID(curModIndex << 24, &tempRefID))
-								{
+
+							if (intfc->ResolveRefID(curModIndex << 24, &tempRefID)) {
+								if (isUnloaded) {
 									modIndex = tempRefID >> 24;
 									_MESSAGE("ArrayID %d was owned by an unloaded mod. Assigning ownership to mod #%d", arrayID, modIndex);
+									isUnloaded = false;
 								}
-							}
-
-							if (intfc->ResolveRefID(curModIndex << 24, &tempRefID))
 								refs[refIdx++] = (tempRefID >> 24);
+							}	
 						}
 
 						numRefs = refIdx;
@@ -1324,7 +1321,7 @@ void ArrayVarMap::Load(OBSESerializationInterface* intfc)
 				}
 				else		// v0 arrays assumed to have only one reference (the owning mod)
 				{
-					if (modIndex)		// owning mod is loaded
+					if (!isUnloaded)		// owning mod is loaded
 					{
 						numRefs = 1;
 						refs = new UInt8[1];
@@ -1332,7 +1329,7 @@ void ArrayVarMap::Load(OBSESerializationInterface* intfc)
 					}
 				}
 				
-				if (!modIndex)
+				if (isUnloaded && !modIndex )
 				{
 					_MESSAGE("Array ID %d is referred to by no loaded mods. Discarding", arrayID);
 					delete[] refs;

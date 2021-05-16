@@ -5,6 +5,7 @@
 #include "GameAPI.h"
 #include <vector>
 #include "EventManager.h"
+#include <obse_common/obse_version.h>
 
 // ### TODO: only create save file when something has registered a handler
 

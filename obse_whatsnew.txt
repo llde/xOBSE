@@ -6,6 +6,12 @@ xOBSE 22.2
         - Rewrote from scratch the input handling system of OBSE switching from the old and kludgy DInput hook to a proper OSInputGlobal hook. This should overall simplify the code, be faster and more robust, and more easily to interact with OBSE plugins in the future.
         - The above change also fix these instances were input handling routines weren't working on some system if bBackground Keyboard = 0 (Oblivion.ini)
         - Backport 3 fixes for Menu functions ignoring keyboard selection tiles, from NorthenerUI + 1 fix not covered by NUI
+        - Add some Error message in the ExpressionEvaluator for Array
+        - Fixed an issue were using subscript operator ([]) on a string map non existant element would succeed (and provide invalid data, testexpr would return true), now it complain with an error (and testexpr fail)
+        - Added an obse.ini option to avoid suppressing testexpr error messages.
+        - Fixed an issue with array loading were mod index 0 were mistakenly  seen as arrays beloging to discarded mods
+        - Fix some error reporting issues were failing command weren't shown
+        - Fix bad dereferencing  CommandList.end() iterator element, in exception handler.
     API:
         - Documented a lot of the struct fields for OSInputGlobals, and documented at least some of it's member functions 
         - Removed code for older version  of Oblivion then the last version (1_2_416)
@@ -15,11 +21,11 @@ xOBSE 22.2
 
 xOBSE 22.1
     Fix:
-    - Fix a serious regression in xOBSE 22.0 where using the hotkeys functions could cause crashes (thanks @Laulajatar for report). Enhanced Hotkeys users were affected by this.
-	- Fix a serious regression in GetInvRefsForItem where it didn't correctly handle anymore objects with no ExtendData (for example some objects stack that should have only xCount property have the extendData compeltly null after reload), causing the game to crash. Enhanced Hotkeys users that were using a binded hotkey to equip bow and arrows were affected.
-	- Made changes to improve robustness of overall ExtendData and ExtraData usages.
-	- Using .0 minor revision was causing a mod with a bad obse check to fail. Using always revisions >= 1 solve this issue and should solve issues with similarly bugged mods.
-	- Fix an issue with GetBaseAV3 that was causing crashes
+        - Fix a serious regression in xOBSE 22.0 where using the hotkeys functions could cause crashes (thanks @Laulajatar for report). Enhanced Hotkeys users were affected by this.
+        - Fix a serious regression in GetInvRefsForItem where it didn't correctly handle anymore objects with no ExtendData (for example some objects stack that should have only xCount property have the extendData compeltly null after reload), causing the game to crash. Enhanced Hotkeys users that were using a binded hotkey to equip bow and arrows were affected.
+        - Made changes to improve robustness of overall ExtendData and ExtraData usages.
+        - Using .0 minor revision was causing a mod with a bad obse check to fail. Using always revisions >= 1 solve this issue and should solve issues with similarly bugged mods.
+        - Fix an issue with GetBaseAV3 that was causing crashes
 
 xOBSE 22.0
     Global:
@@ -77,7 +83,7 @@ xOBSE 0021.5:
         -Fixed tList SetAt function that could cause issue if the allocator can return less then 8 bytes
     Addition:
         -Added EventHandlerExist function. 
-        -Added console print for GetOBSEVersion/Revision and for Plugins detection functions
+        -Added console print for IsPluginLoaded/Version
         -Added the GOG version and another Polish version to the launcher
 
 0021:
