@@ -1274,7 +1274,7 @@ void ArrayVarMap::Load(OBSESerializationInterface* intfc)
 			{
 				bool isUnloaded = false;
 				intfc->ReadRecordData(&modIndex, sizeof(modIndex));
-				if (modIndex != 0 && !intfc->ResolveRefID(modIndex << 24, &tempRefID))
+				if (!intfc->ResolveRefID(modIndex << 24, &tempRefID))
 				{
 					// owning mod was removed, but there may be references to it from other mods
 					// assign ownership to the first mod which refers to it and is still loaded

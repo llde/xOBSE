@@ -23,7 +23,7 @@ public:
 	//Last 10 reserved for the mouse (wheel up, wheel down and up to 8 buttons)
 	#define kMaxMacros  266
 	#define kControlsMapped 29
-
+	#define kMaxButtons 264
 	enum
 	{
 		kFlag_HasJoysticks =	1 << 0,
@@ -225,7 +225,7 @@ public:
 */
 	UInt32 QueryControlState(MappableControl control, KeyQuery query) {return ThisStdCall<UInt32, KeyQuery>(0x00403520, this, control, query);}
 
-	static bool IsKeycodeValid(UInt32 id) { return id < kMaxMacros; } //I don't know why there was a -2 causing the wheels motion to not be picked up.
+	static bool IsKeycodeValid(UInt32 id) { return id < kMaxButtons; } //I don't know why there was a -2 causing the wheels motion to not be picked up.
 
 	//TODO allow passign type of binding
 	UInt16 GetControlFromKeycode(UInt16 keycode) {

@@ -3,160 +3,86 @@
 
 OSInputGlobalsEx* g_inputGlobal = nullptr;
 
-void OSInputGlobalsEx::SetMaskKey(UInt16 keycode) {
-	if (keycode >= 256) SetMaskMouse(keycode - 256);
-	else KeyMaskState[keycode] |= kStateDisabled;
+void OSInputGlobalsEx::SetMask(UInt16 keycode) {
+	//TODO handle 265 and 266
+	if (keycode >= 256 && keycode < kMaxButtons) MouseMaskState.rgbButtons[keycode - 256] |= kStateDisabled;
+	else if(keycode < 256) KeyMaskState[keycode] |= kStateDisabled;
 }
 
-void OSInputGlobalsEx::SetMaskMouse(UInt8 keycode) {
-	if (keycode >= 8 ) return;
-	MouseMaskState.rgbButtons[keycode] |= kStateDisabled;
+void OSInputGlobalsEx::SetUnMask(UInt16 keycode) {
+	//TODO handle 265 and 266
+	if (keycode >= 256 && keycode < kMaxButtons) MouseMaskState.rgbButtons[keycode - 256] &= ~kStateDisabled;
+	else if (keycode < 256) KeyMaskState[keycode] &= ~kStateDisabled;
 }
 
-void OSInputGlobalsEx::SetUnmaskKey(UInt16 keycode) {
-	if (keycode >= 256) SetUnmaskMouse(keycode - 256);
-	else KeyMaskState[keycode] &= ~kStateDisabled;
+UInt8 OSInputGlobalsEx::GetMaskStatus(UInt16 keycode) {
+	if (keycode >= 256 && keycode < kMaxButtons) return MouseMaskState.rgbButtons[keycode - 256];
+	if (keycode < 256) return KeyMaskState[keycode];
+	return 0;
 }
 
-void OSInputGlobalsEx::SetUnmaskMouse(UInt8 keycode) {
-	if (keycode >= 8) return;
-	MouseMaskState.rgbButtons[keycode] &= ~kStateDisabled;
+void OSInputGlobalsEx::SetTap(UInt16 keycode){
+	if (keycode >= 256 && keycode < kMaxButtons) MouseMaskState.rgbButtons[keycode - 256] |= kStateTap;
+	else if (keycode < 256) KeyMaskState[keycode] |= kStateTap;
 }
 
-UInt8 OSInputGlobalsEx::GetMaskStatusKey(UInt16 keycode) {
-	if (keycode >= 256) return GetMaskStatusMouse(keycode - 256);
-	return KeyMaskState[keycode];
+void OSInputGlobalsEx::SetHold(UInt16 keycode) {
+	if (keycode >= 256 && keycode < kMaxButtons) MouseMaskState.rgbButtons[keycode - 256] |= kStateHolded;
+	else if (keycode < 256) KeyMaskState[keycode] |= kStateHolded;
 }
 
-UInt8 OSInputGlobalsEx::GetMaskStatusMouse(UInt8 keycode) {
-	if (keycode >= 8) return 0;
-	return MouseMaskState.rgbButtons[keycode];
+void OSInputGlobalsEx::SetUnHold(UInt16 keycode){
+	if (keycode >= 256 && keycode < kMaxButtons) MouseMaskState.rgbButtons[keycode - 256] &= ~kStateHolded;
+	else if (keycode < 256) KeyMaskState[keycode] &= ~kStateHolded;
 }
 
-
-UInt8 OSInputGlobalsEx::GetSignalStatusKey(UInt16 keycode) {
-	if (keycode >= 256) return GetSignalStatusMouse(keycode - 256);
-	return (KeyMaskState[keycode] & kStateSignalled) == kStateSignalled;
+void OSInputGlobalsEx::SetHammer(UInt16 keycode, bool AHammer){
+	if (keycode >= 256 && keycode < kMaxButtons ) MouseMaskState.rgbButtons[keycode - 256] |= (AHammer ? kStateAHammered : kStateHammered);
+	else if (keycode < 256) KeyMaskState[keycode] |= (AHammer ?  kStateAHammered : kStateHammered);
 }
 
-UInt8 OSInputGlobalsEx::GetSignalStatusMouse(UInt8 keycode) {
-	if (keycode >= 8) return 0;
-	return (MouseMaskState.rgbButtons[keycode] & kStateSignalled) == kStateSignalled;
-}
-
-
-
-UInt8 OSInputGlobalsEx::GetPreSignalStatusKey(UInt16 keycode) {
-	if (keycode >= 256) return GetPreSignalStatusMouse(keycode - 256);
-	return (KeyMaskState[keycode] & kStatePSignalled) == kStatePSignalled;
-}
-
-UInt8 OSInputGlobalsEx::GetPreSignalStatusMouse(UInt8 keycode) {
-	if (keycode >= 8) return 0;
-	return (MouseMaskState.rgbButtons[keycode] & kStatePSignalled) == kStatePSignalled;
-}
-
-void OSInputGlobalsEx::SetTapKey(UInt16 keycode){
-	if (keycode >= 256) SetTapMouse(keycode - 256);
-	else KeyMaskState[keycode] |= kStateTap;
-}
-
-void OSInputGlobalsEx::SetTapMouse(UInt8 keycode){
-	if (keycode >= 8) return;
-	MouseMaskState.rgbButtons[keycode] |= kStateTap;
-}
-
-void OSInputGlobalsEx::SetHoldKey(UInt16 keycode) {
-	if (keycode >= 256) SetHoldMouse(keycode - 256);
-	else KeyMaskState[keycode] |= kStateHolded;
-}
-
-void OSInputGlobalsEx::SetHoldMouse(UInt8 keycode){
-	if (keycode >= 8) return;
-	MouseMaskState.rgbButtons[keycode] |= kStateHolded;
-}
-
-void OSInputGlobalsEx::SetUnHoldKey(UInt16 keycode){
-	if (keycode >= 256) SetUnHoldMouse(keycode - 256);
-	else KeyMaskState[keycode] &= ~kStateHolded;
-
-}
-
-void OSInputGlobalsEx::SetUnHoldMouse(UInt8 keycode){
-	if (keycode >= 8) return;
-	MouseMaskState.rgbButtons[keycode] &= ~kStateHolded;
-}
-
-void OSInputGlobalsEx::SetHammerKey(UInt16 keycode, bool AHammer){
-	if (keycode >= 256) SetHammerMouse(keycode - 256, AHammer);
-	else KeyMaskState[keycode] |= (AHammer ?  kStateAHammered : kStateHammered);
-}
-
-void OSInputGlobalsEx::SetHammerMouse(UInt8 keycode, bool AHammer){
-	if (keycode >= 8) return;
-	MouseMaskState.rgbButtons[keycode] |= (AHammer ? kStateAHammered : kStateHammered);
-}
-
-void OSInputGlobalsEx::SetUnHammerKey(UInt16 keycode){
-	if (keycode >= 256) SetUnHammerMouse(keycode - 256);
-	else {
+void OSInputGlobalsEx::SetUnHammer(UInt16 keycode){
+	if (keycode >= 256 && keycode < kMaxButtons) {
+		MouseMaskState.rgbButtons[keycode - 256] &= ~kStateHammered;
+		MouseMaskState.rgbButtons[keycode - 256] &= ~kStateAHammered;
+	}
+	else if (keycode < 256) {
 		KeyMaskState[keycode] &= ~kStateHammered;
 		KeyMaskState[keycode] &= ~kStateAHammered;
 	}
 }
 
-void OSInputGlobalsEx::SetUnHammerMouse(UInt8 keycode){
-	if (keycode >= 8) return;
-	MouseMaskState.rgbButtons[keycode] &= ~kStateHammered;
-	MouseMaskState.rgbButtons[keycode] &= ~kStateAHammered;
-
-}
-
-bool OSInputGlobalsEx::IsKeyPressedKeyboard(UInt16 keycode) {
-	if ((KeyMaskState[keycode] & kStateDisabled) == kStateDisabled) {
-		//Don't report tap presses, so check only for signal state
-		return (KeyMaskState[keycode] & kStateSignalled) == kStateSignalled;
+bool OSInputGlobalsEx::IsKeyPressedSimulated(UInt16 keycode) {
+	if (keycode >= 256 && keycode < kMaxButtons) {
+		return  CurrentMouseState.rgbButtons[keycode - 256] == 0x80;
 	}
-	else {
-		//also here don't report tapped keys
-		 return (CurrentKeyState[keycode] != 0)  && ((KeyMaskState[keycode] & kStateTapped ) != kStateTapped);
+	else if(keycode < 256) return CurrentKeyState[keycode] == 0x80;
+	return false;
+}
+
+bool OSInputGlobalsEx::WasKeyPressedSimulated(UInt16 keycode) {
+	if (keycode >= 256 && keycode < kMaxButtons) {
+		return  PreviousMouseState.rgbButtons[keycode - 256] == 0x80;
 	}
+	else if (keycode < 256) return PreviousKeyState[keycode] == 0x80;
+	return false;
 }
 
-bool OSInputGlobalsEx::IsKeyPressedMouse(UInt8 keycode) {
-	if ((MouseMaskState.rgbButtons[keycode] & kStateDisabled) == kStateDisabled) {
-		//Don't report tap presses, so check only for signal state
-		return (MouseMaskState.rgbButtons[keycode] & kStateSignalled) == kStateSignalled;
-	}
-	else {
-		//TODO also here don't report tapped keys (require moving the clear of tap status in the hooked loop)
-		return (CurrentMouseState.rgbButtons[keycode] != 0) && ((MouseMaskState.rgbButtons[keycode] & kStateTapped) != kStateTapped);
-	}
-
-}
-bool OSInputGlobalsEx::IsKeyPressed(UInt16 keycode) {
-	if (keycode >= 256 && keycode < kMaxMacros) {
-		return  IsKeyPressedMouse(keycode - 256);
-	}
-	return IsKeyPressedKeyboard(keycode);
-
+bool OSInputGlobalsEx::IsKeyPressedReal(UInt16 keycode) {
+	if (keycode >= 256 && keycode < kMaxButtons) return (MouseMaskState.rgbButtons[keycode - 256] & kStateSignalled) == kStateSignalled;
+	if (keycode < 256) return (KeyMaskState[keycode] & kStateSignalled) == kStateSignalled;
+	return false;
 }
 
-//TODO what happens if key is tapped while is pressed? Should probably be reported
-bool OSInputGlobalsEx::WasKeyPressedMouse(UInt8 keycode) {
-	return ((MouseMaskState.rgbButtons[keycode] & kStatePTapped) != kStatePTapped) && (PreviousMouseState.rgbButtons[keycode] != 0);
-}
-bool OSInputGlobalsEx::WasKeyPressedKeyboard(UInt16 keycode) {
-	return ((KeyMaskState[keycode] & kStatePTapped) != kStatePTapped)  && (PreviousKeyState[keycode] != 0);
+bool OSInputGlobalsEx::WasKeyPressedReal(UInt16 keycode) {
+	if (keycode >= 256 && keycode < kMaxButtons) return (MouseMaskState.rgbButtons[keycode - 256] & kStatePSignalled) == kStatePSignalled;
+	if (keycode < 256) return (KeyMaskState[keycode] & kStatePSignalled) == kStatePSignalled;
+	return false;
 }
 
-bool OSInputGlobalsEx::WasKeyPressed(UInt16 keycode) {
-	if (keycode >= 256) return WasKeyPressedMouse(keycode - 256);
-	return WasKeyPressedKeyboard(keycode);
-}
+
 //TODO Speed(Ma davvero vogliamo sto' bordello?)
 //TODO wheel to button translation
-//TODO add a way to separate proper presses to simulated presses
 /*
 *  The old DInput hook use this order: Hammer (depending on the frame), Hold (DI_data.FakeState) , Disabled, Tap 
 *  So a Disabled key win on hold and hamer but it lose on Tap. So Tap is seen as a proper input
@@ -175,91 +101,46 @@ void OSInputGlobalsEx::InputPollFakeHandle() {
 
 	for (UInt16 idx = 0; idx <= 255; idx++) {
 		if (idx < 8) {
-			if ((MouseMaskState.rgbButtons[idx] & kStateSignalled) == kStateSignalled) {
-				MouseMaskState.rgbButtons[idx] &= ~kStateSignalled;
-				MouseMaskState.rgbButtons[idx] |= kStatePSignalled;
-//				_MESSAGE("Mouse key %0X  was pressed, set previous frame state", idx);
-			}
-			else { MouseMaskState.rgbButtons[idx] &= ~kStatePSignalled; }
-			if ((MouseMaskState.rgbButtons[idx] & kStateTapped) == kStateTapped) {
-				MouseMaskState.rgbButtons[idx] &= ~kStateTapped;
-				MouseMaskState.rgbButtons[idx] |= kStatePTapped;
-//				_MESSAGE("Mouse key %0X  was tapped, set previous frame state", idx);
+			if ((MouseMaskState.rgbButtons[idx] & kStateSignalled) == kStateSignalled) MouseMaskState.rgbButtons[idx] |= kStatePSignalled;
+			else MouseMaskState.rgbButtons[idx] &= ~kStatePSignalled;
 
-			}
-			else { MouseMaskState.rgbButtons[idx] &= ~kStatePTapped; }
-			//	_MESSAGE("%u mouse key mask  %0X, status %0X", idx,  MouseMaskState.rgbButtons[idx]  , CurrentMouseState.rgbButtons[idx]);
-			if (FrameIndex == 0 && (MouseMaskState.rgbButtons[idx] & kStateHammered) == kStateHammered) {
-				CurrentMouseState.rgbButtons[idx] = 0x80; 
-	//			_MESSAGE("Mouse Key %0X was setted as hammered, simulate press", idx);
-			}
-			if (FrameIndex == 1 && (MouseMaskState.rgbButtons[idx] & kStateAHammered) == kStateAHammered) {
-				CurrentMouseState.rgbButtons[idx] = 0x80; 
-	//			_MESSAGE("Mouse Key %0X was setted as Ahammered, simulate press", idx);
-			}
-			if ((MouseMaskState.rgbButtons[idx] & kStateHolded) == kStateHolded) {
-	//			_MESSAGE("Mouse Key %0X was setted as holded, simulate press", idx);
-				CurrentMouseState.rgbButtons[idx] = 0x80;
-			}
-			if ((MouseMaskState.rgbButtons[idx] & kStateDisabled) == kStateDisabled) {
-	//			_MESSAGE("Mouse key %0X disabled", idx);
-				if (CurrentMouseState.rgbButtons[idx] != 0) {  //Presses are 0x80 
-	//				_MESSAGE("Mouse key %0X was pressed, signal ", idx);
-					CurrentMouseState.rgbButtons[idx] = 0;
-					MouseMaskState.rgbButtons[idx] |= kStateSignalled;
-				}
-			}
-			if ((MouseMaskState.rgbButtons[idx] & kStateTap) == kStateTap   && CurrentMouseState.rgbButtons[idx] == 0) {
-				CurrentMouseState.rgbButtons[idx] = 0x80; 
-	//			_MESSAGE("Mouse Key %0X tapped, simulate press", idx);
-				CurrentMouseState.rgbButtons[idx] |= kStateTapped;
-			}
-			CurrentMouseState.rgbButtons[idx] &= ~kStateTap;
+			if (CurrentMouseState.rgbButtons[idx] == 0x80) MouseMaskState.rgbButtons[idx] |= kStateSignalled;
+			else MouseMaskState.rgbButtons[idx] &= ~kStateSignalled;
+
+			if (FrameIndex == 0 && (MouseMaskState.rgbButtons[idx] & kStateHammered) == kStateHammered) CurrentMouseState.rgbButtons[idx] = 0x80;
+			
+			if (FrameIndex == 1 && (MouseMaskState.rgbButtons[idx] & kStateAHammered) == kStateAHammered) CurrentMouseState.rgbButtons[idx] = 0x80;
+			
+			if ((MouseMaskState.rgbButtons[idx] & kStateHolded) == kStateHolded) CurrentMouseState.rgbButtons[idx] = 0x80;
+			
+			if ((MouseMaskState.rgbButtons[idx] & kStateDisabled) == kStateDisabled) CurrentMouseState.rgbButtons[idx] = 0;
+		
+			if ((MouseMaskState.rgbButtons[idx] & kStateTap) == kStateTap) CurrentMouseState.rgbButtons[idx] = 0x80;
+			MouseMaskState.rgbButtons[idx] &= ~kStateTap;
+
 		}
-		if ((KeyMaskState[idx] & kStateSignalled) == kStateSignalled) {
-			KeyMaskState[idx] &= ~kStateSignalled;
-			KeyMaskState[idx] |= kStatePSignalled;
-	//		_MESSAGE("key %0X  was pressed, set previous frame state", idx);
-		}
-		else { KeyMaskState[idx] &= ~kStatePSignalled; }
-		if ((KeyMaskState[idx] & kStateTapped) == kStateTapped) {
-			KeyMaskState[idx] &= ~kStateTapped;
-			KeyMaskState[idx] |= kStatePTapped;
-	//		_MESSAGE("key %0X  was tapped, set previous frame state", idx);
-		}
-		else { KeyMaskState[idx] &= ~kStatePTapped; }
-		if (FrameIndex == 0 && (KeyMaskState[idx] & kStateHammered) == kStateHammered) {
-			CurrentKeyState[idx] = 0x80;
-	//		_MESSAGE("Key %0X was setted as hammered, simulate press", idx);
-		}
-		if (FrameIndex == 1 && (KeyMaskState[idx] & kStateAHammered) == kStateAHammered) {
-			CurrentKeyState[idx] = 0x80;
-	//		_MESSAGE("Key %0X was setted as Ahammered, simulate press", idx);
-		}
-		if ((KeyMaskState[idx] & kStateHolded) == kStateHolded) {
-			CurrentKeyState[idx] = 0x80;
-	//		_MESSAGE("Key %0X was setted as holded, simulate press", idx);
-		}
-		if((KeyMaskState[idx] & kStateDisabled) == kStateDisabled){
-	//		_MESSAGE("key %0X disabled", idx);
-			if (CurrentKeyState[idx] != 0) {
-	//			_MESSAGE("key %0X was pressed, signal ", idx);
-				CurrentKeyState[idx] = 0;
-				KeyMaskState[idx] |= kStateSignalled;
-			}
-		}
-		if ((KeyMaskState[idx] & kStateTap) == kStateTap  && CurrentKeyState[idx] == 0) {
-			CurrentKeyState[idx] = 0x80;
-	//		_MESSAGE("Key %0X tapped, simulate press", idx);
-			KeyMaskState[idx] |= kStateTapped;
-		}
+		if ((KeyMaskState[idx] & kStateSignalled) == kStateSignalled) KeyMaskState[idx] |= kStatePSignalled;
+		else KeyMaskState[idx] &= ~kStatePSignalled;
+
+		if (CurrentKeyState[idx] == 0x80) KeyMaskState[idx] |= kStateSignalled;
+		else KeyMaskState[idx] &= ~kStateSignalled;
+
+		if (FrameIndex == 0 && (KeyMaskState[idx] & kStateHammered) == kStateHammered) CurrentKeyState[idx] = 0x80;
+
+		if (FrameIndex == 1 && (KeyMaskState[idx] & kStateAHammered) == kStateAHammered) CurrentKeyState[idx] = 0x80;
+
+		if ((KeyMaskState[idx] & kStateHolded) == kStateHolded) CurrentKeyState[idx] = 0x80;
+
+		if ((KeyMaskState[idx] & kStateDisabled) == kStateDisabled) CurrentKeyState[idx] = 0;
+
+		if ((KeyMaskState[idx] & kStateTap) == kStateTap ) CurrentKeyState[idx] = 0x80;
 		KeyMaskState[idx] &= ~kStateTap;
 	}
 	FrameIndex = (FrameIndex + 1) % 2;
 
 }
 
-void __fastcall InputPollFakeHandleNoMouse(OSInputGlobals* input) { _MESSAGE("Macche è sto porccoddio"); }
+void __fastcall InputPollFakeHandleNoMouse(OSInputGlobals* input) { _MESSAGE("Can't still use the new input system without a mouse "); }
 
 
 __declspec(naked) void PollInputHook() {

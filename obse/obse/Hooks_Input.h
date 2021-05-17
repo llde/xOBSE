@@ -12,18 +12,15 @@ static const UInt32 kInitializeInputGlobals = 0x00404150;
 
 static UInt8 ControlsState[kControlsMapped] = {0};
 
-enum  KeyControlState : UInt16 {
+enum  KeyControlState : UInt8 {
 	kStateUnmodified = 0,
-	kStateDisabled   = 1 << 0,
-	kStateSignalled  = 1 << 1,
-	kStateTapped	 = 1 << 2,
-	kStateHolded	 = 1 << 3,
-	kStateHammered   = 1 << 4,
-	kStateAHammered  = 1 << 5,
-	kStatePSignalled = 1 << 6,
-	kStatePTapped	 = 1 << 7,
-	kStateTap		 = 1 << 8,
-	kStateReal		 = 1 << 9, 
+	kStateDisabled   = 1 << 0,  //The button is disabled (the game will not react to presses)
+	kStateSignalled  = 1 << 1,  //The button is signalled (a real press was detected)
+	kStateTap		 = 1 << 2,  //The button is tapped (the game react to a single press)
+	kStateHolded	 = 1 << 3,  //The button is holded (react to continuos ppesses)
+	kStateHammered   = 1 << 4,  //The button is hammered (react to press in odd frames)
+	kStateAHammered  = 1 << 5,  //The button is AHammered (react to press in even frames)
+	kStatePSignalled = 1 << 6,  //The button was signalled  (real press detected for previous frame)
 };
 DEFINE_ENUM_FLAG_OPERATORS(KeyControlState)
 
@@ -39,32 +36,18 @@ public:
 	KeyControlState	KeyMaskState[256];
 	DIMOUSESTATEInn MouseMaskState;
 
-	void SetMaskKey(UInt16 keycode);
-	void SetUnmaskKey(UInt16 keycode);
-	void SetMaskMouse(UInt8 keycode);
-	void SetUnmaskMouse(UInt8 keycode);
-	UInt8 GetMaskStatusKey(UInt16 keycode);
-	UInt8 GetMaskStatusMouse(UInt8 keycode);
-	UInt8 GetSignalStatusKey(UInt16 keycode);
-	UInt8 GetSignalStatusMouse(UInt8 keycode);
-	UInt8 GetPreSignalStatusKey(UInt16 keycode);
-	UInt8 GetPreSignalStatusMouse(UInt8 keycode);
-	void SetTapKey(UInt16 keycode);
-	void SetTapMouse(UInt8 keycode);
-	void SetHoldKey(UInt16 keycode);
-	void SetHoldMouse(UInt8 keycode);
-	void SetUnHoldKey(UInt16 keycode);
-	void SetUnHoldMouse(UInt8 keycode);
-	void SetHammerKey(UInt16 keycode, bool AHammer);
-	void SetHammerMouse(UInt8 keycode, bool AHammer);
-	void SetUnHammerKey(UInt16 keycode);
-	void SetUnHammerMouse(UInt8 keycode);
-	bool IsKeyPressed(UInt16 keycode);
-	bool IsKeyPressedKeyboard(UInt16 keycode);
-	bool IsKeyPressedMouse(UInt8 keycode);
-	bool WasKeyPressed(UInt16 keycode);
-	bool WasKeyPressedKeyboard(UInt16 keycode);
-	bool WasKeyPressedMouse(UInt8 keycode);
+	void SetMask(UInt16 keycode);
+	void SetUnMask(UInt16 keycode);
+	UInt8 GetMaskStatus(UInt16 keycode);
+	void SetTap(UInt16 keycode);
+	void SetHold(UInt16 keycode);
+	void SetUnHold(UInt16 keycode);
+	void SetHammer(UInt16 keycode, bool AHammer);
+	void SetUnHammer(UInt16 keycode);
+	bool IsKeyPressedSimulated(UInt16 keycode);  /*Report simulated keypresses*/
+	bool WasKeyPressedSimulated(UInt16 keycode);
+	bool IsKeyPressedReal(UInt16 keycode);  /*Report real keypresses*/
+	bool WasKeyPressedReal(UInt16 keycode);
 
 	OSInputGlobalsEx* InitializeEx(IDirectInputDevice8* device);
 	void InputPollFakeHandle();
