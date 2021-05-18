@@ -12,7 +12,7 @@
 #include "StringVar.h"
 #include "ArrayVar.h"
 #include "FunctionScripts.h"
-
+#include "Hooks_Input.h"
 #else
 
 #include "Hooks_Script.h"
@@ -77,6 +77,17 @@ static OBSETasksInterface g_TasksInterface = {
 	PluginAPI::EnqueueTask,
 	PluginAPI::Remove,
 	PluginAPI::IsTaskEnqueued,
+};
+
+static OBSEInputInterface g_InputInterface = {
+	PluginAPI::DisableKey,
+	PluginAPI::EnableKey,
+	PluginAPI::DisableControl,
+	PluginAPI::EnableControl,
+	PluginAPI::IsKeyPressedReal,
+	PluginAPI::IsKeyPressedSimulated,
+	PluginAPI::IsControlPressedReal,
+	PluginAPI::IsControlPressedSimulated,
 };
 
 #endif
@@ -361,6 +372,9 @@ void * PluginManager::QueryInterface(UInt32 id)
 			break;
 		case kInterface_Tasks:
 			result = &g_TasksInterface;
+			break;
+		case kInterface_Input:
+			result = &g_InputInterface;
 			break;
 #endif
 		case kInterface_Messaging:

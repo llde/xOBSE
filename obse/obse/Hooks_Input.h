@@ -10,7 +10,6 @@ static const UInt32 kInputGlobalAllocSize = 0x00404A77;
 static const UInt32 kInputInitializeCallAddr = 0x00404A92;
 static const UInt32 kInitializeInputGlobals = 0x00404150;
 
-static UInt8 ControlsState[kControlsMapped] = {0};
 
 enum  KeyControlState : UInt8 {
 	kStateUnmodified = 0,
@@ -55,9 +54,17 @@ public:
 
 STATIC_ASSERT(sizeof(OSInputGlobalsEx) == sizeof(OSInputGlobals) + sizeof(DIMOUSESTATEInn) + sizeof(KeyControlState[256]));
 
+extern OSInputGlobalsEx* g_inputGlobal;
 
 void Hook_Input_Init();
 
-
-
-extern OSInputGlobalsEx* g_inputGlobal;
+namespace PluginAPI {
+	void DisableKey(UInt16 dxCode);
+	void EnableKey(UInt16 dxCode);
+	void DisableControl(UInt16 controlCode);
+	void EnableControl(UInt16 controlCode);
+	bool IsKeyPressedReal(UInt16 dxCode);
+	bool IsKeyPressedSimulated(UInt16 dxCode);
+	bool IsControlPressedReal(UInt16 controlCode);
+	bool IsControlPressedSimulated(UInt16 controlCode);
+}

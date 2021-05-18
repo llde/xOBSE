@@ -53,30 +53,34 @@ void OSInputGlobalsEx::SetUnHammer(UInt16 keycode){
 }
 
 bool OSInputGlobalsEx::IsKeyPressedSimulated(UInt16 keycode) {
-	if (keycode >= 256 && keycode < kMaxButtons) {
-		return  CurrentMouseState.rgbButtons[keycode - 256] == 0x80;
-	}
+	if (keycode >= 256 && keycode < kMaxButtons) return  CurrentMouseState.rgbButtons[keycode - 256] == 0x80;
+	else if (keycode == 264) return CurrentMouseState.lZ > 0;
+	else if (keycode == 265) return CurrentMouseState.lZ < 0;
 	else if(keycode < 256) return CurrentKeyState[keycode] == 0x80;
 	return false;
 }
 
 bool OSInputGlobalsEx::WasKeyPressedSimulated(UInt16 keycode) {
-	if (keycode >= 256 && keycode < kMaxButtons) {
-		return  PreviousMouseState.rgbButtons[keycode - 256] == 0x80;
-	}
+	if (keycode >= 256 && keycode < kMaxButtons) return  PreviousMouseState.rgbButtons[keycode - 256] == 0x80;
+	else if (keycode == 264) return PreviousMouseState.lZ > 0;
+	else if (keycode == 265) return PreviousMouseState.lZ < 0;
 	else if (keycode < 256) return PreviousKeyState[keycode] == 0x80;
 	return false;
 }
 
 bool OSInputGlobalsEx::IsKeyPressedReal(UInt16 keycode) {
 	if (keycode >= 256 && keycode < kMaxButtons) return (MouseMaskState.rgbButtons[keycode - 256] & kStateSignalled) == kStateSignalled;
-	if (keycode < 256) return (KeyMaskState[keycode] & kStateSignalled) == kStateSignalled;
+	else if (keycode == 264) return CurrentMouseState.lZ > 0;
+	else if (keycode == 265) return CurrentMouseState.lZ < 0;
+	else if (keycode < 256) return (KeyMaskState[keycode] & kStateSignalled) == kStateSignalled;
 	return false;
 }
 
 bool OSInputGlobalsEx::WasKeyPressedReal(UInt16 keycode) {
 	if (keycode >= 256 && keycode < kMaxButtons) return (MouseMaskState.rgbButtons[keycode - 256] & kStatePSignalled) == kStatePSignalled;
-	if (keycode < 256) return (KeyMaskState[keycode] & kStatePSignalled) == kStatePSignalled;
+	else if (keycode == 264) return PreviousMouseState.lZ > 0;
+	else if (keycode == 265) return PreviousMouseState.lZ < 0;
+	else if (keycode < 256) return (KeyMaskState[keycode] & kStatePSignalled) == kStatePSignalled;
 	return false;
 }
 
@@ -195,3 +199,38 @@ void Hook_Input_Init() {
 }
 
 
+
+namespace PluginAPI {
+	void DisableKey(UInt16 dxCode) { g_inputGlobal->SetMask(dxCode); }
+	void EnableKey(UInt16 dxCode) { g_inputGlobal->SetUnMask(dxCode); }
+	void DisableControl(UInt16 controlCode) {
+		UInt8 keyCode = g_inputGlobal->KeyboardInputControls[controlCode];
+		if (keyCode != 0xFF) g_inputGlobal->SetMask(keyCode);
+		keyCode = g_inputGlobal->MouseInputControls[controlCode];
+		if (keyCode != 0xFF) g_inputGlobal->SetMask(keyCode + 256);
+	}
+	void EnableControl(UInt16 controlCode) {
+		UInt8 keyCode = g_inputGlobal->KeyboardInputControls[controlCode];
+		if (keyCode != 0xFF) g_inputGlobal->SetUnMask(keyCode);
+		keyCode = g_inputGlobal->MouseInputControls[controlCode];
+		if (keyCode != 0xFF) g_inputGlobal->SetUnMask(keyCode + 256);
+	}
+	bool IsKeyPressedReal(UInt16 dxCode) { return g_inputGlobal->IsKeyPressedReal(dxCode); }
+	bool IsKeyPressedSimulated(UInt16 dxCode) { return g_inputGlobal->IsKeyPressedSimulated(dxCode); }
+	bool IsControlPressedReal(UInt16 controlCode) {
+		UInt8 keyCode = g_inputGlobal->KeyboardInputControls[controlCode];
+		bool result = false;
+		if (keyCode != 0xFF) result = g_inputGlobal->IsKeyPressedReal(keyCode);
+		keyCode = g_inputGlobal->MouseInputControls[controlCode];
+		if (keyCode != 0xFF && !result) result = g_inputGlobal->IsKeyPressedReal(keyCode + 256);
+		return result;
+	}
+	bool IsControlPressedSimulated(UInt16 controlCode) {
+		UInt8 keyCode = g_inputGlobal->KeyboardInputControls[controlCode];
+		bool result = false;
+		if (keyCode != 0xFF) result = g_inputGlobal->IsKeyPressedSimulated(keyCode);
+		keyCode = g_inputGlobal->MouseInputControls[controlCode];
+		if (keyCode != 0xFF && !result) result = g_inputGlobal->IsKeyPressedSimulated(keyCode + 256);
+		return result;
+	}
+}

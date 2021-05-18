@@ -18,6 +18,8 @@ xOBSE 22.2
         - GetFame() is now correctly placed into Actor vtbl instead of MobileObject
         - CompareTo is now correctly in BaseFormComponent vtbl instead of being repeated in TESForm, TESModel and TesAttackDamage.  
         - Decoded some virtual functions and members on game structures, thanks to COEF and OR
+    PluginAPI:
+        - OBSEInputInterface to allow plugins to interact with the new Input System 
 
 xOBSE 22.1
     Fix:

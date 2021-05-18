@@ -42,6 +42,7 @@ enum
 	kInterface_Script,
 
     kInterface_Tasks,
+	kInterface_Input,
     kInterface_EventManager,
 	kInterface_Max
 };
@@ -590,6 +591,19 @@ struct OBSETasksInterface {
 	void (*RemoveTask)(Task* f);
 	bool (*IsTaskPresent)(Task* f);
 };
+
+
+struct OBSEInputInterface {
+	void (*DisableInputKey)(UInt16 dxCode);
+	void (*EnableInputKey)(UInt16 dxCode);
+	void (*DisableInputControl)(UInt16 controlCode);
+	void (*EnableInputControl)(UInt16 controlCode);
+	bool (*IsKeyPressedReal)(UInt16 dxCode);
+	bool (*IsKeyPressedSimulated)(UInt16 dxCode);
+	bool (*IsControlPressedReal)(UInt16 controlCode);
+	bool (*IsControlPressedSimulated)(UInt16 controlCode);
+};
+
 /*
 struct OBSEEventManagerInterface {
 	bool RegisterEvent();
@@ -601,6 +615,8 @@ struct OBSEEventManagerInterface {
 };*/
 
 #endif
+
+
 
 struct PluginInfo
 {
