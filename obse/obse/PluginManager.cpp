@@ -13,12 +13,14 @@
 #include "ArrayVar.h"
 #include "FunctionScripts.h"
 #include "Hooks_Input.h"
+#include "EventManager.h"
 #else
 
 #include "Hooks_Script.h"
 
 #endif
 #include <obse/GameOSDepend.h>
+#include <obse_common/obse_version.h>
 
 PluginManager	g_pluginManager;
 
@@ -88,6 +90,14 @@ static OBSEInputInterface g_InputInterface = {
 	PluginAPI::IsKeyPressedSimulated,
 	PluginAPI::IsControlPressedReal,
 	PluginAPI::IsControlPressedSimulated,
+};
+
+
+static OBSEEventManagerInterface g_EventInterface = {
+	PluginAPI::DispatchEvent,
+	nullptr,
+	nullptr,
+	nullptr,
 };
 
 #endif

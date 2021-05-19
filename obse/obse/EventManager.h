@@ -1,4 +1,5 @@
 #pragma once
+#include "Utilities.h"
 
 class Script;
 class TESForm;
@@ -120,13 +121,43 @@ namespace EventManager
 		bool Equals(const EventCallback& rhs) const;	// compare, return true if the two handlers are identical
 	};
 
+
+	typedef void (*EventHookInstaller)();
+
+	struct EventInfo
+	{
+		EventInfo(std::string const& name_, UInt8* params_, UInt8 nParams_, bool defer_, EventHookInstaller* installer_)
+			: name(name_), paramTypes(params_), numParams(nParams_), isDeferred(defer_), callbacks(NULL), installHook(installer_)
+		{
+			MakeLower(name);
+		}
+		EventInfo(std::string const& name_, UInt8* params_, UInt8 numParams_) : name(name_), paramTypes(params_), numParams(numParams_), isDeferred(false), callbacks(NULL), installHook(NULL)
+		{
+			MakeLower(name);
+		}
+		EventInfo() : name(""), paramTypes(NULL), numParams(0), isDeferred(false), callbacks(NULL), installHook(NULL)
+		{
+			;
+		}
+		~EventInfo();
+
+		std::string					name;			// must be lowercase
+		UInt8* paramTypes;
+		UInt8						numParams;
+		bool						isDeferred;		// dispatch event in Tick() instead of immediately - currently unused
+		std::list<EventCallback>* callbacks;
+		EventHookInstaller* installHook;			// if a hook is needed for this event type, this will be non-null. 
+													// install it once and then set *installHook to NULL. Allows multiple events
+													// to use the same hook, installing it only once.
+	};
+
 	bool SetHandler(const char* eventName, EventCallback& handler);
 
 	// removes handler only if all filters match
 	bool RemoveHandler(const char* id, EventCallback& handler);
 
 	// removes all instances of handler regardless of filters
-	bool RemoveHandler(const char* id, Script* fnScript);
+	bool RemoveHandler(const char* id);
 
 	bool EventHandlerExist(const char* ev, EventCallback& handler);
 
@@ -153,3 +184,9 @@ namespace EventManager
 	float __stdcall GetActorMaxSwimBreath(Actor* actor);
 	bool SetActorSwimBreathOverride(Actor* actor, UInt32 state);
 };
+
+
+namespace PluginAPI {
+	bool DispatchEvent(const char* eventName, const char* sender, UInt32 arrayId = 0);
+	bool RegisterEvent(const char* eventName);
+}

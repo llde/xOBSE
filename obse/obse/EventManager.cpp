@@ -4,7 +4,6 @@
 #include "ArrayVar.h"
 #include "PluginAPI.h"
 #include "GameAPI.h"
-#include "Utilities.h"
 #include "ScriptUtils.h"
 #include "obse_common/SafeWrite.h"
 #include "FunctionScripts.h"
@@ -58,32 +57,6 @@ static void  InstallSwimmingBreathHook();
 
 enum {
 	kEventMask_OnActivate		= 0xFFFFFFFF,		// special case as OnActivate has no event mask
-};
-
-typedef void (* EventHookInstaller)();
-
-struct EventInfo
-{
-	EventInfo (std::string const& name_, UInt8* params_, UInt8 nParams_, bool defer_, EventHookInstaller* installer_)
-		: name(name_), paramTypes(params_), numParams(nParams_), isDeferred(defer_), callbacks(NULL), installHook(installer_)
-		{ MakeLower (name);}
-	EventInfo (std::string const& name_, UInt8 * params_, UInt8 numParams_) : name(name_), paramTypes(params_), numParams(numParams_), isDeferred(false), callbacks(NULL), installHook(NULL)
-	{
-		MakeLower(name); 
-	}
-	EventInfo () : name(""), paramTypes(NULL), numParams(0), isDeferred(false), callbacks(NULL), installHook(NULL)
-		{ ; }
-	~EventInfo();
-
-	std::string					name;			// must be lowercase
-	UInt8						* paramTypes;
-	UInt8						numParams;
-	bool						isDeferred;		// dispatch event in Tick() instead of immediately - currently unused
-	std::list<EventCallback>	* callbacks;
-	EventHookInstaller			* installHook;	// if a hook is needed for this event type, this will be non-null. 
-												// install it once and then set *installHook to NULL. Allows multiple events
-												// to use the same hook, installing it only once.
-	
 };
 
 // hook installers
@@ -1763,6 +1736,10 @@ bool DispatchUserDefinedEvent (const char* eventName, Script* sender, UInt32 arg
 
 	// does an EventInfo entry already exist for this event?
 	UInt32 eventID = EventIDForString (eventName);
+	if (eventID < kEventID_UserDefinedMIN) {
+		_MESSAGE("User Dispatch for internal event not supported");
+		return false;
+	}
 	if (kEventID_INVALID == eventID)
 	{
 		// The event isn't found, event should not be created by Dispatch but only on Set. 
@@ -1773,15 +1750,17 @@ bool DispatchUserDefinedEvent (const char* eventName, Script* sender, UInt32 arg
 
 	// get or create args array
 	if (argsArrayId == 0)
-		argsArrayId = g_ArrayMap.Create (kDataType_String, false, sender->GetModIndex ());
+		argsArrayId = g_ArrayMap.Create (kDataType_String, false, sender ?  sender->GetModIndex () : 0xFF);
 	else if (!g_ArrayMap.Exists (argsArrayId) || g_ArrayMap.GetKeyType (argsArrayId) != kDataType_String)
 		return false;
 
 	// populate args array
 	g_ArrayMap.SetElementString (argsArrayId, "eventName", eventName);
-	if (NULL == senderName)
-		senderName = (*g_dataHandler)->GetNthModName (sender->GetModIndex ());
-
+	if (nullptr == senderName  && sender != nullptr)
+		senderName = (*g_dataHandler)->GetNthModName(sender->GetModIndex ());
+	else if (senderName == nullptr) {
+		senderName = "OBSE";
+	}
 	g_ArrayMap.SetElementString (argsArrayId, "eventSender", senderName);
 
 	// dispatch
@@ -1936,3 +1915,13 @@ void Init()
 
 };	// namespace
 
+namespace PluginAPI {
+	bool DispatchEvent(const char* eventName, const char* sender, UInt32 arrayId) {
+		return EventManager::DispatchUserDefinedEvent(eventName, nullptr, arrayId, sender);
+	}
+
+	bool RegisterEvent(const char* eventName) { return false; }
+	bool UnRegisterEvent(const char* eventName) { return false; }
+	bool IsEventRegistered(const char* eventName) { return false; }
+
+}

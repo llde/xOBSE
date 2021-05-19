@@ -129,7 +129,7 @@ struct OBSEStringVarInterface
 	bool		(* Assign)(ParamInfo * paramInfo, void * arg1, TESObjectREFR * thisObj, UInt32 arg3, Script * scriptObj, ScriptEventList * eventList, double * result, UInt32 * opcodeOffsetPtr, const char* newValue);
 };
 
-// Added in v0016
+// Added in v0016, Deprecated in xOBSE 22.2 use OBSEInputInterface
 // IsKeyPressed() takes a DirectInput scancode; values above 255 represent mouse buttons
 // codes are the same as those used by OBSE's IsKeyPressed2 command
 struct OBSEIOInterface
@@ -604,15 +604,12 @@ struct OBSEInputInterface {
 	bool (*IsControlPressedSimulated)(UInt16 controlCode);
 };
 
-/*
 struct OBSEEventManagerInterface {
-	bool RegisterEvent();
-	bool UnregisterEvent();
-	bool IsEventRegistered();
-	bool DispatchEvent();
-	bool RegisterScriptCallback();
-	bool RegisterNativeCallback();
-};*/
+	bool (*DispatchEvent)(const char* eventName, const char* senderName, UInt32 argsArrayId);
+	bool (*RegisterEvent)(const char* eventName);
+	bool (*UnregisterEvent)(const char* eventName);
+	bool (*IsEventRegistered)(const char* eventName);
+};
 
 #endif
 
