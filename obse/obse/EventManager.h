@@ -126,16 +126,16 @@ namespace EventManager
 
 	struct EventInfo
 	{
-		EventInfo(std::string const& name_, UInt8* params_, UInt8 nParams_, bool defer_, EventHookInstaller* installer_)
-			: name(name_), paramTypes(params_), numParams(nParams_), isDeferred(defer_), callbacks(NULL), installHook(installer_)
+		EventInfo(std::string const& name_, UInt8* params_, UInt8 nParams_, EventHookInstaller* installer_)
+			: name(name_), paramTypes(params_), numParams(nParams_), callbacks(NULL), installHook(installer_)
 		{
 			MakeLower(name);
 		}
-		EventInfo(std::string const& name_, UInt8* params_, UInt8 numParams_) : name(name_), paramTypes(params_), numParams(numParams_), isDeferred(false), callbacks(NULL), installHook(NULL)
+		EventInfo(std::string const& name_, UInt8* params_, UInt8 numParams_) : name(name_), paramTypes(params_), numParams(numParams_), callbacks(NULL), installHook(NULL)
 		{
 			MakeLower(name);
 		}
-		EventInfo() : name(""), paramTypes(NULL), numParams(0), isDeferred(false), callbacks(NULL), installHook(NULL)
+		EventInfo() : name(""), paramTypes(NULL), numParams(0), callbacks(NULL), installHook(NULL)
 		{
 			;
 		}
@@ -144,7 +144,6 @@ namespace EventManager
 		std::string					name;			// must be lowercase
 		UInt8* paramTypes;
 		UInt8						numParams;
-		bool						isDeferred;		// dispatch event in Tick() instead of immediately - currently unused
 		std::list<EventCallback>* callbacks;
 		EventHookInstaller* installHook;			// if a hook is needed for this event type, this will be non-null. 
 													// install it once and then set *installHook to NULL. Allows multiple events
