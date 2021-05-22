@@ -182,6 +182,11 @@ static TESForm* s_lastOnHitAttacker = NULL;
 // Hooks
 /////////////////////////////////
 
+void __stdcall HandleEventFilter(UInt32 mask , TESObjectREFR* source, TESForm* target) {
+	if (mask == ScriptEventList::kEvent_OnActorEquip) return; //Let the other hook intercept kEvent_OnActorEquip events
+	HandleGameEvent(mask, source, target);
+}
+
 static __declspec(naked) void MarkEventHook(void)
 {
 	// volatile: ecx, edx, eax
@@ -206,7 +211,7 @@ static __declspec(naked) void MarkEventHook(void)
 		push edx
 		push eax
 		push ecx
-		call HandleGameEvent
+		call HandleEventFilter
 		popad
 
 		// overwritten code
@@ -275,13 +280,11 @@ static __declspec(naked) void OnActorEquipHook(void)
 	}
 }
 #endif
-
 static __declspec(naked) void OnActorEquipHook(void)
 {
 	static const UInt32 s_callAddr = 0x00489C30;	// ExtraContainerChanges::Data::EquipForActor()
 
 	static const UInt32 kEventMask = ScriptEventList::kEvent_OnActorEquip;
-
 	__asm {
 		pushad
 		push edi
@@ -296,17 +299,12 @@ static __declspec(naked) void OnActorEquipHook(void)
 
 static void InstallOnActorEquipHook()
 {
-	static const UInt32 patchAddr = 0x00489C6E;
-
+	/*
 	if (s_MainEventHook) {
-		// OnActorEquip event also (unreliably) passes through main hook, so install that
 		s_MainEventHook();
-		// since it's installed, prevent it from being installed again
 		s_MainEventHook = NULL;
-	}
-
-	// additional hook to overcome game's failure to consistently mark this event type
-
+	} */
+	static const UInt32 patchAddr = 0x00489C6E;
 	// below is commented out b/c it reproducibly produces game instability in seemingly unrelated code.
 	// WriteRelJump(patchAddr, (UInt32)&OnActorEquipHook);
 
@@ -314,7 +312,8 @@ static void InstallOnActorEquipHook()
 	// The issue is that our Console_Print routine interacts poorly with the game's debug text (turned on with TDT console command)
 	// when called from a background thread.
 	// So if the handler associated with this event calls Print, PrintC, etc, there is a chance it will crash.
-	// ###TODO: fix!
+	// ###TODO: fix! 
+	//EDIT: The code actually defer the events if happen on the non main thread. This issue should no longer be relevant
 	WriteRelCall(0x005F376D, (UInt32)&OnActorEquipHook);
 }
 
