@@ -12,6 +12,7 @@ xOBSE 22.2
         - Fixed an issue with array loading were mod index 0 were mistakenly  seen as arrays beloging to discarded mods
         - Fix some error reporting issues were failing command weren't shown
         - Fix bad dereferencing  CommandList.end() iterator element, in exception handler.
+        - Fix OnActorEquip event being sent twice when using enchantend armours or clothing
     API:
         - Documented a lot of the struct fields for OSInputGlobals, and documented at least some of it's member functions 
         - Removed code for older version  of Oblivion then the last version (1_2_416)
@@ -20,6 +21,7 @@ xOBSE 22.2
         - Decoded some virtual functions and members on game structures, thanks to COEF and OR
     PluginAPI:
         - OBSEInputInterface to allow plugins to interact with the new Input System 
+        - OBSEEventInterface allow plugins to install event handlers and dispatch UDF
 
 xOBSE 22.1
     Fix:
