@@ -95,14 +95,22 @@ namespace EventManager
 		kEventID_INVALID = 0xFFFFFFFF
 	};
 
+	typedef void (*EventFunc)(void* arg0 , void* arg1, TESObjectREFR* thisObj);
+
 	// Represents an event handler registered for an event.
 	struct EventCallback
 	{
-		EventCallback(Script* funcScript, TESObjectREFR* sourceFilter = NULL, TESForm* objectFilter = NULL, TESObjectREFR* thisObj = NULL)
-			: script(funcScript), source(sourceFilter), object(objectFilter), callingObj(thisObj), flags(0) { }
+		EventCallback(void) : script(nullptr), source(nullptr), object(nullptr), callingObj(nullptr), flags(0), eventFunction(nullptr) { }
+
+		EventCallback(Script* funcScript, TESObjectREFR* sourceFilter = nullptr, TESForm* objectFilter = nullptr, TESObjectREFR* thisObj = nullptr)
+			: script(funcScript), source(sourceFilter), object(objectFilter), callingObj(thisObj), flags(0), eventFunction(nullptr) { }
+
+		EventCallback(EventFunc func, TESObjectREFR* sourceFilter = nullptr, TESForm* objectFilter = nullptr, TESObjectREFR* thisObj = nullptr)
+			: script(nullptr), source(sourceFilter), object(objectFilter), callingObj(thisObj), flags(0), eventFunction(func) { }
+
 		~EventCallback() { }
 
-		
+	
 		enum {
 			kFlag_Removed		= 1 << 0,		// set when RemoveEventHandler called while handler is in use
 			kFlag_InUse			= 1 << 1,		// is in use by HandleEvent (so removing it would invalidate an iterator)
@@ -113,7 +121,7 @@ namespace EventManager
 		TESForm			* object;				// second arg to handler
 		TESObjectREFR	* callingObj;			// invoking object for handler
 		UInt8			flags;
-
+		EventFunc       eventFunction;          // The function for handling the event, used in a plugin. If this is valid, then script is NULL the reverse is also valid
 		bool IsInUse() const { return flags & kFlag_InUse ? true : false; }
 		bool IsRemoved() const { return flags & kFlag_Removed ? true : false; }
 		void SetInUse(bool bSet) { flags = bSet ? flags | kFlag_InUse : flags & ~kFlag_InUse; }
@@ -187,5 +195,8 @@ namespace EventManager
 
 namespace PluginAPI {
 	bool DispatchEvent(const char* eventName, const char* sender, UInt32 arrayId = 0);
-	bool RegisterEvent(const char* eventName);
+	bool RegisterEvent(const char* eventName, EventManager::EventFunc func, void* arg0, void* arg1, TESObjectREFR* refr);
+	bool UnRegisterEvent(const char* eventName, EventManager::EventFunc func, void* arg0, void* arg1, TESObjectREFR* refr);
+	bool IsEventRegistered(const char* eventName, EventManager::EventFunc func, void* arg0, void* arg1, TESObjectREFR* refr);
+
 }

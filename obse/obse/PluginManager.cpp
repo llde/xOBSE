@@ -95,9 +95,9 @@ static OBSEInputInterface g_InputInterface = {
 
 static OBSEEventManagerInterface g_EventInterface = {
 	PluginAPI::DispatchEvent,
-	nullptr,
-	nullptr,
-	nullptr,
+	PluginAPI::RegisterEvent,
+	PluginAPI::UnRegisterEvent,
+	PluginAPI::IsEventRegistered,
 };
 
 #endif
@@ -385,6 +385,9 @@ void * PluginManager::QueryInterface(UInt32 id)
 			break;
 		case kInterface_Input:
 			result = &g_InputInterface;
+			break;
+		case kInterface_EventManager:
+			result = &g_EventInterface;
 			break;
 #endif
 		case kInterface_Messaging:

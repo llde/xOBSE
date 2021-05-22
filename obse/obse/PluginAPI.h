@@ -2,7 +2,9 @@
 
 #include "obse\CommandTable.h"
 #include "Tasks.h"
-
+#ifdef OBLIVION
+#include "EventManager.h"
+#endif
 struct CommandInfo;
 struct ParamInfo;
 class TESObjectREFR;
@@ -606,9 +608,9 @@ struct OBSEInputInterface {
 
 struct OBSEEventManagerInterface {
 	bool (*DispatchEvent)(const char* eventName, const char* senderName, UInt32 argsArrayId);
-	bool (*RegisterEvent)(const char* eventName);
-	bool (*UnregisterEvent)(const char* eventName);
-	bool (*IsEventRegistered)(const char* eventName);
+	bool (*RegisterEvent)(const char* eventName, EventManager::EventFunc func, void* arg0, void* arg1, TESObjectREFR* refr);
+	bool (*UnregisterEvent)(const char* eventName, EventManager::EventFunc func, void* arg0, void* arg1, TESObjectREFR* refr);
+	bool (*IsEventRegistered)(const char* eventName, EventManager::EventFunc func, void* arg0, void* arg1, TESObjectREFR* refr);
 };
 
 #endif

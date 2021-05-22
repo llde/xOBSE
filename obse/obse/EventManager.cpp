@@ -1497,7 +1497,16 @@ void __stdcall HandleEventForCallingObject(UInt32 id, TESObjectREFR* callingObj,
 				bool bWasInUse = iter->IsInUse();
 				iter->SetInUse(true);
 				s_eventStack.push(eventInfo->name);
-				ScriptToken* result = UserFunctionManager::Call(EventHandlerCaller(iter->script, eventInfo, arg0, arg1, callingObj));
+				if (iter->script) {
+					ScriptToken* result = UserFunctionManager::Call(EventHandlerCaller(iter->script, eventInfo, arg0, arg1, callingObj));
+					// result is unused
+					delete result;
+				}
+				else {
+					iter->eventFunction(arg0,arg1, callingObj); //TODO there is no validation of parameters. Add it.
+					//TODO actually restructure this entire mess.
+				}
+
 				s_eventStack.pop();
 				iter->SetInUse(bWasInUse);
 
@@ -1510,8 +1519,6 @@ void __stdcall HandleEventForCallingObject(UInt32 id, TESObjectREFR* callingObj,
 					++iter;
 				}
 
-				// result is unused
-				delete result;
 			}
 		}
 	}
@@ -1749,7 +1756,7 @@ bool DispatchUserDefinedEvent (const char* eventName, Script* sender, UInt32 arg
 	}
 
 	// get or create args array
-	if (argsArrayId == 0)
+	if (argsArrayId == 0) //Still should be avoided to be deleted. 
 		argsArrayId = g_ArrayMap.Create (kDataType_String, false, sender ?  sender->GetModIndex () : 0xFF);
 	else if (!g_ArrayMap.Exists (argsArrayId) || g_ArrayMap.GetKeyType (argsArrayId) != kDataType_String)
 		return false;
@@ -1788,8 +1795,15 @@ void Tick()
 		while (iter != s_deferredCallbacks.end()) {
 			if (!iter->iterator->IsRemoved()) {
 				s_eventStack.push(iter->eventInfo->name);
-				ScriptToken* result = UserFunctionManager::Call(
-					EventHandlerCaller(iter->iterator->script, iter->eventInfo, iter->arg0, iter->arg1, iter->callingObj));
+				if (iter->iterator->script) {
+					ScriptToken* result = UserFunctionManager::Call(
+						EventHandlerCaller(iter->iterator->script, iter->eventInfo, iter->arg0, iter->arg1, iter->callingObj));
+					// result is unused
+					delete result;
+				}
+				else {
+					iter->iterator->eventFunction(iter->arg0, iter->arg1, iter->callingObj); //TODO param validation
+				}
 				s_eventStack.pop();
 
 				if (iter->iterator->IsRemoved()) {
@@ -1799,9 +1813,6 @@ void Tick()
 				else {
 					iter = s_deferredCallbacks.erase(iter);
 				}
-
-				// result is unused
-				delete result;
 			}
 		}
 
@@ -1917,11 +1928,25 @@ void Init()
 
 namespace PluginAPI {
 	bool DispatchEvent(const char* eventName, const char* sender, UInt32 arrayId) {
+		//TODO add deferred events
 		return EventManager::DispatchUserDefinedEvent(eventName, nullptr, arrayId, sender);
 	}
 
-	bool RegisterEvent(const char* eventName) { return false; }
-	bool UnRegisterEvent(const char* eventName) { return false; }
-	bool IsEventRegistered(const char* eventName) { return false; }
+	bool RegisterEvent(const char* eventName, EventManager::EventFunc func, void* arg0 , void* arg1, TESObjectREFR* refr) {
+		if (eventName== nullptr || func == nullptr) return false;
+		EventManager::EventCallback event(func, (TESObjectREFR*)arg0, (TESObjectREFR*)arg1, refr);
+		return  EventManager::SetHandler(eventName, event);
+	}
+	bool UnRegisterEvent(const char* eventName, EventManager::EventFunc func, void* arg0, void* arg1, TESObjectREFR* refr) { 
+		if (eventName == nullptr || func == nullptr) return false;
+		EventManager::EventCallback event(func, (TESObjectREFR*)arg0, (TESObjectREFR*)arg1, refr);
+		return  EventManager::RemoveHandler(eventName, event);
+	}
+	bool IsEventRegistered(const char* eventName, EventManager::EventFunc func, void* arg0, void* arg1, TESObjectREFR* refr) {
+		if (eventName == nullptr || func == nullptr) return false;
+		EventManager::EventCallback event(func, (TESObjectREFR*)arg0, (TESObjectREFR*)arg1, refr);
+		return  EventManager::EventHandlerExist(eventName, event);
+
+	}
 
 }

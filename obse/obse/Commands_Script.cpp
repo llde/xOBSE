@@ -464,7 +464,7 @@ static bool ExtractEventCallback(ExpressionEvaluator& eval, EventManager::EventC
 static bool Cmd_SetEventHandler_Execute(COMMAND_ARGS)
 {
 	ExpressionEvaluator eval(PASS_COMMAND_ARGS);
-	EventManager::EventCallback callback(NULL);
+	EventManager::EventCallback callback;
 	char eventName[0x20];
 	if (ExtractEventCallback(eval, &callback, eventName)) {
 		if (EventManager::SetHandler(eventName, callback))
@@ -477,7 +477,7 @@ static bool Cmd_SetEventHandler_Execute(COMMAND_ARGS)
 static bool Cmd_RemoveEventHandler_Execute(COMMAND_ARGS)
 {
 	ExpressionEvaluator eval(PASS_COMMAND_ARGS);
-	EventManager::EventCallback callback(NULL);
+	EventManager::EventCallback callback;
 	char eventName[0x20];
 	if (ExtractEventCallback(eval, &callback, eventName)) {
 		if (EventManager::RemoveHandler(eventName, callback))
@@ -490,7 +490,7 @@ static bool Cmd_RemoveEventHandler_Execute(COMMAND_ARGS)
 static bool Cmd_EventHandlerExist_Execute(COMMAND_ARGS)
 {
 	ExpressionEvaluator eval(PASS_COMMAND_ARGS);
-	EventManager::EventCallback callback(NULL);
+	EventManager::EventCallback callback;
 	char eventName[0x20];
 	*result = 0.0;
 	if (ExtractEventCallback(eval, &callback, eventName)) {
