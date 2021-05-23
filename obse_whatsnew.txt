@@ -13,6 +13,7 @@ xOBSE 22.2
         - Fix some error reporting issues were failing command weren't shown
         - Fix bad dereferencing  CommandList.end() iterator element, in exception handler.
         - Fix OnActorEquip event being sent twice when using enchantend armours or clothing
+        - Improved Script diagnostics for Expression Evaluator for Commands.
     API:
         - Documented a lot of the struct fields for OSInputGlobals, and documented at least some of it's member functions 
         - Removed code for older version  of Oblivion then the last version (1_2_416)

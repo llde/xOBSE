@@ -1621,7 +1621,7 @@ void ExpressionEvaluator::Error(const char* fmt, ...)
 	vsprintf_s(errorMsg, 0x400, fmt, args);
 
 	// include script data offset and command name/opcode
-	_MESSAGE("%08X     %08X", (UInt16*)((UInt8*)m_scriptData + m_baseOffset), (UInt16*)((UInt8*)script->data + m_baseOffset));
+//	_MESSAGE("%08X     %08X", (UInt16*)((UInt8*)m_scriptData + m_baseOffset), (UInt16*)((UInt8*)script->data + m_baseOffset));
 	UInt16* opcodePtr = (UInt16*)((UInt8*)m_scriptData + m_baseOffset);
 	CommandInfo* cmd = g_scriptCommands.GetByOpcode(*opcodePtr);
 
@@ -3447,6 +3447,7 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 			CommandInfo* cmdInfo = curToken->GetCommandInfo();
 			if (!cmdInfo)
 			{
+				Error("Command is NULL");
 				delete curToken;
 				curToken = NULL;
 				break;
@@ -3463,21 +3464,17 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 				{
 					delete curToken;
 					curToken = NULL;
-					Error("Attempting to call a function on a NULL reference or base object");
+					Error("Attempting to call a function on a NULL reference or base object: %s", cmdInfo->longName);
 					break;
 				}
 			}
-	//		_MESSAGE("%0X    %0X  %s", cmdInfo->needsParent, callingObj, cmdInfo->longName);
 			TESObjectREFR* contObj = callingRef ? NULL : m_containingObj;
 			if (cmdInfo->needsParent && !callingObj) {
-				Error("Attempting to call a function without a reference");
-			}
-		/*	if (!callingObj && !contObj) {
+				Error("Attempting to call function %s without a reference", cmdInfo->longName);
 				delete curToken;
 				curToken = nullptr;
-				Error("Attempting to call a function without a reference or containing object, maybe a bad user defined function?");
 				break;
-			} */
+			}
 			double cmdResult = 0;
 
 			UInt16 argsLen = Read16();

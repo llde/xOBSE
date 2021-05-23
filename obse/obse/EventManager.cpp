@@ -1927,25 +1927,40 @@ void Init()
 
 namespace PluginAPI {
 	bool DispatchEvent(const char* eventName, const char* sender, UInt32 arrayId) {
-		//TODO add deferred events
+		if (EventManager::s_eventInfos.empty()) return false;
 		return EventManager::DispatchUserDefinedEvent(eventName, nullptr, arrayId, sender);
 	}
-
+	/*
+		If you want to register an handler for a native event, register the event info with  RegisterEventNative before calling this or registering the event in scripts
+	*/
 	bool RegisterEvent(const char* eventName, EventManager::EventFunc func, void* arg0 , void* arg1, TESObjectREFR* refr) {
+		if (EventManager::s_eventInfos.empty()) return false;
 		if (eventName== nullptr || func == nullptr) return false;
 		EventManager::EventCallback event(func, (TESObjectREFR*)arg0, (TESObjectREFR*)arg1, refr);
 		return  EventManager::SetHandler(eventName, event);
 	}
 	bool UnRegisterEvent(const char* eventName, EventManager::EventFunc func, void* arg0, void* arg1, TESObjectREFR* refr) { 
+		if (EventManager::s_eventInfos.empty()) return false;
 		if (eventName == nullptr || func == nullptr) return false;
 		EventManager::EventCallback event(func, (TESObjectREFR*)arg0, (TESObjectREFR*)arg1, refr);
 		return  EventManager::RemoveHandler(eventName, event);
 	}
 	bool IsEventRegistered(const char* eventName, EventManager::EventFunc func, void* arg0, void* arg1, TESObjectREFR* refr) {
+		if (EventManager::s_eventInfos.empty()) return false;
 		if (eventName == nullptr || func == nullptr) return false;
 		EventManager::EventCallback event(func, (TESObjectREFR*)arg0, (TESObjectREFR*)arg1, refr);
 		return  EventManager::EventHandlerExist(eventName, event);
 
 	}
+	
+	HandleEventFunc  GetHandleGameEventFuncAddress() {
+		return EventManager::HandleGameEvent;
+	}
 
+	bool RegisterEventNative(PluginEventInfo* info) {
+		if (EventManager::s_eventInfos.empty()) return false;
+		EventManager::EventInfo* event = new EventManager::EventInfo(info->name, info->paramTypes, info->numParams, &info->installer);
+		EventManager::s_eventInfos.push_back(event);
+		return true;
+	}
 }

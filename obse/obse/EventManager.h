@@ -194,9 +194,21 @@ namespace EventManager
 
 
 namespace PluginAPI {
+	typedef void (__stdcall *HandleEventFunc)(UInt32 mask, TESObjectREFR* arg0, TESForm* arg1);
+
+
+	struct PluginEventInfo {
+		const char* name;
+		UInt8*		paramTypes;
+		UInt8		numParams;
+		EventManager::EventHookInstaller installer;
+	};
+
+
 	bool DispatchEvent(const char* eventName, const char* sender, UInt32 arrayId = 0);
 	bool RegisterEvent(const char* eventName, EventManager::EventFunc func, void* arg0, void* arg1, TESObjectREFR* refr);
 	bool UnRegisterEvent(const char* eventName, EventManager::EventFunc func, void* arg0, void* arg1, TESObjectREFR* refr);
 	bool IsEventRegistered(const char* eventName, EventManager::EventFunc func, void* arg0, void* arg1, TESObjectREFR* refr);
-
+	HandleEventFunc  GetHandleGameEventFuncAddress();
+	bool RegisterEventNative(PluginEventInfo* info);
 }

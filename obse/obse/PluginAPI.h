@@ -611,6 +611,8 @@ struct OBSEEventManagerInterface {
 	bool (*RegisterEvent)(const char* eventName, EventManager::EventFunc func, void* arg0, void* arg1, TESObjectREFR* refr);
 	bool (*UnregisterEvent)(const char* eventName, EventManager::EventFunc func, void* arg0, void* arg1, TESObjectREFR* refr);
 	bool (*IsEventRegistered)(const char* eventName, EventManager::EventFunc func, void* arg0, void* arg1, TESObjectREFR* refr);
+	PluginAPI::HandleEventFunc (*GetGameHandleAddress)(void);
+	bool (*RegisterEventNative)(PluginAPI::PluginEventInfo* info);
 };
 
 #endif

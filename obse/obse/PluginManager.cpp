@@ -98,6 +98,8 @@ static OBSEEventManagerInterface g_EventInterface = {
 	PluginAPI::RegisterEvent,
 	PluginAPI::UnRegisterEvent,
 	PluginAPI::IsEventRegistered,
+	PluginAPI::GetHandleGameEventFuncAddress,
+	PluginAPI::RegisterEventNative,
 };
 
 #endif
