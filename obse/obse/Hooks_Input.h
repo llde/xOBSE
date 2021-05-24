@@ -23,6 +23,12 @@ enum  KeyControlState : UInt8 {
 };
 DEFINE_ENUM_FLAG_OPERATORS(KeyControlState)
 
+enum KeyEvent {
+	KeyEvent_Down = 0,
+	KeyEvent_Up   = 1,
+	KeyEvent_Hold = 2,
+};
+
 struct DIMOUSESTATEInn {
 	LONG    lX;
 	LONG    lY;
@@ -34,6 +40,7 @@ class OSInputGlobalsEx : public OSInputGlobals {
 public:
 	KeyControlState	KeyMaskState[256];
 	DIMOUSESTATEInn MouseMaskState;
+	UInt32			EventCode[2];
 
 	void SetMask(UInt16 keycode);
 	void SetUnMask(UInt16 keycode);
@@ -50,9 +57,13 @@ public:
 
 	OSInputGlobalsEx* InitializeEx(IDirectInputDevice8* device);
 	void InputPollFakeHandle();
+private:
+	inline void SendKeyEvent(UInt16 idx);
+	inline void SendMouseEvent(UInt16 idx);
+	inline void SendControlEvents();
 };
 
-STATIC_ASSERT(sizeof(OSInputGlobalsEx) == sizeof(OSInputGlobals) + sizeof(DIMOUSESTATEInn) + sizeof(KeyControlState[256]));
+STATIC_ASSERT(sizeof(OSInputGlobalsEx) == sizeof(OSInputGlobals) + sizeof(DIMOUSESTATEInn) + sizeof(KeyControlState[256]) + sizeof(UInt32[2]) );
 
 extern OSInputGlobalsEx* g_inputGlobal;
 

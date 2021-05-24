@@ -479,32 +479,55 @@ static bool Cmd_EnableControl_Execute(COMMAND_ARGS)
 
 static bool Cmd_OnKeyDown_Execute(COMMAND_ARGS)
 {
+	static std::map<UInt32, std::set<UInt16>> keyListeners;
 	// key is refID, data is a set of key events that have been returned for that script
-	UINT keyCode = 0;
+	UInt32 keyCode = 0;
 	*result = 0;
 
 	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &keyCode))	return true;
-	*result = g_inputGlobal->IsKeyPressedReal(keyCode) && !g_inputGlobal->WasKeyPressedReal(keyCode);
-//	_MESSAGE("OnKeyDown  %0X   %f %s", keyCode, *result , (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
-
+	if (scriptObj) {
+		std::set<UInt16>* keys = &keyListeners[scriptObj->refID];
+		if (g_inputGlobal->IsKeyPressedReal(keyCode)) {
+			if (keys->find(keyCode) == keys->end()) {
+				keys->insert(keyCode);
+				*result = 1;
+			}
+		}
+		else {
+			keys->erase(keyCode);
+		}
+	}
 	return true;
 }
 
 static bool Cmd_OnControlDown_Execute(COMMAND_ARGS)
 {
-	// key is refID, data is a set of key events that have been returned for that script
-	UINT ctrl = 0;
+	static std::map<UInt32, std::set<UInt16>> ctrListeners;
+	UInt32 ctrl = 0;
+	bool pressed = false;
 	*result = 0;
 
 	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &ctrl))	return true;
 	UInt8 keyCode = g_inputGlobal->KeyboardInputControls[ctrl];
 	if (keyCode != NOKEY) {
-		*result = (g_inputGlobal->IsKeyPressedReal(keyCode) && !g_inputGlobal->WasKeyPressedReal(keyCode));
-//		if(*result != 0) return true;
+		pressed = g_inputGlobal->IsKeyPressedReal(keyCode);
 	}
 	UInt8 mouseCode = g_inputGlobal->MouseInputControls[ctrl];
-	if (mouseCode != NOKEY  && *result == 0) {
-		*result = (g_inputGlobal->IsKeyPressedReal(mouseCode + 256) && !g_inputGlobal->WasKeyPressedReal(mouseCode + 256));
+	if (mouseCode != NOKEY && !pressed) {
+		pressed = g_inputGlobal->IsKeyPressedReal(mouseCode + 256);
+	}
+
+	if (scriptObj) {
+		std::set<UInt16>* ctrls = &ctrListeners[scriptObj->refID];
+		if (pressed) {
+			if (ctrls->find(ctrl) == ctrls->end()) {
+				ctrls->insert(keyCode);
+				*result = 1;
+			}
+		}
+		else {
+			ctrls->erase(ctrl);
+		}
 	}
 
 //	_MESSAGE("OnControlDown  %0X   %f %s", ctrl, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));

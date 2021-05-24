@@ -87,6 +87,9 @@ namespace EventManager
 		kEventID_PostLoadGame,
 		kEventID_SaveIni,
 
+		kEventID_EventKey,
+		kEventID_EventControl,
+
 		kEventID_InternalMAX,
 
 		// user-defined
@@ -190,6 +193,9 @@ namespace EventManager
 	void SetActorMaxSwimBreath(Actor* actor, float nuMax);
 	float __stdcall GetActorMaxSwimBreath(Actor* actor);
 	bool SetActorSwimBreathOverride(Actor* actor, UInt32 state);
+
+	UInt32 EventIDForString(const char* eventStr);
+
 };
 
 

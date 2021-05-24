@@ -1348,7 +1348,7 @@ UInt32 EventIDForMessage(UInt32 msgID)
 typedef std::vector<EventInfo*> EventInfoList;
 static EventInfoList s_eventInfos;
 
-UInt32 EventIDForString(const char* eventStr)
+UInt32 EventManager::EventIDForString(const char* eventStr)
 {
 	std::string name(eventStr);
 	MakeLower(name);
@@ -1916,7 +1916,8 @@ void Init()
 	EVENT_INFO("qqq", NULL, NULL)
 	EVENT_INFO("postloadgame", kEventParams_OneInteger, NULL)
 	EVENT_INFO("saveini", kEventParams_OneInteger, &s_IniHook)
-
+	EVENT_INFO("OnKeyEvent", kEventParams_TwoIntegers, nullptr)
+	EVENT_INFO("OnControlEvent", kEventParams_TwoIntegers, nullptr)
 	ASSERT (kEventID_InternalMAX == s_eventInfos.size());
 
 #undef EVENT_INFO

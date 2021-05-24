@@ -1,5 +1,6 @@
 #include "Hooks_Input.h" 
 #include "obse_common/SafeWrite.h"
+#include <obse/EventManager.h>
 
 OSInputGlobalsEx* g_inputGlobal = nullptr;
 
@@ -84,6 +85,56 @@ bool OSInputGlobalsEx::WasKeyPressedReal(UInt16 keycode) {
 	return false;
 }
 
+inline void OSInputGlobalsEx::SendKeyEvent(UInt16 idx) {
+	if ((KeyMaskState[idx] & kStateSignalled) == kStateSignalled && (KeyMaskState[idx] & kStatePSignalled) != kStatePSignalled)
+		EventManager::HandleEvent(EventCode[0], (void*)idx, (void*)KeyEvent_Down);
+	else if ((KeyMaskState[idx] & kStateSignalled) != kStateSignalled && (KeyMaskState[idx] & kStatePSignalled) == kStatePSignalled) {
+		EventManager::HandleEvent(EventCode[0], (void*)idx, (void*)KeyEvent_Up);
+	}
+	else if ((KeyMaskState[idx] & kStateSignalled) == kStateSignalled && (KeyMaskState[idx] & kStatePSignalled) == kStatePSignalled) {
+		EventManager::HandleEvent(EventCode[0], (void*)idx, (void*)KeyEvent_Hold);
+	}
+}
+
+inline void OSInputGlobalsEx::SendMouseEvent(UInt16 idx) {
+	void* nomralizedKey = (void*)(idx + 256);
+	if ((MouseMaskState.rgbButtons[idx] & kStateSignalled) == kStateSignalled && (MouseMaskState.rgbButtons[idx] & kStatePSignalled) != kStatePSignalled)
+		EventManager::HandleEvent(EventCode[0], nomralizedKey, (void*)KeyEvent_Down);
+	else if ((MouseMaskState.rgbButtons[idx] & kStateSignalled) != kStateSignalled && (MouseMaskState.rgbButtons[idx] & kStatePSignalled) == kStatePSignalled) {
+		EventManager::HandleEvent(EventCode[0], nomralizedKey, (void*)KeyEvent_Up);
+	}
+	else if ((MouseMaskState.rgbButtons[idx] & kStateSignalled) == kStateSignalled && (MouseMaskState.rgbButtons[idx] & kStatePSignalled) == kStatePSignalled) {
+		EventManager::HandleEvent(EventCode[0], nomralizedKey, (void*)KeyEvent_Hold);
+	}
+}
+
+inline void OSInputGlobalsEx::SendControlEvents() {
+	for (UInt8 idx = 0; idx < 29; idx++) {
+		UInt8 key = KeyboardInputControls[idx];
+		if (key != 0xFF) {
+			if ((KeyMaskState[key] & kStateSignalled) == kStateSignalled && (KeyMaskState[key] & kStatePSignalled) != kStatePSignalled)
+				EventManager::HandleEvent(EventCode[1], (void*)idx, (void*)KeyEvent_Down);
+			else if ((KeyMaskState[key] & kStateSignalled) != kStateSignalled && (KeyMaskState[key] & kStatePSignalled) == kStatePSignalled) {
+				EventManager::HandleEvent(EventCode[1], (void*)idx, (void*)KeyEvent_Up);
+			}
+			else if ((KeyMaskState[key] & kStateSignalled) == kStateSignalled && (KeyMaskState[key] & kStatePSignalled) == kStatePSignalled) {
+				EventManager::HandleEvent(EventCode[1], (void*)idx, (void*)KeyEvent_Hold);
+			}
+			continue;
+		}
+		key = MouseInputControls[idx];
+		if (key != 0xFF) {
+			if ((MouseMaskState.rgbButtons[key] & kStateSignalled) == kStateSignalled && (MouseMaskState.rgbButtons[key] & kStatePSignalled) != kStatePSignalled)
+				EventManager::HandleEvent(EventCode[1], (void*)idx, (void*)KeyEvent_Down);
+			else if ((MouseMaskState.rgbButtons[idx] & kStateSignalled) != kStateSignalled && (MouseMaskState.rgbButtons[key] & kStatePSignalled) == kStatePSignalled) {
+				EventManager::HandleEvent(EventCode[1], (void*)idx, (void*)KeyEvent_Up);
+			}
+			else if ((MouseMaskState.rgbButtons[key] & kStateSignalled) == kStateSignalled && (MouseMaskState.rgbButtons[key] & kStatePSignalled) == kStatePSignalled) {
+				EventManager::HandleEvent(EventCode[1], (void*)idx, (void*)KeyEvent_Hold);
+			}
+		}
+	}
+}
 
 //TODO Speed(Ma davvero vogliamo sto' bordello?)
 //TODO wheel to button translation
@@ -122,6 +173,7 @@ void OSInputGlobalsEx::InputPollFakeHandle() {
 			if ((MouseMaskState.rgbButtons[idx] & kStateTap) == kStateTap) CurrentMouseState.rgbButtons[idx] = 0x80;
 			MouseMaskState.rgbButtons[idx] &= ~kStateTap;
 
+			SendMouseEvent(idx);
 		}
 		if ((KeyMaskState[idx] & kStateSignalled) == kStateSignalled) KeyMaskState[idx] |= kStatePSignalled;
 		else KeyMaskState[idx] &= ~kStatePSignalled;
@@ -139,7 +191,10 @@ void OSInputGlobalsEx::InputPollFakeHandle() {
 
 		if ((KeyMaskState[idx] & kStateTap) == kStateTap ) CurrentKeyState[idx] = 0x80;
 		KeyMaskState[idx] &= ~kStateTap;
+		SendKeyEvent(idx);
+
 	}
+	SendControlEvents();
 	FrameIndex = (FrameIndex + 1) % 2;
 
 }
@@ -187,6 +242,8 @@ OSInputGlobalsEx* __thiscall OSInputGlobalsEx::InitializeEx(IDirectInputDevice8*
 	this->MouseDisabled = 0;
 	this->FrameIndex = 0;
 	g_inputGlobal = this;
+	EventCode[0] = EventManager::EventIDForString("OnKeyEvent");
+	EventCode[1] = EventManager::EventIDForString("OnControlEvent");
 	return this;
 }
 
