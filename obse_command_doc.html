@@ -4337,7 +4337,7 @@ endif</pre>
 <p><a id="IsKeyPressed" class="f" href="http://cs.elderscrolls.com/index.php?title=IsKeyPressed">IsKeyPressed</a> - returns whether the specified key is currently pressed. Uses standard windows key codes.<br />
 <code class="s">(isKeyPressed:bool) IsKeyPressed windowsKeyCode:int</code></p>
 
-<p><a id="IsKeyPressed2" class="f" href="http://cs.elderscrolls.com/index.php?title=IsKeyPressed2">IsKeyPressed2</a> - returns whether the specified key is currently pressed. Uses DX scancodes.<br />
+<p><a id="IsKeyPressed2" class="f" href="http://cs.elderscrolls.com/index.php?title=IsKeyPressed2">IsKeyPressed2</a> - returns whether the specified key is currently pressed. Uses DX scancodes. Detect Tapped/Hold/Hammered keys but not Disabled keys<br />
 <code class="s">(isKeyPressed:bool) IsKeyPressed2 dxScanCode:int</code></p>
 
 <p><a id="GetKeyPress" class="f" href="http://cs.elderscrolls.com/index.php?title=GetKeyPress">GetKeyPress</a> - returns the DX scan code of the key being pressed. If more than one key is pressed use whichIndex to choose which keycode to return.<br />
@@ -4355,20 +4355,11 @@ endif</pre>
 <p><a id="HoldKey" class="f" href="http://cs.elderscrolls.com/index.php?title=HoldKey">HoldKey</a> - holds down the key with the specified dx scancode<br />
 <code class="s">(nothing) HoldKey dxScanCode:int</code></p>
 
-<p><a id="MenuHoldKey" class="f" href="http://cs.elderscrolls.com/index.php?title=MenuHoldKey">MenuHoldKey</a> - holds down the key with the specified dx scancode when a menu is open<br />
-<code class="s">(nothing) MenuHoldKey dxScanCode:int</code></p>
-
 <p><a id="ReleaseKey" class="f" href="http://cs.elderscrolls.com/index.php?title=ReleaseKey">ReleaseKey</a> - releases a held key with the specified dx scancode<br />
-<code class="s">(nothing) ReleaseKey dxScanCode:int</code></p>
-
-<p><a id="MenuReleaseKey" class="f" href="http://cs.elderscrolls.com/index.php?title=MenuReleaseKey">MenuReleaseKey</a> - releases a held key with the specified dx scancode when a menu is open<br />
 <code class="s">(nothing) ReleaseKey dxScanCode:int</code></p>
 
 <p><a id="TapKey" class="f" href="http://cs.elderscrolls.com/index.php?title=TapKey">TapKey</a> - presses the key with the specidied dx scancode once<br />
 <code class="s">(nothing) TapKey dxScanCode:int</code></p>
-
-<p><a id="MenuTapKey" class="f" href="http://cs.elderscrolls.com/index.php?title=MenuTapKey">MenuTapKey</a> - presses the key with the specificed dx scancode once when a menu is open<br />
-<code class="s">(nothing) MenuTapKey dxScanCode:int</code></p>
 
 <p><a id="HammerKey" class="f" href="http://cs.elderscrolls.com/index.php?title=HammerKey">HammerKey</a> - fakes keypresses every other frame of the key with the specified dx scancode<br />
 <code class="s">(nothing) HammerKey dxScanCode:int</code></p>
@@ -4429,9 +4420,6 @@ endif</pre>
 
 <p><a id="TapControl" class="f" href="http://cs.elderscrolls.com/index.php?title=TapControl">TapControl</a> - presses the key or mouse button associated with the specified control once<br />
 <code class="s">(nothing) TapControl <a href="#Input_Control_IDs">whichControl</a>:int</code></p>
-
-<p><a id="RefreshControlMap" class="f" href="http://cs.elderscrolls.com/index.php?title=RefreshControlMap">RefreshControlMap</a> - re-parses the Oblivion.ini file to update OBSE's internal map of the player's controls. Call this function after the player exits the Controls menu (menumode 1021) to detect any changes to the control layout. <strong>DEPRECATED:</strong> Input functions are now in sync with Oblivion control bindings.<br />
-<code class="s">(nothing) RefreshControlMap</code></p>
 
 <p><a id="SetControl" class="f" href="http://cs.elderscrolls.com/index.php?title=SetControl">SetControl</a> - assigns a new key to the specified control. If the specified control already has a key assigned, the key mappings are swapped.<br />
 <code class="s">(nothing) SetControl <a href="#Input_Control_IDs">whichControl</a>:int dxScanCode:int</code></p>
@@ -5687,6 +5675,8 @@ End</pre>
 	<tr><td>QQQ	</td><td>NONE</td><td>exiting via QQQ/QuitGame console command</td></tr>
 	<tr><td>OnNewGame</td><td>NONE</td><td>user starts a new game from the main menu</td></tr>
 	<tr><td>OnSaveIni</td><td>postSave:bool</td><td>Invoked before (postSave=false) and after (postSave=true) the game's ini settings are saved to the ini file. Not invoked when saving ini settings when quitting the game - use an ExitGame handler if settings must be reset before the ini is saved at game exit</td></tr>
+	<tr><td>OnKeyEvent</td><td>key:int  action:int</td><td>Invoked when the key is pressed (action 0) released (action 1) or hold (action 2). Experimental</td></tr>
+    <tr><td>OnControlEvent</td><td>control:int  action:int</td><td>Invoked when the control is pressed (action 0) released (action 1) or hold (action 2). Experimental</td></tr>
 </table>
 
 <p>For events associated with block types, you may provide a specific value for any, all, or none of the arguments when registering an event handler. The first argument is referred to by the name "first" or "ref" and the second as "second" or "object", regardless of the names of the argument variables in your function script (exception: for OnHealthDamage, "second" or "object" refers to the damaged actor). Doing so allows you to filter out events you're not interested in. For instance, to handle events involving the player being hit by another actor, use <code>SetEventHandler OnHit yourScript first::playerRef</code>. To handle events in which the player, and only the player, hits anyone else, use <code>SetEventHandler OnHit yourScript second::playerRef</code>. To handle the player being affected by a Restore Health magic effect, use <code>SetEventHandler OnMagicEffectHit yourScript first::playerRef second::"REHE"</code>.</p>
@@ -7479,6 +7469,10 @@ SetHair<sup>13</sup></a><br />
 	<li>SetModelPathEX - pass a string_var to <code>SetModelPath</code></li>
 	<li>MessageBoxEx - pass a string_var to <code>MessageBox</code></li>
 	<li>GetBaseAV2 (C) - replaced by <a href="#GetBaseAV3">GetBaseAV3 (C)</a></li>
+	<li>MenuHoldKey - use <a href="#HoldKey">HoldKey</a></li>
+	<li>MenuReleaseKey - use <a href="#ReleaseKey">ReleaseKey</a></li>
+	<li>MenuTapKey - use <a href="#TapKey">TapKey</a></li>
+    <li>RefreshControlMap - has no effect</li>
 </ul>
 
 <p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0 Strict" height="31" width="88" /></a></p></body>

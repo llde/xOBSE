@@ -1,3 +1,12 @@
+xOBSE 22.3
+    General: 
+        - Updated version resources for file PE version.
+    Changes/Fixes:
+        - Fix regression on On{Key,Control}Down functions for scripts that weren't running every frame
+        - Add experimental support for OnKeyEvent and OnControlEvent for Event Manager
+    Docs: 
+        -Update docs, add OnKeyEvent and OnControlEvent
+    
 xOBSE 22.2
     General:
         - Better message for failed plugins in case of missing or mismatched dependancies
