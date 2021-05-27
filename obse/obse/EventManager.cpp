@@ -181,9 +181,20 @@ static TESForm* s_lastOnHitAttacker = NULL;
 //////////////////////////////////
 // Hooks
 /////////////////////////////////
+static TESForm* old_onequip = nullptr;
 
 void __stdcall HandleEventFilter(UInt32 mask , TESObjectREFR* source, TESForm* target) {
-	if (mask == ScriptEventList::kEvent_OnActorEquip) return; //Let the other hook intercept kEvent_OnActorEquip events
+//	_MESSAGE("%0X   %08X  %08X  %08X", mask , source, target , old_onequip);
+	//Events can be sent with invalid data, as source is not a reference on a OnActorEquip. Why the fuck porcoddio?  
+	if (mask == ScriptEventList::kEvent_OnActorEquip && source && source->IsReference() && (old_onequip != nullptr && target->refID == old_onequip->refID)) {
+//		_MESSAGE("Event %08X %08X blocked", source->refID, target->refID);
+		old_onequip = nullptr;
+		return; //the other hook already intercepted the event
+	} 
+	else if (mask == ScriptEventList::kEvent_OnActorEquip && source && source->IsReference()) {
+//		_MESSAGE("Event %08X %08X non blocked", source->refID, target->refID);
+		old_onequip = nullptr;
+	}
 	HandleGameEvent(mask, source, target);
 }
 
@@ -286,6 +297,7 @@ static __declspec(naked) void OnActorEquipHook(void)
 
 	static const UInt32 kEventMask = ScriptEventList::kEvent_OnActorEquip;
 	__asm {
+		mov [old_onequip], edi
 		pushad
 		push edi
 		push ebp
@@ -299,11 +311,11 @@ static __declspec(naked) void OnActorEquipHook(void)
 
 static void InstallOnActorEquipHook()
 {
-	/*
+	//Non equippable objects send event with this
 	if (s_MainEventHook) {
 		s_MainEventHook();
 		s_MainEventHook = NULL;
-	} */
+	} 
 	static const UInt32 patchAddr = 0x00489C6E;
 	// below is commented out b/c it reproducibly produces game instability in seemingly unrelated code.
 	// WriteRelJump(patchAddr, (UInt32)&OnActorEquipHook);
