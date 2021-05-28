@@ -1,3 +1,7 @@
+xOBSE 22.3.1
+    Fix:
+        - Fix regression on OnActorEquip for some non equippable objects. Fix Maskar Oblivion Overhaul.
+        
 xOBSE 22.3
     General: 
         - Updated version resources for file PE version.
