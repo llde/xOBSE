@@ -451,7 +451,7 @@
 <code class="s">(lightAmount:float) reference.GetActorLightAmount</code></p>
 
 <p><a id="CanCorpseCheck" class="f" href="http://cs.elderscrolls.com/index.php?title=CanCorpseCheck">CanCorpseCheck</a> - returns 1 if the Can Corpse Check flag is set on the actor<br />
-<code class="s">(canCoprseCheck:bool) <span class="op">reference.</span>CanCorpseCheck <span class="op">actor:ref</span></code></p>
+<code class="s">(canCorpseCheck:bool) <span class="op">reference.</span>CanCorpseCheck <span class="op">actor:ref</span></code></p>
 
 <p><a id="SetCanCorpseCheck" class="f" href="http://cs.elderscrolls.com/index.php?title=SetCanCorpseCheck">SetCanCorpseCheck</a> - changes the Can Corpse Check flag on the actor<br />
 <code class="s">(nothing) <span class="op">reference.</span>SetCanCorpseCheck flag:int <span class="op">actor:ref</span></code></p>
@@ -830,7 +830,7 @@
 
 <p>Values are accessed like:</p><pre>	array_var baseItems
 	let baseItems := someChestRef.GetBaseItems
-	Print "First item: " + (GetName baseItems[0][item] + " Quantity: " + ToString baseItems[0][count]</pre>
+	Print "First item: " + GetName baseItems[0][item] + " Quantity: " + ToString baseItems[0][count]</pre>
 
 <h3><a id="Description">Description</a></h3>
 
@@ -1240,7 +1240,7 @@
 			(bool) hostile
 </pre>
 
-<code class="s">(effectItem:StringMap) GetNthEffectItem whichEffect:int</code></p>
+<code class="s">(effectItem:StringMap) GetNthEffectItem magicItem:ref whichEffect:int</code></p>
 
 <h3><a id="Magic_Target">Magic Target</a></h3>
 
