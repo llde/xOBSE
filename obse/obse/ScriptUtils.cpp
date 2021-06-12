@@ -1621,8 +1621,9 @@ void ExpressionEvaluator::Error(const char* fmt, ...)
 	vsprintf_s(errorMsg, 0x400, fmt, args);
 
 	// include script data offset and command name/opcode
-//	_MESSAGE("%08X     %08X", (UInt16*)((UInt8*)m_scriptData + m_baseOffset), (UInt16*)((UInt8*)script->data + m_baseOffset));
-	UInt16* opcodePtr = (UInt16*)((UInt8*)m_scriptData + m_baseOffset);
+	_MESSAGE("%08X     %08X", (UInt16*)((UInt8*)m_scriptData + m_baseOffset), (UInt16*)((UInt8*)script->data + m_baseOffset));
+//	UInt16* opcodePtr = (UInt16*)((UInt8*)m_scriptData + m_baseOffset);
+	UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + m_baseOffset);
 	CommandInfo* cmd = g_scriptCommands.GetByOpcode(*opcodePtr);
 
 	// include mod filename, save having to ask users to figure it out themselves
@@ -1645,7 +1646,9 @@ void ExpressionEvaluator::PrintStackTrace() {
 
 	ExpressionEvaluator* eval = this;
 	while (eval) {
-		CommandInfo* cmd = g_scriptCommands.GetByOpcode(*((UInt16*)((UInt8*)eval->m_scriptData + eval->m_baseOffset)));
+		CommandInfo* cmd = g_scriptCommands.GetByOpcode(*((UInt16*)((UInt8*)eval->script->data + eval->m_baseOffset)));
+//		CommandInfo* cmd = g_scriptCommands.GetByOpcode(*((UInt16*)((UInt8*)eval->m_scriptData + eval->m_baseOffset)));
+
 		sprintf_s(output, sizeof(output), "  %s @%04X script %08X", cmd ? cmd->longName : "<unknown>", eval->m_baseOffset, eval->script->refID);
 		_MESSAGE(output);
 		Console_Print(output);
@@ -3462,14 +3465,15 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 					callingObj = OBLIVION_CAST(callingRef->form, TESForm, TESObjectREFR);
 				else
 				{
+					Error("Attempting to call a function on a NULL reference or base object: %s", cmdInfo->longName);
 					delete curToken;
 					curToken = NULL;
-					Error("Attempting to call a function on a NULL reference or base object: %s", cmdInfo->longName);
 					break;
 				}
 			}
 			TESObjectREFR* contObj = callingRef ? NULL : m_containingObj;
 			if (cmdInfo->needsParent && !callingObj) {
+				_MESSAGE("%0X    %0X", callingObj, contObj, m_containingObj);
 				Error("Attempting to call function %s without a reference", cmdInfo->longName);
 				delete curToken;
 				curToken = nullptr;
