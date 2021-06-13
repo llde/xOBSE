@@ -1619,13 +1619,11 @@ void ExpressionEvaluator::Error(const char* fmt, ...)
 
 	char	errorMsg[0x400];
 	vsprintf_s(errorMsg, 0x400, fmt, args);
-
 	// include script data offset and command name/opcode
-	_MESSAGE("%08X     %08X", (UInt16*)((UInt8*)m_scriptData + m_baseOffset), (UInt16*)((UInt8*)script->data + m_baseOffset));
-//	UInt16* opcodePtr = (UInt16*)((UInt8*)m_scriptData + m_baseOffset);
-	UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + m_baseOffset);
-	CommandInfo* cmd = g_scriptCommands.GetByOpcode(*opcodePtr);
-
+	UInt16* opcodePtr = (UInt16*)((UInt8*)m_scriptData + m_baseOffset);
+	//	UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + m_baseOffset);
+	CommandInfo*  cmd = g_scriptCommands.GetByOpcode(*opcodePtr);
+	
 	// include mod filename, save having to ask users to figure it out themselves
 	const char* modName = "Savegame";
 	if (script->GetModIndex() != 0xFF)
@@ -1640,15 +1638,48 @@ void ExpressionEvaluator::Error(const char* fmt, ...)
 	PrintStackTrace();
 }
 
+
+void ExpressionEvaluator::Error(const char* fmt, ScriptToken* tok,  ...)
+{
+	m_flags.Set(kFlag_ErrorOccurred);
+
+	if (m_flags.IsSet(kFlag_SuppressErrorMessages))
+		return;
+
+	va_list args;
+	va_start(args, tok);
+
+	char	errorMsg[0x400];
+	vsprintf_s(errorMsg, 0x400, fmt, args);
+	CommandInfo* cmd = nullptr;
+	if (tok != nullptr && tok->Type() == Token_Type::kTokenType_Command) cmd = tok->GetCommandInfo();
+	else {
+		// include script data offset and command name/opcode
+		UInt16* opcodePtr = (UInt16*)((UInt8*)m_scriptData + m_baseOffset);
+		//	UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + m_baseOffset);
+		cmd = g_scriptCommands.GetByOpcode(*opcodePtr);
+	}
+	// include mod filename, save having to ask users to figure it out themselves
+	const char* modName = "Savegame";
+	if (script->GetModIndex() != 0xFF)
+	{
+		modName = (*g_dataHandler)->GetNthModName(script->GetModIndex());
+		if (!modName || !modName[0])
+			modName = "Unknown";
+	}
+
+	ShowRuntimeError(script, "%s\n    File: %s Offset: 0x%04X Command: %s", errorMsg, modName, m_baseOffset, cmd ? cmd->longName : "<unknown>");
+	//	if (m_flags.IsSet(kFlag_StackTraceOnError))
+	PrintStackTrace();
+}
 void ExpressionEvaluator::PrintStackTrace() {
 	std::stack<const ExpressionEvaluator*> stackCopy;
 	char output[0x100];
 
 	ExpressionEvaluator* eval = this;
 	while (eval) {
-		CommandInfo* cmd = g_scriptCommands.GetByOpcode(*((UInt16*)((UInt8*)eval->script->data + eval->m_baseOffset)));
-//		CommandInfo* cmd = g_scriptCommands.GetByOpcode(*((UInt16*)((UInt8*)eval->m_scriptData + eval->m_baseOffset)));
-
+//		CommandInfo* cmd = g_scriptCommands.GetByOpcode(*((UInt16*)((UInt8*)eval->script->data + eval->m_baseOffset)));
+		CommandInfo* cmd = g_scriptCommands.GetByOpcode(*((UInt16*)((UInt8*)eval->m_scriptData + eval->m_baseOffset)));
 		sprintf_s(output, sizeof(output), "  %s @%04X script %08X", cmd ? cmd->longName : "<unknown>", eval->m_baseOffset, eval->script->refID);
 		_MESSAGE(output);
 		Console_Print(output);
@@ -2858,50 +2889,50 @@ void ShowRuntimeError(Script* script, const char* fmt, ...)
 
 UInt8 ExpressionEvaluator::ReadByte()
 {
-	UInt8 byte = *Data();
-	Data()++;
+	UInt8 byte = *m_data;
+	m_data++;
 	return byte;
 }
 
 SInt8 ExpressionEvaluator::ReadSignedByte()
 {
-	SInt8 byte = *((SInt8*)Data());
-	Data()++;
+	SInt8 byte = *((SInt8*)m_data);
+	m_data++;
 	return byte;
 }
 
 UInt16 ExpressionEvaluator::Read16()
 {
-	UInt16 data = *((UInt16*)Data());
-	Data() += 2;
+	UInt16 data = *((UInt16*)m_data);
+	m_data += 2;
 	return data;
 }
 
 SInt16 ExpressionEvaluator::ReadSigned16()
 {
-	SInt16 data = *((SInt16*)Data());
-	Data() += 2;
+	SInt16 data = *((SInt16*)m_data);
+	m_data += 2;
 	return data;
 }
 
 UInt32 ExpressionEvaluator::Read32()
 {
-	UInt32 data = *((UInt32*)Data());
-	Data() += 4;
+	UInt32 data = *((UInt32*)m_data);
+	m_data += 4;
 	return data;
 }
 
 SInt32 ExpressionEvaluator::ReadSigned32()
 {
-	SInt32 data = *((SInt32*)Data());
-	Data() += 4;
+	SInt32 data = *((SInt32*)m_data);
+	m_data += 4;
 	return data;
 }
 
 double ExpressionEvaluator::ReadFloat()
 {
-	double data = *((double*)Data());
-	Data() += sizeof(double);
+	double data = *((double*)m_data);
+	m_data += sizeof(double);
 	return data;
 }
 
@@ -2909,10 +2940,10 @@ std::string ExpressionEvaluator::ReadString()
 {
 	UInt16 len = Read16();
 	char* buf = new char[len + 1];
-	memcpy(buf, Data(), len);
+	memcpy(buf, m_data, len);
 	buf[len] = 0;
 	std::string str = buf;
-	Data() += len;
+	m_data += len;
 	delete buf;
 	return str;
 }
@@ -2923,9 +2954,10 @@ void ExpressionEvaluator::PushOnStack()
 	ExpressionEvaluator* top = localData.expressionEvaluator;
 	m_parent = top;
 	localData.expressionEvaluator = this;
-
 	// inherit properties of parent
 	if (top) {
+		/*
+		_MESSAGE("%08X   %08X", m_baseOffset, top->m_data - (UInt8*)script->data - 4);
 		// figure out base offset into script data
 		if (top->script == script) {
 			m_baseOffset = top->m_data - (UInt8*)script->data - 4;
@@ -2933,11 +2965,11 @@ void ExpressionEvaluator::PushOnStack()
 		else {	// non-recursive user-defined function call
 			m_baseOffset = m_data - (UInt8*)script->data - 4;
 		}
-
+		*/
 		// inherit flags
 		m_flags.RawSet(top->m_flags.Get());
 		m_flags.Clear(kFlag_ErrorOccurred);
-	}
+	} 
 }
 
 void ExpressionEvaluator::PopFromStack()
@@ -3437,8 +3469,8 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 	std::stack<ScriptToken*> operands;
 
 	UInt16 argLen = Read16();
-	UInt8* endData = Data() + argLen - sizeof(UInt16);
-	while (Data() < endData)
+	UInt8* endData = m_data + argLen - sizeof(UInt16);
+	while (m_data < endData)
 	{
 		ScriptToken* curToken = ScriptToken::Read(this);
 		if (!curToken)
@@ -3465,7 +3497,7 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 					callingObj = OBLIVION_CAST(callingRef->form, TESForm, TESObjectREFR);
 				else
 				{
-					Error("Attempting to call a function on a NULL reference or base object: %s", cmdInfo->longName);
+					Error("Attempting to call a function on a NULL reference or base object: %s", curToken, cmdInfo->longName);
 					delete curToken;
 					curToken = NULL;
 					break;
@@ -3473,35 +3505,30 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 			}
 			TESObjectREFR* contObj = callingRef ? NULL : m_containingObj;
 			if (cmdInfo->needsParent && !callingObj) {
-				_MESSAGE("%0X    %0X", callingObj, contObj, m_containingObj);
-				Error("Attempting to call function %s without a reference", cmdInfo->longName);
+				Error("Attempting to call function %s without a reference",curToken,cmdInfo->longName);
 				delete curToken;
 				curToken = nullptr;
 				break;
 			}
 			double cmdResult = 0;
-
 			UInt16 argsLen = Read16();
 			UInt32 numBytesRead = 0;
-			UInt8* scrData = Data();
-
 			ExpectReturnType(kRetnType_Default);	// expect default return type unless called command specifies otherwise
-			bool bExecuted = cmdInfo->execute(cmdInfo->params, scrData, callingObj, (UInt32)contObj, script, eventList, &cmdResult, &numBytesRead);
-
+			bool bExecuted = cmdInfo->execute(cmdInfo->params, m_data, callingObj, (UInt32)contObj, script, eventList, &cmdResult, &numBytesRead);
+			
 			if (!bExecuted)
 			{
 				delete curToken;
 				curToken = NULL;
-				Error("Command %s failed to execute", cmdInfo->longName);
+				Error("Command %s failed to execute", curToken, cmdInfo->longName);
 				break;
 			}
 
-			Data() += argsLen - 2;
+			m_data += argsLen - 2;
 
 			// create a new ScriptToken* based on result type, delete command token when done
 			ScriptToken* cmdToken = curToken;
 			curToken = ScriptToken::Create(cmdResult);
-
 			// adjust token type if we know command return type
 			CommandReturnType retnType = g_scriptCommands.GetReturnType(cmdInfo);
 			if (retnType == kRetnType_Ambiguous || retnType == kRetnType_ArrayIndex)	// return type ambiguous, cmd will inform us of type to expect
@@ -3527,7 +3554,7 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 				}
 				else
 				{
-					Error("A command returned an invalid array");
+					Error("A command returned an invalid array", curToken);
 					break;
 				}
 			}
@@ -3542,7 +3569,7 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 				curToken = ScriptToken::Create(cmdResult);
 				break;
 			default:
-				Error("Unknown command return type %d while executing command in ExpressionEvaluator::Evaluate()", retnType);
+				Error("Unknown command return type %d while executing command in ExpressionEvaluator::Evaluate()", curToken, retnType);
 			}
 
 			delete cmdToken;

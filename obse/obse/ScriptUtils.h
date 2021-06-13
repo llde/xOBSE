@@ -92,7 +92,6 @@ class ExpressionEvaluator
 	UInt16				m_baseOffset;
 	ExpressionEvaluator	* m_parent;
 
-	UInt8*			&Data()	{ return m_data;	}
 	CommandReturnType GetExpectedReturnType() { CommandReturnType type = m_expectedReturnType; m_expectedReturnType = kRetnType_Default; return type; }
 
 	void PushOnStack();
@@ -107,6 +106,7 @@ public:
 	ScriptEventList	* eventList;
 
 	void			Error(const char* fmt, ...);
+	void			Error(const char* fmt, ScriptToken* tok, ...);
 	bool			HasErrors() { return m_flags.IsSet(kFlag_ErrorOccurred); }
 
 	// extract args compiled by ExpressionParser
