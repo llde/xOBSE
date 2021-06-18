@@ -138,7 +138,6 @@ ContainerIterLoop::ContainerIterLoop(const ForEachContext* context)
 	m_invRef = InventoryReference::CreateInventoryRef(contRef, InventoryReference::Data(), false );
     TESContainer* cont = contRef->GetContainer();
 	std::map<TESForm*, SInt32> baseContainer;
-	DEBUG_PRINT("Nuovo loop cazzoni");
 	if (cont) {
 		for (TESContainer::Entry* cur = &cont->list; cur; cur = cur->next) {
 			if (cur->data && cur->data->type->typeID != kFormType_LeveledItem) {
@@ -347,7 +346,6 @@ bool ContainerIterLoop::SetIterator()
 	}
 	else {
 		// loop ends, ref will shortly be invalid so zero out the var
-		DEBUG_PRINT("It's the end of the war, HOLD THE CORRIDOR");
 		m_refVar->data = 0;
 		m_invRef->SetData(IRefData(nullptr, nullptr, nullptr));
 		return false;
@@ -363,7 +361,6 @@ bool ContainerIterLoop::Update(COMMAND_ARGS)
 
 ContainerIterLoop::~ContainerIterLoop()
 {
-	DEBUG_PRINT("Destorying loop");
 	m_elements.clear();
 //	delete m_invRef;
 	m_refVar->data = 0;
