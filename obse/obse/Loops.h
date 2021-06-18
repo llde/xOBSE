@@ -47,6 +47,7 @@ class ArrayIterLoop : public ForEachLoop
 	ArrayID					m_iterID;
 	ArrayKey				m_curKey;
 	ScriptEventList::Var	* m_iterVar;
+	UInt8					m_modIndex;
 
 	void UpdateIterator(const ArrayElement* elem);
 public:
