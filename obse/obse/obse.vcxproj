@@ -261,6 +261,8 @@
     <ClInclude Include="GameTiles.h" />
     <ClInclude Include="GameTypes.h" />
     <ClInclude Include="Hooks_Input.h" />
+    <ClInclude Include="MemoryPool.cpp" />
+    <ClInclude Include="MemoryPool.h" />
     <ClInclude Include="Script.h" />
     <ClInclude Include="NiAPI.h" />
     <ClInclude Include="NiCollision.h" />
