@@ -521,7 +521,7 @@ static bool Cmd_OnControlDown_Execute(COMMAND_ARGS)
 		std::set<UInt16>* ctrls = &ctrListeners[scriptObj->refID];
 		if (pressed) {
 			if (ctrls->find(ctrl) == ctrls->end()) {
-				ctrls->insert(keyCode);
+				ctrls->insert(ctrl);
 				*result = 1;
 			}
 		}
