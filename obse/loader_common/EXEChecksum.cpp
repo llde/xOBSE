@@ -268,9 +268,10 @@ bool TestChecksum(const char * procName, std::string * dllSuffix, ProcHookInfo *
 				case 0x7CD1332D:	// 1.2.0.416 japanese unofficial v15 (proper PE checksum)
 				case 0xDA1EC605:	// 1.2.0.416 hungarian unofficial
 				case 0x4F11C5C5:	// 1.2.0.416 hungarian unofficial v2
-				case 0xE243684D:    // 1.2.0.416 GOG version
-				case 0x299C4CB4:    // 1.2.0.416 GOTY Polish version by RPGowo 
-                case 0x9E284932:    // 1.2.0.416 Polish Antology by Cenega
+				case 0xE243684D:	// 1.2.0.416 GOG version
+				case 0x299C4CB4:	// 1.2.0.416 GOTY Polish version by RPGowo 
+				case 0x9E284932:	// 1.2.0.416 Polish Antology by Cenega
+				case 0x2D73D2FF:	// 1.2.0.416 japanese unofficial v15 (GOG executable)
 					*dllSuffix = "1_2_416";
 					result = true;
 					break;
