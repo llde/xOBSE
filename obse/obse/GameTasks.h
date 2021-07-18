@@ -250,7 +250,7 @@ public:
 
 	UInt32									unk30;			// 30
 	LockFreeQueue< NiPointer< IOTask > >	* taskQueue;	// 34
-	UInt32									unk38;			// 38
+	UInt32									unk38;			// 38 //Initialized to 6.  If 5 allow black fade-out in cell transitions and save load.
 
 	bool IsInQueue(TESObjectREFR *refr);
 	void QueueForDeletion(TESObjectREFR* refr);

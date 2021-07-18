@@ -69,18 +69,18 @@ void __stdcall DoPreLoadGame(BSFile* file)
 }
 
 static BSFile* s_curLoadingFile = NULL;
-
 static __declspec(naked) void PreLoadGameHook(void)
 {
+	static IOManager* IOManager = *g_ioManager;
+
 	__asm {
 		pushad
-
-		mov		[s_curLoadingFile], esi
+		mov [s_curLoadingFile], esi
 		push	esi
 		call	DoPreLoadGame
-
 		popad
-		mov		edx, g_ioManager
+
+		mov		edx, IOManager
 		jmp		[kPreLoadRetnAddr]
 	}
 }
