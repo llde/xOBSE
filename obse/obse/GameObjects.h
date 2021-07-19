@@ -847,6 +847,7 @@ public:
 	ActorValues		avModifiers;					// 088
 	PowerListEntry  greaterPowerList;				// 09C
 	DispositionModifier * dispositionModifier;      // 0A4 - This is created after the player has increased/decreased the Actor's disposition
+	UInt32          unk0A8;                         // 0A8	
 	float			unk0AC;							// 0AC
 	UInt32			DeadState;						// 0B0
 	UInt32			unk0B4[(0x0CC - 0x0B4) >> 2];	// 0B4
