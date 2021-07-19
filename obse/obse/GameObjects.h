@@ -831,17 +831,10 @@ public:
 	};
 
 	// 8
-	struct Unk0A4
+	struct DispositionModifier
 	{
-		// 8+
-		struct Data
-		{
-			UInt32	unk0;
-			Actor	* unk4;
-		};
-
-		Data	* data;
-		Unk0A4	* next;
+		SInt32			  modifier;					// 00 - Can be positive or negative. Linear based on previous interactions
+		TESObjectREFR	* refr;						// 04 - This is always the player
 	};
 
 	// bases
@@ -853,7 +846,7 @@ public:
 	UInt32			unk080[(0x088 - 0x080) >> 2];	// 080
 	ActorValues		avModifiers;					// 088
 	PowerListEntry  greaterPowerList;				// 09C
-	Unk0A4			unk0A4;							// 0A4
+	DispositionModifier * dispositionModifier;      // 0A4 - This is created after the player has increased/decreased the Actor's disposition
 	float			unk0AC;							// 0AC
 	UInt32			DeadState;						// 0B0
 	UInt32			unk0B4[(0x0CC - 0x0B4) >> 2];	// 0B4
