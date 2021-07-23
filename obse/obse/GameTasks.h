@@ -248,7 +248,7 @@ public:
 
 	static IOManager* GetSingleton();
 
-	UInt32									unk30;			// 30
+	UInt32									unk30;			// 30 //currentThreadID?
 	LockFreeQueue< NiPointer< IOTask > >	* taskQueue;	// 34
 	UInt32									unk38;			// 38 //Initialized to 6.  If 5 allow black fade-out in cell transitions and save load.
 

@@ -50,6 +50,21 @@ public:
 
 extern NiTPointerList <TESForm>	* g_quickKeyList;	//array of 8 NiTPointerLists of size 0-1 with pointers to hotkeyed items/spells
 
+// 10
+class ThreadSpecificInterfaceManager {
+public:
+	UInt32 maxthread;
+	UInt32 tlsStorage;
+	void* unk08;
+	UInt32 numCurrentThreads;
+
+	//No vtbl.
+	//Some other non virtual methods are present.
+	ThreadSpecificInterfaceManager(UInt32 maxthread) { ThisStdCall(0x00435E70, this, maxthread ); }
+	UInt32 AddInterface(void* funcPtr) { return ThisStdCall(0x00431D60, this, funcPtr); }
+};
+STATIC_ASSERT(sizeof(ThreadSpecificInterfaceManager) == 0x10);
+
 // 1C
 template <typename T>
 class LockFreeMap
@@ -75,10 +90,10 @@ public:
 	UInt32	numBuckets;				// 008
 	void	* buckets;				// 00C has unk0C_count elements; init to 0
 	UInt32	unk10;					// 010
-	void	* unk14;				// 014 ptr to 0x10 byte struct
+	ThreadSpecificInterfaceManager* unk14;				// 014 ptr to 0x10 byte struct
 	UInt32	unk18;					// 018 init to 0
 };
-
+STATIC_ASSERT(sizeof(LockFreeMap<int>) == 0x1C);
 // 1C
 template <typename T>
 class LockFreeQueue
@@ -96,7 +111,7 @@ public:
 	Node	* tail;						// 008
 	UInt32	unk0C;						// 00C -init to c'tr arg1
 	void	* unk10;					// 010 -dynamic alloc
-	void	* unk14;					// 0x14 (0x10 byte struct, called with arg0)
+	ThreadSpecificInterfaceManager	* unk14;					// 0x14 (0x10 byte struct, called with arg0)
 	UInt32	unk18;						// 0x18 -init to 0
 };
 
