@@ -152,7 +152,7 @@ bool Cmd_TestExtractArgs_Execute(COMMAND_ARGS)
 bool Cmd_GetOBSEVersion_Execute(COMMAND_ARGS)
 {
 	*result = OBSE_VERSION_INTEGER;
-
+	if (IsConsoleMode()) Console_Print("OBSE Version %d.%d", OBSE_VERSION_INTEGER, OBSE_VERSION_INTEGER_MINOR);
 	return true;
 }
 
