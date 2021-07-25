@@ -842,13 +842,22 @@ public:
 	// action is one of kAction_XXX. Returns action, return value probably unused.
 	virtual UInt16	SetCurrentAction(UInt16 action, BSAnimGroupSequence* sequence) = 0;
 	virtual void	Unk_B7(void) = 0;
-	virtual void	Unk_B8(void) = 0;
-	virtual UInt8	GetKnockedState(void) = 0;
+/*	virtual void	Unk_B8(void) = 0;   //OR set this as GetKnockedState
+	virtual UInt8	GetKnockedState(void) = 0; //And this as SetKnockedState(UInt8 knockedState) TODO investigate
+	*/
+	virtual void	GetKnockedState(void) = 0;  //JROush DB report this as HasFatigue/SetHasFatigue
+	virtual UInt8	SetKnockedState(UInt8 knockedState)  = 0;
+    
 	virtual void	Unk_BA(void) = 0;
-	virtual void	Unk_BB(void) = 0;
+/*	virtual void	Unk_BB(void) = 0;
 
 	// arg3 is a multiplier, arg4 appears to be base force to apply
 	virtual void	KnockbackActor(Actor* target, float arg1, float arg2, float arg3, float arg4) = 0;
+While OBSE and TESR define this order, VTBL analysis suggest that Unk_BB is actually KnockbackActor
+TODO test and control. Seems correct for MiddleHighProcess
+	*/
+	virtual void	KnockbackActor(Actor* target, float arg1, float arg2, float arg3, float arg4) = 0;
+	virtual void	Unk_BC(void) = 0;   //Seems to be actually be some stuff about skeleton nodes and animations. At least for MiddleHighProcess
 	virtual void	Unk_BD(void) = 0;
 	virtual UInt8	GetCombatMode(void) = 0;
 	virtual UInt8	SetCombatMode(UInt8 mode) = 0;
