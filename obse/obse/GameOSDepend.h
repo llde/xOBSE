@@ -228,7 +228,7 @@ public:
 	static bool IsKeycodeValid(UInt32 id) { return id < kMaxButtons; } //I don't know why there was a -2 causing the wheels motion to not be picked up.
 
 	//TODO allow passign type of binding
-	UInt16 GetControlFromKeycode(UInt16 keycode) {
+	UInt8 GetControlFromKeycode(UInt16 keycode) {
 		UInt8* controlArray = KeyboardInputControls; 
 		if (keycode >= 256) {
 			controlArray = MouseInputControls;
@@ -237,7 +237,7 @@ public:
 		for (UInt8 idx = 0; idx < kControlsMapped; idx++) {
 			if (controlArray[idx] == keycode) return idx;
 		}
-		return 0xFFFF;
+		return 0xFF;
 	}
 	static UInt8 Plugin_IsKeyPressed(UInt16 keycode) { return false; }
 };

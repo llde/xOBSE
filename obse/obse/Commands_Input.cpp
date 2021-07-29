@@ -42,7 +42,7 @@ static bool Cmd_GetControl_Execute(COMMAND_ARGS)
 	if(controlId >=kControlsMapped) return true;
 
 	*result = g_inputGlobal->KeyboardInputControls[controlId];
-
+//	_MESSAGE("GetControl  %0X   %0X    %s", controlId, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 	return true;
 }
 
@@ -53,46 +53,50 @@ static bool Cmd_GetAltControl2_Execute(COMMAND_ARGS)
 {
 	*result = 0xFFFF;
 	UInt32 controlId = 0;
-
 	if (ExtractArgs(EXTRACT_ARGS, &controlId) && controlId < kControlsMapped)
 	{
-		if (g_inputGlobal->MouseInputControls[controlId] != 0xFF)	//0xFF = unassigned
+		if (g_inputGlobal->MouseInputControls[controlId] != 0xFF) {	//0xFF = unassigned
 			*result = g_inputGlobal->MouseInputControls[controlId] + 256;
+		}
 	}
-//	_MESSAGE("GetAltControl2  %0X   %f    %s", controlId ,  *result , (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+//	_MESSAGE("GetAltControl2  %0X   %f    %s", controlId , *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 	return true;
 }
 
 static bool Cmd_SetControl_Execute(COMMAND_ARGS)
 {
-	*result = 0;
+	*result = 0xFF;
 	UInt32 keycode = 0;
 	UInt32 whichControl = 0;
 
 	if (ExtractArgs(PASS_EXTRACT_ARGS, &whichControl, &keycode) && whichControl < kControlsMapped)
 	{
-		UInt16 curControl = g_inputGlobal->GetControlFromKeycode(keycode);
-		if (curControl != 0xFFFF) g_inputGlobal->KeyboardInputControls[curControl] = g_inputGlobal->KeyboardInputControls[whichControl];	//swap control mappings
+		UInt8 curControl = g_inputGlobal->GetControlFromKeycode(keycode);
+		if (curControl != 0xFF) g_inputGlobal->KeyboardInputControls[curControl] = g_inputGlobal->KeyboardInputControls[whichControl];	//swap control mappings
 
 		g_inputGlobal->KeyboardInputControls[whichControl] = keycode;
+		*result = curControl;
+//		_MESSAGE("SetControl  %0X   %0X   %0X    %s", whichControl, keycode, curControl, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 	}
+
 	return true;
 }
 
 static bool Cmd_SetAltControl_Execute(COMMAND_ARGS)
 {
-	*result = 0;
+	*result = 0xFF;
 	UInt32 keycode = 0;
 	UInt32 whichControl = 0;
 	
 	if (ExtractArgs(PASS_EXTRACT_ARGS, &whichControl, &keycode) && whichControl < kControlsMapped && keycode > 255)
 	{
-		UInt16 curControl = g_inputGlobal->GetControlFromKeycode(keycode);
-		if (curControl != 0xFFFF) g_inputGlobal->MouseInputControls[curControl] = g_inputGlobal->MouseInputControls[whichControl];	//swap control mappings
+		UInt8 curControl = g_inputGlobal->GetControlFromKeycode(keycode);
+		if (curControl != 0xFF) g_inputGlobal->MouseInputControls[curControl] = g_inputGlobal->MouseInputControls[whichControl];	//swap control mappings
 
 		g_inputGlobal->MouseInputControls[whichControl] = keycode - 256;
+		*result = curControl;
+		_MESSAGE("SetAltControl  %0X   %0X   %0X    %s", whichControl, keycode, curControl, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 	}
-//	_MESSAGE("SetAltControl  %0X %0X %s", whichControl, keycode, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 	return true;
 }
 
@@ -621,10 +625,10 @@ static bool Cmd_IsControl_Execute(COMMAND_ARGS)
 
 	if (!ExtractArgs(PASS_EXTRACT_ARGS, &key))
 		return true;
-	UInt16 control = g_inputGlobal->GetControlFromKeycode(key);
-	if (control != 0xFFFF) *result = control;
+	UInt8 control = g_inputGlobal->GetControlFromKeycode(key);
+	if (control != 0xFF) *result = control;
 	// check mod custom controls
-	if (control == 0xFFFF && registeredControls[key].size()) *result = 2;
+	if (control == 0xFF && registeredControls[key].size()) *result = 2;
 
 	return true;
 }
