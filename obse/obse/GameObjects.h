@@ -651,16 +651,17 @@ public:
 	~MobileObject();
 
 	virtual void	Unk_6A(void) = 0;	// 6A
-	virtual void	Unk_6B(void) = 0;
+	virtual void	Unk_6B(void) = 0;  //Relevant to switch of processing? Seen destroying/creating  Processes
 	virtual void	Unk_6C(void) = 0;
-	virtual void	Move(float arg0, float* pos, UInt32 arg2) = 0;  //TODO check
-	virtual void	Jump(void) = 0;	// jump?
+	virtual void	Move(float arg0, float* pos, UInt32 arg2) = 0;  //TODO check. This function is a mess
+//	virtual void	Jump(void) = 0;	// jump?
+	virtual void  	FallImpact(float a2, float a3, Actor* a4, int a5) = 0; //At least seems relevant to fall and/or pain sounds
 	virtual void	Unk_6F(void) = 0;
 	virtual void	Unk_70(void) = 0;	// 70
 	virtual void	Unk_71(void) = 0;
 	virtual void	Unk_72(void) = 0;
 	virtual void	Unk_73(void) = 0;
-	virtual void	Unk_74(void) = 0;
+	virtual void	SetPosition(float* pos) = 0;  //Call TESObjectREFR::SetPosition + some stuffs with the havok for actors
 	virtual void	Unk_75(void) = 0;
 	virtual void	Unk_76(void) = 0;
 	virtual void	Unk_77(void) = 0;
@@ -669,8 +670,8 @@ public:
 	virtual void	Unk_7A(void) = 0;
 	virtual void	Unk_7B(void) = 0;
 	virtual void	Unk_7C(void) = 0;
-	virtual float	GetJumpScale(void) = 0;
-	virtual void	Unk_7E(void) = 0;
+	virtual float	GetJumpScale(void) = 0; //Return Acrobatics AAV / 100.0 
+	virtual bool	IsDead(void) = 0;   //For Actors return True if DeadState == 1
 	virtual void	Unk_7F(void) = 0;
 	virtual void	Unk_80(void) = 0;	// 80
 
@@ -689,7 +690,7 @@ public:
 
 	virtual SInt32	GetFame(void) = 0; // 81
 	virtual SInt32	GetInfamy(void) = 0;	// 82
-	virtual void	Resurrect(UInt8 unk1, UInt8 unk2, UInt8 unk3) = 0;
+	virtual void	Resurrect(UInt8 unk1, UInt8 unk2, UInt8 unk3) = 0; //If unk3 is 1, it try to use the bhkProxyController. MAybe relative to animations? unk3 == 0, recreate the processes
 	virtual void	Unk_84(void) = 0;
 	virtual void	Unk_85(void) = 0;
 	virtual void	Unk_86(void) = 0;
@@ -697,9 +698,9 @@ public:
 
 	// applies damage based on game difficulty modifier. Difficulty only applies if attacker != NULL
 	// invoked for fall damage (attacker == NULL), melee attacks, not spell damage.
-	virtual void	ApplyDamage(float damage, float arg1, Actor* attacker) = 0;
-	virtual void	Unk_89(void) = 0;
-	virtual void	ProcessControl(void) = 0;	// handles input for PlayerCharacter
+	virtual void	ApplyDamage(float hpDamage, float staminaDamage, Actor* attacker) = 0;
+	virtual void	GetDisposition(Actor* with, UInt32 unk1) = 0; //
+ 	virtual void	ProcessControl(void) = 0;	// handles input for PlayerCharacter
 	virtual void	Unk_8B(void) = 0;
 	virtual void	SetPackageDismount(void) = 0;
 	virtual void	Unk_8D(void) = 0;
@@ -712,12 +713,12 @@ public:
 	virtual void	Unk_94(void) = 0;
 	virtual void	Unk_95(void) = 0;
 	virtual void	Unk_96(void) = 0;
-	virtual void	Unk_97(void) = 0;
+	virtual bool	IsOverEncoumbered(void) = 0;   //Possible incorrect decompilation. 
 	virtual bool	HasVampireFed(void) = 0;
 	virtual void	SetVampireHasFed(bool bFed) = 0;
 	virtual void	Unk_9A(void) = 0;  //GetBirthsign?
-	virtual void	Unk_9B(void) = 0;
-	virtual void	Unk_9C(void) = 0;
+	virtual void	GetHandReachDistance(void) = 0;   
+	virtual void	SetTransparency(bool on, float amount) = 0;  //Can create or delete ExtraRefractionProperty, set something on the NiAvObject, call a base object vtbl function
 	virtual void	Unk_9D(void) = 0;
 	virtual void	Unk_9E(void) = 0;
 	virtual void	Unk_9F(void) = 0;
