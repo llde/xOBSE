@@ -241,9 +241,9 @@ OSInputGlobalsEx* __thiscall OSInputGlobalsEx::InitializeEx(IDirectInputDevice8*
 	this->MouseMaskState.lZ = 0;
 	this->MouseDisabled = 0;
 	this->FrameIndex = 0;
-	g_inputGlobal = this;
 	EventCode[0] = EventManager::EventIDForString("OnKeyEvent");
 	EventCode[1] = EventManager::EventIDForString("OnControlEvent");
+	g_inputGlobal = this;
 	return this;
 }
 

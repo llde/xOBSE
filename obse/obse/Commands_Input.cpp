@@ -81,25 +81,39 @@ static bool Cmd_SetControl_Execute(COMMAND_ARGS)
 
 	return true;
 }
-
+//Deprecated
 static bool Cmd_SetAltControl_Execute(COMMAND_ARGS)
 {
-	*result = 0xFF;
+	*result = 0;
 	UInt32 keycode = 0;
 	UInt32 whichControl = 0;
 	
 	if (ExtractArgs(PASS_EXTRACT_ARGS, &whichControl, &keycode) && whichControl < kControlsMapped && keycode > 255)
 	{
-		UInt8 curControl = g_inputGlobal->GetControlFromKeycode(keycode);
-		if (curControl != 0xFF) g_inputGlobal->MouseInputControls[curControl] = g_inputGlobal->MouseInputControls[whichControl];	//swap control mappings
-
+		//Original function never switched controls, for a bug in the GetControlFromKey function. Enhanced Economy depend on this
 		g_inputGlobal->MouseInputControls[whichControl] = keycode - 256;
-		*result = curControl;
-		_MESSAGE("SetAltControl  %0X   %0X   %0X    %s", whichControl, keycode, curControl, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 	}
 	return true;
 }
 
+static bool Cmd_SetAltControl2_Execute(COMMAND_ARGS)
+{
+	*result = 0xFF;
+	UInt32 keycode = 0;
+	UInt32 whichControl = 0;
+
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &whichControl, &keycode) && whichControl < kControlsMapped && keycode > 255)
+	{
+		UInt8 curControl = g_inputGlobal->GetControlFromKeycode(keycode);
+		if (curControl != 0xFF) {
+			g_inputGlobal->MouseInputControls[curControl] = g_inputGlobal->MouseInputControls[whichControl];	//swap control mappings
+		}
+
+		g_inputGlobal->MouseInputControls[whichControl] = keycode - 256;
+		*result = curControl;
+	}
+	return true;
+}
 //deprecated
 static bool Cmd_GetAltControl_Execute(COMMAND_ARGS)
 {
@@ -1146,7 +1160,7 @@ CommandInfo kCommandInfo_RefreshControlMap =
 };
 
 DEFINE_COMMAND(SetControl,
-			   assigns a new keycode to the specified keyboard control,
+			   assigns a new keycode to the specified keyboard control and return the code of the control the keycode was bound if any (0xFF otherwise),
 			   0,
 			   2,
 			   kParams_TwoInts);
@@ -1156,6 +1170,12 @@ DEFINE_COMMAND(SetAltControl,
 			   0,
 			   2,
 			   kParams_TwoInts);
+
+DEFINE_COMMAND(SetAltControl2,
+	assigns a new mouse button code to the specified mouse control and return the code of the control the keycode was bound if any (0xFF otherwise),
+	0,
+	2,
+	kParams_TwoInts);
 
 DEFINE_COMMAND(GetCursorPos,
 			   returns the x coordinate of the mouse cursor,

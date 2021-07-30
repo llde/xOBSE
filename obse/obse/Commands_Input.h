@@ -38,6 +38,8 @@ extern CommandInfo kCommandInfo_RefreshControlMap;
 extern CommandInfo kCommandInfo_GetAltControl2;
 extern CommandInfo kCommandInfo_SetControl;
 extern CommandInfo kCommandInfo_SetAltControl;
+extern CommandInfo kCommandInfo_SetAltControl2;
+
 
 extern CommandInfo kCommandInfo_GetCursorPos;
 extern CommandInfo kCommandInfo_SetIsControl;
