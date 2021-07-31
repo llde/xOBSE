@@ -159,30 +159,23 @@ void ResetActivationRecurseDepth()
 
 #include "PluginManager.h"
 
-#if CS_VERSION == CS_VERSION_1_2
-	static const UInt32 kEndOfLineCheckPatchAddr = 0x00501E22;
-	static const UInt32 kCopyStringArgHookAddr		 = 0x00501A8A;
+static const UInt32 kEndOfLineCheckPatchAddr = 0x00501E22;
+static const UInt32 kCopyStringArgHookAddr		 = 0x00501A8A;
 
-	static const UInt32 kBeginScriptCompilePatchAddr = 0x005034A9;	// calls CompileScript()
-	static const UInt32 kBeginScriptCompileCallAddr  = 0x00503330;	// bool __fastcall CompileScript(unk, unk, Script*, ScriptBuffer*)
-	static const UInt32 kBeginScriptCompileRetnAddr	 = 0x005034AE;
+static const UInt32 kBeginScriptCompilePatchAddr = 0x005034A9;	// calls CompileScript()
+static const UInt32 kBeginScriptCompileCallAddr  = 0x00503330;	// bool __fastcall CompileScript(unk, unk, Script*, ScriptBuffer*)
+static const UInt32 kBeginScriptCompileRetnAddr	 = 0x005034AE;
 
-	static const UInt32 kExpressionParserBufferOverflowHookAddr_1 = 0x004F9712;
-	static const UInt32 kExpressionParserBufferOverflowRetnAddr_1 = 0x004F9717;
+static const UInt32 kExpressionParserBufferOverflowHookAddr_1 = 0x004F9712;
+static const UInt32 kExpressionParserBufferOverflowRetnAddr_1 = 0x004F9717;
 
-	static const UInt32 kExpressionParserBufferOverflowHookAddr_2 = 0x004F9863;
-	static const UInt32 kExpressionParserBufferOverflowRetnAddr_2 = 0x004F986A;
-#elif CS_VERSION == CS_VERSION_1_0
-	static const UInt32 kEndOfLineCheckPatchAddr = 0x004F7E77;
-	static const UInt32 kEndOfLineCheckJumpDelta = 0xFFFFFCF8;
-	static const UInt32 kEndOfLineCheckJumpAddr		 = 0x004F7B75;
+static const UInt32 kExpressionParserBufferOverflowHookAddr_2 = 0x004F9863;
+static const UInt32 kExpressionParserBufferOverflowRetnAddr_2 = 0x004F986A;
+	
+static const UInt32 kWarnForDeprecatedCommandsHook = 0x00503119;
+static const UInt32 kWarnForDeprecatedCommandsReturn = 0x0050311E;
 
-	static const UInt32 kBeginScriptCompilePatchAddr = 0x004F935E;	// calls CompileScript()
-	static const UInt32 kBeginScriptCompileCallAddr  = 0x004F9200;	// bool __fastcall CompileScript(unk, unk, Script*, ScriptBuffer*)
-	static const UInt32 kBeginScriptCompileRetnAddr  = 0x004F9363;
-#else
-#error unsupported CS version
-#endif	// CS_VERSION
+int (__cdecl* PrintScriptError)(ScriptBuffer* buffer, char* format, ...);
 
 static __declspec(naked) void ExpressionParserBufferOverflowHook_1(void)
 {
@@ -206,22 +199,7 @@ static __declspec(naked) void ExpressionParserBufferOverflowHook_2(void)
 
 // Patch compiler check on end of line when calling commands from within other commands
 // TODO: implement for run-time compiler
-// Hook differs for 1.0/1.2 CS versions as the patched code differs
-#if CS_VERSION == CS_VERSION_1_0
 
-void PatchEndOfLineCheck(bool bDisableCheck)
-{
-	if (bDisableCheck)
-		WriteRelJump(kEndOfLineCheckPatchAddr, kEndOfLineCheckJumpAddr);
-	else
-	{
-		SafeWrite8(kEndOfLineCheckPatchAddr, 0x0F);
-		SafeWrite8(kEndOfLineCheckPatchAddr + 1, 0x83);
-		SafeWrite32(kEndOfLineCheckPatchAddr + 2, kEndOfLineCheckJumpDelta);
-	}
-}
-
-#elif CS_VERSION == CS_VERSION_1_2
 
 void PatchEndOfLineCheck(bool bDisableCheck)
 {
@@ -230,15 +208,6 @@ void PatchEndOfLineCheck(bool bDisableCheck)
 	else
 		SafeWrite8(kEndOfLineCheckPatchAddr, 0x73);		// conditional jnb (short)
 }
-
-#else
-
-void PatchEndOfLineCheck(bool bDisableCheck)
-{
-	// ###TODO: implement for run-time
-}
-
-#endif
 
 static bool s_bParsingExpression = false;
 
@@ -358,29 +327,25 @@ namespace CompilerOverride {
 		}
 	}
 
-	#if CS_VERSION == CS_VERSION_1_2
-		static const UInt32 stricmpAddr = 0x0088CFAE;			// doesn't clean stack
-		static const UInt32 stricmpPatchAddr_1 = 0x005029DC;	// stricmp(cmdInfo->longName, blockName)
-		static const UInt32 stricmpPatchAddr_2 = 0x005029F4;	// stricmp(cmdInfo->altName, blockName)
+	static const UInt32 stricmpAddr = 0x0088CFAE;			// doesn't clean stack
+	static const UInt32 stricmpPatchAddr_1 = 0x005029DC;	// stricmp(cmdInfo->longName, blockName)
+	static const UInt32 stricmpPatchAddr_2 = 0x005029F4;	// stricmp(cmdInfo->altName, blockName)
+	// stores offset into ScriptBuffer's data buffer at which to store the jump offset for the current block
+	static const UInt32* kBeginBlockDataOffsetPtr = (const UInt32*)0x00A11038;
 
-		// stores offset into ScriptBuffer's data buffer at which to store the jump offset for the current block
-		static const UInt32* kBeginBlockDataOffsetPtr = (const UInt32*)0x00A11038;
+	// target of an overwritten jump after parsing of block args
+	// copies block args to ScriptBuffer after doing some bounds-checking
+	static const UInt32 kCopyBlockArgsAddr = 0x005031A9;
 
-		// target of an overwritten jump after parsing of block args
-		// copies block args to ScriptBuffer after doing some bounds-checking
-		static const UInt32 kCopyBlockArgsAddr = 0x005031A9;
+	// address of an overwritten call to a void function(void) which does nothing.
+	// after ScriptLineBuffer data has been copied to ScriptBuffer and CompileLine() is about to return true
+	static const UInt32 nullCallAddr = 0x0050327C;
 
-		// address of an overwritten call to a void function(void) which does nothing.
-		// after ScriptLineBuffer data has been copied to ScriptBuffer and CompileLine() is about to return true
-		static const UInt32 nullCallAddr = 0x0050327C;
+	// address at which the block len is calculated when compiling 'end' statement
+	static const UInt32 storeBlockLenHookAddr = 0x00502C2B;
+	static const UInt32 storeBlockLenRetnAddr = 0x00502C31;
 
-		// address at which the block len is calculated when compiling 'end' statement
-		static const UInt32 storeBlockLenHookAddr = 0x00502C2B;
-		static const UInt32 storeBlockLenRetnAddr = 0x00502C31;
 
-	#else
-	#error unsupported CS version
-	#endif
 
 	static bool s_overridden;	// is true if compiler override in effect
 
@@ -668,7 +633,6 @@ UInt32 __stdcall CopyStringArg(char* dest, const char* src, UInt32 len, ScriptLi
 // major code differences between CS versions here so hooks differ significantly
 static __declspec(naked) void __cdecl CopyStringArgHook(void)
 {
-#if CS_VERSION == CS_VERSION_1_2
 	// overwrite call to memcpy()
 
 	// On entry:
@@ -693,27 +657,38 @@ static __declspec(naked) void __cdecl CopyStringArgHook(void)
 
 		retn
 	}
-#elif CS_VERSION == CS_VERSION_1_0
-	// string copy is done inline by CS 1.0 using rep movsd
-	// need to write length of string to scriptdata before writing string
 
-	// ###TODO
-
-#else
-#error unsupported CS version
-#endif
 }
+static void WarnDeprecatedCommand(CommandInfo* info, ScriptBuffer* buffer){
+	if (info->flags & CommandInfo_Deprecated) PrintScriptError(buffer, "Used deprecated command %s", info->longName);
+}
+
+static __declspec(naked) void __cdecl WarnForDeprecatedCommands(void){
+		//ebp is the CommandInfo*
+		__asm {
+			push edi
+			push ebp
+			call WarnDeprecatedCommand
+			add esp, 8
+
+			mov al, [ebp+0x10]
+			test al, al
+			jmp [kWarnForDeprecatedCommandsReturn]
+		}
+	
+}
+
 
 void Hook_Compiler_Init()
 {
+	*(int*)&PrintScriptError = 0x004FFF40;
 	// hook beginning of compilation process
 	WriteRelJump(kBeginScriptCompilePatchAddr, (UInt32)&CompileScriptHook);
 
 	// hook copying of string argument to compiled data
 	// lets us modify the string before its copied
-#if CS_VERSION == CS_VERSION_1_2		// 1.0 hook not yet implemented
 	WriteRelCall(kCopyStringArgHookAddr, (UInt32)&CopyStringArgHook);
-#endif
+	WriteRelJump(kWarnForDeprecatedCommandsHook, (UInt32)&WarnForDeprecatedCommands);
 
 	// hook code in the vanilla expression parser's subroutine to fix the buffer overflow
 	WriteRelJump(kExpressionParserBufferOverflowHookAddr_1, (UInt32)&ExpressionParserBufferOverflowHook_1);
