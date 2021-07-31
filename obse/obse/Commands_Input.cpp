@@ -688,7 +688,7 @@ CommandInfo kCommandInfo_GetAltControl =
 	HANDLER(Cmd_GetAltControl_Execute),
 	Cmd_Default_Parse,
 	NULL,
-	0
+	CommandInfo_Deprecated
 };
 
 CommandInfo kCommandInfo_IsKeyPressed =
@@ -1156,7 +1156,7 @@ CommandInfo kCommandInfo_RefreshControlMap =
 	HANDLER(Cmd_RefreshControlMap_Execute),
 	Cmd_Default_Parse,
 	NULL,
-	0
+	CommandInfo_Deprecated
 };
 
 DEFINE_COMMAND(SetControl,
@@ -1165,7 +1165,7 @@ DEFINE_COMMAND(SetControl,
 			   2,
 			   kParams_TwoInts);
 
-DEFINE_COMMAND(SetAltControl,
+DEFINE_COMMAND_DEPRECATED(SetAltControl,
 			   assigns a new mouse button code to the specified mouse control,
 			   0,
 			   2,
