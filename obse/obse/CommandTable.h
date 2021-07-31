@@ -168,6 +168,20 @@ struct ScriptLineBuffer;
 	0 \
 	};
 
+#define DEFINE_COMMAND_DEPRECATED(name, description, refRequired, numParams, paramInfo) \
+	CommandInfo (kCommandInfo_ ## name) = { \
+	#name, \
+	"", \
+	0, \
+	#description, \
+	refRequired, \
+	numParams, \
+	paramInfo, \
+	HANDLER(Cmd_ ## name ## _Execute), \
+	Cmd_Default_Parse, \
+	NULL, \
+	CommandInfo_Deprecated \
+	};
 #define DEFINE_CMD_COND(name, description, refRequired, paramInfo) \
 	CommandInfo (kCommandInfo_ ## name) = { \
 	#name, \
@@ -237,6 +251,9 @@ bool Cmd_Default_Eval(COMMAND_ARGS_EVAL);
 // TESForm * param
 // TESForm * param2
 // double * result
+
+
+#define CommandInfo_Deprecated 0x8000
 
 struct CommandInfo
 {
