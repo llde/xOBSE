@@ -286,17 +286,20 @@ int __cdecl StubMsgBox(const char* format, ...) {
 	_vsprintf_p(buf, 1024, format, va);
 	UInt32 flags = 0;
 	const char* caption = nullptr;
-	const char* hold = nullptr;
+	char* hold = nullptr;
 	for (size_t i = 0; i < 1024; i++) {
 		if (buf[i] == '\n') {
 			hold = buf + i + 1;
 			break;
 		}
 	}
-	if (0 == strncmp(hold, "[SUPPRESSED]", 12)) return returnCode;
-	if (0 == strncmp(hold, "[WARNING]", 9)) {
+	UInt32 len = strlen(hold);
+	if (len > 9 && 0 == strncmp(hold, "[SUPPRESSED]", 12)) return returnCode;
+	else if (len > 9 && 0 == strncmp(hold, "[WARNING]", 9)) {
 		flags = MB_OKCANCEL | MB_ICONWARNING;
 		caption = "Script Warning";
+		memmove(hold, hold + 9, len - 9);
+		hold[len - 9] = '\0';
 	}
 	else {
 		flags |= MB_ICONERROR | MB_OK;
