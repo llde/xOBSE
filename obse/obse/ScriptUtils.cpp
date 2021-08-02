@@ -37,6 +37,8 @@ static bool ShowWarning(const char* msg)
 }
 
 #else
+//UInt8  isWarning = 0;
+UInt8 block = 0;
 
 const char* GetEditorID(TESForm* form)
 {
@@ -2243,7 +2245,6 @@ void ExpressionParser::Message(UInt32 errorCode, ...)
 	va_list args;
 	va_start(args, errorCode);
 	ErrOutput::Message* msg = &s_Messages[errorCode];
-
 	if (msg->CanDisable())
 	{
 		UInt32 enabled = 0;

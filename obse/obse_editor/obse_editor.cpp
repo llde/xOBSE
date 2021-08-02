@@ -6,6 +6,7 @@
 #include "richedit.h"
 #include "obse/Hooks_Script.h"
 #include "obse/Settings.h"
+#include "obse/Utilities.h"
 
 IDebugLog	gLog("obse_editor.log");
 
@@ -124,13 +125,7 @@ static void FixEditorFont(void)
 		GetObject(fontHandle, sizeof(fontInfo), &fontInfo);
 	}
 
-#if CS_VERSION == CS_VERSION_1_0
-	UInt32	basePatchAddr = 0x004F4491;
-#elif CS_VERSION == CS_VERSION_1_2
 	UInt32	basePatchAddr = 0x004FEAB9;
-#else
-#error unhandled cs version
-#endif
 
 	SafeWrite8(basePatchAddr + 0,	0xFF);
 	SafeWrite8(basePatchAddr + 1,	0x15);
@@ -148,23 +143,13 @@ static void FixErrorReportBug(void)
 
 	const UInt32	kBlockMoveDelta =	5;
 
-#if CS_VERSION == CS_VERSION_1_0
-	const UInt32	kBlockMoveSrc =		0x004F5A32;
-	const UInt32	kBlockMoveDst =		kBlockMoveSrc + kBlockMoveDelta;
-	const UInt32	kBlockMoveSize =	0x004F5A63 - kBlockMoveSrc;
-	const UInt32	kFormatStrPos =		0x0091C6A4;	// "%s"
-	const UInt32	kStackFixupPos =	0x12 + 2;
-	const UInt32	kPCRelFixups[] =	{ 0x00 + 1, 0x06 + 1, 0x25 + 1 };
-#elif CS_VERSION == CS_VERSION_1_2
 	const UInt32	kBlockMoveSrc =		0x00500001;
 	const UInt32	kBlockMoveDst =		kBlockMoveSrc + kBlockMoveDelta;
 	const UInt32	kBlockMoveSize =	0x00500035 - kBlockMoveSrc;
 	const UInt32	kFormatStrPos =		0x0092BBE4;	// "%s"
 	const UInt32	kStackFixupPos =	0x0B + 2;
 	const UInt32	kPCRelFixups[] =	{ 0x00 + 1, 0x06 + 1, 0x28 + 1 };
-#else
-#error unhandled cs version
-#endif
+
 
 	UInt8	tempBuf[kBlockMoveSize];
 
@@ -186,13 +171,8 @@ static void FixErrorReportBug(void)
 
 static void CreateTokenTypedefs(void)
 {
-#if CS_VERSION == CS_VERSION_1_2
 	char** tokenAlias_Float = (char**)0x009F10AC;	//reserved for array variable
 	char** tokenAlias_Long	= (char**)0x009F1084;	//string variable
-#else
-	char** tokenAlias_Float = (char**)0x009DB374;	//reserved for array variable
-	char** tokenAlias_Long = (char**)0x009DB34C;	//string variable
-#endif
 
 	*tokenAlias_Long = "string_var";
 	*tokenAlias_Float = "array_var";
@@ -203,23 +183,13 @@ static void PatchConditionalCommands(void)
 	// editor will not accept commands outside of the vanilla opcode range
 	// for use as conditionals in dialog/packages/quests/etc
 	// nop out a conditional branch to fix
-
-#if CS_VERSION == CS_VERSION_1_2
 	SafeWrite16(0x00457DD0, 0x9090);
-#else
-#error unsupported CS version
-#endif
+
 }
 
-#if CS_VERSION == CS_VERSION_1_2
 static UInt32 ScriptIsAlpha_PatchAddr = 0x00500ACA;
 static UInt32 IsAlphaCallAddr = 0x00890E4C;
-#elif CS_VERSION == CS_VERSION_1_0
-static UInt32 ScriptIsAlpha_PatchAddr = 0x004F64B1;
-static UInt32 IsAlphaCallAddr = 0x008ACD7F;
-#else
-error unsupported CS version
-#endif
+
 
 static void __declspec(naked) ScriptIsAlphaHook(void)
 {
@@ -247,6 +217,113 @@ void PatchIsAlpha()
 	WriteRelCall(ScriptIsAlpha_PatchAddr, (UInt32)ScriptIsAlphaHook);
 }
 
+/*
+static const UInt32 kErrorReturn = 0x004FFFEC;
+
+
+static  UInt32 WINAPI MessageBoxHook(HWND hWnd, const char* text, const char* caption, UInt32 flags) {
+	bool isWarning = flags & MSG_WARNING;
+	bool isSuppressed = flags & MSG_SUPPRESSED;
+	if (isSuppressed) return 0;
+	if (isWarning) returnCode = MessageBoxA(hWnd, text, "Script Warning", MB_ICONWARNING | MB_OKCANCEL);
+	else returnCode = MessageBoxA(hWnd, text, caption, MB_ICONERROR | MB_OK);
+	return returnCode;
+}
+
+
+static const UInt32 kFormHeapFree = 0x00401EA0;
+static const UInt32 kRet = 0x0050000C;
+static void __declspec(naked) HeapFreeHook() {
+//arguments are already pushed here
+	__asm {
+		call kFormHeapFree
+		mov eax, [returnCode]
+		jmp kRet
+	}
+}
+UInt32 flags = 0;
+static UInt32 fixupsReturn = 0x004FFFE4 + 5;
+void __declspec(naked) FixupFlags() {
+
+	_asm {
+		pushad
+	}
+	flags = 0; //Start clean
+	if (isWarning) flags |= MSG_WARNING;
+	if (block && isWarning) flags |= MSG_SUPPRESSED;  //TODO make suppressions and warnings a lookup
+	__asm {
+		popad
+		//ebx are flags
+		mov  ebx, [flags]
+		jmp [fixupsReturn]
+	}
+}
+
+void PatchScriptErrorReporting() {
+	WriteRelCall(0x004FFFFA, (UInt32)MessageBoxHook);
+	SafeWrite8(0x004FFFFA +5 , 0x90);
+	WriteRelCall(0x00500001, (UInt32)StubMsgBox);  //Stub to avoid nopping a lot of stuffs
+	WriteRelJump(0x00500007, (UInt32)HeapFreeHook);  //Hook to ensure we got the proper EAX
+	SafeWrite8(0x004FFFEA, 0x90);
+	SafeWrite8(0x004FFFEA + 1, 0x90);
+	SafeWrite8(0x004FFFE2, 0x90);
+	SafeWrite8(0x004FFFE2 + 1, 0x90);
+	SafeWrite8(0x004FFFDA, 0x90);
+	SafeWrite8(0x004FFFDA + 1, 0x90); 
+	WriteRelJump(0x004FFFE4, (UInt32)FixupFlags);
+	SafeWrite8(0x004FFFE4 + 5, 0x90);
+}
+*/
+
+static UInt32 returnCode = 0;
+
+int __cdecl StubMsgBox(const char* format, ...) {
+	returnCode = 0;
+	HWND parentHwnd = *(HWND*)0x00A0AF20;
+	char* buf = (char*)calloc(1024, sizeof(char));
+	va_list va;
+	va_start(va, format);
+	_vsprintf_p(buf, 1024, format, va);
+	UInt32 flags = 0;
+	const char* caption = nullptr;
+	const char* hold = nullptr;
+	for (size_t i = 0; i < 1024; i++) {
+		if (buf[i] == '\n') {
+			hold = buf + i + 1;
+			break;
+		}
+	}
+	if (0 == strncmp(hold, "[SUPPRESSED]", 12)) return returnCode;
+	if (0 == strncmp(hold, "[WARNING]", 9)) {
+		flags = MB_OKCANCEL | MB_ICONWARNING;
+		caption = "Script Warning";
+	}
+	else {
+		flags |= MB_ICONERROR | MB_OK;
+		caption = "Script Error";
+	}
+	returnCode = MessageBoxA(parentHwnd, buf, caption, flags);
+	free(buf);
+	return returnCode;
+}
+
+static const UInt32 kFormHeapFree = 0x00401EA0;
+static const UInt32 kRet = 0x0050000C + 5;
+static void __declspec(naked) HeapFreeHook() {
+	//arguments are already pushed here
+	__asm {
+		call kFormHeapFree
+		mov eax, [returnCode]
+		jmp kRet
+	}
+}
+
+void CSHookFixups() {
+//TODO assume CSE is installed for now
+	WriteRelCall(0x00500006, (UInt32)StubMsgBox);  //Save ecx and do stuff
+	WriteRelJump(0x0050000C, (UInt32)HeapFreeHook);  //Hook to ensure we got the proper EAX
+}
+
 extern "C" {
 void OBSE_Initialize(void)
 {
@@ -264,8 +341,12 @@ void OBSE_Initialize(void)
 
 		FixEditorFont();
 		FixErrorReportBug();
+//		PatchScriptErrorReporting();
+	//TODO get if CSE is installed, if not handle ourself
+		CSHookFixups();
 
-		CommandTable::Init();
+		CommandTable::Init();  
+
 
 		// Add "string_var" as alias for "long"
 		CreateTokenTypedefs();

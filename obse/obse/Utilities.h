@@ -323,6 +323,8 @@ void MakeLower(char* str);
 // data between obse and plugins
 char* CopyCString(const char* src);
 
+//extern UInt8  isWarning;
+extern UInt8 block;   //TODO reimplement the generic system
 // Generic error/warning output
 // provides a common way to output errors and warnings
 class ErrOutput

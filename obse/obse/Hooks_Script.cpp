@@ -175,7 +175,7 @@ static const UInt32 kExpressionParserBufferOverflowRetnAddr_2 = 0x004F986A;
 static const UInt32 kWarnForDeprecatedCommandsHook = 0x00503119;
 static const UInt32 kWarnForDeprecatedCommandsReturn = 0x0050311E;
 
-int (__cdecl* PrintScriptError)(ScriptBuffer* buffer, char* format, ...);
+int (__cdecl* PrintScriptError)(ScriptBuffer* buffer, const char* format, ...);
 
 static __declspec(naked) void ExpressionParserBufferOverflowHook_1(void)
 {
@@ -199,8 +199,6 @@ static __declspec(naked) void ExpressionParserBufferOverflowHook_2(void)
 
 // Patch compiler check on end of line when calling commands from within other commands
 // TODO: implement for run-time compiler
-
-
 void PatchEndOfLineCheck(bool bDisableCheck)
 {
 	if (bDisableCheck)
@@ -659,8 +657,14 @@ static __declspec(naked) void __cdecl CopyStringArgHook(void)
 	}
 
 }
+//TODO improve and refactor in a way everything make sense
+
+const char* deprecationWarning = "[WARNING]Used deprecated command %s";
+const char* deprecationBLocked = "[SUPPRESSED]Used deprecated command %s";
 static void WarnDeprecatedCommand(CommandInfo* info, ScriptBuffer* buffer){
-	if (info->flags & CommandInfo_Deprecated) PrintScriptError(buffer, "Used deprecated command %s", info->longName);
+	//isWarning = 1
+	if (info->flags & CommandInfo_Deprecated) block |= (PrintScriptError(buffer,  block ? deprecationBLocked : deprecationWarning , info->longName) == IDCANCEL) ; //Once 1, 1 forever
+	//isWarning = 0
 }
 
 static __declspec(naked) void __cdecl WarnForDeprecatedCommands(void){
