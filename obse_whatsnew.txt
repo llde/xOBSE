@@ -1,3 +1,7 @@
+xOBSE 22.4.1
+	Fix:
+		- Fix an issue with IsCOntrolDisabled and IsKeyDisabled, were causing an issue with Bashing Reworked
+		
 xOBSE 22.4
     General:
         - Added the CRC for the Unofficial Japanese Patch v15 on the top of the GOG version
