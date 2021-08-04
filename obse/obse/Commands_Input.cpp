@@ -293,7 +293,7 @@ static bool Cmd_IsKeyDisabled_Execute(COMMAND_ARGS)
 
 	if (ExtractArgs(PASS_EXTRACT_ARGS, &keycode))
 	{
-		if(g_inputGlobal->GetMaskStatus(keycode))
+		if((g_inputGlobal->GetMaskStatus(keycode) & kStateDisabled) == kStateDisabled)
 			*result = 1;
 	}
 //	_MESSAGE("IsKeyDisabled %0X   %f   %s" , keycode, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
@@ -462,12 +462,12 @@ static bool Cmd_IsControlDisabled_Execute(COMMAND_ARGS)
 	if (ExtractArgs(PASS_EXTRACT_ARGS, &ctrl) && ctrl < kControlsMapped) {
 		UInt8 dxCode = g_inputGlobal->KeyboardInputControls[ctrl];
 		if (dxCode != NOKEY) {
-			*result = g_inputGlobal->GetMaskStatus(dxCode);
+			*result = (g_inputGlobal->GetMaskStatus(dxCode) & kStateDisabled) == kStateDisabled;
 		}
 
 		dxCode = g_inputGlobal->MouseInputControls[ctrl];
-		if (dxCode != NOKEY) {
-			*result += g_inputGlobal->GetMaskStatus(dxCode + 256);
+		if (dxCode != NOKEY && *result == 0) {
+			*result = (g_inputGlobal->GetMaskStatus(dxCode + 256) & kStateDisabled) == kStateDisabled;
 		}
 	}
 //	_MESSAGE("IsControlDisabled  %0X  %f  %s", ctrl, *result, (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
