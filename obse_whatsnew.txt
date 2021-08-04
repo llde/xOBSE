@@ -1,3 +1,22 @@
+xOBSE 22.4
+    General:
+        - Added the CRC for the Unofficial Japanese Patch v15 on the top of the GOG version
+    Changes/Fix:
+		- Fix ExpressionEvaluator regression that caused crash in Vampire Revolution. Also  now it report the precise Command at fault.
+		- Loops temporary arrays are now setted with the mod id instead of 0xFF, avoiding leaking if the script crash inside the loop.
+		- Fix OnControlDown, now register correctly the control id and not the key id
+		- PreLoad hook now properly get the address of the IOManager to pass to game code, This fix the missing black out fade on cell transition that was present in Oblivion vanilla
+		- Restore bugged behaviour for SetAltControl required by Enhanced Economy. 
+		- SetAltControl , GetAltControl and RefreshControlMap marked as deprecated
+		- Added SetAltControl2 with the fixed behaviour to substitute SetAltControl
+		- Compiling a script using commands marked as deprecated give a warning in CS (and an hard error in CSE pre 11 (unreleased))
+		
+    API:
+		- Some additions to BaseProcess, MobileObject and Actor vtbls.
+		- Added Actor->dispositionModifier
+    Docs: 
+		- Some documentation fixes by Laulajatar
+		
 xOBSE 22.3.1
     Fix:
         - Fix regression on OnActorEquip for some non equippable objects. Fix Maskar Oblivion Overhaul.

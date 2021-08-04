@@ -4424,8 +4424,8 @@ endif</pre>
 <p><a id="SetControl" class="f" href="http://cs.elderscrolls.com/index.php?title=SetControl">SetControl</a> - assigns a new key to the specified control. If the specified control already has a key assigned, the key mappings are swapped.<br />
 <code class="s">(nothing) SetControl <a href="#Input_Control_IDs">whichControl</a>:int dxScanCode:int</code></p>
 
-<p><a id="SetAltControl" class="f" href="http://cs.elderscrolls.com/index.php?title=SetAltControl">SetAltControl</a> - assigns a new mouse button to the specified control. If the specified control already has a mouse button assigned, the button mappings are swapped.<br />
-<code class="s">(nothing) SetAltControl <a href="#Input_Control_IDs">whichControl</a>:int dxScanCode:int</code></p>
+<p><a id="SetAltControl2" class="f" href="http://cs.elderscrolls.com/index.php?title=SetAltControl2">SetAltControl2</a> - assigns a new mouse button to the specified control. If the specified control already has a mouse button assigned, the button mappings are swapped.<br />
+<code class="s">(nothing) SetAltControl2 <a href="#Input_Control_IDs">whichControl</a>:int dxScanCode:int</code></p>
 
 <p><a id="GetCursorPos" class="f" href="http://cs.elderscrolls.com/index.php?title=GetCursorPos">GetCursorPos</a> - returns the current X or Y coordinate of the mouse cursor in menu mode. Minumum coordinate is zero, maximum is determined by the user's screen resolution. Specify 'X' or 'Y' for the axis.<br />
 <code class="s">(cursorPos:int) GetCursorPos axis:char</code></p>
@@ -7473,6 +7473,7 @@ SetHair<sup>13</sup></a><br />
 	<li>MenuReleaseKey - use <a href="#ReleaseKey">ReleaseKey</a></li>
 	<li>MenuTapKey - use <a href="#TapKey">TapKey</a></li>
     <li>RefreshControlMap - has no effect</li>
+    <li>SetAltControl - don't correctly swap binded mouse keys. Use use <a href="#SetAltControl2">SetAltControl2</a></li> 
 </ul>
 
 <p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0 Strict" height="31" width="88" /></a></p></body>
