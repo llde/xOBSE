@@ -133,7 +133,7 @@ OBSE was created and maintained by *Ian Patterson*,
 *Stephen Abel*, *Paul Connelly*, and *Madeesh Kannan*
 (ianpatt, behippo, scruggsywuggsy the ferret, and shadeMe)
 
-Additional contributions from Timeslip, The J, DragoonWraith, SkyRanger-1, badhair, JRoush and kyoma.
+Additional contributions from *Timeslip*, *The J*, *DragoonWraith*, *SkyRanger-1*, *badhair*, *JRoush* and *kyoma*.
 
 The home page for OBSE is http://obse.silverlock.org/
 
@@ -141,7 +141,14 @@ The home page for OBSE is http://obse.silverlock.org/
 This version is maintained by *llde* and *shadeMe*
 
 ## Thanks
-Thanks to the xNVSE people  korri123 (aka Kormákur), lStewieAl, jazzisparis, iranrmrf, maletsna (c6), and carxt (aka karut)  that with their fork inspired me to take over this
-Also a thanks to *Ershin* (Oblivion Display Tweaks, Loot Menu) that reported a serious bug in the Event Framework
+Thanks to the xNVSE people  *korri123* (aka *Kormákur*), *lStewieAl*, *jazzisparis*, *iranrmrf*, *maletsna* (*c6*), and *carxt* (aka *karut*)  that with their fork inspired me to take over this
+
+Thanks to *Ershin* (Oblivion Display Tweaks, Loot Menu) that reported a serious bug in the Event Framework
+
+Thanks to *Laulajatar* and *KatAwful* for documentation fixes and help with bug reports
+
+Thanks to *EchoEclipseWolf* for decoding bits
+
+Thanks to all people who reported bugs.
 
 A special thanks to *ianpatt* that allowed us to mantian this fork.
