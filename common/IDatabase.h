@@ -8,8 +8,8 @@ template <class DataType>
 class IDatabase
 {
 	public:
-		typedef std::map <UInt64, DataType>		DataMapType;
-		typedef typename DataMapType::iterator	DataMapIterator;
+		using DataMapType = std::map <UInt64, DataType>;
+		using DataMapIterator = typename DataMapType::iterator;
 
 		static const UInt64	kGUIDMask = 0x0FFFFFFFFFFFFFFF;
 
@@ -23,7 +23,7 @@ class IDatabase
 			if(!key)
 				return NULL;
 
-			DataMapType::iterator	iter = theDataMap.find(key);
+			DataMapIterator	iter = theDataMap.find(key);
 
 			return (iter == theDataMap.end()) ? NULL : &((*iter).second);
 		}
@@ -35,7 +35,7 @@ class IDatabase
 			if(!key)
 				return NULL;
 
-			DataMapType::iterator	iter = theDataMap.find(key);
+			DataMapIterator	iter = theDataMap.find(key);
 
 			return (iter == theDataMap.end()) ? &theDataMap[key] : NULL;
 		}
@@ -49,7 +49,7 @@ class IDatabase
 				if(!newKey)
 					newKey++;
 
-				DataMapType::iterator	iter = theDataMap.find(newKey);
+				DataMapIterator	iter = theDataMap.find(newKey);
 
 				// is 'newKey' unused?
 				if(iter == theDataMap.end())
