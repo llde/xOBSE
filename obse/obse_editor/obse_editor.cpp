@@ -171,8 +171,8 @@ static void FixErrorReportBug(void)
 
 static void CreateTokenTypedefs(void)
 {
-	char** tokenAlias_Float = (char**)0x009F10AC;	//reserved for array variable
-	char** tokenAlias_Long	= (char**)0x009F1084;	//string variable
+	const char** tokenAlias_Float = (const char**)0x009F10AC;	//reserved for array variable
+	const char** tokenAlias_Long	= (const char**)0x009F1084;	//string variable
 
 	*tokenAlias_Long = "string_var";
 	*tokenAlias_Float = "array_var";
