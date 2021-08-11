@@ -511,7 +511,7 @@ __forceinline UInt32 ThisVirtualStdCall(UInt32 vtbl, UInt32 offset, Tthis _this,
 {
 	if (!vtbl) return 0;
 	class T {}; union { UInt32 x; UInt32 (T::*m)(T1, T2, T3, T4, T5); } u = {*(UInt32*)(vtbl + offset)};
-	return ((T*)_this->*u.m)(arg1, arg2, arg3, arg6, arg5);
+	return ((T*)_this->*u.m)(arg1, arg2, arg3, arg4, arg5);
 }
 
 // conversions between game units and metric units
