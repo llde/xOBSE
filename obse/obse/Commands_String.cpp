@@ -205,7 +205,7 @@ static bool StringVar_Find_Execute(COMMAND_ARGS, UInt32 mode, CommandInfo* comma
 				if (splitPoint != -1 && splitPoint < str.length())
 				{
 					toFind[splitPoint] = '\0';
-					char* replaceWith = (splitPoint == str.length() - 1) ? "" : toFind + splitPoint + 1;
+					const char* replaceWith = (splitPoint == str.length() - 1) ? "" : toFind + splitPoint + 1;
 					intResult = strVar->Replace(toFind, replaceWith, startPos, numChars, bCaseSensitive ? true : false, numToReplace);
 				}
 				break;

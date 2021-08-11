@@ -21,7 +21,7 @@ void WriteToExtraDataList(BaseExtraList* from, BaseExtraList* to)
 std::map<UInt32, InventoryReference*> InventoryReference::s_refmap;
 
 
-InventoryReference* InventoryReference::CreateInventoryRef(TESObjectREFR* container, InventoryReference::Data& data, bool bValidate)
+InventoryReference* InventoryReference::CreateInventoryRef(TESObjectREFR* container, InventoryReference::Data data, bool bValidate)
 {
 	TESObjectREFR *refr = TESObjectREFR::Create(false);
 	InventoryReference* invRefr = (InventoryReference*)FormHeap_Allocate(sizeof(InventoryReference));
@@ -91,7 +91,7 @@ void InventoryReference::DoDeferredActions() {
 	}
 }
 
-bool InventoryReference::SetData(Data &data){
+bool InventoryReference::SetData(Data data){
 	DEBUG_PRINT("Set IR  %s", GetFullName(data.type));
 	m_bRemoved = false;
 	m_tempRef->baseForm = data.type;

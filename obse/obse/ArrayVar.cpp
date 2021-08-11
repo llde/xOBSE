@@ -890,7 +890,7 @@ public:
 	bool operator()(const ArrayElement& lhs, const ArrayElement& rhs) {
 		g_ArrayMap.SetElement(m_lhs, 0.0, lhs);
 		g_ArrayMap.SetElement(m_rhs, 0.0, rhs);
-		ScriptToken* result = UserFunctionManager::Call(*this);
+		ScriptToken* result = UserFunctionManager::Call(std::move(*this));
 		bool bResult = result ? result->GetBool() : false;
 		delete result;
 		return bResult;
@@ -1575,7 +1575,7 @@ void ArrayVarMap::Clean()		// garbage collection: delete unreferenced arrays
 
 namespace PluginAPI
 {
-	bool ArrayAPI::SetElementFromAPI(UInt32 id, ArrayKey& key, const OBSEArrayVarInterface::Element& elem)
+	bool ArrayAPI::SetElementFromAPI(UInt32 id, const ArrayKey& key, const OBSEArrayVarInterface::Element& elem)
 	{
 		switch (elem.type)
 		{

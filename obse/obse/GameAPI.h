@@ -321,7 +321,7 @@ struct SettingInfo
 	void Set(const char* str);
 };
 
-bool GetGameSetting(char *settingName, SettingInfo** setting);
+bool GetGameSetting(const char *settingName, SettingInfo** setting);
 
 struct INISettingEntry
 {

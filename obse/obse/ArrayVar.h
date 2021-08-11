@@ -259,7 +259,7 @@ namespace PluginAPI
 	class ArrayAPI 
 	{
 	private:
-		static bool SetElementFromAPI(UInt32 id, ArrayKey& key, const OBSEArrayVarInterface::Element& elem);
+		static bool SetElementFromAPI(UInt32 id, const ArrayKey& key, const OBSEArrayVarInterface::Element& elem);
 
 	public:
 		static OBSEArrayVarInterface::Array* CreateArray(const OBSEArrayVarInterface::Element* data, UInt32 size, Script* callingScript);

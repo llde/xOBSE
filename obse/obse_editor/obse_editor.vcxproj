@@ -59,6 +59,9 @@
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_0|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_0|Win32'" />
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_0|Win32'">
+    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_0|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>

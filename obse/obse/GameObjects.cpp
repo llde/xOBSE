@@ -104,7 +104,7 @@ void PlayerCharacter::SetBirthSign(BirthSign* birthSign)
 	ThisStdCall(0x0066A400, this, birthSign);
 }
 
-float GetGameSettingFloat(char* settingName)
+float GetGameSettingFloat(const char* settingName)
 {
 	float fVal = 1.0;
 	SettingInfo* setting = 0;

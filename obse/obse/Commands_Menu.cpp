@@ -560,7 +560,7 @@ static bool GetSetMenuValue_Execute(COMMAND_ARGS, UInt32 mode)
 		break;
 	}
 
-	char* strToAssign = "";
+	const char* strToAssign = "";
 
 	if (bExtracted)
 	{

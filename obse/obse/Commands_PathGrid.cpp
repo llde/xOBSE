@@ -610,7 +610,7 @@ struct OBBPathGridArea
 
 struct Circle
 {
-	Circle(Vector2& c, float r) : center(c), radius(r) { }
+	Circle(Vector2 c, float r) : center(c), radius(r) { }
 	Circle(float x, float y, float r) : center(x, y), radius(r) { }
 
 	Vector2		center;
@@ -750,7 +750,7 @@ template <class _Shape>
 class AreaNodeFinder
 {
 public:
-	AreaNodeFinder(_Shape& area, bool bIncludeDisabledNodes)
+	AreaNodeFinder(_Shape area, bool bIncludeDisabledNodes)
 		: m_area(area), m_playerCellX(0), m_playerCellY(0), m_bIncludeDisabled(bIncludeDisabledNodes)  {
 		m_centerCell = (*g_thePlayer)->parentCell;
 		if (m_centerCell && !m_centerCell->IsInterior()) {

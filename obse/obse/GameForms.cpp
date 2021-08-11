@@ -382,7 +382,7 @@ UInt32 SpellItem::GetMagickaCost(TESForm *form) const
 static float GetSpellLevelMin(short whichLevel)
 {
 	float fLevel = 0.0;
-	char* settingString = NULL;
+	const char* settingString = NULL;
 	switch(whichLevel) {
 		case SpellItem::kLevel_Apprentice:
 			settingString = "fMagicSpellLevelApprenticeMin";

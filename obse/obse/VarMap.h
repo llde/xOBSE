@@ -68,7 +68,7 @@ protected:
 			}
 			else if (vars.size())
 			{
-				_VarMap::iterator iter = vars.end();
+				typename _VarMap::iterator iter = vars.end();
 				--iter;
 				id = iter->first + 1;
 			}
@@ -84,7 +84,7 @@ protected:
 					return var;
 				}
 
-				_VarMap::iterator it = vars.find(varID);
+				typename _VarMap::iterator it = vars.find(varID);
 				if (it != vars.end())  {
 					cache.Insert(varID, it->second);
 					return it->second;
@@ -121,9 +121,9 @@ protected:
 		void Reset()
 		{
 			cache.Reset();
-			_VarMap::iterator itEnd = vars.end();
-			_VarMap::iterator iter = vars.begin();
-			_VarMap::iterator toErase = iter;
+			typename _VarMap::iterator itEnd = vars.end();
+			typename _VarMap::iterator iter = vars.begin();
+			typename _VarMap::iterator toErase = iter;
 			while (iter != itEnd)
 			{
 				delete iter->second;

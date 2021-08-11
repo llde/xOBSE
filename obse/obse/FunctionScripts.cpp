@@ -170,7 +170,7 @@ ScriptToken* UserFunctionManager::Call(ExpressionEvaluator* eval)
 	return Call(ScriptFunctionCaller(*eval));
 }
 
-ScriptToken* UserFunctionManager::Call(FunctionCaller & caller)
+ScriptToken* UserFunctionManager::Call(FunctionCaller&& caller)
 {
 	UserFunctionManager* funcMan = GetSingleton();
 
@@ -603,7 +603,7 @@ namespace PluginAPI {
 		bool success = caller.vSetArgs(numArgs, args);
 		if (success) {
 			*result = OBSEArrayVarInterface::Element();
-			ScriptToken* ret = UserFunctionManager::Call(caller);
+			ScriptToken* ret = UserFunctionManager::Call(std::move(caller));
 			if (ret) {
 				switch (ret->Type()) {
 					case kTokenType_Number:

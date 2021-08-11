@@ -105,7 +105,7 @@ enum {
 
 SettingInfo* CombatSettingList[60];
 bool CombatSettingListInit = 0;
-SettingInfo* ReturnGameSetting(char* settingName)
+SettingInfo* ReturnGameSetting(const char* settingName)
 {
 	SettingInfo* setting = NULL;
 	if ( GetGameSetting(settingName, &setting) )

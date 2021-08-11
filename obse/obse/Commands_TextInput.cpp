@@ -262,7 +262,7 @@ TextInputMessageBox::~TextInputMessageBox()
 
 void TextInputMessageBox::Init()
 {
-	char* buttons[10] = { NULL };
+	const char* buttons[10] = { NULL };
 	UInt32 numButtons = 0;
 	UInt32 fmtStringLen = strlen(m_fmtString);
 	char* fmtString = new char[fmtStringLen + 1];
@@ -658,7 +658,7 @@ void TextInputHandler::Update()
 						// invoke the function script, passing in the control key code
 						InternalFunctionCaller caller(m_controlHandler);
 						caller.SetArgs(1, (void*)((UInt32)keyCode));
-						ScriptToken* result = UserFunctionManager::Call(caller);
+						ScriptToken* result = UserFunctionManager::Call(std::move(caller));
 						delete result;		// result unused
 					}
 					else {

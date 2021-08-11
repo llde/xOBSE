@@ -193,7 +193,7 @@ void AddFormToCreatedBaseObjectsList(TESSaveLoadGame * objList, TESForm * form)
 
 TESSaveLoadGame ** g_createdBaseObjList = (TESSaveLoadGame **)0x00B33B00;
 
-UInt32 NiTPointerMap_Lookup(void * map, void * key, void ** data)
+UInt32 NiTPointerMap_Lookup(void * map, const void * key, void ** data)
 {
 	return ThisStdCall(0x0055E000, map, key, data);
 }
@@ -570,7 +570,7 @@ static bool v_ExtractArgsEx(SInt16 numArgs, ParamInfo * paramInfo, UInt8* &scrip
 // g_baseActorValueNames is only filled in after oblivion's global initializers run
 const char* GetActorValueString(UInt32 actorValue)
 {
-	char* name = 0;
+	const char* name = 0;
 	if (actorValue <= kActorVal_Infamy)
 		name = *g_baseActorValueNames[actorValue];
 	else if (actorValue < kActorVal_OblivionMax)
@@ -655,7 +655,7 @@ SettingInfo::EType SettingInfo::Type() const
 	}
 }
 
-bool GetGameSetting(char* settingName, SettingInfo** setting)
+bool GetGameSetting(const char* settingName, SettingInfo** setting)
 {
 	return (NiTPointerMap_Lookup(g_gameSettingsTable, settingName, (void **)setting) != 0);
 }

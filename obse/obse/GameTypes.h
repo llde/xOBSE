@@ -305,7 +305,7 @@ public:
 	}
 
 	template <class Op>
-	void Visit(Op& op, _Node* prev = NULL) const {
+	void Visit(Op&& op, _Node* prev = NULL) const {
 		const _Node* pCur = (prev) ? prev->next : Head();
 		bool bContinue = true;
 		while (pCur && bContinue) {
@@ -321,7 +321,7 @@ public:
 	}
 
 	template <class Op>
-	Item* Find(Op& op) const
+	Item* Find(Op&& op) const
 	{
 		const _Node* pCur = Head();
 
@@ -412,7 +412,7 @@ public:
 	}
 
 	template <class Op>
-	UInt32 RemoveIf(Op& op) {
+	UInt32 RemoveIf(Op&& op) {
 		return FreeNodes(const_cast<_Node*>(Head()), op);
 	}
 

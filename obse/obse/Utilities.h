@@ -36,7 +36,7 @@ class Visitor
 	const Node* m_pHead;
 
 	template <class Op>
-	UInt32 FreeNodes(Node* node, Op &compareOp) const
+	UInt32 FreeNodes(Node* node, Op &&compareOp) const
 	{
 		static UInt32 nodeCount = 0;
 		static UInt32 numFreed = 0;
@@ -131,7 +131,7 @@ public:
 	}
 
 	template <class Op>
-	void Visit(Op& op) const {
+	void Visit(Op&& op) const {
 		const Node* pCur = m_pHead;
 		bool bContinue = true;
 		while (pCur && pCur->Info() && bContinue) {
@@ -143,7 +143,7 @@ public:
 	}
 
 	template <class Op>
-	const Node* Find(Op& op, const Node* prev = NULL) const
+	const Node* Find(Op&& op, const Node* prev = NULL) const
 	{
 		const Node* pCur;
 		if (!prev)
@@ -176,7 +176,7 @@ public:
 	}
 
 	template <class Op>
-	UInt32 CountIf(Op& op) const
+	UInt32 CountIf(Op&& op) const
 	{
 		UInt32 count = 0;
 		const Node* pCur = m_pHead;
@@ -203,7 +203,7 @@ public:
 	}
 
 	template <class Op>
-	UInt32 RemoveIf(Op& op)
+	UInt32 RemoveIf(Op&& op)
 	{
 		return FreeNodes(const_cast<Node*>(m_pHead), op);
 	}
@@ -228,7 +228,7 @@ public:
 	}
 
 	template <class Op>
-	UInt32 GetIndexOf(Op& op)
+	UInt32 GetIndexOf(Op&& op)
 	{
 		UInt32 idx = 0;
 		const Node* pCur = m_pHead;

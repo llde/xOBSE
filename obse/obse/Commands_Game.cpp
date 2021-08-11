@@ -412,7 +412,7 @@ static bool Cmd_MessageBoxEX_Execute(COMMAND_ARGS)
 		return true;
 
 	//extract the buttons
-	char* b[10] = {0};
+	const char* b[10] = {0};
 	UInt32 btnIdx = 0;
 
 	for (char* ch = buffer; *ch && btnIdx < 10; ch++)
