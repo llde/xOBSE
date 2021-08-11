@@ -21,7 +21,7 @@ public:
 	};
 
 	typedef std::map <t_key, Entry>			EntryMapType;
-	typedef typename EntryMapType::iterator	Iterator;
+	typedef typename EntryMapType::iterator	EntryMapIterator;
 
 	IRangeMap()
 	{
@@ -56,7 +56,7 @@ public:
 			{
 				// collision check
 
-				EntryMapType::iterator	iter = m_entries.lower_bound(start);
+				EntryMapIterator iter = m_entries.lower_bound(start);
 				// iter contains the first entry at or after start (or null)
 
 				if(iter == m_entries.begin())
@@ -79,7 +79,7 @@ public:
 						// we didn't get the first entry in the map
 						// and there is at least one entry in the map
 						// therefore there's an entry before iter
-						EntryMapType::iterator	preIter = iter;
+						EntryMapIterator	preIter = iter;
 						preIter--;
 
 						// check if this collides
@@ -89,7 +89,7 @@ public:
 						if(preEnd < start)
 						{
 							// cool, everything's fine, allocate it
-							EntryMapType::iterator	newEntry = m_entries.insert(preIter, EntryMapType::value_type(start, Entry()));
+							EntryMapIterator	newEntry = m_entries.insert(preIter, EntryMapType::value_type(start, Entry()));
 							entry = &newEntry->second;
 						}
 					}
@@ -112,7 +112,7 @@ public:
 	{
 		t_data	* result = NULL;
 
-		EntryMapType::iterator	iter = LookupIter(addr);
+		EntryMapIterator	iter = LookupIter(addr);
 		if(iter != m_entries.end())
 		{
 			if(base) *base = iter->first;
@@ -128,7 +128,7 @@ public:
 	{
 		bool result = false;
 
-		EntryMapType::iterator	iter = LookupIter(addr);
+		EntryMapIterator	iter = LookupIter(addr);
 		if(iter != m_entries.end())
 		{
 			if(base) *base = iter->first;
@@ -149,16 +149,16 @@ public:
 		return entry->length;
 	}
 
-	typename EntryMapType::iterator	LookupIter(t_key addr)
+	EntryMapIterator	LookupIter(t_key addr)
 	{
-		EntryMapType::iterator	result = m_entries.end();
+		EntryMapIterator	result = m_entries.end();
 
 		if(!m_entries.empty())
 		{
 			// we need to find the last entry less than or equal to addr
 
 			// find the first entry not less than addr
-			EntryMapType::iterator	iter = m_entries.lower_bound(addr);
+			EntryMapIterator	iter = m_entries.lower_bound(addr);
 
 			// iter is either equal to addr, greater than addr, or the end
 			if(iter == m_entries.end())
