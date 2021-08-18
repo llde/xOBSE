@@ -29,7 +29,7 @@ static void ShowError(const char* msg, void* userData)
 	_MESSAGE(msg);
 }
 
-static bool ShowWarning(const char* msg, void* userData)
+static bool ShowWarning(const char* msg, void* userData, bool canDisable)
 {
 	Console_Print(msg);
 	_MESSAGE(msg);
@@ -48,7 +48,7 @@ static void ShowError(const char* msg, void* userData)
 	ASSERT(userData != nullptr);
 	auto scriptBuffer = reinterpret_cast<ScriptBuffer*>(userData);
 
-	if (IsCseLoaded())
+	if (scriptBuffer->scriptFragment == 0 && IsCseLoaded())
 	{
 		// route all errors throw the editor's ShowCompilerError() function
 		// so that CSE's script editor can intercept and parse them
@@ -64,12 +64,12 @@ static void ShowError(const char* msg, void* userData)
 	}
 }
 
-static bool ShowWarning(const char* msg, void* userData)
+static bool ShowWarning(const char* msg, void* userData, bool canDisable)
 {
 	ASSERT(userData != nullptr);
 	auto scriptBuffer = reinterpret_cast<ScriptBuffer*>(userData);
 
-	if (IsCseLoaded() && DoesCseSupportCompilerWarnings())
+	if (scriptBuffer->scriptFragment == 0 && IsCseLoaded() && DoesCseSupportCompilerWarnings())
 	{
 		// route all warnings throw the editor's ShowCompilerError() function (hooked by the CSE)
 		// at this point, the message should have a prefix to denote that it's a warning and have its corresponding message code
@@ -79,11 +79,12 @@ static bool ShowWarning(const char* msg, void* userData)
 	else
 	{
 		char msgText[0x1000];
-		sprintf_s(msgText, sizeof(msgText), "Warning in script '%s', line %d:\n\n%s\n\n'Cancel' will disable this message for the remainder of the session.",
+		sprintf_s(msgText, sizeof(msgText), "Warning in script '%s', line %d:\n\n%s%s",
 				  (scriptBuffer->scriptName.m_data ? scriptBuffer->scriptName.m_data : ""),
-				  scriptBuffer->curLineNumber, msg);
-		int result = MessageBox(NULL, msgText, "OBSE", MB_OKCANCEL | MB_ICONWARNING | MB_TASKMODAL);
-		return result == IDCANCEL;
+				  scriptBuffer->curLineNumber, msg,
+				  canDisable ? "\n\n'Cancel' will disable this message for the remainder of the session." : "");
+		int result = MessageBox(NULL, msgText, "OBSE", (canDisable ? MB_OKCANCEL : MB_OK) | MB_ICONWARNING | MB_TASKMODAL);
+		return canDisable ? result == IDCANCEL : false;
 	}
 }
 
@@ -2281,6 +2282,7 @@ ErrOutput::Message CompilerMessages::s_Messages[] =
 		"Undefined message."
 };
 
+
 void CompilerMessages::Show(UInt32 messageCode, ScriptBuffer* scriptBuffer, ...)
 {
 	messageCode = messageCode > kMessageCode_Max ? kMessageCode_Max : messageCode;
@@ -2307,8 +2309,12 @@ void CompilerMessages::Show(UInt32 messageCode, ScriptBuffer* scriptBuffer, ...)
 
 	if (!messageDisabled)
 	{
-		if (msg->IsTreatAsWarning() && IsCseLoaded() && DoesCseSupportCompilerWarnings())
+		// if the CSE is not loaded or if the message is an error, use our dispatch machinery as-is
+		if (!msg->IsTreatAsWarning() || !IsCseLoaded() || !DoesCseSupportCompilerWarnings())
+			g_ErrOut.vShow(*msg, scriptBuffer, args);
+		else if (scriptBuffer->scriptFragment == 0)
 		{
+			// warning whilst compiling a regular script with the CSE
 			// prefix the message with the warning flag and the message code
 			// the CSE's script editor will automatically parse it on its end
 			char warningText[0x1000];
@@ -2317,8 +2323,15 @@ void CompilerMessages::Show(UInt32 messageCode, ScriptBuffer* scriptBuffer, ...)
 
 			g_ErrOut.vShow(tempMsg, scriptBuffer, args);
 		}
+		else if (scriptBuffer->scriptFragment)
+		{
+			// warning whilst compiling a script fragment with the CSE
+			// we need to handle this ourselves as the CSE's script editor is not in-use here
+			ErrOutput::Message tempMsg(msg->fmt.c_str(), false, true);
+			g_ErrOut.vShow(tempMsg, scriptBuffer, args);
+		}
 		else
-			g_ErrOut.vShow(s_Messages[messageCode], scriptBuffer, args);
+			g_ErrOut.vShow(*msg, scriptBuffer, args);
 	}
 
 	va_end(args);

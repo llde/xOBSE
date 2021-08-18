@@ -574,13 +574,17 @@ ErrOutput::ErrOutput(ErrorCallbackT errorFunc, WarningCallbackT warningFunc)
 
 void ErrOutput::vShow(ErrOutput::Message& msg, void* userData, va_list args)
 {
+	if (msg.CanDisable() && msg.IsDisabled())
+		return;
+
 	char msgText[0x1000];
 	vsprintf_s(msgText, sizeof(msgText), msg.fmt.c_str(), args);
-	if (msg.CanDisable())
+
+	if (msg.IsTreatAsWarning())
 	{
-		if (msg.IsDisabled() == false)
-			if (ShowWarning(msgText, userData))
-				msg.SetDisabled();
+		bool disableWarning = ShowWarning(msgText, userData, msg.CanDisable());
+		if (msg.CanDisable() && disableWarning)
+			msg.SetDisabled();
 	}
 	else
 		ShowError(msgText, userData);

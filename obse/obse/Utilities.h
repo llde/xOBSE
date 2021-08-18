@@ -328,7 +328,7 @@ char* CopyCString(const char* src);
 class ErrOutput
 {
 	using ErrorCallbackT = std::function<void(const char* msg, void* userData)>;
-	using WarningCallbackT = std::function<bool(const char* msg, void* userData)>;	// returns true if user requests to disable warning
+	using WarningCallbackT = std::function<bool(const char* msg, void* userData, bool canBeDisabled)>;	// returns true if user requests to disable warning
 
 	ErrorCallbackT		ShowError;
 	WarningCallbackT	ShowWarning;
