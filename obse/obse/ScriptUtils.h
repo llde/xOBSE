@@ -19,10 +19,8 @@ class FunctionCaller;
 
 #include "ScriptTokens.h"
 
-#ifndef OBLIVION
 bool IsCseLoaded();
 bool DoesCseSupportCompilerWarnings();
-#endif
 
 extern ErrOutput g_ErrOut;
 
