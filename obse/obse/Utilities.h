@@ -323,19 +323,17 @@ void MakeLower(char* str);
 // data between obse and plugins
 char* CopyCString(const char* src);
 
-//extern UInt8  isWarning;
-extern UInt8 block;   //TODO reimplement the generic system
 // Generic error/warning output
 // provides a common way to output errors and warnings
 class ErrOutput
 {
-	typedef void (* _ShowError)(const char* msg);
-	typedef bool (* _ShowWarning)(const char* msg);		// returns true if user requests to disable warning
+	using ErrorCallbackT = std::function<void(const char* msg, void* userData)>;
+	using WarningCallbackT = std::function<bool(const char* msg, void* userData)>;	// returns true if user requests to disable warning
 
-	_ShowError		ShowError;
-	_ShowWarning	ShowWarning;
+	ErrorCallbackT		ShowError;
+	WarningCallbackT	ShowWarning;
 public:
-	ErrOutput(_ShowError errorFunc, _ShowWarning warningFunc);
+	ErrOutput(ErrorCallbackT errorFunc, WarningCallbackT warningFunc);
 
 	struct Message
 	{
@@ -358,10 +356,10 @@ public:
 		void SetDisabled () { flags |= kFlag_Disabled; }
 	};
 
-	void Show(Message msg, ...);
-	void Show(const char* msg, ...);
-	void vShow(Message& msg, va_list args);
-	void vShow(const char* msg, va_list args);
+	void Show(Message msg, void* userData = nullptr, ...);
+	void Show(const char* msg, void* userData = nullptr, ...);
+	void vShow(Message& msg, void* userData, va_list args);
+	void vShow(const char* msg, void* userData, va_list args);
 };
 
 inline Vector2 Vector2_Subtract(Vector2& lhs, Vector2& rhs)

@@ -19,6 +19,11 @@ class FunctionCaller;
 
 #include "ScriptTokens.h"
 
+#ifndef OBLIVION
+bool IsCseLoaded();
+bool DoesCseSupportCompilerWarnings();
+#endif
+
 extern ErrOutput g_ErrOut;
 
 // these are used in ParamInfo to specify expected Token_Type of args to commands taking OBSE expressions as args
@@ -146,17 +151,13 @@ public:
 
 bool BasicTokenToElem(ScriptToken* token, ArrayElement& elem, ExpressionEvaluator* context);
 
-class ExpressionParser
+
+struct CompilerMessages
 {
-	enum { kMaxArgs = OBSE_EXPR_MAX_ARGS };
-
-	ScriptBuffer		* m_scriptBuf;
-	ScriptLineBuffer	* m_lineBuf;
-	UInt32				m_len;
-	Token_Type			m_argTypes[kMaxArgs];
-	UInt8				m_numArgsParsed;
-
-	enum {								// varargs
+	// NOTE: new messages MUST be added just before kMessageCode_Max
+	// as the CSE plugin depends on the order of the ordinals
+	enum MessageCode : UInt32			// varargs
+	{
 		kError_CantParse,
 		kError_TooManyOperators,
 		kError_TooManyOperands,
@@ -176,14 +177,29 @@ class ExpressionParser
 		kError_UserFunctionVarsMustPrecedeDefinition,
 		kError_UserFunctionParamsUndefined,
 		kError_ExpectedStringLiteral,
+
 		kWarning_UnquotedString,		// string:unquotedString
-
 		kWarning_FunctionPointer,
+		kWarning_DeprecatedCommand,		// string:commandName
 
-		kError_Max
+		kMessageCode_Max
 	};
+private:
+	static ErrOutput::Message s_Messages[];
+public:
+	static void Show(UInt32 messageCode, ScriptBuffer* scriptBuffer, ...);
+};
 
-	static ErrOutput::Message	* s_Messages;
+
+class ExpressionParser
+{
+	enum { kMaxArgs = OBSE_EXPR_MAX_ARGS };
+
+	ScriptBuffer		* m_scriptBuf;
+	ScriptLineBuffer	* m_lineBuf;
+	UInt32				m_len;
+	Token_Type			m_argTypes[kMaxArgs];
+	UInt8				m_numArgsParsed;
 
 	char	Peek(UInt32 idx = -1) {
 		if (idx == -1)	idx = m_lineBuf->lineOffset;
@@ -192,8 +208,6 @@ class ExpressionParser
 	UInt32&	Offset()	{ return m_lineBuf->lineOffset; }
 	const char * Text()	{ return m_lineBuf->paramText; }
 	const char * CurText() { return Text() + Offset(); }
-
-	void	Message(UInt32 errorCode, ...);
 
 	Token_Type		Parse();
 	Token_Type		ParseSubExpression(UInt32 exprLen);

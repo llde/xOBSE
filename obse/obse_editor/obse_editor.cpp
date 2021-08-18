@@ -217,115 +217,6 @@ void PatchIsAlpha()
 	WriteRelCall(ScriptIsAlpha_PatchAddr, (UInt32)ScriptIsAlphaHook);
 }
 
-/*
-static const UInt32 kErrorReturn = 0x004FFFEC;
-
-
-static  UInt32 WINAPI MessageBoxHook(HWND hWnd, const char* text, const char* caption, UInt32 flags) {
-	bool isWarning = flags & MSG_WARNING;
-	bool isSuppressed = flags & MSG_SUPPRESSED;
-	if (isSuppressed) return 0;
-	if (isWarning) returnCode = MessageBoxA(hWnd, text, "Script Warning", MB_ICONWARNING | MB_OKCANCEL);
-	else returnCode = MessageBoxA(hWnd, text, caption, MB_ICONERROR | MB_OK);
-	return returnCode;
-}
-
-
-static const UInt32 kFormHeapFree = 0x00401EA0;
-static const UInt32 kRet = 0x0050000C;
-static void __declspec(naked) HeapFreeHook() {
-//arguments are already pushed here
-	__asm {
-		call kFormHeapFree
-		mov eax, [returnCode]
-		jmp kRet
-	}
-}
-UInt32 flags = 0;
-static UInt32 fixupsReturn = 0x004FFFE4 + 5;
-void __declspec(naked) FixupFlags() {
-
-	_asm {
-		pushad
-	}
-	flags = 0; //Start clean
-	if (isWarning) flags |= MSG_WARNING;
-	if (block && isWarning) flags |= MSG_SUPPRESSED;  //TODO make suppressions and warnings a lookup
-	__asm {
-		popad
-		//ebx are flags
-		mov  ebx, [flags]
-		jmp [fixupsReturn]
-	}
-}
-
-void PatchScriptErrorReporting() {
-	WriteRelCall(0x004FFFFA, (UInt32)MessageBoxHook);
-	SafeWrite8(0x004FFFFA +5 , 0x90);
-	WriteRelCall(0x00500001, (UInt32)StubMsgBox);  //Stub to avoid nopping a lot of stuffs
-	WriteRelJump(0x00500007, (UInt32)HeapFreeHook);  //Hook to ensure we got the proper EAX
-	SafeWrite8(0x004FFFEA, 0x90);
-	SafeWrite8(0x004FFFEA + 1, 0x90);
-	SafeWrite8(0x004FFFE2, 0x90);
-	SafeWrite8(0x004FFFE2 + 1, 0x90);
-	SafeWrite8(0x004FFFDA, 0x90);
-	SafeWrite8(0x004FFFDA + 1, 0x90); 
-	WriteRelJump(0x004FFFE4, (UInt32)FixupFlags);
-	SafeWrite8(0x004FFFE4 + 5, 0x90);
-}
-*/
-
-static UInt32 returnCode = 0;
-
-int __cdecl StubMsgBox(const char* format, ...) {
-	returnCode = 0;
-	HWND parentHwnd = *(HWND*)0x00A0AF20;
-	char* buf = (char*)calloc(1024, sizeof(char));
-	va_list va;
-	va_start(va, format);
-	_vsprintf_p(buf, 1024, format, va);
-	UInt32 flags = 0;
-	const char* caption = nullptr;
-	char* hold = nullptr;
-	for (size_t i = 0; i < 1024; i++) {
-		if (buf[i] == '\n') {
-			hold = buf + i + 1;
-			break;
-		}
-	}
-	UInt32 len = strlen(hold);
-	if (len > 9 && 0 == strncmp(hold, "[SUPPRESSED]", 12)) return returnCode;
-	else if (len > 9 && 0 == strncmp(hold, "[WARNING]", 9)) {
-		flags = MB_OKCANCEL | MB_ICONWARNING;
-		caption = "Script Warning";
-		memmove(hold, hold + 9, len - 9);
-		hold[len - 9] = '\0';
-	}
-	else {
-		flags |= MB_ICONERROR | MB_OK;
-		caption = "Script Error";
-	}
-	returnCode = MessageBoxA(parentHwnd, buf, caption, flags);
-	free(buf);
-	return returnCode;
-}
-
-static const UInt32 kFormHeapFree = 0x00401EA0;
-static const UInt32 kRet = 0x0050000C + 5;
-static void __declspec(naked) HeapFreeHook() {
-	//arguments are already pushed here
-	__asm {
-		call kFormHeapFree
-		mov eax, [returnCode]
-		jmp kRet
-	}
-}
-
-void CSHookFixups() {
-//TODO assume CSE is installed for now
-	WriteRelCall(0x00500006, (UInt32)StubMsgBox);  //Save ecx and do stuff
-	WriteRelJump(0x0050000C, (UInt32)HeapFreeHook);  //Hook to ensure we got the proper EAX
-}
 
 extern "C" {
 void OBSE_Initialize(void)
@@ -344,11 +235,8 @@ void OBSE_Initialize(void)
 
 		FixEditorFont();
 		FixErrorReportBug();
-//		PatchScriptErrorReporting();
-	//TODO get if CSE is installed, if not handle ourself
-		CSHookFixups();
 
-		CommandTable::Init();  
+		CommandTable::Init();
 
 
 		// Add "string_var" as alias for "long"

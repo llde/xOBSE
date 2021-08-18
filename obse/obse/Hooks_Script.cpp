@@ -157,8 +157,6 @@ void ResetActivationRecurseDepth()
 
 #else	// CS-stuff
 
-#include "PluginManager.h"
-
 static const UInt32 kEndOfLineCheckPatchAddr = 0x00501E22;
 static const UInt32 kCopyStringArgHookAddr		 = 0x00501A8A;
 
@@ -171,11 +169,10 @@ static const UInt32 kExpressionParserBufferOverflowRetnAddr_1 = 0x004F9717;
 
 static const UInt32 kExpressionParserBufferOverflowHookAddr_2 = 0x004F9863;
 static const UInt32 kExpressionParserBufferOverflowRetnAddr_2 = 0x004F986A;
-	
+
 static const UInt32 kWarnForDeprecatedCommandsHook = 0x00503119;
 static const UInt32 kWarnForDeprecatedCommandsReturn = 0x0050311E;
 
-int (__cdecl* PrintScriptError)(ScriptBuffer* buffer, const char* format, ...);
 
 static __declspec(naked) void ExpressionParserBufferOverflowHook_1(void)
 {
@@ -413,13 +410,11 @@ namespace CompilerOverride {
 	{
 		ASSERT(opcode == 0x10 || opcode == 0x11);
 
-		UInt32 maxScriptLength = 0x4000;	// default length, doubled when running the CSE plugin
-		if (g_pluginManager.LookupHandleFromName(("CSE")) != kPluginHandle_Invalid)
-			maxScriptLength = 0x8000;
+		UInt32 maxScriptLength = IsCseLoaded() ? 0x8000 : 0x4000;	// default length of 0x4000 is doubled when running the CSE plugin
 
 		// make sure we've got enough room in the buffer
 		if (buf->dataOffset + 4 >= maxScriptLength)
-			g_ErrOut.Show("Error: Max script length exceeded. Please edit and recompile.");
+			g_ErrOut.Show("Error: Max script length exceeded. Please edit and recompile.", buf);
 		else {
 			const char* cmdName = "@PushExecutionContext";
 			SInt32 offset = 0;
@@ -657,35 +652,28 @@ static __declspec(naked) void __cdecl CopyStringArgHook(void)
 	}
 
 }
-//TODO improve and refactor in a way everything make sense
-
-const char* deprecationWarning = "[WARNING]Used deprecated command %s";
-const char* deprecationBLocked = "[SUPPRESSED]Used deprecated command %s";
 static void WarnDeprecatedCommand(CommandInfo* info, ScriptBuffer* buffer){
-	//isWarning = 1
-	if (info->flags & CommandInfo_Deprecated) block |= (PrintScriptError(buffer,  block ? deprecationBLocked : deprecationWarning , info->longName) == IDCANCEL) ; //Once 1, 1 forever
-	//isWarning = 0
+	if (info->flags & CommandInfo_Deprecated)
+		CompilerMessages::Show(CompilerMessages::kWarning_DeprecatedCommand, buffer, info->longName);
 }
 
 static __declspec(naked) void __cdecl WarnForDeprecatedCommands(void){
-		//ebp is the CommandInfo*
-		__asm {
-			push edi
-			push ebp
-			call WarnDeprecatedCommand
-			add esp, 8
+	//ebp is the CommandInfo*
+	__asm {
+		push edi
+		push ebp
+		call WarnDeprecatedCommand
+		add esp, 8
 
-			mov al, [ebp+0x10]
-			test al, al
-			jmp [kWarnForDeprecatedCommandsReturn]
-		}
-	
+		mov al, [ebp+0x10]
+		test al, al
+		jmp [kWarnForDeprecatedCommandsReturn]
+	}
 }
 
 
 void Hook_Compiler_Init()
 {
-	*(int*)&PrintScriptError = 0x004FFF40;
 	// hook beginning of compilation process
 	WriteRelJump(kBeginScriptCompilePatchAddr, (UInt32)&CompileScriptHook);
 
