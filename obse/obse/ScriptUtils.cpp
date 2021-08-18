@@ -43,21 +43,6 @@ const char* GetEditorID(TESForm* form)
 	return form->editorData.editorID.m_data;
 }
 
-bool IsCseLoaded()
-{
-	return g_pluginManager.LookupHandleFromName("CSE");
-}
-
-bool DoesCseSupportCompilerWarnings()
-{
-	auto cseVersion = g_pluginManager.GetPluginVersion("CSE");
-
-	// support for suppressible warnings was added in major version 11
-	auto major = (cseVersion >> 24) & 0xFF;
-	return major >= 11;
-}
-
-
 static void ShowError(const char* msg, void* userData)
 {
 	ASSERT(userData != nullptr);
@@ -103,6 +88,20 @@ static bool ShowWarning(const char* msg, void* userData)
 }
 
 #endif
+
+bool IsCseLoaded()
+{
+	return g_pluginManager.LookupHandleFromName("CSE");
+}
+
+bool DoesCseSupportCompilerWarnings()
+{
+	auto cseVersion = g_pluginManager.GetPluginVersion("CSE");
+
+	// support for suppressible warnings was added in major version 11
+	auto major = (cseVersion >> 24) & 0xFF;
+	return major >= 11;
+}
 
 ErrOutput g_ErrOut(ShowError, ShowWarning);
 
