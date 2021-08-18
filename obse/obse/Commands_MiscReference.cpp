@@ -1177,14 +1177,14 @@ static bool Cmd_SetHarvested_Execute(COMMAND_ARGS)
 	else if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &bHarvested))
 		return true;
 
-	if (bHarvested)
-	{
+	if (bHarvested){
 		thisObj->flags |= TESFlora::kFloraFlags_Harvested;
 		thisObj->MarkAsModified(TESFlora::kModified_Empty);
 	}
-	else
+	else {
 		thisObj->flags &= ~TESFlora::kFloraFlags_Harvested;
-
+		thisObj->ClearModified(TESFlora::kModified_Empty);
+	}
 	return true;
 }
 
