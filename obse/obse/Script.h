@@ -220,9 +220,10 @@ struct ScriptBuffer
 	char			* scriptText;		// 000
 	UInt32			textOffset;			// 004
 	UInt32			unk008;				// 008
-	BSStringT			scriptName;			// 00C
+	BSStringT		scriptName;			// 00C
 	UInt32			unk014;				// 014
-	UInt16			unk018;				// 018
+	UInt8			scriptFragment;		// 018 set to 1 when compiling results scripts in quest stages, dialogue topics and AI packages
+	UInt8			pad019;				// 019
 	UInt16			unk01A;				// 01A
 	UInt32			curLineNumber;		// 01C
 	UInt8			* scriptData;		// 020 pointer to 0x4000-byte array
