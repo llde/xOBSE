@@ -1460,41 +1460,47 @@ void __stdcall HandleEventForCallingObject(UInt32 id, TESObjectREFR* callingObj,
 
 				continue;
 			}
-
-			// Check filters
-			if (iter->source) {
-				// special-case - check the source filter against the second arg, the attacker
-				if (id == kEventID_OnHealthDamage) {
-					if ((TESObjectREFR*)arg1 != iter->source) {
-						++iter;
-						continue;
-					}
-				}
-				else if (!((TESObjectREFR*)arg0 == iter->source)) {
+			if (id == kEventID_EventKey || id == kEventID_EventControl) {
+				if (arg0 != iter->source || arg1 != iter->object) {
 					++iter;
 					continue;
 				}
 			}
-
-			if (iter->callingObj && !(callingObj == iter->callingObj)) {
-				++iter;
-				continue;
-			}
-
-			if (iter->object) {
-				if (id == kEventID_OnMagicEffectHit) {
-					EffectSetting* setting = OBLIVION_CAST(iter->object, TESForm, EffectSetting);
-					if (setting && setting->effectCode != (UInt32)arg1) {
+			else {
+				// Check filters
+				if (iter->source) {
+					// special-case - check the source filter against the second arg, the attacker
+					if (id == kEventID_OnHealthDamage) {
+						if ((TESObjectREFR*)arg1 != iter->source) {
+							++iter;
+							continue;
+						}
+					}
+					else if (!((TESObjectREFR*)arg0 == iter->source)) {
 						++iter;
 						continue;
 					}
 				}
-				else if (!(iter->object == (TESForm*)arg1)) {
+
+				if (iter->callingObj && !(callingObj == iter->callingObj)) {
 					++iter;
 					continue;
 				}
-			}
 
+				if (iter->object) {
+					if (id == kEventID_OnMagicEffectHit) {
+						EffectSetting* setting = OBLIVION_CAST(iter->object, TESForm, EffectSetting);
+						if (setting && setting->effectCode != (UInt32)arg1) {
+							++iter;
+							continue;
+						}
+					}
+					else if (!(iter->object == (TESForm*)arg1)) {
+						++iter;
+						continue;
+					}
+				}
+			}
 			if (GetCurrentThreadId() != g_mainThreadID) {
 				// avoid potential issues with invoking handlers outside of main thread by deferring event handling
 				if (!iter->IsRemoved()) {

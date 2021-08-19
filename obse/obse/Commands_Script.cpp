@@ -425,17 +425,23 @@ static bool ExtractEventCallback(ExpressionEvaluator& eval, EventManager::EventC
 			TESObjectREFR* thisObjFilter = NULL;
 
 			// any filters?
+			//TODO respect the parameters
 			for (UInt32 i = 2; i < eval.NumArgs(); i++) {
 				const TokenPair* pair = eval.Arg(i)->GetPair();
 				if (pair && pair->left && pair->right) {
 					const char* key = pair->left->GetString();
 					if (key) {
 						if (!_stricmp(key, "ref") || !_stricmp(key, "first")) {
-							sourceFilter = OBLIVION_CAST(pair->right->GetTESForm(), TESForm, TESObjectREFR);
+							if (_stricmp(eventName, "OnKeyEvent") == 0 || _stricmp(eventName, "OnControlEvent") == 0) 
+								sourceFilter = (TESObjectREFR*)(UInt32)pair->right->GetNumber();
+							else sourceFilter = OBLIVION_CAST(pair->right->GetTESForm(), TESForm, TESObjectREFR);
 						}
 						else if (!_stricmp(key, "object") || !_stricmp(key, "second")) {
+							if (_stricmp(eventName, "OnKeyEvent") == 0 || _stricmp(eventName, "OnControlEvent") == 0)
+								targetFilter = (TESObjectREFR*)(UInt32)pair->right->GetNumber();
+
 							// special-case MGEF
-							if (!_stricmp(eventName, "onmagiceffecthit")) {
+							else if (!_stricmp(eventName, "onmagiceffecthit")) {
 								const char* effStr = pair->right->GetString();
 								if (effStr && strlen(effStr) == 4) {
 									targetFilter = EffectSetting::EffectSettingForC(*((UInt32*)effStr));
