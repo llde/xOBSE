@@ -170,6 +170,7 @@ extern CommandInfo kCommandInfo_IsDoor;
 extern CommandInfo kCommandInfo_IsActivator;
 extern CommandInfo kCommandInfo_IsLight;
 extern CommandInfo kCommandInfo_IsFurniture;
+extern CommandInfo kCommandInfo_IsMiscItem;
 
 extern CommandInfo kCommandInfo_IsClonedForm;
 extern CommandInfo kCommandInfo_CloneForm;

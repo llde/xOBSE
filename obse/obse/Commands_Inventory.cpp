@@ -3067,6 +3067,11 @@ static bool Cmd_IsLight_Execute(COMMAND_ARGS)
 	return IsType_Execute(PASS_COMMAND_ARGS, kFormType_Light);
 }
 
+static bool Cmd_IsMiscItem_Execute(COMMAND_ARGS)
+{
+	return IsType_Execute(PASS_COMMAND_ARGS, kFormType_Misc);
+}
+
 static bool Cmd_IsFurniture_Execute(COMMAND_ARGS)
 {
 	return IsType_Execute(PASS_COMMAND_ARGS, kFormType_Furniture);
@@ -4550,6 +4555,21 @@ CommandInfo kCommandInfo_IsLight =
 	1,
 	kParams_OneOptionalInventoryObject,
 	HANDLER(Cmd_IsLight_Execute),
+	Cmd_Default_Parse,
+	NULL,
+	0
+};
+
+CommandInfo kCommandInfo_IsMiscItem =
+{
+	"IsMiscItem",
+	"IsMisc",
+	0,
+	"returns 1 if the specified base object is a misc item and 0 if it is not",
+	0,
+	1,
+	kParams_OneOptionalInventoryObject,
+	HANDLER(Cmd_IsMiscItem_Execute),
 	Cmd_Default_Parse,
 	NULL,
 	0
