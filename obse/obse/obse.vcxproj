@@ -65,6 +65,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_416|Win32'">
     <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_416|Win32'">
+    <PostBuildEventUseInBuild>false</PostBuildEventUseInBuild>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_416|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
@@ -96,7 +99,8 @@
     </Link>
     <PostBuildEvent>
       <Message>Installing DLL...</Message>
-      <Command>copy "$(TargetPath)" "$(OblivionPath)\obse_1_2_416.dll"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_416|Win32'">
@@ -146,6 +150,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_416|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_416|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ExpressionEvaluator.cpp" />
     <ClCompile Include="GameActorValues.cpp" />
     <ClCompile Include="GameAPI.cpp" />
     <ClCompile Include="GameBSExtraData.cpp" />
@@ -250,6 +255,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\StdAfx.h" />
+    <ClInclude Include="ExpressionEvaluator.h" />
     <ClInclude Include="GameActorValues.h" />
     <ClInclude Include="GameAPI.h" />
     <ClInclude Include="GameBSExtraData.h" />

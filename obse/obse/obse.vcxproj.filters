@@ -317,6 +317,9 @@
     <ClCompile Include="Hooks_Input.cpp">
       <Filter>hooks</Filter>
     </ClCompile>
+    <ClCompile Include="ExpressionEvaluator.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameActorValues.h">
@@ -630,6 +633,9 @@
       <Filter>internals</Filter>
     </ClInclude>
     <ClInclude Include="MemoryPool.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="ExpressionEvaluator.h">
       <Filter>internals</Filter>
     </ClInclude>
   </ItemGroup>

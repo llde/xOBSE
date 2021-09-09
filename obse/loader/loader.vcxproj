@@ -85,7 +85,8 @@
     </Link>
     <PostBuildEvent>
       <Message>Installing...</Message>
-      <Command>copy "$(TargetPath)" "$(OblivionPath)\obse_loader.exe"</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
