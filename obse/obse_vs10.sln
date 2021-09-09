@@ -14,16 +14,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "loader_common", "loader_com
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "steam_loader", "steam_loader\steam_loader.vcxproj", "{0B4878C9-13C0-45F2-A25D-F532EC19760A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc", "Misc", "{399E8DD8-D7C5-42A0-B72D-A34B3183134F}"
-	ProjectSection(SolutionItems) = preProject
-		obse.ini = obse.ini
-		obse_command_doc.html = obse_command_doc.html
-		obse_readme.txt = obse_readme.txt
-		obse_whatsnew.txt = obse_whatsnew.txt
-		plugin_opcode_assignments.txt = plugin_opcode_assignments.txt
-		Todo.txt = Todo.txt
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32

@@ -566,46 +566,55 @@ void MakeLower(char* str)
 #pragma warning(pop)
 
 // ErrOutput
-ErrOutput::ErrOutput(_ShowError errorFunc, _ShowWarning warningFunc)
+ErrOutput::ErrOutput(ErrorCallbackT errorFunc, WarningCallbackT warningFunc)
 {
 	ShowWarning = warningFunc;
 	ShowError = errorFunc;
 }
 
-void ErrOutput::vShow(ErrOutput::Message& msg, va_list args)
+void ErrOutput::vShow(ErrOutput::Message& msg, void* userData, va_list args)
 {
-	char msgText[0x400];
+	if (msg.CanDisable() && msg.IsDisabled())
+		return;
+
+	char msgText[0x1000];
 	vsprintf_s(msgText, sizeof(msgText), msg.fmt.c_str(), args);
-	if (msg.CanDisable())
+
+	if (msg.IsTreatAsWarning())
 	{
-		if (msg.IsDisabled() == false)
-			if (ShowWarning(msgText))
-				msg.SetDisabled();
+		bool disableWarning = ShowWarning(msgText, userData, msg.CanDisable());
+		if (msg.CanDisable() && disableWarning)
+			msg.SetDisabled();
 	}
 	else
-		ShowError(msgText);
+		ShowError(msgText, userData);
 }
 
-void ErrOutput::Show(ErrOutput::Message msg, ...)
+void ErrOutput::Show(ErrOutput::Message msg, void* userData, ...)
 {
 	va_list args;
-	va_start(args, msg);
+	va_start(args, userData);
 
-	vShow(msg, args);
+	vShow(msg, userData, args);
+
+	va_end(args);
 }
 
-void ErrOutput::Show(const char* msg, ...)
+void ErrOutput::Show(const char* msg, void* userData, ...)
 {
 	va_list args;
-	va_start(args, msg);
+	va_start(args, userData);
 
-	vShow(msg, args);
+	vShow(msg, userData, args);
+
+	va_end(args);
+
 }
 
-void ErrOutput::vShow(const char* msg, va_list args)
+void ErrOutput::vShow(const char* msg, void* userData, va_list args)
 {
 	Message tempMsg (msg);
-	vShow(tempMsg, args);
+	vShow(tempMsg, userData, args);
 }
 
 LPTOP_LEVEL_EXCEPTION_FILTER g_OriginalTopLevelExceptionFilter = NULL;

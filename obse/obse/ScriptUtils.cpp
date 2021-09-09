@@ -6,6 +6,7 @@
 #include "ParamInfos.h"
 #include "FunctionScripts.h"
 #include "Settings.h"
+#include "PluginManager.h"
 
 #if OBLIVION
 
@@ -16,20 +17,19 @@
 #include "GameData.h"
 #include "common/ICriticalSection.h"
 #include "ThreadLocal.h"
-#include "PluginManager.h"
 
 const char* GetEditorID(TESForm* form)
 {
 	return NULL;
 }
 
-static void ShowError(const char* msg)
+static void ShowError(const char* msg, void* userData)
 {
 	Console_Print(msg);
 	_MESSAGE(msg);
 }
 
-static bool ShowWarning(const char* msg)
+static bool ShowWarning(const char* msg, void* userData, bool canDisable)
 {
 	Console_Print(msg);
 	_MESSAGE(msg);
@@ -37,28 +37,72 @@ static bool ShowWarning(const char* msg)
 }
 
 #else
-//UInt8  isWarning = 0;
-UInt8 block = 0;
 
 const char* GetEditorID(TESForm* form)
 {
 	return form->editorData.editorID.m_data;
 }
 
-static void ShowError(const char* msg)
+static void ShowError(const char* msg, void* userData)
 {
-	MessageBox(NULL, msg, "OBSE", MB_ICONEXCLAMATION);
+	ASSERT(userData != nullptr);
+	auto scriptBuffer = reinterpret_cast<ScriptBuffer*>(userData);
+
+	if (scriptBuffer->scriptFragment == 0 && IsCseLoaded())
+	{
+		// route all errors throw the editor's ShowCompilerError() function
+		// so that CSE's script editor can intercept and parse them
+		ShowCompilerError(scriptBuffer, "%s", msg);
+	}
+	else
+	{
+		char msgText[0x1000];
+		sprintf_s(msgText, sizeof(msgText), "Error in script '%s', line %d:\n\n%s",
+				  (scriptBuffer->scriptName.m_data ? scriptBuffer->scriptName.m_data : ""),
+				  scriptBuffer->curLineNumber, msg);
+		MessageBox(NULL, msgText, "OBSE", MB_OK | MB_ICONERROR | MB_TASKMODAL);
+	}
 }
 
-static bool ShowWarning(const char* msg)
+static bool ShowWarning(const char* msg, void* userData, bool canDisable)
 {
-	char msgText[0x400];
-	sprintf_s(msgText, sizeof(msgText), "%s\n\n'Cancel' will disable this message for the remainder of the session.", msg);
-	int result = MessageBox(NULL, msgText, "OBSE", MB_OKCANCEL | MB_ICONEXCLAMATION);
-	return result == IDCANCEL;
+	ASSERT(userData != nullptr);
+	auto scriptBuffer = reinterpret_cast<ScriptBuffer*>(userData);
+
+	if (scriptBuffer->scriptFragment == 0 && IsCseLoaded() && DoesCseSupportCompilerWarnings())
+	{
+		// route all warnings throw the editor's ShowCompilerError() function (hooked by the CSE)
+		// at this point, the message should have a prefix to denote that it's a warning and have its corresponding message code
+		ShowCompilerError(scriptBuffer, "%s", msg);
+		return false;
+	}
+	else
+	{
+		char msgText[0x1000];
+		sprintf_s(msgText, sizeof(msgText), "Warning in script '%s', line %d:\n\n%s%s",
+				  (scriptBuffer->scriptName.m_data ? scriptBuffer->scriptName.m_data : ""),
+				  scriptBuffer->curLineNumber, msg,
+				  canDisable ? "\n\n'Cancel' will disable this message for the remainder of the session." : "");
+		int result = MessageBox(NULL, msgText, "OBSE", (canDisable ? MB_OKCANCEL : MB_OK) | MB_ICONWARNING | MB_TASKMODAL);
+		return canDisable ? result == IDCANCEL : false;
+	}
 }
 
 #endif
+
+bool IsCseLoaded()
+{
+	return g_pluginManager.LookupHandleFromName("CSE");
+}
+
+bool DoesCseSupportCompilerWarnings()
+{
+	auto cseVersion = g_pluginManager.GetPluginVersion("CSE");
+
+	// support for suppressible warnings was added in major version 11
+	auto major = (cseVersion >> 24) & 0xFF;
+	return major >= 11;
+}
 
 ErrOutput g_ErrOut(ShowError, ShowWarning);
 
@@ -376,7 +420,7 @@ ScriptToken* Eval_Assign_Elem_String(OperatorType op, ScriptToken* lh, ScriptTok
 		return nullptr;
 	}
 	if (array->SetElementString(key, rh->GetString())) return ScriptToken::Create(rh->GetString());
-	context->Error("Element with key not found or wrong type"); 
+	context->Error("Element with key not found or wrong type");
 	return nullptr;
 }
 
@@ -394,7 +438,7 @@ ScriptToken* Eval_Assign_Elem_Form(OperatorType op, ScriptToken* lh, ScriptToken
 		return nullptr;
 	}
 	if (array->SetElementFormID(key, rh->GetFormID())) return ScriptToken::CreateForm(rh->GetFormID());
-	context->Error("Element with key not found or wrong type"); 
+	context->Error("Element with key not found or wrong type");
 	return nullptr;
 }
 
@@ -1635,7 +1679,7 @@ void ExpressionEvaluator::Error(const char* fmt, ...)
 //	UInt16* opcodePtr = (UInt16*)((UInt8*)m_scriptData + m_baseOffset);
 	UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + m_baseOffset);
 	CommandInfo*  cmd = g_scriptCommands.GetByOpcode(*opcodePtr);
-	
+
 	// include mod filename, save having to ask users to figure it out themselves
 	const char* modName = "Savegame";
 	if (script->GetModIndex() != 0xFF)
@@ -1822,7 +1866,7 @@ bool ExpressionParser::ParseArgs(ParamInfo* params, UInt32 numParams, bool bUses
 	{
 		// when parsing commands as args to other commands or components of larger expressions, we expect to have some leftovers
 		// so this check is not necessary unless we're finished parsing the entire line
-		Message(kError_TooManyArgs);
+		CompilerMessages::Show(CompilerMessages::kError_TooManyArgs, m_scriptBuf);
 		return false;
 	}
 
@@ -1834,7 +1878,7 @@ bool ExpressionParser::ParseArgs(ParamInfo* params, UInt32 numParams, bool bUses
 	if (numExpectedArgs > m_numArgsParsed)
 	{
 		ParamInfo* missingParam = &params[m_numArgsParsed];
-		Message(kError_MissingParam, missingParam->typeStr, m_numArgsParsed + 1);
+		CompilerMessages::Show(CompilerMessages::kError_MissingParam, m_scriptBuf, missingParam->typeStr, m_numArgsParsed + 1);
 		return false;
 	}
 
@@ -2016,7 +2060,7 @@ bool ExpressionParser::ParseUserFunctionCall()
 		Offset()++;
 		if (Offset() >= paramLen)
 		{
-			Message(kError_CantParse);
+			CompilerMessages::Show(CompilerMessages::kError_CantParse, m_scriptBuf);
 			return false;
 		}
 	}
@@ -2047,7 +2091,7 @@ bool ExpressionParser::ParseUserFunctionCall()
 	funcForm = NULL;
 
 	if (!foundFunc)	{
-		Message(kError_ExpectedUserFunction);
+		CompilerMessages::Show(CompilerMessages::kError_ExpectedUserFunction, m_scriptBuf);
 		delete funcForm;
 		return false;
 	}
@@ -2079,7 +2123,7 @@ bool ExpressionParser::ParseUserFunctionCall()
 		std::vector<UserFunctionParam> funcParams;
 		if (!GetUserFunctionParams(funcScriptText, funcParams, funcScriptVars))
 		{
-			Message(kError_UserFunctionParamsUndefined);
+			CompilerMessages::Show(CompilerMessages::kError_UserFunctionParamsUndefined, m_scriptBuf);
 			return false;
 		}
 
@@ -2118,7 +2162,7 @@ bool ExpressionParser::ParseUserFunctionDefinition()
 	std::vector<UserFunctionParam> params;
 	if (!GetUserFunctionParams(m_scriptBuf->scriptText, params, &m_scriptBuf->vars))
 	{
-		Message(kError_UserFunctionParamsUndefined);
+		CompilerMessages::Show(CompilerMessages::kError_UserFunctionParamsUndefined, m_scriptBuf);
 		return false;
 	}
 
@@ -2152,7 +2196,7 @@ bool ExpressionParser::ParseUserFunctionDefinition()
 			{
 				if (bFoundBegin)
 				{
-					Message(kError_UserFunctionContainsMultipleBlocks);
+					CompilerMessages::Show(CompilerMessages::kError_UserFunctionContainsMultipleBlocks, m_scriptBuf);
 					return false;
 				}
 
@@ -2162,7 +2206,7 @@ bool ExpressionParser::ParseUserFunctionDefinition()
 			{
 				if (bFoundBegin)
 				{
-					Message(kError_UserFunctionVarsMustPrecedeDefinition);
+					CompilerMessages::Show(CompilerMessages::kError_UserFunctionVarsMustPrecedeDefinition, m_scriptBuf);
 					return false;
 				}
 
@@ -2182,7 +2226,7 @@ bool ExpressionParser::ParseUserFunctionDefinition()
 				!_stricmp(token.c_str(), "ref") || !_stricmp(token.c_str(), "reference") || !_stricmp(token.c_str(), "short") ||
 				!_stricmp(token.c_str(), "long"))
 				{
-					Message(kError_UserFunctionVarsMustPrecedeDefinition);
+					CompilerMessages::Show(CompilerMessages::kError_UserFunctionVarsMustPrecedeDefinition, m_scriptBuf);
 					return false;
 				}
 			}
@@ -2216,7 +2260,7 @@ Token_Type ExpressionParser::Parse()
 	return result;
 }
 
-static ErrOutput::Message s_expressionErrors[] =
+ErrOutput::Message CompilerMessages::s_Messages[] =
 {
 	// errors
 		"Could not parse this line.",
@@ -2242,46 +2286,62 @@ static ErrOutput::Message s_expressionErrors[] =
 	// warnings
 		ErrOutput::Message ("Unquoted argument '%s' will be treated as string by default. Check spelling if a form or variable was intended.", true, true),
 		ErrOutput::Message ("Usage of ref variables as pointers to user-defined functions prevents type-checking of function arguments. Make sure the arguments provided match those expected by the function being called.", true, true),
+		ErrOutput::Message ("Command '%s' is deprecated. Consult the command documentation for an alternative command.", true, true),
 
 	// default
-		"Undefined error."
+		"Undefined message."
 };
 
-ErrOutput::Message * ExpressionParser::s_Messages = s_expressionErrors;
 
-void ExpressionParser::Message(UInt32 errorCode, ...)
+void CompilerMessages::Show(UInt32 messageCode, ScriptBuffer* scriptBuffer, ...)
 {
-	errorCode = errorCode > kError_Max ? kError_Max : errorCode;
+	messageCode = messageCode > kMessageCode_Max ? kMessageCode_Max : messageCode;
 	va_list args;
-	va_start(args, errorCode);
-	ErrOutput::Message* msg = &s_Messages[errorCode];
+	va_start(args, scriptBuffer);
+	ErrOutput::Message* msg = &s_Messages[messageCode];
+
+	bool messageDisabled = false;
 	if (msg->CanDisable())
 	{
-		UInt32 enabled = 0;
-
-		switch (errorCode)
+		switch (messageCode)
 		{
 		case kWarning_UnquotedString:
-			enabled = warningUnquotedString;
+			messageDisabled = warningUnquotedString == 0;
 			break;
 		case kWarning_FunctionPointer:
-			enabled = warningUDFRefVar;
+			messageDisabled = warningUDFRefVar == 0;
+			break;
+		case kWarning_DeprecatedCommand:
+			messageDisabled = warningDeprecatedCmd == 0;
 			break;
 		}
-
-		if (enabled)
-			g_ErrOut.vShow(s_Messages[errorCode], args);
 	}
-	else		// prepend line # to message
+
+	if (!messageDisabled)
 	{
-		char msgText[0x400];
-		#if OBLIVION
-			sprintf_s(msgText, sizeof(msgText), "Error line %d\n\n%s", m_lineBuf->lineNumber, msg->fmt.data());
-			g_ErrOut.vShow(msgText, args);
-		#else
-			vsprintf_s(msgText, sizeof(msgText), msg->fmt.c_str(), args);
-			ShowCompilerError(m_scriptBuf, "%s", msgText);
-		#endif
+		// if the CSE is not loaded or if the message is an error, use our dispatch machinery as-is
+		if (!msg->IsTreatAsWarning() || !IsCseLoaded() || !DoesCseSupportCompilerWarnings())
+			g_ErrOut.vShow(*msg, scriptBuffer, args);
+		else if (scriptBuffer->scriptFragment == 0)
+		{
+			// warning whilst compiling a regular script with the CSE
+			// prefix the message with the warning flag and the message code
+			// the CSE's script editor will automatically parse it on its end
+			char warningText[0x1000];
+			sprintf_s(warningText, sizeof(warningText), "[WARNING %d] %s", messageCode, msg->fmt.c_str());
+			ErrOutput::Message tempMsg(warningText, true, true);
+
+			g_ErrOut.vShow(tempMsg, scriptBuffer, args);
+		}
+		else if (scriptBuffer->scriptFragment)
+		{
+			// warning whilst compiling a script fragment with the CSE
+			// we need to handle this ourselves as the CSE's script editor is not in-use here
+			ErrOutput::Message tempMsg(msg->fmt.c_str(), false, true);
+			g_ErrOut.vShow(tempMsg, scriptBuffer, args);
+		}
+		else
+			g_ErrOut.vShow(*msg, scriptBuffer, args);
 	}
 
 	va_end(args);
@@ -2347,7 +2407,7 @@ Token_Type ExpressionParser::ParseSubExpression(UInt32 exprLen)
 				UInt32 endBracPos = MatchOpenBracket(op);
 				if (endBracPos == -1)
 				{
-					Message(kError_MismatchedBrackets);
+					CompilerMessages::Show(CompilerMessages::kError_MismatchedBrackets, m_scriptBuf);
 					return kTokenType_Invalid;
 				}
 
@@ -2360,7 +2420,7 @@ Token_Type ExpressionParser::ParseSubExpression(UInt32 exprLen)
 			}
 			else if (op->IsClosingBracket())
 			{
-				Message(kError_MismatchedBrackets);
+				CompilerMessages::Show(CompilerMessages::kError_MismatchedBrackets, m_scriptBuf);
 				return kTokenType_Invalid;
 			}
 			else		// normal operator, handle or push
@@ -2408,7 +2468,7 @@ Token_Type ExpressionParser::ParseSubExpression(UInt32 exprLen)
 
 				if (!bParsed)
 				{
-					Message(kError_CantParse);
+					CompilerMessages::Show(CompilerMessages::kError_CantParse, m_scriptBuf);
 					return kTokenType_Invalid;
 				}
 			}
@@ -2419,7 +2479,7 @@ Token_Type ExpressionParser::ParseSubExpression(UInt32 exprLen)
 		// operandType is an operand or result of a subexpression
 		if (operandType == kTokenType_Invalid)
 		{
-			Message(kError_CantParse);
+			CompilerMessages::Show(CompilerMessages::kError_CantParse, m_scriptBuf);
 			return kTokenType_Invalid;
 		}
 		else
@@ -2436,12 +2496,12 @@ Token_Type ExpressionParser::ParseSubExpression(UInt32 exprLen)
 	// done, make sure we've got a result
 	if (ops.size() != 0)
 	{
-		Message(kError_TooManyOperators);
+		CompilerMessages::Show(CompilerMessages::kError_TooManyOperators, m_scriptBuf);
 		return kTokenType_Invalid;
 	}
 	else if (operands.size() > 1)
 	{
-		Message(kError_TooManyOperands);
+		CompilerMessages::Show(CompilerMessages::kError_TooManyOperands, m_scriptBuf);
 		return kTokenType_Invalid;
 	}
 	else if (operands.size() == 0) {
@@ -2461,7 +2521,7 @@ Token_Type ExpressionParser::PopOperator(std::stack<Operator*> & ops, std::stack
 	Token_Type lhType, rhType = kTokenType_Invalid;
 	if (operands.size() < topOp->numOperands)
 	{
-		Message(kError_TooManyOperators);
+		CompilerMessages::Show(CompilerMessages::kError_TooManyOperators, m_scriptBuf);
 		return kTokenType_Invalid;
 	}
 
@@ -2476,7 +2536,7 @@ Token_Type ExpressionParser::PopOperator(std::stack<Operator*> & ops, std::stack
 		operands.pop();
 		break;
 	default:		// a paren or right bracket ended up on stack somehow
-		Message(kError_CantParse);
+		CompilerMessages::Show(CompilerMessages::kError_CantParse, m_scriptBuf);
 		return kTokenType_Invalid;
 	}
 
@@ -2484,7 +2544,7 @@ Token_Type ExpressionParser::PopOperator(std::stack<Operator*> & ops, std::stack
 	Token_Type result = topOp->GetResult(lhType, rhType);
 	if (result == kTokenType_Invalid)
 	{
-		Message(kError_InvalidOperands, topOp->symbol);
+		CompilerMessages::Show(CompilerMessages::kError_InvalidOperands, m_scriptBuf, topOp->symbol);
 		return kTokenType_Invalid;
 	}
 
@@ -2641,7 +2701,7 @@ ScriptToken* ExpressionParser::ParseOperand(Operator* curOp)
 
 	if (!firstChar)
 	{
-		Message(kError_CantParse);
+		CompilerMessages::Show(CompilerMessages::kError_CantParse, m_scriptBuf);
 		return NULL;
 	}
 	else if (firstChar == '"')			// string literal
@@ -2650,7 +2710,7 @@ ScriptToken* ExpressionParser::ParseOperand(Operator* curOp)
 		const char* endQuotePtr = strchr(CurText(), '"');
 		if (!endQuotePtr)
 		{
-			Message(kError_MismatchedQuotes);
+			CompilerMessages::Show(CompilerMessages::kError_MismatchedQuotes, m_scriptBuf);
 			return NULL;
 		}
 		else
@@ -2673,7 +2733,7 @@ ScriptToken* ExpressionParser::ParseOperand(Operator* curOp)
 	// some operators (e.g. ->) expect a string literal, filter them out now
 	if (curOp && curOp->ExpectsStringLiteral()) {
 		if (!token.length() || bExpectStringVar) {
-			Message(kError_ExpectedStringLiteral);
+			CompilerMessages::Show(CompilerMessages::kError_ExpectedStringLiteral, m_scriptBuf);
 			return NULL;
 		}
 		else {
@@ -2712,7 +2772,7 @@ ScriptToken* ExpressionParser::ParseOperand(Operator* curOp)
 	Script::RefVariable* refVar = m_scriptBuf->ResolveRef(refToken.c_str());
 	if (dotPos != -1 && !refVar)
 	{
-		Message(kError_InvalidDotSyntax);
+		CompilerMessages::Show(CompilerMessages::kError_InvalidDotSyntax, m_scriptBuf);
 		return NULL;
 	}
 	else if (refVar)
@@ -2731,7 +2791,7 @@ ScriptToken* ExpressionParser::ParseOperand(Operator* curOp)
 		}
 		else if (refVar->form && refVar->form->typeID != kFormType_REFR && refVar->form->typeID != kFormType_Quest)
 		{
-			Message(kError_InvalidDotSyntax);
+			CompilerMessages::Show(CompilerMessages::kError_InvalidDotSyntax, m_scriptBuf);
 			return NULL;
 		}
 	}
@@ -2745,7 +2805,7 @@ ScriptToken* ExpressionParser::ParseOperand(Operator* curOp)
 			// if quest script, check that calling obj supplied for cmds requiring it
 			if (m_scriptBuf->scriptType == Script::eType_Quest && cmdInfo->needsParent && !refVar)
 			{
-				Message(kError_RefRequired, cmdInfo->longName);
+				CompilerMessages::Show(CompilerMessages::kError_RefRequired, m_scriptBuf, cmdInfo->longName);
 				return NULL;
 			}
 			if (refVar && refVar->form && refVar->form->typeID != kFormType_REFR)	// make sure we're calling it on a reference
@@ -2759,7 +2819,7 @@ ScriptToken* ExpressionParser::ParseOperand(Operator* curOp)
 	Script::VariableInfo* varInfo = LookupVariable(token.c_str(), refVar);
 	if (!varInfo && dotPos != -1)
 	{
-		Message(kError_CantFindVariable, token.c_str());
+		CompilerMessages::Show(CompilerMessages::kError_CantFindVariable, m_scriptBuf, token.c_str());
 		return NULL;
 	}
 	else if (varInfo)
@@ -2767,7 +2827,7 @@ ScriptToken* ExpressionParser::ParseOperand(Operator* curOp)
 		UInt8 theVarType = m_scriptBuf->GetVariableType(varInfo, refVar);
 		if (bExpectStringVar && theVarType != Script::eVarType_String)
 		{
-			Message(kError_ExpectedStringVariable);
+			CompilerMessages::Show(CompilerMessages::kError_ExpectedStringVariable, m_scriptBuf);
 			return NULL;
 		}
 		else
@@ -2775,19 +2835,19 @@ ScriptToken* ExpressionParser::ParseOperand(Operator* curOp)
 	}
 	else if (bExpectStringVar)
 	{
-		Message(kError_ExpectedStringVariable);
+		CompilerMessages::Show(CompilerMessages::kError_ExpectedStringVariable, m_scriptBuf);
 		return NULL;
 	}
 
 	if (refVar != NULL)
 	{
-		Message(kError_InvalidDotSyntax);
+		CompilerMessages::Show(CompilerMessages::kError_InvalidDotSyntax, m_scriptBuf);
 		return NULL;
 	}
 
 	// anything else that makes it this far is treated as string
 	if (!curOp || curOp->type != kOpType_MemberAccess) {
-		Message(kWarning_UnquotedString, token.c_str());
+		CompilerMessages::Show(CompilerMessages::kWarning_UnquotedString, m_scriptBuf, token.c_str());
 	}
 
 	FormatString(token);
@@ -2980,7 +3040,7 @@ void ExpressionEvaluator::PushOnStack()
 		// inherit flags
 		m_flags.RawSet(top->m_flags.Get());
 		m_flags.Clear(kFlag_ErrorOccurred);
-	} 
+	}
 }
 
 void ExpressionEvaluator::PopFromStack()
@@ -3526,7 +3586,7 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 			UInt32 numBytesRead = 0;
 			ExpectReturnType(kRetnType_Default);	// expect default return type unless called command specifies otherwise
 			bool bExecuted = cmdInfo->execute(cmdInfo->params, m_data, callingObj, (UInt32)contObj, script, eventList, &cmdResult, &numBytesRead);
-			
+
 			if (!bExecuted)
 			{
 				delete curToken;
@@ -3904,7 +3964,7 @@ bool Preprocessor::Process()
 					if (!blockStack.size() || blockStack.top() != cur->type)
 					{
 						const char* blockStr = BlockTypeAsString(blockStack.size() ? blockStack.top() : cur->type);
-						g_ErrOut.Show("Invalid %s block structure on line %d.", blockStr, m_curLineNo);
+						g_ErrOut.Show("Invalid %s block structure on line %d.", m_buf, blockStr, m_curLineNo);
 						return false;
 					}
 
@@ -3928,7 +3988,7 @@ bool Preprocessor::Process()
 			{
 				if (!m_loopDepth)
 				{
-					g_ErrOut.Show("Error line %d:\nFunction %s must be called from within a loop.", m_curLineNo, tok);
+					g_ErrOut.Show("Error line %d:\nFunction %s must be called from within a loop.", m_buf, m_curLineNo, tok);
 					return false;
 				}
 			}
@@ -3959,12 +4019,12 @@ bool Preprocessor::Process()
 						UInt32 varType = GetDeclaredVariableType(varName.c_str(), scriptText);
 						if (varType == Script::eVarType_Array)
 						{
-							g_ErrOut.Show("Error line %d:\nSet may not be used to assign to an array variable", m_curLineNo);
+							g_ErrOut.Show("Error line %d:\nSet may not be used to assign to an array variable", m_buf, m_curLineNo);
 							return false;
 						}
 						else if (false && varType == Script::eVarType_String)	// this is un-deprecated b/c older plugins don't register return types
 						{
-							g_ErrOut.Show("Error line %d:\nUse of Set to assign to string variables is deprecated. Use Let instead.", m_curLineNo);
+							g_ErrOut.Show("Error line %d:\nUse of Set to assign to string variables is deprecated. Use Let instead.", m_buf, m_curLineNo);
 							return false;
 						}
 					}
@@ -3972,7 +4032,7 @@ bool Preprocessor::Process()
 			}
 			else if (!_stricmp(tok, "return") && m_loopDepth)
 			{
-				g_ErrOut.Show("Error line %d:\nReturn cannot be called within the body of a loop.", m_curLineNo);
+				g_ErrOut.Show("Error line %d:\nReturn cannot be called within the body of a loop.", m_buf, m_curLineNo);
 				return false;
 			}
 			else
@@ -3987,7 +4047,7 @@ bool Preprocessor::Process()
 
 	if (blockStack.size())
 	{
-		g_ErrOut.Show("Error: Mismatched block structure.");
+		g_ErrOut.Show("Error: Mismatched block structure.", m_buf);
 		return false;
 	}
 

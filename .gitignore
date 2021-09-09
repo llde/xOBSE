@@ -1,0 +1,13 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/common/Debug
+/common/Release
+/obse/.vs
+/obse/obse/Debug 1_2_0_416
+/obse/obse_editor/Debug 1_2_0_0
+/obse/Debug
+/obse/loader/Debug
+/obse/loader_common/Debug
+/obse/steam_loader/Debug
