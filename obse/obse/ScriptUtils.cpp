@@ -351,9 +351,10 @@ ScriptToken* Eval_Assign_Elem_Number(OperatorType op, ScriptToken* lh, ScriptTok
 		context->Error("Array Element is invalid");
 		return nullptr;
 	}
-	ArrayVar* array = g_ArrayMap.Get(lh->GetOwningArrayID());
+	ArrayID id = lh->GetOwningArrayID();
+	ArrayVar* array = g_ArrayMap.Get(id);
 	if (!array) {
-		context->Error("Invalid Array Access - The array was not initialized");
+		context->Error("Eval_Assign_Elem_Number : Invalid Array Access - The array %u was not initialized", id);
 		return nullptr;
 	}
 	if (array->SetElementNumber(key, rh->GetNumber())) return ScriptToken::Create(rh->GetNumber());
@@ -368,9 +369,10 @@ ScriptToken* Eval_Assign_Elem_String(OperatorType op, ScriptToken* lh, ScriptTok
 		context->Error("Array Element is invalid");
 		return NULL;
 	}
-	ArrayVar* array = g_ArrayMap.Get(lh->GetOwningArrayID());
+	ArrayID id = lh->GetOwningArrayID();
+	ArrayVar* array = g_ArrayMap.Get(id);
 	if (!array) {
-		context->Error("Invalid Array Access - The array was not initialized");
+		context->Error("Eval_Assign_Elem_String: Invalid Array Access - The array %u was not initialized", id);
 		return nullptr;
 	}
 	if (array->SetElementString(key, rh->GetString())) return ScriptToken::Create(rh->GetString());
@@ -385,9 +387,10 @@ ScriptToken* Eval_Assign_Elem_Form(OperatorType op, ScriptToken* lh, ScriptToken
 		context->Error("Array Element is invalid");
 		return NULL;
 	}
-	ArrayVar* array = g_ArrayMap.Get(lh->GetOwningArrayID());
+	ArrayID id = lh->GetOwningArrayID();
+	ArrayVar* array = g_ArrayMap.Get(id);
 	if (!array) {
-		context->Error("Invalid Array Access - The array was not initialized");
+		context->Error("Eval_Assign_Elem_Form: Invalid Array Access - The array %u was not initialized", id);
 		return nullptr;
 	}
 	if (array->SetElementFormID(key, rh->GetFormID())) return ScriptToken::CreateForm(rh->GetFormID());
@@ -402,9 +405,10 @@ ScriptToken* Eval_Assign_Elem_Array(OperatorType op, ScriptToken* lh, ScriptToke
 		context->Error("Array Element is invalid");
 		return NULL;
 	}
-	ArrayVar* array = g_ArrayMap.Get(lh->GetOwningArrayID());
+	ArrayID id = lh->GetOwningArrayID();
+	ArrayVar* array = g_ArrayMap.Get(id);
 	if (!array) {
-		context->Error("Invalid Array Access - The array was not initialized");
+		context->Error("Eval_Assign_Elem_Array: Invalid Array Access - The array %u was not initialized", id);
 		return nullptr;
 	}
 
@@ -554,9 +558,10 @@ ScriptToken* Eval_PlusEquals_Elem_Number(OperatorType op, ScriptToken* lh, Scrip
 		context->Error("Array Element is invalid");
 		return NULL;
 	}
-	ArrayVar* array = g_ArrayMap.Get(lh->GetOwningArrayID());
+	ArrayID id = lh->GetOwningArrayID();
+	ArrayVar* array = g_ArrayMap.Get(id);
 	if (!array) {
-		context->Error("Invalid Array Access - The array was not initialized");
+		context->Error("Eval_PlusEquals_Elem_Number: Invalid Array Access - The array %u was not initialized", id);
 		return nullptr;
 	}
 
@@ -576,9 +581,10 @@ ScriptToken* Eval_MinusEquals_Elem_Number(OperatorType op, ScriptToken* lh, Scri
 		context->Error("Array Element is invalid");
 		return NULL;
 	}
-	ArrayVar* array = g_ArrayMap.Get(lh->GetOwningArrayID());
+	ArrayID id = lh->GetOwningArrayID();
+	ArrayVar* array = g_ArrayMap.Get(id);
 	if (!array) {
-		context->Error("Invalid Array Access - The array was not initialized");
+		context->Error("Eval_MinusEquals_Elem_Number: Invalid Array Access - The array %u was not initialized",id);
 		return nullptr;
 	}
 	double elemVal;
@@ -596,9 +602,10 @@ ScriptToken* Eval_TimesEquals_Elem(OperatorType op, ScriptToken* lh, ScriptToken
 		context->Error("Array Element is invalid");
 		return NULL;
 	}
-	ArrayVar* array = g_ArrayMap.Get(lh->GetOwningArrayID());
+	ArrayID id = lh->GetOwningArrayID();
+	ArrayVar* array = g_ArrayMap.Get(id);
 	if (!array) {
-		context->Error("Invalid Array Access - The array was not initialized");
+		context->Error("Eval_TimesEquals_Elem: Invalid Array Access - The array %u was not initialized",id );
 		return nullptr;
 	}
 	double elemVal;
@@ -617,9 +624,10 @@ ScriptToken* Eval_DividedEquals_Elem(OperatorType op, ScriptToken* lh, ScriptTok
 		context->Error("Array Element is invalid");
 		return NULL;
 	}
-	ArrayVar* array = g_ArrayMap.Get(lh->GetOwningArrayID());
+	ArrayID id = lh->GetOwningArrayID();
+	ArrayVar* array = g_ArrayMap.Get(id);
 	if (!array) {
-		context->Error("Invalid Array Access - The array was not initialized");
+		context->Error("Eval_DividedEquals_Elem : Invalid Array Access - The array %u was not initialized", id);
 		return nullptr;
 	}
 	double elemVal;
@@ -645,9 +653,10 @@ ScriptToken* Eval_ExponentEquals_Elem(OperatorType op, ScriptToken* lh, ScriptTo
 		context->Error("Array Element is invalid");
 		return NULL;
 	}
-	ArrayVar* array = g_ArrayMap.Get(lh->GetOwningArrayID());
+	ArrayID id = lh->GetOwningArrayID();
+	ArrayVar* array = g_ArrayMap.Get(id);
 	if (!array) {
-		context->Error("Invalid Array Access - The array was not initialized");
+		context->Error("Eval_ExponentEquals_Elem: Invalid Array Access - The array %u was not initialized", id);
 		return nullptr;
 	}
 	double elemVal;
@@ -667,9 +676,10 @@ ScriptToken* Eval_PlusEquals_Elem_String(OperatorType op, ScriptToken* lh, Scrip
 		context->Error("Array Element is invalid");
 		return NULL;
 	}
-	ArrayVar* array = g_ArrayMap.Get(lh->GetOwningArrayID());
+	ArrayID id = lh->GetOwningArrayID();
+	ArrayVar* array = g_ArrayMap.Get(id);
 	if (!array) {
-		context->Error("Invalid Array Access - The array was not initialized");
+		context->Error("Eval_PlusEquals_Elem_String: Invalid Array Access - The array %u was not initialized", id);
 		return nullptr;
 	}
 	if (!array->GetElementString(key, elemStr)) {
@@ -694,12 +704,12 @@ ScriptToken* Eval_Subscript_Array_Number(OperatorType op, ScriptToken* lh, Scrip
 {
 	if (!lh->GetArray())
 	{
-		context->Error("Invalid array access - the array was not initialized.");
+		context->Error("Eval_Subscript_Array_Number: Invalid array access - the array was not initialized.");
 		return NULL;
 	}
 	else if (g_ArrayMap.GetKeyType(lh->GetArray()) != kDataType_Numeric)
 	{
-		context->Error("Invalid array access - expected string index, received numeric.");
+		context->Error("Eval_Subscript_Array_Number: Invalid array access - expected string index, received numeric.");
 		return NULL;
 	}
 
@@ -733,12 +743,12 @@ ScriptToken* Eval_Subscript_Array_String(OperatorType op, ScriptToken* lh, Scrip
 {
 	if (!lh->GetArray())
 	{
-		context->Error("Invalid array access - the array was not initialized.");
+		context->Error("Eval_Subscript_Array_String: Invalid array access - the array %u %u was not initialized.", lh->GetArray(), lh->GetOwningArrayID());
 		return NULL;
 	}
 	else if (g_ArrayMap.GetKeyType(lh->GetArray()) != kDataType_String)
 	{
-		context->Error("Invalid array access - expected numeric index, received string");
+		context->Error("Eval_Subscript_Array_String: Invalid array access - expected numeric index, received string");
 		return NULL;
 	}
 
@@ -845,12 +855,12 @@ ScriptToken* Eval_MemberAccess(OperatorType op, ScriptToken* lh, ScriptToken* rh
 {
 	if (!lh->GetArray())
 	{
-		context->Error("Invalid array access - the array was not initialized.");
+		context->Error("Eval_MemberAccess: Invalid array access - the array %u  %u was not initialized.", lh->GetArray(), lh->GetOwningArrayID());
 		return NULL;
 	}
 	else if (g_ArrayMap.GetKeyType(lh->GetArray()) != kDataType_String)
 	{
-		context->Error("Invalid array access - expected numeric index, received string");
+		context->Error("Eval_MemberAccess: Invalid array access - expected numeric index, received string");
 		return NULL;
 	}
 
@@ -967,7 +977,7 @@ ScriptToken* Eval_Dereference(OperatorType op, ScriptToken* lh, ScriptToken* rh,
 	ArrayID arrID = lh->GetArray();
 	if (!arrID)
 	{
-		context->Error("Invalid array access - the array was not initialized.");
+		context->Error("Eval_Dereference: Invalid array access - the array was not initialized.");
 		return NULL;
 	}
 
@@ -981,7 +991,7 @@ ScriptToken* Eval_Dereference(OperatorType op, ScriptToken* lh, ScriptToken* rh,
 	if (g_ArrayMap.GetFirstElement(arrID, &elem, &valueKey))
 		return ScriptToken::Create(arrID, &valueKey);
 
-	context->Error("Invalid array access - the array was not initialized.");
+	context->Error("Eval_Dereference2: Invalid array access - the array was not initialized.");
 	return NULL;
 }
 
@@ -1622,8 +1632,8 @@ void ExpressionEvaluator::Error(const char* fmt, ...)
 	char	errorMsg[0x400];
 	vsprintf_s(errorMsg, 0x400, fmt, args);
 	// include script data offset and command name/opcode
-	UInt16* opcodePtr = (UInt16*)((UInt8*)m_scriptData + m_baseOffset);
-	//	UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + m_baseOffset);
+//	UInt16* opcodePtr = (UInt16*)((UInt8*)m_scriptData + m_baseOffset);
+	UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + m_baseOffset);
 	CommandInfo*  cmd = g_scriptCommands.GetByOpcode(*opcodePtr);
 	
 	// include mod filename, save having to ask users to figure it out themselves
@@ -1657,8 +1667,8 @@ void ExpressionEvaluator::Error(const char* fmt, ScriptToken* tok,  ...)
 	if (tok != nullptr && tok->Type() == Token_Type::kTokenType_Command) cmd = tok->GetCommandInfo();
 	else {
 		// include script data offset and command name/opcode
-		UInt16* opcodePtr = (UInt16*)((UInt8*)m_scriptData + m_baseOffset);
-		//	UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + m_baseOffset);
+		//UInt16* opcodePtr = (UInt16*)((UInt8*)m_scriptData + m_baseOffset);
+		UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + m_baseOffset);
 		cmd = g_scriptCommands.GetByOpcode(*opcodePtr);
 	}
 	// include mod filename, save having to ask users to figure it out themselves
@@ -1680,8 +1690,8 @@ void ExpressionEvaluator::PrintStackTrace() {
 
 	ExpressionEvaluator* eval = this;
 	while (eval) {
-//		CommandInfo* cmd = g_scriptCommands.GetByOpcode(*((UInt16*)((UInt8*)eval->script->data + eval->m_baseOffset)));
-		CommandInfo* cmd = g_scriptCommands.GetByOpcode(*((UInt16*)((UInt8*)eval->m_scriptData + eval->m_baseOffset)));
+		CommandInfo* cmd = g_scriptCommands.GetByOpcode(*((UInt16*)((UInt8*)eval->script->data + eval->m_baseOffset)));
+//		CommandInfo* cmd = g_scriptCommands.GetByOpcode(*((UInt16*)((UInt8*)eval->m_scriptData + eval->m_baseOffset)));
 		sprintf_s(output, sizeof(output), "  %s @%04X script %08X", cmd ? cmd->longName : "<unknown>", eval->m_baseOffset, eval->script->refID);
 		_MESSAGE(output);
 		Console_Print(output);
