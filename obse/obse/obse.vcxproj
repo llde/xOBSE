@@ -150,6 +150,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug 1_2_0_416|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release 1_2_0_416|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="constainers.cpp" />
     <ClCompile Include="ExpressionEvaluator.cpp" />
     <ClCompile Include="GameActorValues.cpp" />
     <ClCompile Include="GameAPI.cpp" />
@@ -252,9 +253,11 @@
     <ClCompile Include="ThreadLocal.cpp" />
     <ClCompile Include="Utilities.cpp" />
     <ClCompile Include="obse.cpp" />
+    <ClCompile Include="utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\StdAfx.h" />
+    <ClInclude Include="containers.h" />
     <ClInclude Include="ExpressionEvaluator.h" />
     <ClInclude Include="GameActorValues.h" />
     <ClInclude Include="GameAPI.h" />
@@ -354,10 +357,12 @@
     <ClInclude Include="ScriptTokens.h" />
     <ClInclude Include="ScriptUtils.h" />
     <ClInclude Include="Settings.h" />
+    <ClInclude Include="SmallObjectsAllocator.h" />
     <ClInclude Include="StringVar.h" />
     <ClInclude Include="Tasks.h" />
     <ClInclude Include="ThreadLocal.h" />
     <ClInclude Include="Utilities.h" />
+    <ClInclude Include="utility.h" />
     <ClInclude Include="VarMap.h" />
     <ClInclude Include="obse.h" />
     <ClInclude Include="..\obse_common\obse_prefix.h" />

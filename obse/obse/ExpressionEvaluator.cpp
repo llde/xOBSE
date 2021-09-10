@@ -33,8 +33,9 @@ void ExpressionEvaluator::Error(const char* fmt, ...)
 	char	errorMsg[0x400];
 	vsprintf_s(errorMsg, 0x400, fmt, args);
 	// include script data offset and command name/opcode
-	UInt16* opcodePtr = (UInt16*)((UInt8*)m_scriptData + m_baseOffset);
+//	UInt16* opcodePtr = (UInt16*)((UInt8*)m_scriptData + m_baseOffset);
 	//	UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + m_baseOffset);
+	UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + (*m_opcodeOffsetPtr - 4));
 	CommandInfo* cmd = g_scriptCommands.GetByOpcode(*opcodePtr);
 
 	// include mod filename, save having to ask users to figure it out themselves
@@ -68,8 +69,9 @@ void ExpressionEvaluator::Error(const char* fmt, ScriptToken* tok, ...)
 	if (tok != nullptr && tok->Type() == Token_Type::kTokenType_Command) cmd = tok->GetCommandInfo();
 	else {
 		// include script data offset and command name/opcode
-		UInt16* opcodePtr = (UInt16*)((UInt8*)m_scriptData + m_baseOffset);
+	//	UInt16* opcodePtr = (UInt16*)((UInt8*)m_scriptData + m_baseOffset);
 		//	UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + m_baseOffset);
+		UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + (*m_opcodeOffsetPtr - 4));
 		cmd = g_scriptCommands.GetByOpcode(*opcodePtr);
 	}
 	// include mod filename, save having to ask users to figure it out themselves
@@ -92,7 +94,9 @@ void ExpressionEvaluator::PrintStackTrace() {
 	ExpressionEvaluator* eval = this;
 	while (eval) {
 		//		CommandInfo* cmd = g_scriptCommands.GetByOpcode(*((UInt16*)((UInt8*)eval->script->data + eval->m_baseOffset)));
-		CommandInfo* cmd = g_scriptCommands.GetByOpcode(*((UInt16*)((UInt8*)eval->m_scriptData + eval->m_baseOffset)));
+	//	CommandInfo* cmd = g_scriptCommands.GetByOpcode(*((UInt16*)((UInt8*)eval->m_scriptData + eval->m_baseOffset)));
+		UInt16* opcodePtr = (UInt16*)((UInt8*)eval->script->data + (*eval->m_opcodeOffsetPtr - 4));
+		CommandInfo* cmd = g_scriptCommands.GetByOpcode(*opcodePtr);
 		sprintf_s(output, sizeof(output), "  %s @%04X script %08X", cmd ? cmd->longName : "<unknown>", eval->m_baseOffset, eval->script->refID);
 		_MESSAGE(output);
 		Console_Print(output);

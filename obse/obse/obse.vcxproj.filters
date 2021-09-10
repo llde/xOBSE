@@ -320,6 +320,12 @@
     <ClCompile Include="ExpressionEvaluator.cpp">
       <Filter>internals</Filter>
     </ClCompile>
+    <ClCompile Include="constainers.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
+    <ClCompile Include="utility.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameActorValues.h">
@@ -636,6 +642,15 @@
       <Filter>internals</Filter>
     </ClInclude>
     <ClInclude Include="ExpressionEvaluator.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="SmallObjectsAllocator.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="containers.h">
+      <Filter>internals</Filter>
+    </ClInclude>
+    <ClInclude Include="utility.h">
       <Filter>internals</Filter>
     </ClInclude>
   </ItemGroup>
