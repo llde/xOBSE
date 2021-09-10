@@ -412,7 +412,9 @@ bool FunctionInfo::Execute(FunctionCaller& caller, FunctionContext* context)
 	ASSERT(m_instanceCount < 0xFF);
 
 	m_instanceCount++;
+	g_insideUserDefinedFunction = true;
 	bool bResult = context->Execute(caller);
+	g_insideUserDefinedFunction = false;
 	m_instanceCount--;
 	return bResult;
 }
