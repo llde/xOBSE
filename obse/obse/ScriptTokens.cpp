@@ -54,13 +54,13 @@ ScriptToken::ScriptToken(Script::RefVariable* refVar, UInt16 refIdx) : type(kTok
 ScriptToken::ScriptToken(const std::string& str) : type(kTokenType_String), refIdx(0), variableType(Script::eVarType_Invalid)
 {
 	INC_TOKEN_COUNT
-	value.str = str;
+	value.str = std::make_unique<std::string>(str);
 }
 
 ScriptToken::ScriptToken(const char* str) : type(kTokenType_String), refIdx(0), variableType(Script::eVarType_Invalid)
 {
 	INC_TOKEN_COUNT
-	value.str = str;
+	value.str = std::make_unique<std::string>(str);
 }
 
 ScriptToken::ScriptToken(TESGlobal* global, UInt16 refIdx) : type(kTokenType_Global), refIdx(refIdx), variableType(Script::eVarType_Invalid)
@@ -325,7 +325,7 @@ const char* ScriptToken::GetString() const
 	const char* result = NULL;
 
 	if (type == kTokenType_String)
-		result = value.str.c_str();
+		result = value.str->c_str();
 #if OBLIVION
 	else if (type == kTokenType_StringVar && value.var)
 	{
@@ -762,7 +762,7 @@ bool ScriptToken::Write(ScriptLineBuffer* buf)
 			}
 		}
 	case kTokenType_String:
-		return buf->WriteString(value.str.c_str());
+		return buf->WriteString(value.str->c_str());
 	case kTokenType_Ref:
 	case kTokenType_Global:
 		return buf->Write16(refIdx);
@@ -785,6 +785,41 @@ bool ScriptToken::Write(ScriptLineBuffer* buf)
 	}
 }
 
+
+char* ScriptToken::DebugPrint(void)
+{
+	char debugPrint[512];
+	switch (type) {
+	case kTokenType_Number: sprintf_s(debugPrint, 512, "[Type=Number, Value=%g]", value.num); break;
+	case kTokenType_Boolean: sprintf_s(debugPrint, 512, "[Type=Boolean, Value=%s]", (value.num ? "true" : "false")); break;
+	case kTokenType_String: sprintf_s(debugPrint, 512, "[Type=String, Value=%s]", value.str->c_str()); break;
+	case kTokenType_Form: sprintf_s(debugPrint, 512, "[Type=Form, Value=%08X]", value.formID); break;
+	case kTokenType_Ref: sprintf_s(debugPrint, 512, "[Type=Ref, Value=%s]", value.refVar->name); break;
+	case kTokenType_Global: sprintf_s(debugPrint, 512, "[Type=Global, Value=%s]", value.global->GetName()); break;
+	case kTokenType_ArrayElement: sprintf_s(debugPrint, 512, "[Type=ArrayElement, Value=%g]", value.num); break;
+	case kTokenType_Slice: sprintf_s(debugPrint, 512, "[Type=Slice, Value=%g]", value.num); break;
+	case kTokenType_Command: sprintf_s(debugPrint, 512, "[Type=Command, Value=%g]", value.cmd->opcode); break;
+#if OBLIVION
+	case kTokenType_Array: sprintf_s(debugPrint, 512, "[Type=Array, Value=%g]", value.arrID); break;
+	case kTokenType_Variable: sprintf_s(debugPrint, 512, "[Type=Variable, Value=%g]", value.var->id); break;
+	case kTokenType_NumericVar: sprintf_s(debugPrint, 512, "[Type=NumericVar, Value=%g]", value.var->data); break;
+	case kTokenType_ArrayVar: sprintf_s(debugPrint, 512, "[Type=ArrayVar, Value=%g]", value.arrID); break;
+	case kTokenType_StringVar: sprintf_s(debugPrint, 512, "[Type=StringVar, Value=%g]", value.num); break;
+#endif
+	case kTokenType_RefVar: sprintf_s(debugPrint, 512, "[Type=RefVar, Index=%d (EDID not available)]", value.refVar->varIdx); break;
+	case kTokenType_Ambiguous: sprintf_s(debugPrint, 512, "[Type=Ambiguous, no Value]"); break;
+	case kTokenType_Operator: sprintf_s(debugPrint, 512, "[Type=Operator, Value=%g]", value.op->type); break;
+	case kTokenType_ForEachContext: sprintf_s(debugPrint, 512, "[Type=ForEachContext, Value=%g]", value.num); break;
+	case kTokenType_Byte: sprintf_s(debugPrint, 512, "[Type=Byte, Value=%g]", value.num); break;
+	case kTokenType_Short: sprintf_s(debugPrint, 512, "[Type=Short, Value=%g]", value.num); break;
+	case kTokenType_Int: sprintf_s(debugPrint, 512, "[Type=Int, Value=%g]", value.num); break;
+	case kTokenType_Pair: sprintf_s(debugPrint, 512, "[Type=Pair, Value=%g]", value.num); break;
+	case kTokenType_AssignableString: sprintf_s(debugPrint, 512, "[Type=AssignableString, Value=%s]", value.str->c_str()); break;
+	case kTokenType_Invalid: sprintf_s(debugPrint, 512, "[Type=Invalid, no Value]"); break;
+	case kTokenType_Empty: sprintf_s(debugPrint, 512, "[Type=Empty, no Value]"); break;
+	}
+	return debugPrint;
+}
 #if OBLIVION
 ScriptToken* ScriptToken::ToBasicToken() const
 {

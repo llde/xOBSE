@@ -156,7 +156,7 @@ protected:
 	Script* owningScript = nullptr;
 
 	struct Value {
-		std::string					str;
+		std::unique_ptr<std::string> str;
 		union {
 			Script::RefVariable		* refVar;
 			UInt32					formID;
@@ -237,7 +237,7 @@ public:
 	bool					IsVariable() const	{ return type >= kTokenType_NumericVar && type <= kTokenType_ArrayVar; }
 
 	double					GetNumericRepresentation(bool bFromHex);	// attempts to convert string to number
-
+	char*					DebugPrint(void);
 	static ScriptToken* Read(ExpressionEvaluator* context);
 
 	static ScriptToken* Create(bool boolean)													{ return new ScriptToken(boolean); }

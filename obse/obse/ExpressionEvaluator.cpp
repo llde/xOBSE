@@ -154,13 +154,13 @@ double ExpressionEvaluator::ReadFloat()
 	return data;
 }
 
-std::string ExpressionEvaluator::ReadString()
+std::unique_ptr<std::string>  ExpressionEvaluator::ReadString()
 {
 	UInt16 len = Read16();
 	char* buf = new char[len + 1];
 	memcpy(buf, m_data, len);
 	buf[len] = 0;
-	std::string str = buf;
+	auto str = std::make_unique<std::string>(buf);
 	m_data += len;
 	delete buf;
 	return str;
@@ -756,7 +756,7 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 			cmdToken = NULL;
 		}
 
-		if (!(curToken->Type() == kTokenType_Operator))
+		if (curToken->Type() != kTokenType_Operator)
 			operands.push(curToken);
 		else
 		{
