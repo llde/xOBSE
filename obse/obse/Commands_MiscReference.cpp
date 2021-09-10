@@ -65,7 +65,7 @@ static bool Cmd_SetTravelHorse_Execute(COMMAND_ARGS)
 
 	if (!thisObj) return true;
 	TESObjectREFR* objectRef = NULL;
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &objectRef))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &objectRef))
 		return true;
 	if (!thisObj || thisObj->typeID != kFormType_ACHR) return true;	//only NPCs may have travel horses
 
@@ -284,7 +284,7 @@ static bool Cmd_IsOffLimits_Execute(COMMAND_ARGS)
 
 	if (!thisObj)
 		return true;
-	else if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &actor))
+	else if (!ExtractArgs(PASS_EXTRACT_ARGS, &actor))
 		return true;
 
 	if (!actor || actor == (*g_thePlayer)->baseForm)	// if actor arg omitted use player
@@ -919,13 +919,13 @@ static bool GetFirstRef_Execute(COMMAND_ARGS, bool bUsePlayerCell = true)
 
 	if (bUsePlayerCell)
 	{
-		if (ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &formType, &cellDepth, &bIncludeTakenRefs))
+		if (ExtractArgs(PASS_EXTRACT_ARGS, &formType, &cellDepth, &bIncludeTakenRefs))
 			cell = pc->parentCell;
 		else
 			return true;
 	}
 	else
-		if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &cell, &formType, &cellDepth, &bIncludeTakenRefs))
+		if (!ExtractArgs(PASS_EXTRACT_ARGS, &cell, &formType, &cellDepth, &bIncludeTakenRefs))
 			return true;
 
 	if (!cell)
@@ -985,12 +985,12 @@ static bool GetNumRefs_Execute(COMMAND_ARGS, bool bUsePlayerCell = true)
 
 	TESObjectCELL* cell = NULL;
 	if (bUsePlayerCell)
-		if (ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &formType, &cellDepth, &includeTakenRefs))
+		if (ExtractArgs(PASS_EXTRACT_ARGS, &formType, &cellDepth, &includeTakenRefs))
 			cell = pc->parentCell;
 		else
 			return true;
 	else
-		if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &cell, &formType, &cellDepth, &includeTakenRefs))
+		if (!ExtractArgs(PASS_EXTRACT_ARGS, &cell, &formType, &cellDepth, &includeTakenRefs))
 			return true;
 
 	if (!cell)
@@ -1057,7 +1057,7 @@ static bool Cmd_SetPersistent_Execute(COMMAND_ARGS)
 	UInt32 persistent = 0;
 	*result = 0;
 
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &persistent);
+	ExtractArgs(PASS_EXTRACT_ARGS, &persistent);
 	if (thisObj)
 	{
 		if (persistent)
@@ -1093,7 +1093,7 @@ static bool Cmd_GetNthChildRef_Execute(COMMAND_ARGS)
 	UInt32* refResult = (UInt32*)result;
 	*refResult = 0;
 
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &idx))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &idx))
 		return true;
 
 	else if (!thisObj)
@@ -1119,7 +1119,7 @@ static bool Cmd_SetScaleEX_Execute(COMMAND_ARGS)
 	float newScale = 0;
 	*result = 0;
 
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newScale))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &newScale))
 		return true;
 	else if (!thisObj)
 		return true;
@@ -1174,7 +1174,7 @@ static bool Cmd_SetHarvested_Execute(COMMAND_ARGS)
 	UInt32 bHarvested = 0;
 	if (!thisObj || thisObj->baseForm->typeID != kFormType_Flora)
 		return true;
-	else if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &bHarvested))
+	else if (!ExtractArgs(PASS_EXTRACT_ARGS, &bHarvested))
 		return true;
 
 	if (bHarvested){
@@ -1204,7 +1204,7 @@ static bool Cmd_SetHasBeenPickedUp_Execute(COMMAND_ARGS)
 
 	if (!thisObj)
 		return true;
-	else if (!ExtractArgs(EXTRACT_ARGS, &bPickedUp))
+	else if (!ExtractArgs(PASS_EXTRACT_ARGS, &bPickedUp))
 		return true;
 
 	thisObj->SetTaken(bPickedUp ? true : false);
@@ -1356,7 +1356,7 @@ static bool Cmd_SetMagicProjectileSpell_Execute(COMMAND_ARGS)
 
 	SpellItem* spell = NULL;
 
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &spell))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &spell))
 		return true;
 
 	MagicProjectile* mag = (MagicProjectile*)Oblivion_DynamicCast(thisObj, 0, RTTI_TESObjectREFR, RTTI_MagicProjectile, 0);
@@ -1442,7 +1442,7 @@ static bool Cmd_SetRefCount_Execute(COMMAND_ARGS)
 	}
 
 	UInt32 newCount = 0;
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newCount))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &newCount))
 		return true;
 	else if (!thisObj || newCount > 32767 || newCount < 1)
 		return true;
@@ -1642,7 +1642,7 @@ static bool Cmd_DeleteReference_Execute(COMMAND_ARGS)
 	{
 		// don't delete actors or objects in inventories
 		// references must be disabled before deletion
-		if (!arg3 && !thisObj->IsActor() && thisObj->IsDisabled())
+		if (!contObj && !thisObj->IsActor() && thisObj->IsDisabled())
 		{
 			IOManager* ioMan = IOManager::GetSingleton();
 			if (ioMan)
@@ -1952,7 +1952,7 @@ static bool Cmd_SetBaseForm_Execute(COMMAND_ARGS)
 	TESForm* form = NULL;
 	*result = 0;
 
-	if (arg3)			// object is in a container
+	if (contObj)			// object is in a container
 		return true;
 
 	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form) && thisObj)

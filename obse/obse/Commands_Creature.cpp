@@ -32,7 +32,7 @@ static bool Cmd_IsCreature_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	TESActorBase* actorBase = NULL;
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &actorBase);
+	ExtractArgs(PASS_EXTRACT_ARGS, &actorBase);
 
 	if (!actorBase) {
 		if (!thisObj) return true;
@@ -76,7 +76,7 @@ static bool GetCreatureValue(COMMAND_ARGS, UInt32 whichVal)
 {
 	*result = 0;
 	TESActorBase* actorBase = NULL;
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &actorBase);
+	ExtractArgs(PASS_EXTRACT_ARGS, &actorBase);
 
 	if (!actorBase) {
 		if (!thisObj) return true;
@@ -202,7 +202,7 @@ static bool Cmd_SetCreatureType_Execute(COMMAND_ARGS)
 	// both mostly addressed below
 	UInt32 newType;
 	Creature* creatureRef = OBLIVION_CAST(thisObj, TESObjectREFR, Creature);
-	if (creatureRef && ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newType) && newType < TESCreature::eCreatureType_MAX)
+	if (creatureRef && ExtractArgs(PASS_EXTRACT_ARGS, &newType) && newType < TESCreature::eCreatureType_MAX)
 	{
 		TESCreature* creatureBase = (TESCreature*)Oblivion_DynamicCast(creatureRef->baseForm, 0, RTTI_TESForm, RTTI_TESCreature, 0);
 		if (!creatureBase)
@@ -328,7 +328,7 @@ static bool Cmd_GetCreatureSoundBase_Execute(COMMAND_ARGS)
 	UInt32* refResult = (UInt32*)result;
 	*refResult = 0;
 
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &actorBase))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &actorBase))
 		return true;
 
 	if (!actorBase)
@@ -352,7 +352,7 @@ static bool Cmd_HasModel_Execute(COMMAND_ARGS)
 	TESActorBase* actorBase = 0;
 	*result = 0;
 
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &nifPath, &actorBase))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &nifPath, &actorBase))
 		return true;
 
 	if (!actorBase)
@@ -385,7 +385,7 @@ static bool Cmd_ToggleCreatureModel_Execute(COMMAND_ARGS)
 	char nifPath[512];
 	*result = 0;
 
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &nifPath, &bEnable, &actorBase))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &nifPath, &bEnable, &actorBase))
 		return false;
 
 	if (!actorBase)
@@ -447,7 +447,7 @@ static bool Cmd_GetCreatureSound_Execute(COMMAND_ARGS)
 	UInt32* refResult = (UInt32*)result;
 	*refResult = 0;
 
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &whichSound, &actorBase))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &whichSound, &actorBase))
 		return true;
 
 	if (!actorBase)

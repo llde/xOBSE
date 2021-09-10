@@ -44,7 +44,7 @@ static bool Cmd_SetActiveSpell_Execute(COMMAND_ARGS)
 {
 	TESForm	* spell = NULL;
 
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &spell)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &spell)) return true;
 
 	SpellItem	* spellItem = (SpellItem *)Oblivion_DynamicCast(spell, 0, RTTI_TESForm, RTTI_SpellItem, 0);
 	if(spellItem)
@@ -74,7 +74,7 @@ static bool Cmd_IncrementPlayerSkillUse_Execute(COMMAND_ARGS)
 	UInt32 whichUse = 0;
 	float howManyTimes = 1.0;
 
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &valSkill, &whichUse, &howManyTimes))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &valSkill, &whichUse, &howManyTimes))
 		return true;
 	if (!IsSkill(valSkill)) return true;
 
@@ -93,7 +93,7 @@ static bool Cmd_TriggerPlayerSkillUse_Execute(COMMAND_ARGS)
 	UInt32 whichUse = 0;
 	float howManyTimes = 1.0;
 
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &valSkill, &whichUse, &howManyTimes))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &valSkill, &whichUse, &howManyTimes))
 		return true;
 	if (!IsSkill(valSkill)) return true;
 
@@ -111,7 +111,7 @@ static bool Cmd_ModPlayerSkillExp_Execute(COMMAND_ARGS)
 	UInt32 valSkill = 0;
 	float expChange = 0.0;
 
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &valSkill, &expChange))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &valSkill, &expChange))
 		return true;
 	if (!IsSkill(valSkill)) return true;
 
@@ -127,7 +127,7 @@ static bool Cmd_GetPlayerSkillUse_Execute(COMMAND_ARGS)
 	*result = 0;
 	UInt32 valSkill = 0;
 
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &valSkill))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &valSkill))
 		return true;
 	if (!IsSkill(valSkill)) return true;
 
@@ -140,7 +140,7 @@ static bool Cmd_GetPlayerSkillAdvances_Execute(COMMAND_ARGS)
 	*result = 0;
 	UInt32 valSkill = 0;
 
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &valSkill))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &valSkill))
 		return true;
 	if (!IsSkill(valSkill)) return true;
 
@@ -155,7 +155,7 @@ static bool Cmd_SetPlayerSkillAdvances_Execute(COMMAND_ARGS)
 	UInt32 valSkill = 0;
 	SInt32 advCount = 0;
 
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &valSkill, &advCount))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &valSkill, &advCount))
 		return true;
 	if (!IsSkill(valSkill)  || advCount < 0) return true;
 
@@ -169,7 +169,7 @@ static bool Cmd_SetPCAMurderer_Execute(COMMAND_ARGS)
 	*result = (*g_thePlayer)->isAMurderer != 0;
 
 	int	value = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &value)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &value)) return true;
 
 	(*g_thePlayer)->isAMurderer = value ? 1 : 0;
 
@@ -283,7 +283,7 @@ static bool Cmd_GetPCAttributeBonus_Execute(COMMAND_ARGS)
 	UInt32 whichAttribute = 0;
 	*result = 0;
 
-	if (ExtractArgs(EXTRACT_ARGS, &whichAttribute))
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &whichAttribute))
 	{
 		*result = (*g_thePlayer)->GetAttributeBonus(whichAttribute);
 		if (IsConsoleMode())

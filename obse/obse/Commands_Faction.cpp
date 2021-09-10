@@ -15,7 +15,7 @@ static bool Cmd_IsFactionEvil_Execute(COMMAND_ARGS)
 	TESFaction* fact = NULL;
 	*result = 0;
 
-	if (ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &fact))
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &fact))
 	{
 		if (fact && fact->IsEvil())
 			*result = 1;
@@ -29,7 +29,7 @@ static bool Cmd_IsFactionHidden_Execute(COMMAND_ARGS)
 	TESFaction* fact = NULL;
 	*result = 0;
 
-	if (ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &fact))
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &fact))
 	{
 		if (fact && fact->IsHidden())
 			*result = 1;
@@ -43,7 +43,7 @@ static bool Cmd_FactionHasSpecialCombat_Execute(COMMAND_ARGS)
 	TESFaction* fact = NULL;
 	*result = 0;
 
-	if (ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &fact))
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &fact))
 	{
 		if (fact && fact->HasSpecialCombat())
 			*result = 1;
@@ -57,7 +57,7 @@ static bool Cmd_SetFactionEvil_Execute(COMMAND_ARGS)
 	TESFaction* fact = NULL;
 	UInt32 bMod = 0;
 
-	if (ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &fact, &bMod))
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &fact, &bMod))
 	{
 		if (fact)
 			fact->SetEvil(bMod ? true : false);
@@ -71,7 +71,7 @@ static bool Cmd_SetFactionHidden_Execute(COMMAND_ARGS)
 	TESFaction* fact = NULL;
 	UInt32 bMod = 0;
 
-	if (ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &fact, &bMod))
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &fact, &bMod))
 	{
 		if (fact)
 			fact->SetHidden(bMod ? true : false);
@@ -85,7 +85,7 @@ static bool Cmd_SetFactionSpecialCombat_Execute(COMMAND_ARGS)
 	TESFaction* fact = NULL;
 	UInt32 bMod = 0;
 
-	if (ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &fact, &bMod))
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &fact, &bMod))
 	{
 		if (fact)
 			fact->SetSpecialCombat(bMod ? true : false);
@@ -99,7 +99,7 @@ static TESActorBase* ExtractActorBase(COMMAND_ARGS)
 	TESActorBase* actorBase = NULL;
 	TESForm* actorForm = NULL;
 
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &actorForm);
+	ExtractArgs(PASS_EXTRACT_ARGS, &actorForm);
 	if (!actorForm)
 		if (thisObj)
 			actorForm = thisObj->baseForm;
@@ -118,7 +118,7 @@ static TESActorBase* ExtractSetActorBase(COMMAND_ARGS, UInt32* bMod)
 	TESForm* actorForm = NULL;
 	*bMod = 0;
 
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, bMod, &actorForm);
+	ExtractArgs(PASS_EXTRACT_ARGS, bMod, &actorForm);
 	if (!actorForm)
 		if (thisObj)
 			actorForm = thisObj->baseForm;
@@ -164,7 +164,7 @@ static bool Cmd_GetNumRanks_Execute(COMMAND_ARGS)
 	TESFaction* fact = NULL;
 	*result = 0;
 
-	if (ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &fact))
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &fact))
 		*result = FactionRankVisitor(&(fact->ranks)).Count();
 
 	return true;

@@ -37,7 +37,7 @@ static bool Cmd_GetNthFollower_Execute(COMMAND_ARGS)
 	UInt32* refResult = (UInt32*)result;
 	*refResult = 0;
 
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &idx))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &idx))
 		return true;
 
 	else if (!thisObj)
@@ -127,7 +127,7 @@ static bool Cmd_GetNthDetectedActor_Execute(COMMAND_ARGS)
 	HighProcess* hiProc = NULL;
 	UInt32* refResult = (UInt32*)result;
 	*refResult = 0;
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &whichN))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &whichN))
 		return true;
 
 	Actor* actor = (Actor*)Oblivion_DynamicCast(thisObj, 0, RTTI_TESObjectREFR, RTTI_Actor, 0);
@@ -169,7 +169,7 @@ static bool Cmd_SetDetectionState_Execute(COMMAND_ARGS)
 	Actor* actor = NULL;
 	UInt32 detectLevel = 0;
 	*result = 0;
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &actor, &detectLevel))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &actor, &detectLevel))
 		return true;
 
 	Actor* callingActor = (Actor*)Oblivion_DynamicCast(thisObj, 0, RTTI_TESObjectREFR, RTTI_Actor, 0);
@@ -189,7 +189,7 @@ static bool Cmd_SetDetectionState_Execute(COMMAND_ARGS)
 static bool GetServiceFlag_Execute(COMMAND_ARGS, UInt32 whichService)
 {
 	TESNPC* npc = NULL;
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &npc))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &npc))
 		return false;
 	if (!npc && thisObj)
 		npc = (TESNPC*)Oblivion_DynamicCast(thisObj->baseForm, 0, RTTI_TESForm, RTTI_TESNPC, 0);
@@ -287,7 +287,7 @@ static bool Cmd_OffersRepair_Execute(COMMAND_ARGS)
 static bool Cmd_GetTrainerSkill_Execute(COMMAND_ARGS)
 {
 	TESNPC* npc = NULL;
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &npc))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &npc))
 		return true;
 	if (!npc && thisObj)
 		npc = (TESNPC*)Oblivion_DynamicCast(thisObj->baseForm, 0, RTTI_TESForm, RTTI_TESNPC, 0);
@@ -301,7 +301,7 @@ static bool Cmd_GetTrainerSkill_Execute(COMMAND_ARGS)
 static bool Cmd_GetTrainerLevel_Execute(COMMAND_ARGS)
 {
 	TESNPC* npc = NULL;
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &npc))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &npc))
 		return true;
 	if (!npc && thisObj)
 		npc = (TESNPC*)Oblivion_DynamicCast(thisObj->baseForm, 0, RTTI_TESForm, RTTI_TESNPC, 0);
@@ -316,7 +316,7 @@ static bool Cmd_OffersServicesC_Execute(COMMAND_ARGS)
 {
 	TESNPC* npc = NULL;
 	UInt32 serviceMask = 0;
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &serviceMask, &npc))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &serviceMask, &npc))
 		return true;
 
 	if (!npc && thisObj)
@@ -334,7 +334,7 @@ static void SetServiceFlag_Execute(COMMAND_ARGS, UInt32 whichService)
 {
 	TESNPC* npc = NULL;
 	UInt32 bSetFlag = 0;
-	if (ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &bSetFlag, &npc))
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &bSetFlag, &npc))
 	{
 		if (!npc && thisObj)
 			npc = (TESNPC*)Oblivion_DynamicCast(thisObj->baseForm, 0, RTTI_TESForm, RTTI_TESNPC, 0);
@@ -434,7 +434,7 @@ static bool Cmd_GetServicesMask_Execute(COMMAND_ARGS)
 {
 	TESNPC* npc = NULL;
 	*result = 0;
-	if (ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &npc))
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &npc))
 	{
 		if (!npc && thisObj)
 			npc = (TESNPC*)Oblivion_DynamicCast(thisObj->baseForm, 0, RTTI_TESForm, RTTI_TESNPC, 0);
@@ -450,7 +450,7 @@ static bool Cmd_SetServicesMask_Execute(COMMAND_ARGS)
 	UInt32 serviceMask = 0;
 
 	*result = 0;
-	if (ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &serviceMask, &npc))
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &serviceMask, &npc))
 	{
 		if (!npc && thisObj)
 			npc = (TESNPC*)Oblivion_DynamicCast(thisObj->baseForm, 0, RTTI_TESForm, RTTI_TESNPC, 0);
@@ -468,7 +468,7 @@ static bool Cmd_SetTrainerSkill_Execute(COMMAND_ARGS)
 	UInt32 actorVal = 0;
 
 	*result = 0;
-	if (ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &actorVal, &npc))
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &actorVal, &npc))
 	{
 		if (!npc && thisObj)
 			npc = (TESNPC*)Oblivion_DynamicCast(thisObj->baseForm, 0, RTTI_TESForm, RTTI_TESNPC, 0);
@@ -486,7 +486,7 @@ static bool Cmd_SetTrainerLevel_Execute(COMMAND_ARGS)
 	UInt32 nuLevel = 0;
 
 	*result = 0;
-	if (ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &nuLevel, &npc))
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &nuLevel, &npc))
 	{
 		if (!npc && thisObj)
 			npc = (TESNPC*)Oblivion_DynamicCast(thisObj->baseForm, 0, RTTI_TESForm, RTTI_TESNPC, 0);
@@ -503,7 +503,7 @@ static bool Cmd_GetNumPackages_Execute(COMMAND_ARGS)
 	TESActorBase* actorBase = NULL;
 	*result = 0;
 
-	if (ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &actorBase))
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &actorBase))
 	{
 		if (!actorBase && thisObj)
 			actorBase = (TESActorBase*)Oblivion_DynamicCast(thisObj->baseForm, 0, RTTI_TESForm, RTTI_TESActorBase, 0);
@@ -520,7 +520,7 @@ static bool Cmd_GetNthPackage_Execute(COMMAND_ARGS)
 	UInt32* refResult = (UInt32*)result;
 	*refResult = 0;
 
-	if (ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &whichPackage, &actorBase))
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &whichPackage, &actorBase))
 	{
 		if (!actorBase && thisObj)
 			actorBase = (TESActorBase*)Oblivion_DynamicCast(thisObj->baseForm, 0, RTTI_TESForm, RTTI_TESActorBase, 0);
@@ -763,7 +763,7 @@ static bool Cmd_IsAnimGroupPlaying_Execute(COMMAND_ARGS)
 	UInt32 whichGroup = -1;
 	*result = 0;
 
-	if (!ExtractArgs(EXTRACT_ARGS, &whichGroup))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &whichGroup))
 		return true;
 	else if (whichGroup > TESAnimGroup::kAnimGroup_Max)
 		return true;
@@ -780,7 +780,7 @@ static bool Cmd_AnimPathIncludes_Execute(COMMAND_ARGS)
 	char subStr[512] = { 0 };
 	*result = 0;
 
-	if (!ExtractArgs(EXTRACT_ARGS, &subStr))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &subStr))
 		return true;
 
 	ActorAnimData* animData = GetActorAnimData(thisObj);

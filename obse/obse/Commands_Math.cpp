@@ -17,7 +17,7 @@ bool Cmd_SquareRoot_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = sqrt(arg);
@@ -30,7 +30,7 @@ bool Cmd_Log_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = log(arg);
@@ -42,7 +42,7 @@ bool Cmd_Exp_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = exp(arg);
@@ -55,7 +55,7 @@ bool Cmd_Log10_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = log10(arg);
@@ -70,7 +70,7 @@ bool Cmd_Pow_Execute(COMMAND_ARGS)
 	float f1 = 0;
 	float f2 = 0;
 
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &f1, &f2)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &f1, &f2)) return true;
 
 	*result = pow(f1,f2);
 
@@ -82,7 +82,7 @@ bool Cmd_Floor_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = floor(arg);
@@ -94,7 +94,7 @@ bool Cmd_Ceil_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = ceil(arg);
@@ -106,7 +106,7 @@ bool Cmd_Abs_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = abs(arg);
@@ -124,7 +124,7 @@ bool Cmd_Rand_Execute(COMMAND_ARGS)
 
 	float rangeMin = 0;
 	float rangeMax = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &rangeMin, &rangeMax)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &rangeMin, &rangeMax)) return true;
 
 	if(rangeMax < rangeMin)
 	{
@@ -150,7 +150,7 @@ bool Cmd_Sin_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = sin(arg);
@@ -162,7 +162,7 @@ bool Cmd_Cos_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = cos(arg);
@@ -174,7 +174,7 @@ bool Cmd_Tan_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = tan(arg);
@@ -186,7 +186,7 @@ bool Cmd_ASin_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = asin(arg);
@@ -198,7 +198,7 @@ bool Cmd_ACos_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = acos(arg);
@@ -210,7 +210,7 @@ bool Cmd_ATan_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = atan(arg);
@@ -224,7 +224,7 @@ bool Cmd_ATan2_Execute(COMMAND_ARGS)
 
 	float f1 = 0;
 	float f2 = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &f1, &f2)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &f1, &f2)) return true;
 
 	*result = atan2(f1,f2);
 
@@ -235,7 +235,7 @@ bool Cmd_Sinh_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = sinh(arg);
@@ -247,7 +247,7 @@ bool Cmd_Cosh_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = cosh(arg);
@@ -259,7 +259,7 @@ bool Cmd_Tanh_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = tanh(arg);
@@ -275,7 +275,7 @@ bool Cmd_dSin_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = sin(arg*DEGTORAD);
@@ -287,7 +287,7 @@ bool Cmd_dCos_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = cos(arg*DEGTORAD);
@@ -299,7 +299,7 @@ bool Cmd_dTan_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = tan(arg*DEGTORAD);
@@ -311,7 +311,7 @@ bool Cmd_dASin_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = asin(arg)/DEGTORAD;
@@ -323,7 +323,7 @@ bool Cmd_dACos_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = acos(arg)/DEGTORAD;
@@ -335,7 +335,7 @@ bool Cmd_dATan_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = atan(arg)/DEGTORAD;
@@ -348,7 +348,7 @@ bool Cmd_dATan2_Execute(COMMAND_ARGS)
 
 	float f1 = 0;
 	float f2 = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &f1, &f2)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &f1, &f2)) return true;
 
 	*result = atan2(f1,f2)/DEGTORAD;
 
@@ -359,7 +359,7 @@ bool Cmd_dSinh_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = sinh(arg*DEGTORAD);
@@ -371,7 +371,7 @@ bool Cmd_dCosh_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = cosh(arg*DEGTORAD);
@@ -383,7 +383,7 @@ bool Cmd_dTanh_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	float arg = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 		return true;
 
 	*result = tanh(arg*DEGTORAD);
@@ -398,7 +398,7 @@ bool Cmd_LeftShift_Execute(COMMAND_ARGS)
 	UInt32	lhs = 0;
 	UInt32	rhs = 0;
 
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &lhs, &rhs))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &lhs, &rhs))
 		return true;
 
 	if(rhs >= 32)
@@ -416,7 +416,7 @@ bool Cmd_RightShift_Execute(COMMAND_ARGS)
 	UInt32	lhs = 0;
 	UInt32	rhs = 0;
 
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &lhs, &rhs))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &lhs, &rhs))
 		return true;
 
 	if(rhs >= 32)
@@ -434,7 +434,7 @@ bool Cmd_LogicalAnd_Execute(COMMAND_ARGS)
 	UInt32	lhs = 0;
 	UInt32	rhs = 0;
 
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &lhs, &rhs))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &lhs, &rhs))
 		return true;
 
 	*result = lhs & rhs;
@@ -449,7 +449,7 @@ bool Cmd_LogicalOr_Execute(COMMAND_ARGS)
 	UInt32	lhs = 0;
 	UInt32	rhs = 0;
 
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &lhs, &rhs))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &lhs, &rhs))
 		return true;
 
 	*result = lhs | rhs;
@@ -464,7 +464,7 @@ bool Cmd_LogicalXor_Execute(COMMAND_ARGS)
 	UInt32	lhs = 0;
 	UInt32	rhs = 0;
 
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &lhs, &rhs))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &lhs, &rhs))
 		return true;
 
 	*result = lhs ^ rhs;
@@ -481,7 +481,7 @@ bool Cmd_LogicalNot_Execute(COMMAND_ARGS)
 
 	UInt32	lhs = 0;
 
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &lhs))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &lhs))
 		return true;
 
 	*result = (double)(~lhs);
@@ -498,7 +498,7 @@ bool Cmd_Fmod_Execute(COMMAND_ARGS)
 	float n = 0.0;
 	float offset = 0.0;
 
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &x, &n, &offset);
+	ExtractArgs(PASS_EXTRACT_ARGS, &x, &n, &offset);
 
 	float answer = x - n * floor(x/n);
 	if (offset != 0) {

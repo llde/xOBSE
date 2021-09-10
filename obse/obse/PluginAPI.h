@@ -128,7 +128,7 @@ struct OBSEStringVarInterface
 	void		(* SetString)(UInt32 stringID, const char* newValue);
 	UInt32		(* CreateString)(const char* value, void* owningScript);
 	void		(* Register)(OBSEStringVarInterface* intfc);			// DEPRECATED: use RegisterStringVarInterface() in GameAPI.h
-	bool		(* Assign)(ParamInfo * paramInfo, void * arg1, TESObjectREFR * thisObj, UInt32 arg3, Script * scriptObj, ScriptEventList * eventList, double * result, UInt32 * opcodeOffsetPtr, const char* newValue);
+	bool		(* Assign)(ParamInfo * paramInfo, void * arg1, TESObjectREFR * thisObj, TESObjectREFR* contObj, Script * scriptObj, ScriptEventList * eventList, double * result, UInt32 * opcodeOffsetPtr, const char* newValue);
 };
 
 // Added in v0016, Deprecated in xOBSE 22.2 use OBSEInputInterface

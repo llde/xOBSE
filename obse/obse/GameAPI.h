@@ -141,11 +141,10 @@ extern const _Console_Print Console_Print;
 typedef bool (* _MarkBaseExtraListScriptEvent)(TESForm* target, BaseExtraList* extraList, UInt32 eventMask);
 extern const _MarkBaseExtraListScriptEvent MarkBaseExtraListScriptEvent;
 
-typedef bool (* _ExtractArgs)(ParamInfo * paramInfo, void * arg1, UInt32 * arg2, TESObjectREFR * arg3, UInt32 arg4, Script * script, ScriptEventList * eventList, ...);
+typedef bool (* _ExtractArgs)(ParamInfo * paramInfo, void * arg1, UInt32 * arg2, TESObjectREFR * thisObj, TESObjectREFR* contObj, Script * script, ScriptEventList * eventList, ...);
 extern const _ExtractArgs ExtractArgs;
 
 // convenience macro for common arguments to ExtractArgs
-#define PASS_EXTRACT_ARGS	paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList
 
 #if OBSE_CORE
 bool ExtractArgsEx(ParamInfo * paramInfo, void * scriptData, UInt32 * scriptDataOffset, Script * scriptObj, ScriptEventList * eventList, ...);

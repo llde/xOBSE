@@ -213,7 +213,7 @@ m_expectedReturnType(kRetnType_Default)
 
 	memset(m_args, 0, sizeof(m_args));
 
-	m_containingObj = (TESObjectREFR*)arg3;
+	m_containingObj = contObj;
 	m_baseOffset = *opcodeOffsetPtr - 4;
 
 	m_flags.Clear();
@@ -694,7 +694,7 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 			UInt16 argsLen = Read16();
 			UInt32 numBytesRead = 0;
 			ExpectReturnType(kRetnType_Default);	// expect default return type unless called command specifies otherwise
-			bool bExecuted = cmdInfo->execute(cmdInfo->params, m_data, callingObj, (UInt32)contObj, script, eventList, &cmdResult, &numBytesRead);
+			bool bExecuted = cmdInfo->execute(cmdInfo->params, m_data, callingObj, contObj, script, eventList, &cmdResult, &numBytesRead);
 
 			if (!bExecuted)
 			{

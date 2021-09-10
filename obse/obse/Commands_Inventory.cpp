@@ -272,7 +272,7 @@ static bool Cmd_GetInventoryItemType_Execute(COMMAND_ARGS)
 	if(!thisObj) return true;
 
 	UInt32	objIdx = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &objIdx)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &objIdx)) return true;
 
 	EnterCriticalSection(g_extraListMutex);
 
@@ -505,7 +505,7 @@ static bool Cmd_GetEquipmentSlotType_Execute(COMMAND_ARGS)
 	if(!thisObj) return true;
 
 	UInt32	slotIdx = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &slotIdx)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &slotIdx)) return true;
 	feGetObject getObject;
 
 	bool bFound = FindEquipped(thisObj, slotIdx, &getObject, result);
@@ -533,7 +533,7 @@ static bool Cmd_GetEquipmentSlotMask_Execute(COMMAND_ARGS)
 	UInt32	slotMask = 0;
 	UInt32	slotData = 0;
 
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &slotMask, &slotData)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &slotMask, &slotData)) return true;
 	if(!slotData) slotData = slotMask;
 
 	feGetObject	getObject;
@@ -928,7 +928,7 @@ static bool Cmd_GetObjectValue_Execute(COMMAND_ARGS)
 	TESForm* form = 0;
 	UInt32	valueType = 0;
 
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &valueType, &form);
+	ExtractArgs(PASS_EXTRACT_ARGS, &valueType, &form);
 	if (!form) {
 		if (!thisObj) return true;
 		form = thisObj->baseForm;
@@ -1084,7 +1084,7 @@ static bool Cmd_GetCurrentValue_Execute(COMMAND_ARGS)
 	if(!thisObj) return true;
 
 	UInt32 valueType = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &valueType)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &valueType)) return true;
 	return GetCurrentValue_Execute(PASS_COMMAND_ARGS, valueType);
 }
 
@@ -1130,7 +1130,7 @@ static bool GetEquippedCurrentValue_Execute(COMMAND_ARGS, UInt32 valueType)
 	if(!thisObj) return true;
 
 	UInt32 slotIdx = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &slotIdx)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &slotIdx)) return true;
 
 	feGetCurrentValue getCurrentValue(valueType);
 	bool bFound = FindEquipped(thisObj, slotIdx, &getCurrentValue, result);
@@ -1146,7 +1146,7 @@ static bool Cmd_GetEquippedCurrentValue_Execute(COMMAND_ARGS)
 
 	UInt32 valueType = 0;
 	UInt32 slotIdx = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &valueType, &slotIdx)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &valueType, &slotIdx)) return true;
 
 	feGetCurrentValue getCurrentValue(valueType);
 	bool bFound = FindEquipped(thisObj, slotIdx, &getCurrentValue, result);
@@ -1177,7 +1177,7 @@ static bool Cmd_GetEquippedObjectValue_Execute(COMMAND_ARGS)
 
 	UInt32 valueType = 0;
 	UInt32 slotIdx = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &valueType, &slotIdx)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &valueType, &slotIdx)) return true;
 
 	feGetBaseValue getBaseValue(valueType);
 	bool bFound = FindEquipped(thisObj, slotIdx, &getBaseValue, result);
@@ -1243,7 +1243,7 @@ static bool Cmd_SetEquippedCurrentValue_Execute(COMMAND_ARGS)
 	UInt32 valueType = 0;
 	float value = 0;
 	UInt32 slotIdx = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &valueType, &value, &slotIdx)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &valueType, &value, &slotIdx)) return true;
 
 	feSetCurrentValue setCurrentValue(valueType, value);
 	bool bFound = FindEquipped(thisObj, slotIdx, &setCurrentValue, result);
@@ -1772,7 +1772,7 @@ bool ChangeObjectBaseValue(TESForm* form, ChangeValueState& state, double* resul
 //	UInt32 valueType = 0;
 //	float value = 0;
 //	UInt32 slotIdx = 0;
-//	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &valueType, &value, &slotIdx)) return true;
+//	if(!ExtractArgs(PASS_EXTRACT_ARGS, &valueType, &value, &slotIdx)) return true;
 //
 //	feSetObjectValue setObjectValue(valueType, value, false);
 //	return FindEquipped(thisObj, slotIdx, &setObjectValue, result);
@@ -1788,7 +1788,7 @@ bool ChangeObjectBaseValue(TESForm* form, ChangeValueState& state, double* resul
 //	UInt32 valueType = 0;
 //	float value = 0;
 //	UInt32 slotIdx = 0;
-//	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &valueType, &value, &slotIdx)) return true;
+//	if(!ExtractArgs(PASS_EXTRACT_ARGS, &valueType, &value, &slotIdx)) return true;
 //
 //	feSetObjectValue setObjectValue(valueType, value, true);
 //	return FindEquipped(thisObj, slotIdx, &setObjectValue, result);
@@ -1934,7 +1934,7 @@ static bool Cmd_SetCurrentHealth_Execute(COMMAND_ARGS)
 	if(!thisObj) return true;
 
 	float value = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &value)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &value)) return true;
 
 	ChangeValueState state(kVal_CurHealth, bModF);
 	*state.FloatPtr() = value;
@@ -1950,7 +1950,7 @@ static bool Cmd_SetCurrentSoulLevel_Execute(COMMAND_ARGS)
 	if (!soulGem || soulGem->soul != 0) return true;
 
 	UInt32 soulLevel = 0;
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &soulLevel)) return true;
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &soulLevel)) return true;
 	if (soulLevel > TESSoulGem::kSoul_Grand) return true;
 	if (soulLevel > soulGem->capacity) soulLevel = soulGem->capacity;
 
@@ -1983,7 +1983,7 @@ static bool ChangeObjectValue_Execute(COMMAND_ARGS, ChangeValueState& state)
 			break;
 
 		case ChangeValueState::eMagicItem:
-			ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, state.MagicItemPtr(), &form);
+			ExtractArgs(PASS_EXTRACT_ARGS, state.MagicItemPtr(), &form);
 			break;
 		case ChangeValueState::eString:
 			ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, state.StringPtr(), &form);
@@ -2031,18 +2031,18 @@ static bool ChangeEquippedCurrentValue_Execute(COMMAND_ARGS, ChangeValueState& s
 
 	switch(state.UseValueType()) {
 		case ChangeValueState::eFloat:
-			bArgsExtracted = ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, state.FloatPtr(), &slotIdx);
+			bArgsExtracted = ExtractArgs(PASS_EXTRACT_ARGS, state.FloatPtr(), &slotIdx);
 			break;
 		case ChangeValueState::eInteger:
 		case ChangeValueState::eBool:
-			bArgsExtracted = ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, state.UInt32Ptr(), &slotIdx);
+			bArgsExtracted = ExtractArgs(PASS_EXTRACT_ARGS, state.UInt32Ptr(), &slotIdx);
 			break;
 
 		case ChangeValueState::eMagicItem:
-			bArgsExtracted = ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, state.MagicItemPtr(), &slotIdx);
+			bArgsExtracted = ExtractArgs(PASS_EXTRACT_ARGS, state.MagicItemPtr(), &slotIdx);
 			break;
 		case ChangeValueState::eString:
-			bArgsExtracted = ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, state.StringPtr(), &slotIdx);
+			bArgsExtracted = ExtractArgs(PASS_EXTRACT_ARGS, state.StringPtr(), &slotIdx);
 			break;
 		default:
 			return true;
@@ -2160,7 +2160,7 @@ static bool Cmd_GetEnchantment_Execute(COMMAND_ARGS)
 static bool Cmd_RemoveEnchantment_Execute(COMMAND_ARGS)
 {
 	TESForm* form = NULL;
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &form);
+	ExtractArgs(PASS_EXTRACT_ARGS, &form);
 	if (!form) {
 		if (!thisObj) return true;
 		form = thisObj->baseForm;
@@ -2881,7 +2881,7 @@ static bool Cmd_SetEquippedWeaponPoison_Execute(COMMAND_ARGS)
 	if (!thisObj) return true;
 
 	ChangeValueState state(kVal_WeaponPoison, bModF);
-	bool bArgsExtracted = ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, state.MagicItemPtr());
+	bool bArgsExtracted = ExtractArgs(PASS_EXTRACT_ARGS, state.MagicItemPtr());
 	if (!bArgsExtracted) return true;
 
 	feChangeCurrentValue changeCurrentVal(state);
@@ -3409,7 +3409,7 @@ static bool Cmd_GetHotKeyItem_Execute(COMMAND_ARGS)
 	UInt32 * refResult = (UInt32*)result;
 	*refResult = 0;
 
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &whichKey))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &whichKey))
 		return true;
 
 	if (whichKey && whichKey <= 8)
@@ -3501,7 +3501,7 @@ static bool Cmd_ClearHotKey_Execute(COMMAND_ARGS)
 	UInt32 whichKey = 0;
 	*result = 0;
 
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &whichKey))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &whichKey))
 		return true;
 
 	whichKey -= 1;
@@ -3626,7 +3626,7 @@ static bool IsBipedPathValid_Execute(COMMAND_ARGS, bool checkIcon)
 	BSStringT* filePath = NULL;
 	*result = 0;
 
-	if (!ExtractArgs(EXTRACT_ARGS, &whichPath, &form))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &whichPath, &form))
 		return true;
 
 	if (!form)
@@ -3696,7 +3696,7 @@ static bool Cmd_FileExists_Execute(COMMAND_ARGS)
 	char filePath[512] = { 0 };
 	*result = 0;
 
-	if (ExtractArgs(EXTRACT_ARGS, &filePath))
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &filePath))
 		*result = (*g_FileFinder)->FindFile(filePath, 0, 0, -1) ? 1 : 0;
 
 	return true;
@@ -4049,7 +4049,7 @@ static bool Cmd_EquipItem2NS_Execute(COMMAND_ARGS)
 
 static bool Cmd_EquipMe_Execute(COMMAND_ARGS)
 {
-	Actor* owner = OBLIVION_CAST((TESObjectREFR*)arg3, TESObjectREFR, Actor);
+	Actor* owner = OBLIVION_CAST(contObj, TESObjectREFR, Actor);
 	if (thisObj) {
 		if (owner) {
 			owner->EquipItem(thisObj->baseForm, 1, &thisObj->baseExtraList, 1, false);
@@ -4067,7 +4067,7 @@ static bool Cmd_EquipMe_Execute(COMMAND_ARGS)
 
 static bool Cmd_UnequipMe_Execute(COMMAND_ARGS)
 {
-	Actor* owner = OBLIVION_CAST((TESObjectREFR*)arg3, TESObjectREFR, Actor);
+	Actor* owner = OBLIVION_CAST(contObj, TESObjectREFR, Actor);
 	if (thisObj) {
 		if (owner) {
 			owner->UnequipItem(thisObj->baseForm, 1, &thisObj->baseExtraList, 0, false, 0);

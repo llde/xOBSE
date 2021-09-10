@@ -459,7 +459,7 @@ static bool GetCombatStyleValue_Execute(COMMAND_ARGS, UInt32 whichValue)
 {
 	*result = 0;
 	TESCombatStyle* style = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &style)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &style)) return true;
 	return GetCombatStyleValue(style, whichValue, result);
 }
 
@@ -783,7 +783,7 @@ static bool SetCombatStyleIntValue_Execute(COMMAND_ARGS, UInt32 whichValue)
 	*result = 0;
 	TESCombatStyle* style = NULL;
 	int newValue = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newValue, &style)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newValue, &style)) return true;
 	return SetCombatStyleIntValue(style, whichValue, newValue, result);
 }
 
@@ -1012,7 +1012,7 @@ static bool SetCombatStyleFloatValue_Execute(COMMAND_ARGS, UInt32 whichValue)
 	*result = 0;
 	TESCombatStyle* style = NULL;
 	float newValue = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newValue, &style)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newValue, &style)) return true;
 	return SetCombatStyleFloatValue(style, whichValue, newValue, result);
 }
 

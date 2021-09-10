@@ -116,9 +116,9 @@ class Script;
 struct ScriptBuffer;
 struct ScriptLineBuffer;
 
-#define COMMAND_ARGS	ParamInfo * paramInfo, void * arg1, TESObjectREFR * thisObj, UInt32 arg3, Script * scriptObj, ScriptEventList * eventList, double * result, UInt32 * opcodeOffsetPtr
-#define PASS_COMMAND_ARGS paramInfo, arg1, thisObj, arg3, scriptObj, eventList, result, opcodeOffsetPtr
-#define EXTRACT_ARGS	paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList
+#define COMMAND_ARGS	ParamInfo * paramInfo, void * arg1, TESObjectREFR * thisObj, TESObjectREFR* contObj, Script * scriptObj, ScriptEventList * eventList, double * result, UInt32 * opcodeOffsetPtr
+#define PASS_COMMAND_ARGS paramInfo, arg1, thisObj, contObj, scriptObj, eventList, result, opcodeOffsetPtr
+#define PASS_EXTRACT_ARGS	paramInfo, arg1, opcodeOffsetPtr, thisObj, contObj, scriptObj, eventList
 #define COMMAND_ARGS_EVAL TESObjectREFR * thisObj, void * arg1, void * arg2, double * result
 
 //Macro to make CommandInfo definitions a bit less tedious

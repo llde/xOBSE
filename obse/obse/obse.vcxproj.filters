@@ -320,7 +320,7 @@
     <ClCompile Include="ExpressionEvaluator.cpp">
       <Filter>internals</Filter>
     </ClCompile>
-    <ClCompile Include="constainers.cpp">
+    <ClCompile Include="containers.cpp">
       <Filter>internals</Filter>
     </ClCompile>
     <ClCompile Include="utility.cpp">

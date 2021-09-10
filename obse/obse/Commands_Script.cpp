@@ -141,7 +141,7 @@ static bool Cmd_IsReference_Execute(COMMAND_ARGS)
 {
 	TESForm* refr = NULL;
 	*result = 0;
-	if (ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &refr))
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &refr))
 		if (refr && refr->IsReference()) *result = 1;
 
 	return true;
@@ -161,7 +161,7 @@ static bool GetVariable_Execute(COMMAND_ARGS, UInt32 whichAction)
 	ScriptEventList* targetEventList = NULL;
 	*result = 0;
 
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &varName, &quest))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &varName, &quest))
 		return true;
 	if (quest)
 	{

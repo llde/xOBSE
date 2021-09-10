@@ -18,7 +18,7 @@ static bool Cmd_GetMagicEffectName_Execute(COMMAND_ARGS)
 	std::string name = "";
 
 	EffectSetting* magic = NULL;
-	if(ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &magic))
+	if(ExtractArgs(PASS_EXTRACT_ARGS, &magic))
 		if (magic)
 			if (magic->fullName.name.m_dataLen > 0)
 				name = magic->fullName.name.m_data;
@@ -32,7 +32,7 @@ static bool Cmd_GetMagicEffectNameC_Execute(COMMAND_ARGS)
 	std::string name = "";
 
 	UInt32 effectCode = 0;
-	if(ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &effectCode)) {
+	if(ExtractArgs(PASS_EXTRACT_ARGS, &effectCode)) {
 		EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 		if (magic) {
 			if (magic->fullName.name.m_dataLen > 0) {
@@ -349,7 +349,7 @@ static bool Cmd_GetMagicEffectValue_Execute(COMMAND_ARGS)
 
 	UInt32 whichValue = 0;
 	EffectSetting* magic = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &whichValue, &magic)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &whichValue, &magic)) return true;
 
 	if (magic) {
 		return GetMagicEffectValue(magic, whichValue, result);
@@ -385,7 +385,7 @@ static bool Cmd_GetMagicEffectCodeValue_Execute(COMMAND_ARGS)
 
 	UInt32 whichValue = 0;
 	UInt32 effectCode = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &whichValue, &effectCode)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &whichValue, &effectCode)) return true;
 	return GetMagicEffectValueC(effectCode, whichValue, result);
 }
 
@@ -393,7 +393,7 @@ static bool GetMagicEffectValueC_Execute(COMMAND_ARGS, UInt32 whichValue)
 {
 	*result = 0;
 	UInt32 effectCode = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &effectCode)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &effectCode)) return true;
 	return GetMagicEffectValueC(effectCode, whichValue, result);
 }
 
@@ -777,7 +777,7 @@ static bool Cmd_GetMagicEffectIcon_Execute(COMMAND_ARGS)
 	std::string icon = "";
 
 	EffectSetting* magic = NULL;
-	if(ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &magic))
+	if(ExtractArgs(PASS_EXTRACT_ARGS, &magic))
 		if (magic)
 			if (magic->texture.ddsPath.m_dataLen > 0)
 				icon = magic->texture.ddsPath.m_data;
@@ -792,7 +792,7 @@ static bool Cmd_GetMagicEffectIconC_Execute(COMMAND_ARGS)
 	EffectSetting* magic = NULL;
 
 	UInt32 effectCode = 0;
-	if(ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &effectCode))
+	if(ExtractArgs(PASS_EXTRACT_ARGS, &effectCode))
 		magic = EffectSetting::EffectSettingForC(effectCode);
 		if (magic)
 			if (magic->texture.ddsPath.m_dataLen > 0)
@@ -807,7 +807,7 @@ static bool Cmd_GetMagicEffectModel_Execute(COMMAND_ARGS)
 	std::string model = "";
 
 	EffectSetting* magic = NULL;
-	if(ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &magic))
+	if(ExtractArgs(PASS_EXTRACT_ARGS, &magic))
 		if (magic)
 			if (magic->model.nifPath.m_dataLen > 0)
 				model = magic->model.nifPath.m_data;
@@ -822,7 +822,7 @@ static bool Cmd_GetMagicEffectModelC_Execute(COMMAND_ARGS)
 	EffectSetting* magic = NULL;
 
 	UInt32 effectCode = 0;
-	if(ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &effectCode))
+	if(ExtractArgs(PASS_EXTRACT_ARGS, &effectCode))
 		magic = EffectSetting::EffectSettingForC(effectCode);
 		if (magic)
 			if (magic->model.nifPath.m_dataLen > 0)
@@ -838,7 +838,7 @@ static bool Cmd_GetNthMagicEffectCounter_Execute(COMMAND_ARGS)
 
 	UInt32 index = -1;
 	EffectSetting* magic = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &index, &magic)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &index, &magic)) return true;
 
 	if (magic) {
 		if ( index >= 0 && index < magic->numCounters ) {
@@ -854,7 +854,7 @@ static bool Cmd_GetNthMagicEffectCounterC_Execute(COMMAND_ARGS)
 
 	UInt32 index = -1;
 	UInt32 effectCode = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &index, &effectCode)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &index, &effectCode)) return true;
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic) {
@@ -878,7 +878,7 @@ static bool Cmd_GetMagicEffectCounters_Execute(COMMAND_ARGS)
 	*result = arrID;
 
 	EffectSetting* magic = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &magic)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &magic)) return true;
 
 	if (magic) {
 		// store items in array
@@ -902,7 +902,7 @@ static bool Cmd_GetMagicEffectCountersC_Execute(COMMAND_ARGS)
 	*result = arrID;
 
 	UInt32 effectCode = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &effectCode)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &effectCode)) return true;
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic) {
@@ -920,7 +920,7 @@ static bool Cmd_SetMagicEffectName_Execute(COMMAND_ARGS)
 
 	char newName[kMaxMessageLength];
 	EffectSetting* magic = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newName, &magic)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newName, &magic)) return true;
 
 	if (magic) {
 		if (newName[0] != '\0') {
@@ -937,7 +937,7 @@ static bool Cmd_SetMagicEffectNameC_Execute(COMMAND_ARGS)
 
 	char newName[kMaxMessageLength];
 	UInt32 effectCode = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newName, &effectCode)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newName, &effectCode)) return true;
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic) {
@@ -955,7 +955,7 @@ static bool Cmd_SetMagicEffectBaseCost_Execute(COMMAND_ARGS)
 
 	float newBaseCost = -1;
 	EffectSetting* magic = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newBaseCost, &magic)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newBaseCost, &magic)) return true;
 
 	if (magic) {
 		if (newBaseCost > 0) {
@@ -972,7 +972,7 @@ static bool Cmd_SetMagicEffectBaseCostC_Execute(COMMAND_ARGS)
 
 	float newBaseCost = -1;
 	UInt32 effectCode = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newBaseCost, &effectCode)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newBaseCost, &effectCode)) return true;
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic) {
@@ -990,7 +990,7 @@ static bool Cmd_SetMagicEffectBarterFactor_Execute(COMMAND_ARGS)
 
 	float newBarterFactor = -1;
 	EffectSetting* magic = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newBarterFactor, &magic)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newBarterFactor, &magic)) return true;
 
 	if (magic) {
 		if (newBarterFactor > 0) {
@@ -1007,7 +1007,7 @@ static bool Cmd_SetMagicEffectBarterFactorC_Execute(COMMAND_ARGS)
 
 	float newBarterFactor = -1;
 	UInt32 effectCode = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newBarterFactor, &effectCode)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newBarterFactor, &effectCode)) return true;
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic) {
@@ -1025,7 +1025,7 @@ static bool Cmd_SetMagicEffectEnchantFactor_Execute(COMMAND_ARGS)
 
 	float newEnchantFactor = -1;
 	EffectSetting* magic = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newEnchantFactor, &magic)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newEnchantFactor, &magic)) return true;
 
 	if (magic) {
 		if (newEnchantFactor > 0) {
@@ -1042,7 +1042,7 @@ static bool Cmd_SetMagicEffectEnchantFactorC_Execute(COMMAND_ARGS)
 
 	float newEnchantFactor = -1;
 	UInt32 effectCode = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newEnchantFactor, &effectCode)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newEnchantFactor, &effectCode)) return true;
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic) {
@@ -1060,7 +1060,7 @@ static bool Cmd_SetMagicEffectProjectileSpeed_Execute(COMMAND_ARGS)
 
 	float newProjectileSpeed = -1;
 	EffectSetting* magic = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newProjectileSpeed, &magic)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newProjectileSpeed, &magic)) return true;
 
 	if (magic) {
 		if (newProjectileSpeed > 0) {
@@ -1077,7 +1077,7 @@ static bool Cmd_SetMagicEffectProjectileSpeedC_Execute(COMMAND_ARGS)
 
 	float newProjectileSpeed = -1;
 	UInt32 effectCode = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newProjectileSpeed, &effectCode)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newProjectileSpeed, &effectCode)) return true;
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic) {
@@ -1095,7 +1095,7 @@ static bool Cmd_SetMagicEffectSchool_Execute(COMMAND_ARGS)
 
 	UInt32 newSchool = 0;
 	EffectSetting* magic = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newSchool, &magic)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newSchool, &magic)) return true;
 
 	if (magic) {
 		if ( newSchool >= EffectSetting::kEffect_Alteration && newSchool <= EffectSetting::kEffect_Restoration ) {
@@ -1112,7 +1112,7 @@ static bool Cmd_SetMagicEffectSchoolC_Execute(COMMAND_ARGS)
 
 	UInt32 newSchool = 0;
 	UInt32 effectCode = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newSchool, &effectCode)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newSchool, &effectCode)) return true;
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic) {
@@ -1130,7 +1130,7 @@ static bool Cmd_SetMagicEffectResistValue_Execute(COMMAND_ARGS)
 
 	UInt32 newResist = 0;
 	EffectSetting* magic = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newResist, &magic)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newResist, &magic)) return true;
 
 	if (magic) {
 		if ((newResist >= kActorVal_Strength && newResist < kActorVal_OblivionMax) || newResist == kActorVal_NoActorValue) { // need to test non-Resist AVs
@@ -1151,7 +1151,7 @@ static bool Cmd_SetMagicEffectResistValueC_Execute(COMMAND_ARGS)
 
 	UInt32 newResist = 0;
 	UInt32 effectCode = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newResist, &effectCode)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newResist, &effectCode)) return true;
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic) {
@@ -1418,7 +1418,7 @@ static bool Cmd_SetMagicEffectIcon_Execute(COMMAND_ARGS)
 
 	char newIcon[kMaxMessageLength];
 	EffectSetting* magic = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newIcon, &magic)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newIcon, &magic)) return true;
 
 	if (magic) {
 		if (newIcon[0] != '\0') {
@@ -1435,7 +1435,7 @@ static bool Cmd_SetMagicEffectIconC_Execute(COMMAND_ARGS)
 
 	char newIcon[kMaxMessageLength];
 	UInt32 effectCode = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newIcon, &effectCode)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newIcon, &effectCode)) return true;
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic) {
@@ -1453,7 +1453,7 @@ static bool Cmd_SetMagicEffectModel_Execute(COMMAND_ARGS)
 
 	char newModel[kMaxMessageLength];
 	EffectSetting* magic = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newModel, &magic)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newModel, &magic)) return true;
 
 	if (magic) {
 		if (newModel[0] != '\0') {
@@ -1470,7 +1470,7 @@ static bool Cmd_SetMagicEffectModelC_Execute(COMMAND_ARGS)
 
 	char newModel[kMaxMessageLength];
 	UInt32 effectCode = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newModel, &effectCode)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newModel, &effectCode)) return true;
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic) {
@@ -1488,7 +1488,7 @@ static bool Cmd_SetMagicEffectFlag_Execute(COMMAND_ARGS, UInt32 whichFlag)
 
 	UInt32 newValue = 0;
 	EffectSetting* magic = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newValue, &magic)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newValue, &magic)) return true;
 
 	if (magic)
 		magic->SetFlag(whichFlag, newValue != 0);
@@ -1501,7 +1501,7 @@ static bool Cmd_SetMagicEffectFlagC_Execute(COMMAND_ARGS, UInt32 whichFlag)
 
 	UInt32 newValue = 0;
 	UInt32 effectCode = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newValue, &effectCode)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newValue, &effectCode)) return true;
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic)
@@ -1725,7 +1725,7 @@ static bool Cmd_AddMagicEffectCounter_Execute(COMMAND_ARGS)
 
 	EffectSetting* newCounter = NULL;
 	EffectSetting* magic = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newCounter, &magic)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newCounter, &magic)) return true;
 
 	if (magic) {
 		if (newCounter) {
@@ -1748,7 +1748,7 @@ static bool Cmd_AddMagicEffectCounterC_Execute(COMMAND_ARGS)
 
 	UInt32 newCounterCode = 0;
 	UInt32 effectCode = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &newCounterCode, &effectCode)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &newCounterCode, &effectCode)) return true;
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic) {
@@ -1772,7 +1772,7 @@ static bool Cmd_RemoveNthMagicEffectCounter_Execute(COMMAND_ARGS)
 
 	UInt32 index = -1;
 	EffectSetting* magic = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &index, &magic)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &index, &magic)) return true;
 
 	if (magic) {
 		if (index >= 0 && index < magic->numCounters) {
@@ -1798,7 +1798,7 @@ static bool Cmd_RemoveNthMagicEffectCounterC_Execute(COMMAND_ARGS)
 
 	UInt32 index = -1;
 	UInt32 effectCode = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &index, &effectCode)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &index, &effectCode)) return true;
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic) {
@@ -1884,7 +1884,7 @@ static bool Cmd_SetMagicEffectOtherActorValue_Execute(COMMAND_ARGS)
 
 	UInt32 actorVal = -1;
 	EffectSetting* magic = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &actorVal, &magic)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &actorVal, &magic)) return true;
 
 	if (magic) {
 		if ( actorVal >= kActorVal_Strength && actorVal < kActorVal_OblivionMax ) {
@@ -1901,7 +1901,7 @@ static bool Cmd_SetMagicEffectOtherActorValueC_Execute(COMMAND_ARGS)
 
 	UInt32 actorVal = -1;
 	UInt32 effectCode = 0;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &actorVal, &effectCode)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &actorVal, &effectCode)) return true;
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic) {
@@ -2040,7 +2040,7 @@ static bool Cmd_DumpMagicEffectUnknowns_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	EffectSetting* magic = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &magic)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &magic)) return true;
 
 	if (magic) {
 		std::string MEdump = "'";

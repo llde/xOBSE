@@ -790,7 +790,7 @@ namespace ExtractArgsOverride {
 		}
 	//	_MESSAGE("OVERRIDE  %08X   %08X", scriptObj->refID, thisObj ? thisObj->refID : 0);
 		// extract
-		ExpressionEvaluator eval(paramInfo, scriptData, thisObj, (UInt32)containingObj, scriptObj, eventList, NULL, opcodeOffsetPtr);
+		ExpressionEvaluator eval(paramInfo, scriptData, thisObj, containingObj, scriptObj, eventList, NULL, opcodeOffsetPtr);
 		if (eval.ExtractDefaultArgs(varArgs, bConvertTESForms)) {
 			return true;
 		}
@@ -809,7 +809,7 @@ namespace ExtractArgsOverride {
 			return false;
 		}
 
-		ExpressionEvaluator eval(paramInfo, scriptData, context->callingRef, (UInt32)context->containerRef, scriptObj, eventList,
+		ExpressionEvaluator eval(paramInfo, scriptData, context->callingRef, context->containerRef, scriptObj, eventList,
 			NULL, opcodeOffsetPtr);
 		return eval.ExtractFormatStringArgs(varArgs, fmtStringPos, fmtStringOut, maxParams);
 	}

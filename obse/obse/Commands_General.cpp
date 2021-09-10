@@ -527,7 +527,7 @@ static bool Cmd_GetAllModLocalData_Execute(COMMAND_ARGS)
 
 static bool Cmd_Internal_PushExecutionContext_Execute(COMMAND_ARGS)
 {
-	ExtractArgsOverride::PushContext(thisObj, (TESObjectREFR*)arg3, (UInt8*)arg1, opcodeOffsetPtr);
+	ExtractArgsOverride::PushContext(thisObj, contObj, (UInt8*)arg1, opcodeOffsetPtr);
 	return true;
 }
 

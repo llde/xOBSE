@@ -189,7 +189,7 @@ static bool GetNthActiveEffectInfo_Execute(COMMAND_ARGS, UInt32 whichVal)
 	if (!magicTarget) return true;
 
 	UInt32 whichEffect = 0;
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &whichEffect);
+	ExtractArgs(PASS_EXTRACT_ARGS, &whichEffect);
 
 	ActiveEffectVisitor visitor(magicTarget->GetEffectList());
 	ActiveEffect* ae = visitor.GetNthInfo(whichEffect);
@@ -277,7 +277,7 @@ static bool ChangeNthActiveEffectValue_Execute(COMMAND_ARGS, UInt32 whichVal, bo
 
 	float floatVal = 0.0;
 	UInt32 whichEffect = 0;
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &floatVal, &whichEffect);
+	ExtractArgs(PASS_EXTRACT_ARGS, &floatVal, &whichEffect);
 
 	ActiveEffectVisitor visitor(magicTarget->GetEffectList());
 	ActiveEffect* ae = visitor.GetNthInfo(whichEffect);
@@ -415,7 +415,7 @@ static bool GetTotalActiveEffectMagnitude_Execute(COMMAND_ARGS, AEMagnitudeCount
 	EffectSetting* magicEffect = NULL;
 	UInt32 actorVal = kActorVal_OblivionMax;
 	UInt32 bIgnoreUnapplied = 0;
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &magicEffect, &actorVal, &bIgnoreUnapplied))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &magicEffect, &actorVal, &bIgnoreUnapplied))
 		return true;
 
 	if (!magicEffect) return true;
@@ -502,7 +502,7 @@ static bool GetTotalActiveEffectMagnitudeC_Execute(COMMAND_ARGS, AEMagnitudeCoun
 
 	UInt32 effectCode = 0;
 	UInt32 actorVal = kActorVal_OblivionMax;
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &effectCode, &actorVal))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &effectCode, &actorVal))
 		return true;
 
 	if (effectCode == 0)
@@ -647,7 +647,7 @@ static bool Cmd_DispelNthActiveEffect_Execute(COMMAND_ARGS)
 		return true;
 
 	UInt32 whichEffect = 0;
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &whichEffect);
+	ExtractArgs(PASS_EXTRACT_ARGS, &whichEffect);
 
 	ActiveEffectVisitor visitor(magicTarget->GetEffectList());
 	ActiveEffect* ae = visitor.GetNthInfo(whichEffect);

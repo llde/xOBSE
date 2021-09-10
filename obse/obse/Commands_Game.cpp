@@ -38,7 +38,7 @@ static bool Cmd_SetNumericGameSetting_Execute(COMMAND_ARGS)
 	char	settingName[256] = { 0 };
 	float	settingData = 0;
 
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &settingName, &settingData))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &settingName, &settingData))
 		return true;
 
 	SettingInfo	* setting = NULL;
@@ -93,7 +93,7 @@ static bool Cmd_SetNumericINISetting_Execute(COMMAND_ARGS)
 	char	settingName[256] = { 0 };
 	float	settingData = 0;
 
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &settingName, &settingData))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &settingName, &settingData))
 		return true;
 
 	INISettingEntry* entry = GetIniSetting(settingName);
@@ -135,7 +135,7 @@ bool Cmd_GetNumericINISetting_Execute(COMMAND_ARGS)
 
 	char	settingName[256] = { 0 };
 
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &settingName))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &settingName))
 		return true;
 
 	INISettingEntry* entry = GetIniSetting(settingName);
@@ -341,7 +341,7 @@ static bool Cmd_SetDisableGlobalCollision_Execute(COMMAND_ARGS)
 
 	*result = currentState;
 
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &disable))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &disable))
 		return true;
 
 	if(disable != currentState)
@@ -393,13 +393,13 @@ static bool Cmd_MessageEX_Execute(COMMAND_ARGS)
 
 static bool Cmd_SetMessageIcon_Execute(COMMAND_ARGS)
 {
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &MessageIconPath);
+	ExtractArgs(PASS_EXTRACT_ARGS, &MessageIconPath);
 	return true;
 }
 
 static bool Cmd_SetMessageSound_Execute(COMMAND_ARGS)
 {
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &MessageSoundID);
+	ExtractArgs(PASS_EXTRACT_ARGS, &MessageSoundID);
 	return true;
 }
 
@@ -459,7 +459,7 @@ static bool Cmd_IsModLoaded_Execute(COMMAND_ARGS)
 	char modName[512];
 	*result = 0;
 
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &modName))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &modName))
 		return true;
 
 	if (ModTable::Get().IsModLoaded (modName))
@@ -479,7 +479,7 @@ static bool Cmd_IsModLoaded_Execute(COMMAND_ARGS)
 static bool Cmd_GetModIndex_Execute(COMMAND_ARGS)
 {
 	char modName[512];
-	if (!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &modName))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &modName))
 		return true;
 
 	UInt32 modIndex = ModTable::Get().GetModIndex (modName);
@@ -640,7 +640,7 @@ static bool Cmd_GetSoundPlaying_Execute(COMMAND_ARGS)
 	OSSoundGlobals	* soundGlobals = (*g_osGlobals)->sound;
 	if(!soundGlobals || !soundGlobals->gameSoundMap || !soundGlobals->niObjectMap) return true;
 
-	if(!ExtractArgs(EXTRACT_ARGS, &soundName, &radiusPickSize)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &soundName, &radiusPickSize)) return true;
 
 	UInt32	matchCount = 0;
 
@@ -987,7 +987,7 @@ static bool Cmd_SetModAlias_Execute (COMMAND_ARGS)
 {
 	char name[0x100] = "", alias[0x100] = "";
 
-	if (ExtractArgs(EXTRACT_ARGS, name, alias) && *name && *alias)
+	if (ExtractArgs(PASS_EXTRACT_ARGS, name, alias) && *name && *alias)
 		*result = ModTable::Get().SetAlias (name, ModTable::Get().GetModIndex (alias)) ? 1.0 : 0.0;
 
 	DEBUG_PRINT ("SetModAlias >> %.0f", *result);
@@ -999,7 +999,7 @@ static bool Cmd_GetModAlias_Execute (COMMAND_ARGS)
 	char name[0x100] = "";
 	std::string alias;
 
-	if (ExtractArgs(EXTRACT_ARGS, name) && *name)
+	if (ExtractArgs(PASS_EXTRACT_ARGS, name) && *name)
 		alias = ModTable::Get().GetAlias (name);
 
 	AssignToStringVar (PASS_COMMAND_ARGS, alias.c_str ());

@@ -99,7 +99,7 @@ static bool Cmd_UncompleteQuest_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	TESQuest* quest = NULL;
-	if (ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &quest) && quest) {
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &quest) && quest) {
 		quest->SetCompleted(false);
 		*result = 1;
 	}
@@ -111,7 +111,7 @@ static bool Cmd_IsQuestCompleted_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	TESQuest* quest = NULL;
-	if (ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &quest) && quest) {
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &quest) && quest) {
 		*result = quest->IsCompleted() ? 1.0 : 0.0;
 	}
 

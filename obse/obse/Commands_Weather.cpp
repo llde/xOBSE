@@ -12,7 +12,7 @@ static bool Cmd_GetWeatherInfo_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	TESWeather* weather = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &weather))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &weather))
 		return true;
 	
 

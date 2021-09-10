@@ -80,13 +80,13 @@ static bool GetActiveMenuElement(COMMAND_ARGS, eMenuValue whichValue, MenuInfo* 
 	//Extract arguments
 	if (whichValue < kMenu_Ingredient && whichValue >= kMenu_Selection)	//optional int param specifies menu type
 	{
-		ExtractArgs(EXTRACT_ARGS, &intArg);
+		ExtractArgs(PASS_EXTRACT_ARGS, &intArg);
 		if (intArg != -1)
 			activeMenu = GetMenuByType(intArg);
 	}
 	else if (whichValue >= kMenu_Ingredient)
 	{
-		ExtractArgs(EXTRACT_ARGS, &intArg);
+		ExtractArgs(PASS_EXTRACT_ARGS, &intArg);
 		if (intArg == -1)
 			return false;
 	}

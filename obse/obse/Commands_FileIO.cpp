@@ -29,7 +29,7 @@ bool Cmd_FloatFromFile_Execute(COMMAND_ARGS)
 	int linePos;
 
 	//just return with error message if file can't be opened
-	if (!(ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &filename, &linePos)) ||
+	if (!(ExtractArgs(PASS_EXTRACT_ARGS, &filename, &linePos)) ||
 		fopen_s(&fileptr, filename, "r"))
 	{
 		Console_Print ("File %s could not be opened.", filename);
@@ -74,7 +74,7 @@ bool Cmd_FloatToFile_Execute(COMMAND_ARGS)
 	int linePos;
 	float input;
 
-	if (!(ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &filename, &linePos, &input)) ||
+	if (!(ExtractArgs(PASS_EXTRACT_ARGS, &filename, &linePos, &input)) ||
 		fopen_s(&fileptr, filename, "r"))
 	{
 		Console_Print ("File %s could not be opened.", filename);

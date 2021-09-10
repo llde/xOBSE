@@ -60,7 +60,7 @@ bool Cmd_PrintToFile_Execute(COMMAND_ARGS)
 	FILE* fileptr;
 	float f0, f1, f2, f3, f4, f5, f6, f7, f8;
 
-	if (ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &filename, &fmtstring, &f0, &f1, &f2, &f3, &f4,
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &filename, &fmtstring, &f0, &f1, &f2, &f3, &f4,
 					&f5, &f6, &f7, &f8))
 	{
 		fopen_s (&fileptr, filename, "a+");
@@ -135,7 +135,7 @@ bool Cmd_RunBatchScript_Execute(COMMAND_ARGS)
 
 	*result = 0;
 
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &fileName, &bRunOnRef, &bSuppressOutput)) {
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &fileName, &bRunOnRef, &bSuppressOutput)) {
 		return true;
 	}
 

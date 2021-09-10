@@ -214,7 +214,7 @@ bool Cmd_SaveIP_Execute(COMMAND_ARGS)
 
 	UInt32	idx = 0;
 
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &idx)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &idx)) return true;
 
 	// this must happen after extractargs updates opcodeOffsetPtr so it points to the next instruction
 	if(idx < kMaxSavedIPs)
@@ -246,7 +246,7 @@ bool Cmd_RestoreIP_Execute(COMMAND_ARGS)
 
 	UInt32	idx = 0;
 
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &idx)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &idx)) return true;
 
 	if(idx < kMaxSavedIPs)
 	{
@@ -270,7 +270,7 @@ bool Cmd_RestoreIP_Execute(COMMAND_ARGS)
 bool Cmd_Test_Execute(COMMAND_ARGS)
 {
 	_MESSAGE("Cmd_Test_Execute: %08X %08X %08X (%s) %08X %08X (%s) %08X %08X %08X",
-		paramInfo, arg1, thisObj, GetObjectClassName((void *)thisObj), arg3, scriptObj, GetObjectClassName((void *)scriptObj), eventList, result, opcodeOffsetPtr);
+		paramInfo, arg1, thisObj, GetObjectClassName((void *)thisObj), contObj, scriptObj, GetObjectClassName((void *)scriptObj), eventList, result, opcodeOffsetPtr);
 
 #if 1
 	InterfaceManager	* interfaceManager = InterfaceManager::GetSingleton();
@@ -340,11 +340,11 @@ bool Cmd_Test_Execute(COMMAND_ARGS)
 bool Cmd_TestArgs_Execute(COMMAND_ARGS)
 {
 	_MESSAGE("Cmd_TestArgs_Execute: %08X %08X %08X (%s) %08X %08X (%s) %08X %08X %08X",
-		paramInfo, arg1, thisObj, GetObjectClassName((void *)thisObj), arg3, scriptObj, GetObjectClassName((void *)scriptObj), eventList, result, opcodeOffsetPtr);
+		paramInfo, arg1, thisObj, GetObjectClassName((void *)thisObj), contObj, scriptObj, GetObjectClassName((void *)scriptObj), eventList, result, opcodeOffsetPtr);
 
 	UInt32	arg;
 
-	if(ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &arg))
+	if(ExtractArgs(PASS_EXTRACT_ARGS, &arg))
 	{
 		Console_Print("testargcommand: %d", arg);
 	}
@@ -426,7 +426,7 @@ bool Cmd_DumpVarInfo_Execute(COMMAND_ARGS)
 bool Cmd_DumpDocs_Execute(COMMAND_ARGS)
 {
 	UInt32 opCodeStart = g_scriptCommands.GetByName("GetMagicEffectCharsC")->opcode;
-	if (ExtractArgs(EXTRACT_ARGS, &opCodeStart)) {
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &opCodeStart)) {
 		g_scriptCommands.DumpCommandDocumentation(opCodeStart);
 	}
 	return true;
@@ -435,7 +435,7 @@ bool Cmd_DumpDocs_Execute(COMMAND_ARGS)
 bool Cmd_DumpXmlDocs_Execute(COMMAND_ARGS)
 {
 	UInt32 opCodeStart = kObseOpCodeStart;
-	if (ExtractArgs(EXTRACT_ARGS, &opCodeStart))
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &opCodeStart))
 		g_scriptCommands.DumpCommandXML(opCodeStart);
 	return true;
 }

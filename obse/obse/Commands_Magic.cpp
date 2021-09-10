@@ -307,7 +307,7 @@ static bool Cmd_GetMagicItemValue_Execute(COMMAND_ARGS)
 	UInt32 valueType = 0;
 	MagicItem* magicItem = NULL;
 	UInt32 whichEffect = 0;
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &valueType, &magicItem, &whichEffect);
+	ExtractArgs(PASS_EXTRACT_ARGS, &valueType, &magicItem, &whichEffect);
 
 	return GetMagicItemValue(magicItem, valueType, whichEffect, result);
 }
@@ -464,7 +464,7 @@ static bool GetSpellItemValue_Execute(COMMAND_ARGS, UInt32 whichValue)
 {
 	*result = 0;
 	SpellItem* spell = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &spell)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &spell)) return true;
 
 	if (spell) {
 		return GetSpellItemValue(spell, whichValue, result, (thisObj) ? thisObj : NULL);
@@ -476,7 +476,7 @@ static bool GetEnchantmentItemValue_Execute(COMMAND_ARGS, UInt32 whichValue)
 {
 	*result = 0;
 	MagicItem* magicItem = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &magicItem)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &magicItem)) return true;
 
 	EnchantmentItem* enchantmentItem = (EnchantmentItem*)Oblivion_DynamicCast(magicItem, 0, RTTI_MagicItem, RTTI_EnchantmentItem, 0);
 	if (enchantmentItem) {
@@ -489,7 +489,7 @@ static bool Cmd_GetMagicItemType_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	MagicItem* magicItem = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &magicItem)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &magicItem)) return true;
 	return GetMagicItemType(magicItem, result);
 }
 
@@ -885,7 +885,7 @@ static bool Cmd_RemoveNthEffectItem_Execute(COMMAND_ARGS)
 //{
 //	*result = 0;
 //	MagicItem* magicItem = NULL;
-//	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &magicItem);
+//	ExtractArgs(PASS_EXTRACT_ARGS, &magicItem);
 //	if (!magicItem || ! result) return true;
 //	TESForm* magicForm = (TESForm*)Oblivion_DynamicCast(magicItem, 0, RTTI_MagicItem, RTTI_TESForm, 0);
 //	if (!magicForm || !IsClonedForm(magicForm->refID)) return true;
@@ -1009,9 +1009,9 @@ static bool ChangeMagicItem_Execute(COMMAND_ARGS, UInt32 whichValue, bool bForMo
 	ChangeMagicValue cmv(whichValue, bForMod, scriptObj);
 	bool bArgsExtracted = false;
 	if (bForMod) {
-		bArgsExtracted = ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, cmv.FloatPtr(), &magicItem);
+		bArgsExtracted = ExtractArgs(PASS_EXTRACT_ARGS, cmv.FloatPtr(), &magicItem);
 	} else {
-		bArgsExtracted = ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, cmv.IntegerPtr(), &magicItem);
+		bArgsExtracted = ExtractArgs(PASS_EXTRACT_ARGS, cmv.IntegerPtr(), &magicItem);
 	}
 	if (!bArgsExtracted) return true;
 	return ChangeMagicItem(magicItem, cmv, result);
@@ -1025,9 +1025,9 @@ static bool ChangeSpellItem_Execute(COMMAND_ARGS, UInt32 whichValue, bool bForMo
 	ChangeMagicValue cmv(whichValue, bForMod, scriptObj);
 	bool bArgsExtracted = false;
 	if (bForMod) {
-		bArgsExtracted = ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, cmv.FloatPtr(), &spell);
+		bArgsExtracted = ExtractArgs(PASS_EXTRACT_ARGS, cmv.FloatPtr(), &spell);
 	} else {
-		bArgsExtracted = ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, cmv.IntegerPtr(), &spell);
+		bArgsExtracted = ExtractArgs(PASS_EXTRACT_ARGS, cmv.IntegerPtr(), &spell);
 	}
 	if (!bArgsExtracted) return true;
 	return ChangeSpellItem(spell, cmv, result);
@@ -1068,9 +1068,9 @@ static bool ChangeEnchantmentItem_Execute(COMMAND_ARGS, UInt32 whichValue, bool 
 	ChangeMagicValue cmv(whichValue, bForMod, scriptObj);
 	bool bArgsExtracted = false;
 	if (bForMod) {
-		bArgsExtracted = ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, cmv.FloatPtr(), &magicItem);
+		bArgsExtracted = ExtractArgs(PASS_EXTRACT_ARGS, cmv.FloatPtr(), &magicItem);
 	} else {
-		bArgsExtracted = ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, cmv.IntegerPtr(), &magicItem);
+		bArgsExtracted = ExtractArgs(PASS_EXTRACT_ARGS, cmv.IntegerPtr(), &magicItem);
 	}
 	if (!bArgsExtracted) return true;
 	EnchantmentItem* enchantmentItem = (EnchantmentItem*)Oblivion_DynamicCast(magicItem, 0, RTTI_MagicItem, RTTI_EnchantmentItem, 0);
@@ -1334,7 +1334,7 @@ static bool Cmd_IsMagicItemAutoCalc_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	MagicItem* magicItem = NULL;
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &magicItem)) return true;
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &magicItem)) return true;
 	return GetMagicItemValue(magicItem, kMagic_IsAutoCalc, 0, result);
 }
 
@@ -1348,7 +1348,7 @@ static bool Cmd_IsSpellHostile_Execute(COMMAND_ARGS)
 	*result = 0;
 	SpellItem* spell = NULL;
 
-	if (!ExtractArgs(EXTRACT_ARGS, &spell))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &spell))
 		return true;
 
 	if (spell)
@@ -1363,7 +1363,7 @@ static bool Cmd_SetSpellHostile_Execute(COMMAND_ARGS)
 	SpellItem* spell = NULL;
 	UInt32 bHostile = 0;
 
-	if (!ExtractArgs(EXTRACT_ARGS, &spell, &bHostile))
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &spell, &bHostile))
 		return true;
 
 	if (spell)

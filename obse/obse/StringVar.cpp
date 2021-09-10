@@ -329,7 +329,7 @@ UInt32	StringVarMap::Add(UInt8 varModIndex, const char* data, bool bTemp)
 
 StringVarMap g_StringMap;
 
-bool AssignToStringVar(ParamInfo * paramInfo, void * arg1, TESObjectREFR * thisObj, UInt32 arg3, Script * scriptObj, ScriptEventList * eventList, double * result, UInt32 * opcodeOffsetPtr, const char* newValue)
+bool AssignToStringVar(ParamInfo * paramInfo, void * arg1, TESObjectREFR * thisObj, TESObjectREFR* contObj, Script * scriptObj, ScriptEventList * eventList, double * result, UInt32 * opcodeOffsetPtr, const char* newValue)
 {
 	double strID = 0;
 	UInt8 modIndex = 0;

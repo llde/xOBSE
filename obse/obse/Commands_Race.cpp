@@ -26,7 +26,7 @@ static bool GetRaceValue_Execute(COMMAND_ARGS, UInt32 whichVal)
 	UInt32 intVal = 0;
 	TESRace* race = 0;
 	UInt32 isFemaleArg = 0; // male
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &intVal, &race, &isFemaleArg);
+	ExtractArgs(PASS_EXTRACT_ARGS, &intVal, &race, &isFemaleArg);
 
 	bool bIsFemale = (isFemaleArg == 0) ? false : true;
 	if (!race) {
@@ -103,7 +103,7 @@ static bool Cmd_GetRaceSpellCount_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	TESRace* race = 0;
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &race);
+	ExtractArgs(PASS_EXTRACT_ARGS, &race);
 	if (!race) {
 		if (!thisObj) return true;
 		TESNPC* npc = (TESNPC*)Oblivion_DynamicCast(thisObj->baseForm, 0, RTTI_TESForm, RTTI_TESNPC, 0);

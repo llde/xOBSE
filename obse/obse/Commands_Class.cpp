@@ -19,7 +19,7 @@ static bool Cmd_IsMajor_Execute(COMMAND_ARGS)
 	UInt32 skill = 0;
 	TESClass* theClass = NULL;
 
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &skill, &theClass);
+	ExtractArgs(PASS_EXTRACT_ARGS, &skill, &theClass);
 
 	if (!IsSkill(skill)) return true;
 	if (!theClass) {
@@ -42,7 +42,7 @@ static bool Cmd_IsClassAttribute_Execute(COMMAND_ARGS)
 	UInt32 attribute = 0;
 	TESClass* theClass = NULL;
 
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &attribute, &theClass);
+	ExtractArgs(PASS_EXTRACT_ARGS, &attribute, &theClass);
 
 	if (attribute > kActorVal_Luck) return true;
 	if (!theClass) {
@@ -90,7 +90,7 @@ static bool Cmd_GetClassAttribute_Execute(COMMAND_ARGS)
 	UInt32 which = 0;
 	TESClass* theClass = NULL;
 
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &which, &theClass);
+	ExtractArgs(PASS_EXTRACT_ARGS, &which, &theClass);
 
 	if (which > 1) return true;
 	if (!theClass) {
@@ -142,7 +142,7 @@ static bool Cmd_GetClassSkill_Execute(COMMAND_ARGS)
 	UInt32 which = 0;
 	TESClass* theClass = NULL;
 
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &which, &theClass);
+	ExtractArgs(PASS_EXTRACT_ARGS, &which, &theClass);
 
 	if (which > 6) return true;
 	if (!theClass) {
@@ -249,7 +249,7 @@ static bool Cmd_GetClassSpecialization_Execute(COMMAND_ARGS)
 
 	TESClass* theClass = NULL;
 
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &theClass);
+	ExtractArgs(PASS_EXTRACT_ARGS, &theClass);
 
 	if (!theClass) {
 		if(!thisObj) return true;

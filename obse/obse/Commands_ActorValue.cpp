@@ -17,7 +17,7 @@ static bool Cmd_GetSkillUseIncrement_Execute(COMMAND_ARGS)
 
 	UInt32 valSkill = 0;
 	UInt32 whichUse = 0;
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &valSkill, &whichUse);
+	ExtractArgs(PASS_EXTRACT_ARGS, &valSkill, &whichUse);
 	if (!IsSkill(valSkill)) return true;
 
 	TESSkill *skill = TESSkill::SkillForActorVal(valSkill);
@@ -33,7 +33,7 @@ static bool Cmd_SetSkillUseIncrement_Execute(COMMAND_ARGS)
 	float nuVal = 0.0;
 	UInt32 valSkill = 0;
 	UInt32 whichUse = 0;
-	ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &nuVal, &valSkill, &whichUse);
+	ExtractArgs(PASS_EXTRACT_ARGS, &nuVal, &valSkill, &whichUse);
 	if (!IsSkill(valSkill)) return true;
 
 	TESSkill *skill = TESSkill::SkillForActorVal(valSkill);
@@ -98,7 +98,7 @@ static bool Cmd_StringToActorValue_Execute(COMMAND_ARGS)
 	*result = 0;
 	char avString[256] = { 0 };
 
-	if(!ExtractArgs(paramInfo, arg1, opcodeOffsetPtr, thisObj, arg3, scriptObj, eventList, &avString))
+	if(!ExtractArgs(PASS_EXTRACT_ARGS, &avString))
 		return true;
 	
 	UInt32 av = GetActorValueForString(avString);
