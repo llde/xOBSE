@@ -116,11 +116,11 @@ class Script;
 struct ScriptBuffer;
 struct ScriptLineBuffer;
 
-#define COMMAND_ARGS	ParamInfo * paramInfo, void * arg1, TESObjectREFR * thisObj, TESObjectREFR* contObj, Script * scriptObj, ScriptEventList * eventList, double * result, UInt32 * opcodeOffsetPtr
-#define PASS_COMMAND_ARGS paramInfo, arg1, thisObj, contObj, scriptObj, eventList, result, opcodeOffsetPtr
-#define PASS_EXTRACT_ARGS	paramInfo, arg1, opcodeOffsetPtr, thisObj, contObj, scriptObj, eventList
+#define COMMAND_ARGS	ParamInfo * paramInfo, void * scriptData, TESObjectREFR * thisObj, TESObjectREFR* contObj, Script * scriptObj, ScriptEventList * eventList, double * result, UInt32 * opcodeOffsetPtr
+#define PASS_COMMAND_ARGS paramInfo, scriptData, thisObj, contObj, scriptObj, eventList, result, opcodeOffsetPtr
+#define PASS_EXTRACT_ARGS	paramInfo, scriptData, opcodeOffsetPtr, thisObj, contObj, scriptObj, eventList
 #define COMMAND_ARGS_EVAL TESObjectREFR * thisObj, void * arg1, void * arg2, double * result
-
+#define PASS_EXTRACT_ARGS_EX paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList
 //Macro to make CommandInfo definitions a bit less tedious
 
 #define DEFINE_COMMAND_CONDITIONAL(name ,description ,refRequired ,numParams ,paramInfo)\

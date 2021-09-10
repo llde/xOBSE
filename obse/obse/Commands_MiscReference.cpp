@@ -113,7 +113,7 @@ static bool Cmd_SetOpenKey_Execute(COMMAND_ARGS)
 	if (!thisObj)
 		return true;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form);
 	if (!form)
 		return true;
 
@@ -1473,7 +1473,7 @@ static bool GetSound_Execute(COMMAND_ARGS, UInt32 whichSound)
 	if (whichSound > 2)
 		return false;
 
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form))
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form))
 		return false;
 
 	form = form->TryGetREFRParent();
@@ -1561,7 +1561,7 @@ static bool SetSound_Execute(COMMAND_ARGS, UInt32 whichSound)
 	if (whichSound > 2)
 		return false;
 
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &sound, &form))
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &sound, &form))
 		return false;
 
 	form = form->TryGetREFRParent();
@@ -1749,12 +1749,12 @@ static bool SetArrowProjectileValue(COMMAND_ARGS, UInt32 whichValue)
 	{
 		if (whichValue < kArrow_Poison)
 		{
-			bExtracted = ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &formArg);
+			bExtracted = ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &formArg);
 			enchItem = (EnchantmentItem*)Oblivion_DynamicCast(formArg, 0, RTTI_TESForm, RTTI_EnchantmentItem, 0);
 		}
 		else
 		{
-			bExtracted = ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &formArg);
+			bExtracted = ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &formArg);
 			alchItem = (AlchemyItem*)Oblivion_DynamicCast(formArg, 0, RTTI_TESForm, RTTI_AlchemyItem, 0);
 		}
 
@@ -1955,7 +1955,7 @@ static bool Cmd_SetBaseForm_Execute(COMMAND_ARGS)
 	if (contObj)			// object is in a container
 		return true;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form) && thisObj)
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form) && thisObj)
 	{
 		if (!thisObj->IsActor() && form && form->typeID == thisObj->baseForm->typeID)
 		{
@@ -2010,7 +2010,7 @@ static bool Cmd_GetProjectile_Execute(COMMAND_ARGS)
 	else if (!(*g_thePlayer))
 		return true;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &projType, &minLifetime, &formToMatch))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &projType, &minLifetime, &formToMatch))
 	{
 		ProjectileFinder finder(projType, actor, formToMatch);
 		TESObjectCELL* pcCell = (*g_thePlayer)->parentCell;

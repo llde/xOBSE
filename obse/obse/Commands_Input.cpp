@@ -409,7 +409,7 @@ static bool Cmd_IsKeyPressed3_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	UINT keyCode = NOKEY;
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &keyCode)) {
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &keyCode)) {
 		return true;
 	}
 	*result = g_inputGlobal->IsKeyPressedReal(keyCode);

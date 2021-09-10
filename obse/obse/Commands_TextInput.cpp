@@ -825,7 +825,7 @@ static bool Cmd_OpenTextInput_Execute(COMMAND_ARGS)
 	if (TextInputHandler::GetTextBox())
 		return true;					//already in use
 
-	if (!ExtractFormatStringArgs(0, buffer, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, 
+	if (!ExtractFormatStringArgs(0, buffer, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList,
 								 kCommandInfo_OpenTextInput.numParams, &menuType, &maxLength))
 		return true;
 
@@ -948,7 +948,7 @@ static bool Cmd_InsertInInputText_Execute(COMMAND_ARGS)
 	if (textBox)
 	{
 		char buffer[kMaxMessageLength];
-		if (!ExtractFormatStringArgs(0, buffer, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, 21))
+		if (!ExtractFormatStringArgs(0, buffer, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, 21))
 			return true;
 
 		textBox->InsertInText(buffer);
@@ -1017,7 +1017,7 @@ static bool Cmd_SetTextInputControlHandler_Execute(COMMAND_ARGS)
 {
 	TESForm* scriptForm = NULL;
 	TextInputHandler* textBox = TextInputHandler::GetTextBox();
-	if (textBox && ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &scriptForm)) {
+	if (textBox && ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &scriptForm)) {
 		Script* script = OBLIVION_CAST(scriptForm, TESForm, Script);
 		if (script) {
 			textBox->SetControlHandler(script);

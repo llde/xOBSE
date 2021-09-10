@@ -386,9 +386,9 @@ static bool MagicItemHasEffect_Execute(COMMAND_ARGS, bool bReturnCount, bool bUs
 	UInt32 actorVal = kActorVal_OblivionMax;
 
 	if (bUsingCode) {
-		ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &effectCode, &form, &actorVal);
+		ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &effectCode, &form, &actorVal);
 	} else {
-		ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &magic, &form, &actorVal);
+		ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &magic, &form, &actorVal);
 		if (magic) effectCode = magic->effectCode;
 	}
 	if (!form || effectCode == 0) return true;
@@ -433,7 +433,7 @@ static bool Cmd_MagicItemHasEffectItemScript_Execute(COMMAND_ARGS)
 	*result = 0;
 	TESForm* scriptItemVar = NULL;
 	TESForm* form = NULL;
-	bool bArgsExtracted = ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &scriptItemVar, &form);
+	bool bArgsExtracted = ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &scriptItemVar, &form);
 	if (!bArgsExtracted || !scriptItemVar || !form) return true;
 
 	EffectItemList* list = GetEffectList(form);
@@ -453,7 +453,7 @@ static bool GetNthEffectItemValue_Execute(COMMAND_ARGS, UInt32 whichValue)
 	UInt32 whichEffect = 0;
 	TESForm* form = NULL;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form, &whichEffect);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form, &whichEffect);
 	if (!form) return true;
 	EffectItemList* list = GetEffectList(form);
 	if (!list) return true;
@@ -498,7 +498,7 @@ static bool Cmd_GetMagicItemEffectCount_Execute(COMMAND_ARGS)
 	*result = 0;
 	TESForm* form = NULL;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form);
 	if (!form) return true;
 	EffectItemList* list = GetEffectList(form);
 	return GetMagicItemEffectCount(&list->effectList, result);
@@ -704,13 +704,13 @@ static bool ChangeNthEffectItem_Execute(COMMAND_ARGS, UInt32 whichValue, bool bF
 	bool bArgsExtracted = false;
 	bool bChangeScript = (whichValue == kMagic_EffectScript);
 	if (whichValue == kMagic_EffectScriptName) {
-		bArgsExtracted = ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, cmv.StringPtr(), &form, &whichEffect);
+		bArgsExtracted = ExtractArgsEx(PASS_EXTRACT_ARGS_EX, cmv.StringPtr(), &form, &whichEffect);
 	} else if (bChangeScript) {
-		bArgsExtracted = ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, cmv.FormPtr(), &form, &whichEffect);
+		bArgsExtracted = ExtractArgsEx(PASS_EXTRACT_ARGS_EX, cmv.FormPtr(), &form, &whichEffect);
 	} else if (bForMod) {
-		bArgsExtracted = ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, cmv.FloatPtr(), &form, &whichEffect);
+		bArgsExtracted = ExtractArgsEx(PASS_EXTRACT_ARGS_EX, cmv.FloatPtr(), &form, &whichEffect);
 	} else {
-		bArgsExtracted = ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, cmv.IntegerPtr(), &form, &whichEffect);
+		bArgsExtracted = ExtractArgsEx(PASS_EXTRACT_ARGS_EX, cmv.IntegerPtr(), &form, &whichEffect);
 	}
 	if (!bArgsExtracted && !bChangeScript) return true;
 	EffectItemList* list = GetEffectList(form);
@@ -807,9 +807,9 @@ static bool SetNthEffectItemVisualEffect_Execute(COMMAND_ARGS, bool bUseCode)
 	UInt32 whichEffect = 0;
 
 	if (bUseCode) {
-		ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &effectCode, &form, &whichEffect);
+		ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &effectCode, &form, &whichEffect);
 	} else {
-		ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &magic, &form, &whichEffect);
+		ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &magic, &form, &whichEffect);
 		if (magic) effectCode = magic->effectCode;
 	}
 	if (!form || effectCode == 0) return true;
@@ -830,7 +830,7 @@ static bool Cmd_GetNthEffectItemName_Execute(COMMAND_ARGS)
 	TESForm* form = NULL;
 	UInt32 idx = -1;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form, &idx) && form && idx != -1)
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form, &idx) && form && idx != -1)
 	{
 		EffectItemList* list = GetEffectList(form);
 		if (list)
@@ -871,7 +871,7 @@ static bool Cmd_RemoveNthEffectItem_Execute(COMMAND_ARGS)
 	UInt32 whichEffect = 0;
 	TESForm* form = NULL;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form, &whichEffect);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form, &whichEffect);
 	if (!form) return NULL;
 
 	EffectItemList* list = GetEffectList(form);
@@ -1137,7 +1137,7 @@ static bool Cmd_CopyNthEffectItem_Execute(COMMAND_ARGS)
 	TESForm* to = NULL;
 	UInt32 whichEffect = 0;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &from, &to, &whichEffect);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &from, &to, &whichEffect);
 	if (!from || !to) return true;
 
 	EffectItemList* fromList = GetEffectList(from);
@@ -1157,7 +1157,7 @@ static bool Cmd_CopyAllEffectItems_Execute(COMMAND_ARGS)
 	TESForm* to = NULL;
 	UInt32 whichEffect = 0;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &from, &to, &whichEffect);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &from, &to, &whichEffect);
 	if (!from || !to) return true;
 
 	EffectItemList* fromList = GetEffectList(from);
@@ -1176,7 +1176,7 @@ static bool Cmd_RemoveAllEffectItems_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	TESForm* from = NULL;
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &from);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &from);
 	if (!from)
 		return true;
 
@@ -1215,9 +1215,9 @@ static bool AddEffectItem_Execute(COMMAND_ARGS, bool bUsingCode)
 	UInt32 effectCode = 0;
 	TESForm* form = NULL;
 	if (bUsingCode) {
-		ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &effectCode, &form);
+		ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &effectCode, &form);
 	} else {
-		ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &magicEffect, &form);
+		ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &magicEffect, &form);
 		if (magicEffect) effectCode = magicEffect->effectCode;
 	}
 	if (!form || effectCode == 0) return true;
@@ -1250,9 +1250,9 @@ static bool AddFullEffectItem_Execute(COMMAND_ARGS, bool bUsingCode)
 	UInt32 range = 0;
 	TESForm* to = NULL;
 	if (bUsingCode) {
-		ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &effectCode, &magnitude, &area, &duration, &range, &to);
+		ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &effectCode, &magnitude, &area, &duration, &range, &to);
 	} else {
-		ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &magicEffect, &magnitude, &area, &duration, &range, &to);
+		ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &magicEffect, &magnitude, &area, &duration, &range, &to);
 		if (magicEffect) effectCode = magicEffect->effectCode;
 	}
 	if (!to || effectCode == 0) return true;
@@ -1299,7 +1299,7 @@ static bool Cmd_AddScriptedEffectItem_Execute(COMMAND_ARGS)
 	char name[256];
 	TESForm* to = NULL;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &scriptArg, (char**)&name, &to);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &scriptArg, (char**)&name, &to);
 	if (!scriptArg || !to) return true;
 
 	Script* script = (Script*)Oblivion_DynamicCast(scriptArg, 0, RTTI_TESForm, RTTI_Script, 0);
@@ -1384,7 +1384,7 @@ static bool Cmd_GetSpells_Execute(COMMAND_ARGS)
 	*result = arr;
 
 	TESForm* form = NULL;
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form))
 	{
 		if (!form && thisObj)
 			form = thisObj->baseForm;
@@ -1410,7 +1410,7 @@ static bool Cmd_GetLeveledSpells_Execute(COMMAND_ARGS)
 	*result = arrID;
 
 	TESForm* form = NULL;
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form))
 		if (!form && thisObj)
 			form = thisObj->baseForm;
 
@@ -1454,7 +1454,7 @@ static bool Cmd_RemoveBaseSpell_Execute(COMMAND_ARGS)
 	TESForm* spellForm = NULL;
 	TESForm* baseForm = NULL;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &spellForm, &baseForm))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &spellForm, &baseForm))
 	{
 		SpellItem* spellItem = OBLIVION_CAST(spellForm, TESForm, SpellItem);
 		TESSpellList* spellList = OBLIVION_CAST(baseForm, TESForm, TESSpellList);
@@ -1512,7 +1512,7 @@ static bool Cmd_GetNthEffectItem_Execute(COMMAND_ARGS)
 	UInt32 idx = -1;
 	*result = 0.0;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &magicForm, &idx) && magicForm) {
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &magicForm, &idx) && magicForm) {
 		EffectItemList* list = GetEffectList(magicForm);
 		if (list && idx != -1) {
 			EffectItem* item = EffectItemVisitor(&list->effectList).GetNthInfo(idx);

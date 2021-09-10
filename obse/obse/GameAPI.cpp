@@ -1144,7 +1144,7 @@ bool IsConsoleOpen()
 	return *g_bIsConsoleOpen;
 }
 
-bool ExtractSetStatementVar(Script* script, ScriptEventList* eventList, void* scriptDataIn, double * outVarData, UInt8* outModIndex)
+bool ExtractSetStatementVar(Script* script, ScriptEventList* eventList, void* scriptDataIn, double * outVarData, bool* makeTemporary, UInt8* outModIndex)
 {
 	//when script command called as righthand side of a set statement, the script data containing the variable
 	//to assign to remains on the stack as arg to a previous function. We can get to it through arg1 in COMMAND_ARGS
@@ -1155,6 +1155,7 @@ bool ExtractSetStatementVar(Script* script, ScriptEventList* eventList, void* sc
 		return false;
 	}
 
+	*makeTemporary = false;
 	UInt32 scriptDataPtrAddr = (UInt32)(scriptDataIn) - 0x3C;
 	UInt32* scriptDataAddr = (UInt32*)scriptDataPtrAddr;
 	UInt8* scriptData = (UInt8*)(*scriptDataAddr);
@@ -1227,6 +1228,10 @@ bool ExtractSetStatementVar(Script* script, ScriptEventList* eventList, void* sc
 				}
 				else
 					break;
+			}
+			else if (script->IsUserDefinedFunction())
+			{
+				*makeTemporary = true;
 			}
 
 			UInt16 varIdx = *(UInt16*)(scriptData + 1);

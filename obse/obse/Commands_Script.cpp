@@ -24,7 +24,7 @@ static bool GetScript_Execute(COMMAND_ARGS, EScriptMode eMode)
 	*result = 0;
 	TESForm* form = 0;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form);
 	form = form->TryGetREFRParent();
 	if (!form) {
 		if (!thisObj) return true;
@@ -73,7 +73,7 @@ static bool Cmd_SetScript_Execute(COMMAND_ARGS)
 	TESForm* scriptArg = NULL;
 	bool bModifyingThisObj = false;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &scriptArg, &form);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &scriptArg, &form);
 	form = form->TryGetREFRParent();
 	if (!form) {
 		if (!thisObj) return true;
@@ -132,7 +132,7 @@ static bool Cmd_IsFormValid_Execute(COMMAND_ARGS)
 {
 	TESForm* form = NULL;
 	*result = 0;
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form) && form)
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form) && form)
 		*result = 1;
 	return true;
 }
@@ -242,7 +242,7 @@ static bool Cmd_CompareScripts_Execute(COMMAND_ARGS)
 	Script* script2 = NULL;
 	*result = 0;
 
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &script1, &script2))
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &script1, &script2))
 		return true;
 	script1 = (Script*)Oblivion_DynamicCast(script1, 0, RTTI_TESForm, RTTI_Script, 0);
 	script2 = (Script*)Oblivion_DynamicCast(script2, 0, RTTI_TESForm, RTTI_Script, 0);
@@ -339,7 +339,7 @@ static bool Cmd_GetNumExplicitRefs_Execute(COMMAND_ARGS)
 	Script* targetScript = NULL;
 	*result = 0;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form))
 	{
 		targetScript = GetScriptArg(thisObj, form);
 		if (targetScript)
@@ -359,7 +359,7 @@ static bool Cmd_GetNthExplicitRef_Execute(COMMAND_ARGS)
 	UInt32* refResult = (UInt32*)result;
 	*refResult = 0;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &refIdx, &form))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &refIdx, &form))
 	{
 		Script* targetScript = GetScriptArg(thisObj, form);
 		if (targetScript)
@@ -400,7 +400,7 @@ static bool Cmd_RunScript_Execute(COMMAND_ARGS)
 {
 	TESForm* scriptForm = NULL;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &scriptForm))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &scriptForm))
 	{
 		Script* script = OBLIVION_CAST(scriptForm, TESForm, Script);
 		if (script)

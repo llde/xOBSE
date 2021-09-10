@@ -36,16 +36,16 @@ static bool IngredientCommand_Execute(COMMAND_ARGS, UInt32 mode)
 	switch (mode)
 	{
 	case eMode_Get:
-		bExtracted = ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &floraForm);
+		bExtracted = ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &floraForm);
 		break;
 	case eMode_Set:
-		bExtracted = ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &ingredientForm, &floraForm);
+		bExtracted = ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &ingredientForm, &floraForm);
 		break;
 	case eMode_GetChance:
-		bExtracted = ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &whichSeason, &floraForm);
+		bExtracted = ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &whichSeason, &floraForm);
 		break;
 	case eMode_SetChance:
-		bExtracted = ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &whichSeason, &newChance, &floraForm);
+		bExtracted = ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &whichSeason, &newChance, &floraForm);
 		break;
 	}
 
@@ -158,7 +158,7 @@ static bool Cmd_GetEditorID_Execute(COMMAND_ARGS)
 
 	TESForm* form = NULL;
 	UInt32 bNoFormID = 0;	// pass 1 to prevent it returning the formID if no string editorID exists
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form, &bNoFormID) && form)
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form, &bNoFormID) && form)
 	{
 		const char* edID = form->GetEditorID();
 		if (edID)
@@ -349,7 +349,7 @@ static bool Cmd_GetLightRGB_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	TESForm* lightForm = NULL;
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &lightForm)) {
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &lightForm)) {
 		if (!lightForm && thisObj) {
 			lightForm = thisObj->baseForm;
 		}
@@ -405,7 +405,7 @@ static bool Cmd_GetEditorSize_Execute(COMMAND_ARGS)
 	TESForm* form = NULL;
 	*result = -1.0;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form)) {
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form)) {
 		if (!form && thisObj) {
 			form = thisObj->baseForm;
 		}

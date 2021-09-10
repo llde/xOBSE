@@ -151,7 +151,7 @@ bool ExtractArgsEx(ParamInfo * paramInfo, void * scriptData, UInt32 * scriptData
 bool ExtractFormatStringArgs(UInt32 fmtStringPos, char* buffer, ParamInfo * paramInfo, void * scriptDataIn, UInt32 * scriptDataOffset, Script * scriptObj, ScriptEventList * eventList, UInt32 maxParams, ...);
 #endif
 
-bool ExtractSetStatementVar(Script* script, ScriptEventList* eventList, void* scriptDataIn, double* outVarData, UInt8* outModIndex = NULL);
+bool ExtractSetStatementVar(Script* script, ScriptEventList* eventList, void* scriptDataIn, double* outVarData, bool* makeTemporary, UInt8* outModIndex = NULL);
 bool ExtractFormattedString(FormatStringArgs& args, char* buffer);
 
 // Problem: plugins may want to use %z specifier in format strings, but don't have access to StringVarMap

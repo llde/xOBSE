@@ -23,7 +23,7 @@ static bool Cmd_sv_Construct_Execute(COMMAND_ARGS)
 	char buffer[kMaxMessageLength] = {0};
 
 	//not checking the return value here 'cuz we need to assign to the string regardless
-	ExtractFormatStringArgs(0, buffer, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_sv_Construct.numParams);
+	ExtractFormatStringArgs(0, buffer, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_sv_Construct.numParams);
 
 	AssignToStringVar(PASS_COMMAND_ARGS, buffer);
 
@@ -34,7 +34,7 @@ static bool Cmd_sv_Set_Execute(COMMAND_ARGS)
 {
 	char buffer[kMaxMessageLength] = { 0 };
 	UInt32 stringID = 0;
-	if (ExtractFormatStringArgs(0, buffer, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_sv_Set.numParams, &stringID))
+	if (ExtractFormatStringArgs(0, buffer, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_sv_Set.numParams, &stringID))
 	{
 		StringVar* var = g_StringMap.Get(stringID);
 		if (var)
@@ -52,14 +52,14 @@ static bool Cmd_sv_Destruct_Execute(COMMAND_ARGS)
     //        'set var to sv_Destruct' -> destroys string contained in 'var'
     //        'sv_Destruct var1 [var2 ... var10]' -> destroys var1, var2, ... var10
     UInt16 numArgs = 0;
-    UInt8* dataStart = (UInt8*)arg1;
+    UInt8* dataStart = (UInt8*)scriptData;
     if (*dataStart == 0x58 || *dataStart == 0x72) // !!! Only if inside a set statement !!!
     {
         *result = 0;            //store zero in destructed string_var
         double strID = 0;
         UInt8 modIndex = 0;
-
-        if (ExtractSetStatementVar(scriptObj, eventList, arg1, &strID, &modIndex))
+		bool bTemp = false;
+        if (ExtractSetStatementVar(scriptObj, eventList, scriptData, &strID, &bTemp, &modIndex))
             g_StringMap.Delete(strID);
 
         return true;
@@ -115,7 +115,7 @@ static bool Cmd_sv_Compare_Execute(COMMAND_ARGS)
 	char buffer[kMaxMessageLength] = { 0 };
 	UInt32 bCaseSensitive = 0;
 
-	if (!ExtractFormatStringArgs(0, buffer, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_sv_Compare.numParams, &stringID, &bCaseSensitive))
+	if (!ExtractFormatStringArgs(0, buffer, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_sv_Compare.numParams, &stringID, &bCaseSensitive))
 		return true;
 
 	StringVar* lhs = g_StringMap.Get(stringID);
@@ -181,7 +181,7 @@ static bool StringVar_Find_Execute(COMMAND_ARGS, UInt32 mode, CommandInfo* comma
 
 	UInt32 intResult = -1;
 
-	if (!ExtractFormatStringArgs(0, toFind, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, commandInfo->numParams, &strID, &startPos, &numChars, &bCaseSensitive, &numToReplace))
+	if (!ExtractFormatStringArgs(0, toFind, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, commandInfo->numParams, &strID, &startPos, &numChars, &bCaseSensitive, &numToReplace))
 		return true;
 
 	StringVar* strVar = g_StringMap.Get(strID);
@@ -263,7 +263,7 @@ static bool Cmd_sv_Insert_Execute(COMMAND_ARGS)
 	char subString[kMaxMessageLength] = { 0 };
 	*result = 0;
 
-	if (!ExtractFormatStringArgs(0, subString, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_sv_Insert.numParams, &strID, &insertionPos))
+	if (!ExtractFormatStringArgs(0, subString, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_sv_Insert.numParams, &strID, &insertionPos))
 		return true;
 
 	StringVar* lhs = g_StringMap.Get(strID);
@@ -382,7 +382,7 @@ static bool Cmd_GetName_Execute(COMMAND_ARGS)
 	TESForm* form = NULL;
 	const char* name = "";
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form))
 	{
 		if (!form)
 			if (thisObj)
@@ -420,7 +420,7 @@ static bool Cmd_SetStringGameSettingEX_Execute(COMMAND_ARGS)
 	char fmtString[kMaxMessageLength] = { 0 };
 	*result = 0;
 
-	if (ExtractFormatStringArgs(0, fmtString, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_SetStringGameSettingEX.numParams))
+	if (ExtractFormatStringArgs(0, fmtString, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_SetStringGameSettingEX.numParams))
 	{
 		UInt32 pipePos = std::string(fmtString).find(GetSeparatorChar(scriptObj));
 		if (pipePos != -1)
@@ -446,7 +446,7 @@ static bool Cmd_GetModelPath_Execute(COMMAND_ARGS)
 	const char* pathStr = "";
 	*result = 0;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form))
 	{
 		if (!form)
 			if (thisObj)
@@ -466,7 +466,7 @@ static bool Cmd_SetModelPathEX_Execute(COMMAND_ARGS)
 	TESForm* form = NULL;
 	char newPath[kMaxMessageLength] = { 0 };
 
-	if (ExtractFormatStringArgs(0, newPath, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_SetModelPathEX.numParams, &form))
+	if (ExtractFormatStringArgs(0, newPath, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_SetModelPathEX.numParams, &form))
 	{
 		if (!form)
 			if (thisObj)
@@ -490,7 +490,7 @@ static bool GetPath_Execute(COMMAND_ARGS, UInt32 whichPath)
 	TESForm* form = NULL;
 	const char* pathStr = "";
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form))
 	{
 		if (!form)
 			if (thisObj)
@@ -546,7 +546,7 @@ static bool Cmd_SetIconPathEX_Execute(COMMAND_ARGS)
 	TESForm* form = NULL;
 	char newPath[kMaxMessageLength] = { 0 };
 
-	if (ExtractFormatStringArgs(0, newPath, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_SetIconPathEX.numParams, &form))
+	if (ExtractFormatStringArgs(0, newPath, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_SetIconPathEX.numParams, &form))
 	{
 		if (!form)
 			if (thisObj)
@@ -600,9 +600,9 @@ static bool BipedPathFunc_Execute(COMMAND_ARGS, UInt32 mode, bool bIcon)
 
 	bool bExtracted = false;
 	if (mode == eMode_Set)
-		bExtracted = ExtractFormatStringArgs(0, newPath, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_SetBipedModelPathEX.numParams, &whichPath, &form);
+		bExtracted = ExtractFormatStringArgs(0, newPath, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_SetBipedModelPathEX.numParams, &whichPath, &form);
 	else
-		bExtracted = ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &whichPath, &form);
+		bExtracted = ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &whichPath, &form);
 
 	if (bExtracted)
 	{
@@ -670,7 +670,7 @@ static bool Cmd_SetNthFactionRankNameEX_Execute(COMMAND_ARGS)
 	UInt32 gender = 0;
 	char newName[kMaxMessageLength] = { 0 };
 
-	if (ExtractFormatStringArgs(0, newName, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_SetNthFactionRankNameEX.numParams, &form, &rank, &gender))
+	if (ExtractFormatStringArgs(0, newName, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_SetNthFactionRankNameEX.numParams, &form, &rank, &gender))
 	{
 		TESFaction* faction = (TESFaction*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_TESFaction, 0);
 		if (faction)
@@ -686,7 +686,7 @@ static bool Cmd_GetNthEffectItemScriptName_Execute(COMMAND_ARGS)
 	UInt32 whichEffect = 0;
 	const char* effectName = "";
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form, &whichEffect))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form, &whichEffect))
 	{
 		EffectItemList* effectList = GetEffectList(form);
 		if (effectList)
@@ -707,7 +707,7 @@ static bool Cmd_SetNthEffectItemScriptNameEX_Execute(COMMAND_ARGS)
 	UInt32 whichEffect = 0;
 	char newName[kMaxMessageLength] = { 0 };
 
-	if (ExtractFormatStringArgs(0, newName, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_SetNthEffectItemScriptNameEX.numParams, &form, &whichEffect))
+	if (ExtractFormatStringArgs(0, newName, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_SetNthEffectItemScriptNameEX.numParams, &form, &whichEffect))
 	{
 		EffectItemList* effectList = GetEffectList(form);
 		if (effectList)
@@ -746,7 +746,7 @@ static bool Cmd_AsciiToChar_Execute(COMMAND_ARGS)
 static bool Cmd_GetFormIDString_Execute(COMMAND_ARGS)
 {
 	TESForm* form = NULL;
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form);
 	if (!form)
 		form = thisObj;
 

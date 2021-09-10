@@ -177,7 +177,7 @@ static bool Cmd_GetStringIniSetting_Execute(COMMAND_ARGS)
 	char settingName[kMaxMessageLength] = { 0 };
 	const char* settingString = "";
 
-	if (ExtractFormatStringArgs(0, settingName, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, SIZEOF_FMT_STRING_PARAMS))
+	if (ExtractFormatStringArgs(0, settingName, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, SIZEOF_FMT_STRING_PARAMS))
 	{
 		INISettingEntry* entry = GetIniSetting(settingName);
 		if (entry && (entry->data->name[0] == 'S' || entry->data->name[0] == 's'))
@@ -192,7 +192,7 @@ static bool Cmd_SetStringIniSetting_Execute(COMMAND_ARGS)
 {
 	char stringArg[kMaxMessageLength] = { 0 };
 
-	if (ExtractFormatStringArgs(0, stringArg, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, SIZEOF_FMT_STRING_PARAMS))
+	if (ExtractFormatStringArgs(0, stringArg, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, SIZEOF_FMT_STRING_PARAMS))
 	{
 		char* strtokContext = NULL;
 		char* settingName = strtok_s(stringArg, GetSeparatorChars(scriptObj), &strtokContext);
@@ -375,7 +375,7 @@ static bool Cmd_MessageEX_Execute(COMMAND_ARGS)
 	// updated 0021: kyoma's MenuQue plugin causes UI messages to take duration into account
 	// so we accept a duration now
 	float duration = 2.0;
-	if (ExtractFormatStringArgs(0, buffer, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_MessageEX.numParams, &duration))
+	if (ExtractFormatStringArgs(0, buffer, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_MessageEX.numParams, &duration))
 	{
 		*result = 1;
 		if (*MessageIconPath || *MessageSoundID)
@@ -408,7 +408,7 @@ static bool Cmd_MessageBoxEX_Execute(COMMAND_ARGS)
 	*result = 0;
 	char buffer[kMaxMessageLength];
 
-	if (!ExtractFormatStringArgs(0, buffer, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_MessageBoxEX.numParams))
+	if (!ExtractFormatStringArgs(0, buffer, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_MessageBoxEX.numParams))
 		return true;
 
 	//extract the buttons
@@ -526,7 +526,7 @@ static bool Cmd_GetSourceModIndex_Execute(COMMAND_ARGS)
 	TESForm* form = NULL;
 	*result = -1;
 
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form))
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form))
 		return true;
 
 	if (!form)
@@ -818,7 +818,7 @@ static bool Cmd_LoadGameEx_Execute(COMMAND_ARGS)
 	char filename[kMaxMessageLength] = { 0 };
 	*result = 0;
 
-	if (ExtractFormatStringArgs(0, filename, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_LoadGameEx.numParams))
+	if (ExtractFormatStringArgs(0, filename, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_LoadGameEx.numParams))
 	{
 		TESSaveLoadGame	* game = *g_createdBaseObjList;
 		if (game)

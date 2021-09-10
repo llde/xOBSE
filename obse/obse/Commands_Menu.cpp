@@ -543,14 +543,14 @@ static bool GetSetMenuValue_Execute(COMMAND_ARGS, UInt32 mode)
 	case kGetFloat:
 	case kGetString:
 	case kExists:
-		bExtracted = ExtractFormatStringArgs(0, stringArg, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_GetMenuFloatValue.numParams, &menuType);
+		bExtracted = ExtractFormatStringArgs(0, stringArg, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_GetMenuFloatValue.numParams, &menuType);
 		break;
 	case kSetFloat:
-		bExtracted = ExtractFormatStringArgs(0, stringArg, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_SetMenuFloatValue.numParams, &menuType, &newFloatVal);
+		bExtracted = ExtractFormatStringArgs(0, stringArg, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_SetMenuFloatValue.numParams, &menuType, &newFloatVal);
 		break;
 	case kSetString:
 		{
-			bExtracted = ExtractFormatStringArgs(0, stringArg, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_GetMenuFloatValue.numParams, &menuType);
+			bExtracted = ExtractFormatStringArgs(0, stringArg, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_GetMenuFloatValue.numParams, &menuType);
 			// extract new value from format string
 			char* context = NULL;
 			componentPath = strtok_s(stringArg, separatorChar, &context);
@@ -698,7 +698,7 @@ static bool Cmd_ClickMenuButton_Execute(COMMAND_ARGS)
 	UInt32 menuType;
 	char name[kMaxMessageLength] = { 0 };
 
-	if (ExtractFormatStringArgs(0, name, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_GetMenuFloatValue.numParams, &menuType))
+	if (ExtractFormatStringArgs(0, name, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_GetMenuFloatValue.numParams, &menuType))
 	{
 		Menu* menu = GetMenuByType(menuType);
 		if (menu && name)

@@ -16,7 +16,7 @@ static bool Cmd_AddToLeveledList_Execute(COMMAND_ARGS)
 	UInt32		level = 1;	
 	UInt32		count = 1;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &list, &form, &level, &count)) {
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &list, &form, &level, &count)) {
 		TESLeveledList*	levList = (TESLeveledList*)Oblivion_DynamicCast(list, 0, RTTI_TESForm, RTTI_TESLeveledList, 0);
 		if (!levList || !form)
 		{
@@ -35,7 +35,7 @@ static bool Cmd_RemoveFromLeveledList_Execute(COMMAND_ARGS)
 	TESForm*	form;
 	*result = 0;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &list, &form);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &list, &form);
 	TESLeveledList*	levList = (TESLeveledList*)Oblivion_DynamicCast(list, 0, RTTI_TESForm, RTTI_TESLeveledList, 0);
 	if (!levList || !form)
 	{
@@ -55,7 +55,7 @@ static bool CalcLevItem_Execute(COMMAND_ARGS, bool noRecurse)
 	UInt32* refResult = (UInt32*)result;
 	*refResult = 0;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &list, &level, &useChanceNone, &levelDiff);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &list, &level, &useChanceNone, &levelDiff);
 	if (level == -1)	//param omitted
 		return true;
 
@@ -97,7 +97,7 @@ static bool Cmd_GetLevItemByLevel_Execute(COMMAND_ARGS)
 	UInt32* refResult = (UInt32*)result;
 	*refResult = 0;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &lev, &form))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &lev, &form))
 		levList = (TESLeveledList*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_TESLeveledList, 0);
 
 	if (levList)
@@ -115,7 +115,7 @@ static bool Cmd_SetChanceNone_Execute(COMMAND_ARGS)
 	TESForm* form = NULL;
 	UInt32 newChance = 0;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &newChance, &form))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &newChance, &form))
 	{
 		TESLeveledList* levList = OBLIVION_CAST(form, TESForm, TESLeveledList);
 		if (levList && newChance <= 100)
@@ -132,7 +132,7 @@ static bool Cmd_RemoveLevItemByLevel_Execute(COMMAND_ARGS)
 	TESLeveledList* levList = NULL;
 	*result = 0;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &lev, &form))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &lev, &form))
 		levList = (TESLeveledList*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_TESLeveledList, 0);
 
 	if (levList)
@@ -145,7 +145,7 @@ static TESLeveledList* ExtractLeveledList(COMMAND_ARGS)
 {
 	TESForm* form = NULL;
 	TESLeveledList* levList = NULL;
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form))
 		levList = (TESLeveledList*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_TESLeveledList, 0);
 
 	return levList;
@@ -205,7 +205,7 @@ static bool Cmd_GetNthLevItem_Execute(COMMAND_ARGS)
 	UInt32* refResult = (UInt32*)result;
 	*refResult = 0;
 
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &index, &form))
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &index, &form))
 		return true;
 
 	TESLeveledList* levList = (TESLeveledList*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_TESLeveledList, 0);
@@ -229,7 +229,7 @@ static bool Cmd_GetNthLevItemCount_Execute(COMMAND_ARGS)
 	TESForm* form = NULL;
 	*result = 0;
 
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &index, &form))
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &index, &form))
 		return true;
 
 	TESLeveledList* levList = (TESLeveledList*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_TESLeveledList, 0);
@@ -248,7 +248,7 @@ static bool Cmd_GetNthLevItemLevel_Execute(COMMAND_ARGS)
 	TESForm* form = NULL;
 	*result = 0;
 
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &index, &form))
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &index, &form))
 		return true;
 
 	TESLeveledList* levList = (TESLeveledList*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_TESLeveledList, 0);
@@ -264,7 +264,7 @@ static bool Cmd_GetNthLevItemLevel_Execute(COMMAND_ARGS)
 static bool Cmd_ClearLeveledList_Execute(COMMAND_ARGS)
 {
 	TESForm* form = NULL;
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form))
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form))
 		return true;
 
 	TESLeveledList* levList = (TESLeveledList*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_TESLeveledList, 0);
@@ -280,7 +280,7 @@ static bool Cmd_RemoveNthLevItem_Execute(COMMAND_ARGS)
 	UInt32 index = 0;
 	TESLeveledList* levList = NULL;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &index, &form))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &index, &form))
 		levList = (TESLeveledList*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_TESLeveledList, 0);
 
 	if (levList)
@@ -295,7 +295,7 @@ static bool Cmd_GetLevItemIndexByLevel_Execute(COMMAND_ARGS)
 	UInt32 level = 0;
 	TESLeveledList* levList = NULL;
 	*result = -1;
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &level, &form))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &level, &form))
 		levList = (TESLeveledList*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_TESLeveledList, 0);
 
 	if (levList)
@@ -315,7 +315,7 @@ static bool Cmd_GetLevItemIndexByForm_Execute(COMMAND_ARGS)
 	TESLeveledList* levList = NULL;
 	*result = -1;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form, &formToMatch))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form, &formToMatch))
 		levList = (TESLeveledList*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_TESLeveledList, 0);
 	
 	if (levList && formToMatch)

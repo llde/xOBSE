@@ -467,7 +467,7 @@ static bool Cmd_SetCellWaterType_Execute(COMMAND_ARGS)
 {
 	TESObjectCELL* cell = NULL;
 	TESForm* waterForm = NULL;
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &cell, &waterForm) && cell && waterForm) {
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &cell, &waterForm) && cell && waterForm) {
 		TESWaterForm* water = OBLIVION_CAST(waterForm, TESForm, TESWaterForm);
 		if (water) {
 			cell->SetWaterType(water);

@@ -362,7 +362,7 @@ static bool GetMagicEffectValue_Execute(COMMAND_ARGS, UInt32 whichValue)
 {
 	*result = 0;
 	EffectSetting* magic = NULL;
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &magic);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &magic);
 	if (magic) {
 		return GetMagicEffectValue(magic, whichValue, result);
 	}
@@ -1173,7 +1173,7 @@ static bool Cmd_SetMagicEffectLight_Execute(COMMAND_ARGS)
 
 	TESForm* form = NULL;
 	EffectSetting* magic = NULL;
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form, &magic)) form = form->TryGetREFRParent();
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form, &magic)) form = form->TryGetREFRParent();
 	if (form) {
 		if (magic) {
 			TESObjectLIGH* light = (TESObjectLIGH*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_TESObjectLIGH, 0);
@@ -1190,7 +1190,7 @@ static bool Cmd_SetMagicEffectLightC_Execute(COMMAND_ARGS)
 
 	TESForm* form = NULL;
 	UInt32 effectCode = 0;
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form, &effectCode)) form = form->TryGetREFRParent();
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form, &effectCode)) form = form->TryGetREFRParent();
 	if (form) {
 		EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 		if (magic) {
@@ -1208,7 +1208,7 @@ static bool Cmd_SetMagicEffectCastingSound_Execute(COMMAND_ARGS)
 
 	TESSound* sound = NULL;
 	EffectSetting* magic = NULL;
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &sound, &magic)) return true;
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &sound, &magic)) return true;
 
 	if (magic) {
 		if (sound) {
@@ -1225,7 +1225,7 @@ static bool Cmd_SetMagicEffectCastingSoundC_Execute(COMMAND_ARGS)
 
 	TESSound* sound = NULL;
 	UInt32 effectCode = 0;
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &sound, &effectCode)) return true;
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &sound, &effectCode)) return true;
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic) {
@@ -1243,7 +1243,7 @@ static bool Cmd_SetMagicEffectBoltSound_Execute(COMMAND_ARGS)
 
 	TESSound* sound = NULL;
 	EffectSetting* magic = NULL;
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &sound, &magic)) return true;
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &sound, &magic)) return true;
 
 	if (magic) {
 		if (sound) {
@@ -1260,7 +1260,7 @@ static bool Cmd_SetMagicEffectBoltSoundC_Execute(COMMAND_ARGS)
 
 	TESSound* sound = NULL;
 	UInt32 effectCode = 0;
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &sound, &effectCode)) return true;
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &sound, &effectCode)) return true;
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic) {
@@ -1278,7 +1278,7 @@ static bool Cmd_SetMagicEffectHitSound_Execute(COMMAND_ARGS)
 
 	TESSound* sound = NULL;
 	EffectSetting* magic = NULL;
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &sound, &magic)) return true;
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &sound, &magic)) return true;
 
 	if (magic) {
 		if (sound) {
@@ -1295,7 +1295,7 @@ static bool Cmd_SetMagicEffectHitSoundC_Execute(COMMAND_ARGS)
 
 	TESSound* sound = NULL;
 	UInt32 effectCode = 0;
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &sound, &effectCode)) return true;
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &sound, &effectCode)) return true;
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic) {
@@ -1313,7 +1313,7 @@ static bool Cmd_SetMagicEffectAreaSound_Execute(COMMAND_ARGS)
 
 	TESSound* sound = NULL;
 	EffectSetting* magic = NULL;
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &sound, &magic)) return true;
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &sound, &magic)) return true;
 
 	if (magic) {
 		if (sound) {
@@ -1330,7 +1330,7 @@ static bool Cmd_SetMagicEffectAreaSoundC_Execute(COMMAND_ARGS)
 
 	TESSound* sound = NULL;
 	UInt32 effectCode = 0;
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &sound, &effectCode)) return true;
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &sound, &effectCode)) return true;
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic) {
@@ -1348,7 +1348,7 @@ static bool Cmd_SetMagicEffectHitShader_Execute(COMMAND_ARGS)
 
 	TESEffectShader* shader = NULL;
 	EffectSetting* magic = NULL;
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &shader, &magic)) return true;
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &shader, &magic)) return true;
 
 	if (magic) {
 		if (shader) {
@@ -1365,7 +1365,7 @@ static bool Cmd_SetMagicEffectHitShaderC_Execute(COMMAND_ARGS)
 
 	TESEffectShader* shader = NULL;
 	UInt32 effectCode = 0;
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &shader, &effectCode)) return true;
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &shader, &effectCode)) return true;
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic) {
@@ -1383,7 +1383,7 @@ static bool Cmd_SetMagicEffectEnchantShader_Execute(COMMAND_ARGS)
 
 	TESEffectShader* shader = NULL;
 	EffectSetting* magic = NULL;
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &shader, &magic)) return true;
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &shader, &magic)) return true;
 
 	if (magic) {
 		if (shader) {
@@ -1400,7 +1400,7 @@ static bool Cmd_SetMagicEffectEnchantShaderC_Execute(COMMAND_ARGS)
 
 	TESEffectShader* shader = NULL;
 	UInt32 effectCode = 0;
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &shader, &effectCode)) return true;
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &shader, &effectCode)) return true;
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic) {
@@ -1919,7 +1919,7 @@ static bool Cmd_SetMagicEffectUsedObject_Execute(COMMAND_ARGS)
 
 	TESForm* form = NULL;
 	EffectSetting* magic = NULL;
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form, &magic)) form = form->TryGetREFRParent();
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form, &magic)) form = form->TryGetREFRParent();
 
 	if (magic && form) {
 		magic->data = form->refID;
@@ -1934,7 +1934,7 @@ static bool Cmd_SetMagicEffectUsedObjectC_Execute(COMMAND_ARGS)
 
 	TESForm* form = NULL;
 	UInt32 effectCode = 0;
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form, &effectCode)) form = form->TryGetREFRParent();
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form, &effectCode)) form = form->TryGetREFRParent();
 
 	EffectSetting* magic = EffectSetting::EffectSettingForC(effectCode);
 	if (magic && form) {

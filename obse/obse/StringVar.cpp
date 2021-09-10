@@ -340,9 +340,8 @@ bool AssignToStringVar(ParamInfo * paramInfo, void * arg1, TESObjectREFR * thisO
 	if (!newValue || len >= kMaxMessageLength)		//if null pointer or too long, assign an empty string
 		newValue = "";
 
-	if (ExtractSetStatementVar(scriptObj, eventList, arg1, &strID, &modIndex)) {
+	if (ExtractSetStatementVar(scriptObj, eventList, arg1, &strID, &bTemp, &modIndex)) {
 		strVar = g_StringMap.Get(strID);
-		bTemp = false;
 	}
 	else if (!bTemp) {
 		_WARNING("Function must be used within a Set statement or OBSE expression");

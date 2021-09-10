@@ -73,7 +73,7 @@ static bool Cmd_GetNthSpell_Execute(COMMAND_ARGS)
 	if (!spellList) return true;
 
 	UInt32 whichSpell = 0;
-	if(!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &whichSpell)) return true;
+	if(!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &whichSpell)) return true;
 
 	TESForm* spellForm = spellList->GetNthSpell(whichSpell);
 	if (spellForm) {
@@ -316,7 +316,7 @@ static bool Cmd_SetEyes_Execute(COMMAND_ARGS)
 	TESForm*  npcF = NULL;
 	*result = 0;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form, &npcF);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form, &npcF);
 	if (!form)
 		return true;
 
@@ -348,7 +348,7 @@ static bool Cmd_SetHair_Execute(COMMAND_ARGS)
 	TESForm*  npcF = NULL;
 	*result = 0;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form, &npcF);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form, &npcF);
 	if (!form)
 		return true;
 
@@ -786,7 +786,7 @@ static bool Cmd_CopyRace_Execute(COMMAND_ARGS)
 	if (!npc)
 		return true;
 
-	if(!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &fromArg))
+	if(!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &fromArg))
 		return true;
 
 	TESNPC* fromNPC = (TESNPC*)Oblivion_DynamicCast(fromArg, 0, RTTI_TESForm, RTTI_TESNPC, 0);
@@ -1278,7 +1278,7 @@ static bool Cmd_PlayIdle_Execute(COMMAND_ARGS)
 	TESForm* idleForm = NULL;
 	*result = 0;
 
-	if (!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &idleForm, &bForceIdle))
+	if (!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &idleForm, &bForceIdle))
 		return true;
 
 	switch (thisObj->typeID)

@@ -91,18 +91,18 @@ bool Cmd_TestExtractArgs_Execute(COMMAND_ARGS)
 		_MESSAGE("thisObj %08x", thisObj->refID);
 	return true;
 
-	UInt8	* scriptData = (UInt8 *)arg1;
-	UInt8	* scriptDataBase = scriptData;
+	UInt8	* scriptData1 = (UInt8 *)scriptData;
+	UInt8	* scriptDataBase = scriptData1;
 
-	scriptData += *opcodeOffsetPtr;
+	scriptData1 += *opcodeOffsetPtr;
 
-	scriptData -= 2;
+	scriptData1 -= 2;
 
-	UInt32	opcodeDataLen = *((UInt16 *)scriptData);
-	scriptData += 2;
+	UInt32	opcodeDataLen = *((UInt16 *)scriptData1);
+	scriptData1 += 2;
 
-	UInt32	numArgs = *((UInt16 *)scriptData);
-	scriptData += 2;
+	UInt32	numArgs = *((UInt16 *)scriptData1);
+	scriptData1 += 2;
 
 	_MESSAGE("len = %04X numArgs = %04X", opcodeDataLen, numArgs);
 
@@ -115,7 +115,7 @@ bool Cmd_TestExtractArgs_Execute(COMMAND_ARGS)
 
 		IFileStream	out;
 		if(out.Create(name))
-			out.WriteBuf(scriptData - 2, opcodeDataLen);
+			out.WriteBuf(scriptData1 - 2, opcodeDataLen);
 	}
 
 	for(UInt32 i = 0; i < numArgs; i++)
@@ -126,8 +126,8 @@ bool Cmd_TestExtractArgs_Execute(COMMAND_ARGS)
 		{
 			case kParamType_InventoryObject:
 			{
-				UInt8	unk0 = *scriptData++;
-				UInt16	varIdx = *((UInt16 *)scriptData);
+				UInt8	unk0 = *scriptData1++;
+				UInt16	varIdx = *((UInt16 *)scriptData1);
 				Script::RefVariable	* var = scriptObj->GetVariable(varIdx);
 				ASSERT(var);
 
@@ -210,7 +210,7 @@ bool Cmd_SaveIP_Execute(COMMAND_ARGS)
 	__asm { mov _esi, esi }
 
 	// make sure this is only called from the main execution loop
-	ASSERT_STR(arg1 == scriptObj->data, "SaveIP may not be called inside a set or if statement");
+	ASSERT_STR(scriptData == scriptObj->data, "SaveIP may not be called inside a set or if statement");
 
 	UInt32	idx = 0;
 
@@ -242,7 +242,7 @@ bool Cmd_RestoreIP_Execute(COMMAND_ARGS)
 	__asm { mov _esi, esi }
 
 	// make sure this is only called from the main execution loop
-	ASSERT_STR(arg1 == scriptObj->data, "RestoreIP may not be called inside a set or if statement");
+	ASSERT_STR(scriptData == scriptObj->data, "RestoreIP may not be called inside a set or if statement");
 
 	UInt32	idx = 0;
 
@@ -270,7 +270,7 @@ bool Cmd_RestoreIP_Execute(COMMAND_ARGS)
 bool Cmd_Test_Execute(COMMAND_ARGS)
 {
 	_MESSAGE("Cmd_Test_Execute: %08X %08X %08X (%s) %08X %08X (%s) %08X %08X %08X",
-		paramInfo, arg1, thisObj, GetObjectClassName((void *)thisObj), contObj, scriptObj, GetObjectClassName((void *)scriptObj), eventList, result, opcodeOffsetPtr);
+		paramInfo, scriptData, thisObj, GetObjectClassName((void *)thisObj), contObj, scriptObj, GetObjectClassName((void *)scriptObj), eventList, result, opcodeOffsetPtr);
 
 #if 1
 	InterfaceManager	* interfaceManager = InterfaceManager::GetSingleton();
@@ -340,7 +340,7 @@ bool Cmd_Test_Execute(COMMAND_ARGS)
 bool Cmd_TestArgs_Execute(COMMAND_ARGS)
 {
 	_MESSAGE("Cmd_TestArgs_Execute: %08X %08X %08X (%s) %08X %08X (%s) %08X %08X %08X",
-		paramInfo, arg1, thisObj, GetObjectClassName((void *)thisObj), contObj, scriptObj, GetObjectClassName((void *)scriptObj), eventList, result, opcodeOffsetPtr);
+		paramInfo, scriptData, thisObj, GetObjectClassName((void *)thisObj), contObj, scriptObj, GetObjectClassName((void *)scriptObj), eventList, result, opcodeOffsetPtr);
 
 	UInt32	arg;
 

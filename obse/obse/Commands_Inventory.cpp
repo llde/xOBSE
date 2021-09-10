@@ -910,7 +910,7 @@ static bool GetObjectValue(COMMAND_ARGS, UInt32 valueType)
 	*result = 0;
 	TESForm* form = 0;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form);
 	form = form->TryGetREFRParent();
 	if (!form) {
 		if (!thisObj) return true;
@@ -958,7 +958,7 @@ static bool Cmd_GetType_Execute(COMMAND_ARGS)
 	*result= 0;
 	TESForm* form = 0;
 
-	if(!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form)) return true;
+	if(!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form)) return true;
 	form = form->TryGetREFRParent();
 	if (!form) {
 		if (!thisObj) return true;
@@ -1975,18 +1975,18 @@ static bool ChangeObjectValue_Execute(COMMAND_ARGS, ChangeValueState& state)
 
 	switch(state.UseValueType()) {
 		case ChangeValueState::eFloat:
-			ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, state.FloatPtr(), &form);
+			ExtractArgsEx(PASS_EXTRACT_ARGS_EX, state.FloatPtr(), &form);
 			break;
 		case ChangeValueState::eInteger:
 		case ChangeValueState::eBool:
-			ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, state.UInt32Ptr(), &form);
+			ExtractArgsEx(PASS_EXTRACT_ARGS_EX, state.UInt32Ptr(), &form);
 			break;
 
 		case ChangeValueState::eMagicItem:
 			ExtractArgs(PASS_EXTRACT_ARGS, state.MagicItemPtr(), &form);
 			break;
 		case ChangeValueState::eString:
-			ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, state.StringPtr(), &form);
+			ExtractArgsEx(PASS_EXTRACT_ARGS_EX, state.StringPtr(), &form);
 			break;
 		default:
 			return true;
@@ -2347,7 +2347,7 @@ static bool Cmd_IsPlayable2_Execute(COMMAND_ARGS)
 	*result = 1;
 	TESForm* form = NULL;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form))
 	{
 		form = form->TryGetREFRParent();
 		if (!form)
@@ -2378,7 +2378,7 @@ static bool Cmd_SetName_Execute(COMMAND_ARGS)
 	TESForm* form = NULL;
 	char	string[256];
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &string, &form);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &string, &form);
 	if (!form)
 	{
 		if (!thisObj)
@@ -2411,7 +2411,7 @@ static bool Cmd_CompareName_Execute(COMMAND_ARGS)
 	TESForm* form = NULL;
 	char	textArg[256];
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &textArg, &form);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &textArg, &form);
 	form = form->TryGetREFRParent();
 	if (!form) {
 		if (!thisObj) return true;
@@ -2432,7 +2432,7 @@ static bool Cmd_CopyName_Execute(COMMAND_ARGS)
 
 	TESForm* srcForm = NULL;
 	TESForm* targetForm = NULL;
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &srcForm, &targetForm);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &srcForm, &targetForm);
 	srcForm = srcForm->TryGetREFRParent();
 	targetForm = targetForm->TryGetREFRParent();
 
@@ -2457,7 +2457,7 @@ static bool Cmd_ModName_Execute(COMMAND_ARGS)
 	TESForm* form = NULL;
 	char	string[256];
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &string, &form);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &string, &form);
 	form = form->TryGetREFRParent();
 	if (!form) {
 		if (!thisObj) return true;
@@ -2488,7 +2488,7 @@ static bool Cmd_AppendToName_Execute(COMMAND_ARGS)
 	TESForm* form = NULL;
 	char	string[256];
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &string, &form);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &string, &form);
 	form = form->TryGetREFRParent();
 	if (!form) {
 		if (!thisObj) return true;
@@ -2568,14 +2568,14 @@ static bool PathFunc_Execute(COMMAND_ARGS, UInt32 whichValue, EMode mode)
 
 	bool bExtracted = false;
 	if (mode == kCopy) {
-		bExtracted = ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &srcForm, &targetForm);
+		bExtracted = ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &srcForm, &targetForm);
 		if (!srcForm) return true;
 		srcForm = srcForm->TryGetREFRParent();
 	} else if (mode == kGet) {
-		bExtracted = ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &targetForm);
+		bExtracted = ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &targetForm);
 	}
 	else {
-		bExtracted = ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &textArg, &targetForm);
+		bExtracted = ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &textArg, &targetForm);
 		if (textArg[0] == '\0') return true;
 	}
 
@@ -2972,7 +2972,7 @@ static bool IsType_Execute(COMMAND_ARGS, UInt8 typeID)
 	*result = 0;
 	TESForm* form = 0;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form);
 	form = form->TryGetREFRParent();
 	if (!form) {
 		if (!thisObj) return true;
@@ -3087,7 +3087,7 @@ static bool Cmd_IsClonedForm_Execute(COMMAND_ARGS)
 	*result = 0;
 	TESForm* form = NULL;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form);
 	form = form->TryGetREFRParent();
 	if (!form) {
 		if (!thisObj) return true;
@@ -3103,7 +3103,7 @@ static bool Cmd_CloneForm_Execute(COMMAND_ARGS)
 	*result = 0;
 	UInt32* refResult = (UInt32*)result;
 	TESForm* form = NULL;
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form);
 	if (!form) {
 		if (!thisObj) return true;
 		form = thisObj->baseForm;
@@ -3122,7 +3122,7 @@ static bool Cmd_CompareNames_Execute(COMMAND_ARGS)
 	*result = 0;
 	TESForm* form = NULL;
 	TESForm* base = NULL;
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form, &base);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form, &base);
 	form = form->TryGetREFRParent();
 	base = base->TryGetREFRParent();
 
@@ -3147,7 +3147,7 @@ static bool Cmd_GetContainerRespawns_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	TESObjectCONT* container = NULL;
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &container);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &container);
 	if (!container) {
 		if (!thisObj) return true;
 		container = (TESObjectCONT*)Oblivion_DynamicCast(thisObj->baseForm, 0, RTTI_TESForm, RTTI_TESObjectCONT, 0);
@@ -3163,7 +3163,7 @@ static bool Cmd_SetContainerRespawns_Execute(COMMAND_ARGS)
 	*result = 0;
 	UInt32 respawns = 0;
 	TESObjectCONT* container = NULL;
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &respawns, &container);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &respawns, &container);
 	if (!container) {
 		if (!thisObj) return true;
 		container = (TESObjectCONT*)Oblivion_DynamicCast(thisObj->baseForm, 0, RTTI_TESForm, RTTI_TESObjectCONT, 0);
@@ -3178,7 +3178,7 @@ static bool Cmd_IsLightCarriable_Execute(COMMAND_ARGS)
 	TESForm* form = NULL;
 	*result = 0;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form))
 	{
 		form = form->TryGetREFRParent();
 		if (!form)
@@ -3200,7 +3200,7 @@ static bool Cmd_GetLightRadius_Execute(COMMAND_ARGS)
 	TESForm* form = NULL;
 	*result = 0;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form))
 	{
 		form = form->TryGetREFRParent();
 		if (!form)
@@ -3223,7 +3223,7 @@ static bool Cmd_SetLightRadius_Execute(COMMAND_ARGS)
 	UInt32 newRadius = 0;
 	*result = 0;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &newRadius, &form))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &newRadius, &form))
 	{
 		form = form->TryGetREFRParent();
 		if (!form)
@@ -3248,7 +3248,7 @@ static bool Cmd_HasName_Execute(COMMAND_ARGS)
 	TESForm* form = 0;
 	*result = 0;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form);
 	form = form->TryGetREFRParent();
 	if (!form)
 		form = thisObj;
@@ -3329,7 +3329,7 @@ static bool Cmd_GetFullGoldValue_Execute(COMMAND_ARGS)
 	*result = 0;
 	UInt32 baseVal = 0;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form);
 	form = form->TryGetREFRParent();
 	if (!form)
 		if (thisObj)
@@ -3525,7 +3525,7 @@ static bool Cmd_SetHotKeyItem_Execute(COMMAND_ARGS)
 	UInt32 whichKey = 0;
 	*result = 0;
 
-	if(!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &whichKey, &qkForm))
+	if(!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &whichKey, &qkForm))
 		return true;
 
 	whichKey -= 1;
@@ -3709,7 +3709,7 @@ static bool Cmd_SetNameEx_Execute(COMMAND_ARGS)
 	TESForm* form = NULL;
 	char	newName[kMaxMessageLength];
 
-	if(!ExtractFormatStringArgs(0, newName, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_SetNameEx.numParams, &form))
+	if(!ExtractFormatStringArgs(0, newName, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_SetNameEx.numParams, &form))
 		return true;
 
 	if (!form && thisObj)
@@ -3935,7 +3935,7 @@ static bool Cmd_GetBaseItems_Execute(COMMAND_ARGS)
 
 	TESForm* form = NULL;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form))
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form))
 	{
 		if (!form && thisObj)
 			form = thisObj->baseForm;
@@ -4131,7 +4131,7 @@ static bool Cmd_SetGoldValue_T_Execute(COMMAND_ARGS)
 	*result = 0.0;
 	UInt32 val = 0;
 	TESForm* form = NULL;
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &val, &form)) {
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &val, &form)) {
 		if (!form && thisObj) {
 			form = thisObj->baseForm;
 		}

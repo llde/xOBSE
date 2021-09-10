@@ -29,7 +29,7 @@ bool Cmd_PrintToConsole_Execute(COMMAND_ARGS)
 	*result = 0;
 	char buffer[kMaxMessageLength];
 
-	if (ExtractFormatStringArgs(0, buffer, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_PrintToConsole.numParams))
+	if (ExtractFormatStringArgs(0, buffer, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_PrintToConsole.numParams))
 	{
 		if (strlen(buffer) < 512)
 		{
@@ -181,7 +181,7 @@ static bool Cmd_RunScriptLine_Execute(COMMAND_ARGS)
 	UInt32 bSuppressOutput = 0;
 	*result = 0;
 
-	if (!ExtractFormatStringArgs(0, scriptText, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_RunScriptLine.numParams, &bRunOnRef, &bSuppressOutput))
+	if (!ExtractFormatStringArgs(0, scriptText, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_RunScriptLine.numParams, &bRunOnRef, &bSuppressOutput))
 		return true;
 
 	UInt32 len = strlen(scriptText);
@@ -272,7 +272,7 @@ bool Cmd_DBG_echo_Execute(COMMAND_ARGS)
 	*result = 0;
 	char buffer[kMaxMessageLength];
 
-	if (ExtractFormatStringArgs(0, buffer, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_PrintToConsole.numParams))
+	if (ExtractFormatStringArgs(0, buffer, paramInfo, scriptData, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_PrintToConsole.numParams))
 	{
 		if (strlen(buffer) < 512)
 		{

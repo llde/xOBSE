@@ -74,7 +74,7 @@ static bool Cmd_While_Execute(COMMAND_ARGS)
 	GET_EXECUTION_STATE(state);
 
 	// read offset to end of loop
-	UInt8* data = (UInt8*)arg1 + *opcodeOffsetPtr;
+	UInt8* data = (UInt8*)scriptData + *opcodeOffsetPtr;
 	UInt32 offsetToEnd = *(UInt32*)data;
 
 	// calc offset of first instruction following this While expression
@@ -101,7 +101,7 @@ static bool Cmd_ForEach_Execute(COMMAND_ARGS)
 	GET_EXECUTION_STATE(state);
 
 	// get offset to end of loop
-	UInt8* data = (UInt8*)arg1 + *opcodeOffsetPtr;
+	UInt8* data = (UInt8*)scriptData + *opcodeOffsetPtr;
 	UInt32 offsetToEnd = *(UInt32*)data;
 
 	// calc offset to first instruction within loop
@@ -527,7 +527,7 @@ static bool Cmd_GetAllModLocalData_Execute(COMMAND_ARGS)
 
 static bool Cmd_Internal_PushExecutionContext_Execute(COMMAND_ARGS)
 {
-	ExtractArgsOverride::PushContext(thisObj, contObj, (UInt8*)arg1, opcodeOffsetPtr);
+	ExtractArgsOverride::PushContext(thisObj, contObj, (UInt8*)scriptData, opcodeOffsetPtr);
 	return true;
 }
 

@@ -203,7 +203,7 @@ static bool Cmd_GetRaceReaction_Execute(COMMAND_ARGS)
 
 	TESRace* pFromRace = NULL;
 	TESRace* pToRace = NULL;
-	bool bExtracted = ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &pToRace, &pFromRace);
+	bool bExtracted = ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &pToRace, &pFromRace);
 	if (!pToRace) return true;
 	if (!pFromRace) {
 		if (!thisObj) return true;
@@ -360,7 +360,7 @@ static bool Cmd_HasTail_Execute(COMMAND_ARGS)
 	TESForm* form = NULL;
 	*result = 0.0;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form)) {
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form)) {
 		TESRace* race = RaceFromForm(form, thisObj);
 
 		if (race && race->tails[0].nifPath.m_data) {
@@ -381,7 +381,7 @@ static bool Cmd_GetTailModelPath_Execute(COMMAND_ARGS)
 	TESForm* form = NULL;	
 	const char* tailPath = NULL;
 
-	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &gender, &form) && gender <= 1) {
+	if (ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &gender, &form) && gender <= 1) {
 		TESRace* race = RaceFromForm(form, thisObj);
 		if (race) {
 			tailPath = race->tails[gender].nifPath.m_data;

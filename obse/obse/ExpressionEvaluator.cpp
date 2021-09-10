@@ -208,7 +208,7 @@ ExpressionEvaluator::ExpressionEvaluator(COMMAND_ARGS) : m_opcodeOffsetPtr(opcod
 m_thisObj(thisObj), script(scriptObj), eventList(eventList), m_params(paramInfo), m_numArgsExtracted(0), m_baseOffset(0),
 m_expectedReturnType(kRetnType_Default)
 {
-	m_scriptData = (UInt8*)arg1;
+	m_scriptData = (UInt8*)scriptData;
 	m_data = m_scriptData + *m_opcodeOffsetPtr;
 
 	memset(m_args, 0, sizeof(m_args));

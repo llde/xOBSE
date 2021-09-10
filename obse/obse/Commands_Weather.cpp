@@ -67,7 +67,7 @@ static bool Cmd_SetCurrentClimate_Execute(COMMAND_ARGS)
 	
 	TESForm* form = NULL;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form);
 	TESClimate* climate = (TESClimate*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_TESClimate, 0);
 	if (!climate) return true;
 
@@ -92,7 +92,7 @@ static bool Cmd_SetWorldspaceClimate_Execute(COMMAND_ARGS)
 
 	*result = 0;
 
-	if(!ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &worldspace, &climate)) return true;
+	if(!ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &worldspace, &climate)) return true;
 	if(!worldspace) return true;
 
 	TESWorldSpace	* firstWorldspace = worldspace;
@@ -140,7 +140,7 @@ static bool GetClimateValue_Execute(COMMAND_ARGS, UInt32 whichVal)
 	*result = 0;
 	TESForm* form = NULL;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &form);
 	TESClimate* climate = (TESClimate*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_TESClimate, 0);
 	if (!climate) return true;
 
@@ -216,7 +216,7 @@ static bool SetClimateValue_Execute(COMMAND_ARGS, UInt32 whichVal)
 	UInt32 intVal = 0;
 	TESForm* form = NULL;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &intVal, &form);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &intVal, &form);
 	TESClimate* climate = (TESClimate*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_TESClimate, 0);
 	if (!climate) return true;
 
@@ -314,7 +314,7 @@ static bool GetWeatherValue_Execute(COMMAND_ARGS, UInt32 whichValue)
 	*result = 0;
 	TESWeather* weather = NULL;
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &weather);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &weather);
 	if (!weather) return true;
 	
 	switch(whichValue) {
@@ -472,7 +472,7 @@ static bool Cmd_GetWeatherHDRValue_Execute(COMMAND_ARGS)
 
 	UInt32 whichValue;
 	TESWeather* weather = NULL;
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &whichValue, &weather);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &whichValue, &weather);
 	if (!weather) return true;
 	if (whichValue > TESWeather::eHDR_Last) return true;
 
@@ -487,7 +487,7 @@ static bool Cmd_SetWeatherHDRValue_Execute(COMMAND_ARGS)
 	float floatVal = 0.0;
 	UInt32 whichValue = 0;
 	TESWeather* weather = NULL;
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &floatVal, &whichValue, &weather);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &floatVal, &whichValue, &weather);
 	if (!weather) return true;
 	if (whichValue > TESWeather::eHDR_Last) return true;
 
@@ -504,7 +504,7 @@ static bool Cmd_GetWeatherColor_Execute(COMMAND_ARGS)
 	TESWeather* weather = NULL;
 	UInt32 time = 0; // sunrise = 0, day = 1, sunset = 2, night = 3 
 
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &rgb, &whichColor, &weather, &time);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &rgb, &whichColor, &weather, &time);
 	if (!weather) return true;
 	if (whichColor > TESWeather::eColor_Last) return true;
 	if (time > TESWeather::eTime_Night) return true;
@@ -527,7 +527,7 @@ static bool Cmd_SetWeatherColor_Execute(COMMAND_ARGS)
 	UInt32 whichColor = 0;
 	TESWeather* weather = NULL;
 	UInt32 time = 0;
-	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &red, &green, &blue, &whichColor, &weather, &time);
+	ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &red, &green, &blue, &whichColor, &weather, &time);
 	if (!weather) return true;
 	if (whichColor > TESWeather::eColor_Last) return true;
 	if (time > TESWeather::eTime_Night) return true;
@@ -557,7 +557,7 @@ static bool SetWeatherValue_Execute(COMMAND_ARGS, UInt32 which)
 		case kWeather_TransDelta:
 		case kWeather_SunGlare:
 		case kWeather_SunDamage: {
-			ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &floatVal, &weather);
+			ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &floatVal, &weather);
 			intVal = (floatVal * 255.0);
 			break;
 		}
@@ -567,14 +567,14 @@ static bool SetWeatherValue_Execute(COMMAND_ARGS, UInt32 which)
 		case kWeather_FogDayFar:
 		case kWeather_FogNightNear:
 		case kWeather_FogNightFar: {
-			ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &floatVal, &weather);
+			ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &floatVal, &weather);
 			break;
 		}
 
 	   // extract int
 		case kWeather_LightningFrequency: 
 		case kWeather_PrecipType: {
-			ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &intVal, &weather);
+			ExtractArgsEx(PASS_EXTRACT_ARGS_EX, &intVal, &weather);
 			break;
 		}
 		default:
