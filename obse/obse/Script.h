@@ -137,6 +137,7 @@ public:
 	VariableInfo*	GetVariableByName(const char* varName);
 	UInt32			GetVariableType(VariableInfo* var);
 
+	bool			IsUserDefinedFunction() const;
 #if OBLIVION
 	// arg3 appears to be true for result scripts (runs script even if dataLength <= 4)
 	DEFINE_MEMBER_FN(Execute, bool, kScript_ExecuteFnAddr, TESObjectREFR* thisObj, ScriptEventList* eventList, TESObjectREFR* containingObj, bool arg3);

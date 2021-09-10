@@ -104,6 +104,13 @@ bool Script::CompileAndRun(void * unk0, UInt32 unk1, void * unk2)
 	return ThisStdCall(0x004FBF00, this, unk0, unk1, unk2) ? true : false;
 }
 
+bool Script::IsUserDefinedFunction() const
+{
+	auto* scriptData = static_cast<UInt8*>(data);
+	return *(scriptData + 8) == 0x0D;
+}
+
+
 ScriptEventList* Script::CreateEventList(void)
 {
 	return (ScriptEventList*)ThisStdCall(0x004FBDC0, this);

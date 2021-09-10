@@ -29,7 +29,6 @@ class NiTexturingProperty;
 class NiD3DShaderConstantMapEntry;
 
 const UInt32	kMaxSavedIPStack = 20;	// twice the supposed limit
-extern bool g_insideUserDefinedFunction;
 
 struct SavedIPInfo
 {

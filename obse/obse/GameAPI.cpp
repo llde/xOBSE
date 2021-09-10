@@ -42,7 +42,6 @@
  ***/
 
 static OBSEStringVarInterface* s_StringVarInterface = NULL;
-bool g_insideUserDefinedFunction = false;
 
 void ScriptEventList::Dump(void)
 {

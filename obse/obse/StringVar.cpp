@@ -321,7 +321,7 @@ UInt32	StringVarMap::Add(UInt8 varModIndex, const char* data, bool bTemp)
 {
 	UInt32 varID = GetUnusedID();
 	Insert(varID, new StringVar(data, varModIndex << 24));
-	if (bTemp || g_insideUserDefinedFunction)
+	if (bTemp)
 		MarkTemporary(varID, true);
 
 	return varID;
