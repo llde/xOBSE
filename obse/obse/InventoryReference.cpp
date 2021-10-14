@@ -321,15 +321,11 @@ bool InventoryReference::MoveToContainer(TESObjectREFR* dest){
 }
 
 bool InventoryReference::CopyToContainer(TESObjectREFR* dest){
-	_MESSAGE("Orco");
 	if (dest == nullptr || !dest->GetContainer()) return false; //Check if dest reference is a valid container
 	ExtraContainerChanges* destCont = ExtraContainerChanges::GetForRef(dest);
-	_MESSAGE("Orco1");
 	if (destCont == nullptr) return false;
-	_MESSAGE("Orco2");
 	ExtraContainerChanges::EntryData* destEntry = destCont->GetByType(m_data.type);
-	
-	_MESSAGE("%0X  %0X  %0X", m_containerRef,m_tempRef, m_data.xData);
+	//_MESSAGE("%0X  %0X  %0X", m_containerRef,m_tempRef, m_data.xData);
 	bool valid = m_containerRef != nullptr ? Validate() : true;
 	if (m_tempRef && valid) {
 		ExtraCount* xCount = nullptr;
@@ -341,7 +337,7 @@ bool InventoryReference::CopyToContainer(TESObjectREFR* dest){
 		else {
 			count = m_data.count;
 		}
-		_MESSAGE("%d", count);
+//		_MESSAGE("%d", count);
 		if (destEntry == nullptr) {
 			destEntry = ExtraContainerChanges::EntryData::Create(count , m_data.type);
 			destCont->data->objList->AddAt(destEntry,0);
@@ -350,22 +346,19 @@ bool InventoryReference::CopyToContainer(TESObjectREFR* dest){
 			destEntry->countDelta += count;
 		
 		}
-		if (m_data.xData) {
+		ExtraDataList* newData = ExtraDataList::Create();
+		newData->Copy(&m_tempRef->baseExtraList);
+		if (destEntry->extendData == nullptr) destEntry->extendData = (tList<ExtraDataList>*) tList<ExtraDataList>::Create();
+		newData->RemoveByType(kExtraData_Worn);
+		newData->RemoveByType(kExtraData_WornLeft);
+		destEntry->extendData->AddAt(newData, 0);
+		if(count > 1 && !xCount){
 			ExtraDataList* newData = ExtraDataList::Create();
-			newData->Copy(m_data.xData);
-			if (destEntry->extendData == nullptr) destEntry->extendData = (tList<ExtraDataList>*) tList<ExtraDataList>::Create();
-			newData->RemoveByType(kExtraData_Worn);
-			newData->RemoveByType(kExtraData_WornLeft);
-			destEntry->extendData->AddAt(newData, 0);
+			xCount = ExtraCount::Create(count);
+			newData->Add(xCount);
+			destEntry->extendData->AddAt(newData, 0);			
 		}
-		else {
-			if (destEntry->extendData != nullptr && !destEntry->extendData->IsEmpty()) {  //TODO correct? Other part of the code seems to assume stack of 1 count not need ExtraCount data
-				ExtraDataList* newData = ExtraDataList::Create();
-				xCount = ExtraCount::Create(count);
-				newData->Add(xCount);
-				destEntry->extendData->AddAt(newData, 0);
-			}
-		}
+		
 		destCont->Cleanup();
 		return true;
 	}
