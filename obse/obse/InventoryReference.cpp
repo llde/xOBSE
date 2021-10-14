@@ -138,7 +138,7 @@ SInt32 InventoryReference::GetCount(){
     SInt32  count = xCount ? xCount->count : 1;
 	if (count < 0)
 	{
-		DEBUG_PRINT("Warning: InventoryReference::GetCount() found an object with a negative count (%d)", count);
+		_MESSAGE("Warning: InventoryReference::GetCount() found an object with a negative count (%d)", count);
 	}
 
 	return count;
@@ -321,11 +321,17 @@ bool InventoryReference::MoveToContainer(TESObjectREFR* dest){
 }
 
 bool InventoryReference::CopyToContainer(TESObjectREFR* dest){
+	_MESSAGE("Orco");
 	if (dest == nullptr || !dest->GetContainer()) return false; //Check if dest reference is a valid container
 	ExtraContainerChanges* destCont = ExtraContainerChanges::GetForRef(dest);
+	_MESSAGE("Orco1");
 	if (destCont == nullptr) return false;
+	_MESSAGE("Orco2");
 	ExtraContainerChanges::EntryData* destEntry = destCont->GetByType(m_data.type);
-	if (m_containerRef && m_tempRef && Validate()) {
+	
+	_MESSAGE("%0X  %0X  %0X", m_containerRef,m_tempRef, m_data.xData);
+	bool valid = m_containerRef != nullptr ? Validate() : true;
+	if (m_tempRef && valid) {
 		ExtraCount* xCount = nullptr;
 		SInt32 count = 0;
 		if (m_data.xData) {
@@ -335,11 +341,14 @@ bool InventoryReference::CopyToContainer(TESObjectREFR* dest){
 		else {
 			count = m_data.count;
 		}
+		_MESSAGE("%d", count);
 		if (destEntry == nullptr) {
 			destEntry = ExtraContainerChanges::EntryData::Create(count , m_data.type);
+			destCont->data->objList->AddAt(destEntry,0);
 		}
 		else {
 			destEntry->countDelta += count;
+		
 		}
 		if (m_data.xData) {
 			ExtraDataList* newData = ExtraDataList::Create();
@@ -350,7 +359,7 @@ bool InventoryReference::CopyToContainer(TESObjectREFR* dest){
 			destEntry->extendData->AddAt(newData, 0);
 		}
 		else {
-			if (destEntry->extendData != nullptr && !destEntry->extendData->IsEmpty()) {
+			if (destEntry->extendData != nullptr && !destEntry->extendData->IsEmpty()) {  //TODO correct? Other part of the code seems to assume stack of 1 count not need ExtraCount data
 				ExtraDataList* newData = ExtraDataList::Create();
 				xCount = ExtraCount::Create(count);
 				newData->Add(xCount);

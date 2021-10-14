@@ -23,6 +23,7 @@ public:
 			temporary = (en  == nullptr || en->extendData == nullptr) ? 2 : 1;
 			//TODO use flags
 		}  
+		Data(TESForm* form, SInt32 count) : type(form), entry(nullptr), xData(nullptr), count(count),temporary(0) { }
     };
     
 	enum DeferredActionType {

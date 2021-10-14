@@ -58,7 +58,7 @@ static bool Cmd_CreateTempRef_Execute(COMMAND_ARGS)
 
 	TESForm* form = NULL;
 	if (ExtractArgs(PASS_EXTRACT_ARGS, &form) && form) {
-		InventoryReference* iref = InventoryReference::CreateInventoryRef(NULL, InventoryReference::Data(form, nullptr, nullptr), false);
+		InventoryReference* iref = InventoryReference::CreateInventoryRef(NULL, InventoryReference::Data(form, 1), false);
 		if (iref) {
 			*refResult = iref->GetRef()->refID;
 		}
