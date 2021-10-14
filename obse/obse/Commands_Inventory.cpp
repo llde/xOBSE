@@ -4068,6 +4068,7 @@ static bool Cmd_EquipMe_Execute(COMMAND_ARGS)
 static bool Cmd_UnequipMe_Execute(COMMAND_ARGS)
 {
 	Actor* owner = OBLIVION_CAST(contObj, TESObjectREFR, Actor);
+	_MESSAGE("%0X   %0X   %0X", thisObj, contObj, owner);
 	if (thisObj) {
 		if (owner) {
 			owner->UnequipItem(thisObj->baseForm, 1, &thisObj->baseExtraList, 0, false, 0);

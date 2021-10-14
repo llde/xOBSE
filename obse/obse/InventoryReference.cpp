@@ -366,6 +366,7 @@ bool InventoryReference::CopyToContainer(TESObjectREFR* dest){
 }
 
 bool InventoryReference::SetEquipped(bool bEquipped){
+	_MESSAGE("%s  %0X   %0X ", GetFullName(m_data.type), m_data.xData , m_data.xData ? m_data.xData->IsWorn() : false );
 	if (m_data.xData && m_data.xData->IsWorn() == bEquipped) return false;
 	else if (bEquipped == false) return false;
 	SInt32 count = 1;
@@ -376,6 +377,7 @@ bool InventoryReference::SetEquipped(bool bEquipped){
 	else {
 		count = m_data.count;
 	}
+	_MESSAGE("Cose");
 	actions->push(new DeferredAction(Action_Equip, m_data, nullptr, count));
     return true;
 }
