@@ -326,6 +326,7 @@ bool InventoryReference::CopyToContainer(TESObjectREFR* dest){
 	if (destCont == nullptr) return false;
 	ExtraContainerChanges::EntryData* destEntry = destCont->GetByType(m_data.type);
 	if (m_containerRef && m_tempRef && Validate()) {
+		_MESSAGE("%0X  %0X  %0X", m_containerRef,m_tempRef, m_data.xData);
 		ExtraCount* xCount = nullptr;
 		SInt32 count = 0;
 		if (m_data.xData) {
@@ -335,6 +336,7 @@ bool InventoryReference::CopyToContainer(TESObjectREFR* dest){
 		else {
 			count = m_data.count;
 		}
+		_MESSAGE("%u", count);
 		if (destEntry == nullptr) {
 			destEntry = ExtraContainerChanges::EntryData::Create(count , m_data.type);
 		}
