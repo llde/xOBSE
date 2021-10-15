@@ -60,7 +60,7 @@ TESObjectREFR* InventoryReference::CreateInventoryRefEntry(TESObjectREFR* contai
 
 InventoryReference::~InventoryReference(){
 	DEBUG_PRINT("Destroying IR");
-	if (m_data.type) Release();
+	if (m_tempRef) Release();
 	DEBUG_PRINT("Destroying IR1");
 	delete actions;
 	if (m_tempRef) m_tempRef->Destroy(true);
@@ -366,15 +366,9 @@ bool InventoryReference::CopyToContainer(TESObjectREFR* dest){
 }
 
 bool InventoryReference::SetEquipped(bool bEquipped){
-	_MESSAGE("%s  %0X   %0X  %0X  %s", GetFullName(m_data.type), m_data.xData , m_data.xData ? m_data.xData->IsWorn() : false , bEquipped, GetFullName(m_containerRef));
-	if (m_data.xData && m_data.xData->IsWorn() == bEquipped) {
-		_MESSAGE("Orcodio");
-		return false;
-	}
-	else if (bEquipped == false) {
-		_MESSAGE("Orcddio2");
-		return false;
-	}
+	 _MESSAGE("%s  %0X   %0X  %0X  %s", GetFullName(m_data.type), m_data.xData , m_data.xData ? m_data.xData->IsWorn() : false , bEquipped, GetFullName(m_containerRef));
+	if (m_data.xData == nullptr && bEquipped == false) return false; //No extra data items can't be already equipped. So bail off if bEquipped is false
+	if (m_data.xData && m_data.xData->IsWorn() == bEquipped) return false; //  If both IsWorn and bEquipped are equals the state is already what we want. Bail out.
 	SInt32 count = 1;
 	if (m_data.xData) {
 		ExtraCount* co = (ExtraCount*) m_data.xData->GetByType(kExtraData_Count);
@@ -383,16 +377,16 @@ bool InventoryReference::SetEquipped(bool bEquipped){
 	else {
 		count = m_data.count;
 	}
-	_MESSAGE("Cose");
+	_MESSAGE("End");
 	actions->push(new DeferredAction(Action_Equip, m_data, nullptr, count));
     return true;
 }
 
 bool InventoryReference::DeferredAction::Execute(InventoryReference* iref) {
 	TESObjectREFR* cont = iref->GetContainer();
+	_MESSAGE("Deferred action for %s", GetFullName(data.type));
 	switch (type) {
 		case Action_Equip: {
-			_MESSAGE("Deferred action for %s", GetFullName(data.type));
 			if (!cont->IsActor())  return false;
 			Actor* actor = (Actor*)cont;
 			_MESSAGE("Actor %s", GetFullName(actor));
