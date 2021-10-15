@@ -366,9 +366,15 @@ bool InventoryReference::CopyToContainer(TESObjectREFR* dest){
 }
 
 bool InventoryReference::SetEquipped(bool bEquipped){
-	_MESSAGE("%s  %0X   %0X ", GetFullName(m_data.type), m_data.xData , m_data.xData ? m_data.xData->IsWorn() : false );
-	if (m_data.xData && m_data.xData->IsWorn() == bEquipped) return false;
-	else if (bEquipped == false) return false;
+	_MESSAGE("%s  %0X   %0X  %0X  %s", GetFullName(m_data.type), m_data.xData , m_data.xData ? m_data.xData->IsWorn() : false , bEquipped, GetFullName(m_containerRef));
+	if (m_data.xData && m_data.xData->IsWorn() == bEquipped) {
+		_MESSAGE("Orcodio");
+		return false;
+	}
+	else if (bEquipped == false) {
+		_MESSAGE("Orcddio2");
+		return false;
+	}
 	SInt32 count = 1;
 	if (m_data.xData) {
 		ExtraCount* co = (ExtraCount*) m_data.xData->GetByType(kExtraData_Count);
@@ -386,8 +392,10 @@ bool InventoryReference::DeferredAction::Execute(InventoryReference* iref) {
 	TESObjectREFR* cont = iref->GetContainer();
 	switch (type) {
 		case Action_Equip: {
+			_MESSAGE("Deferred action for %s", GetFullName(data.type));
 			if (!cont->IsActor())  return false;
 			Actor* actor = (Actor*)cont;
+			_MESSAGE("Actor %s", GetFullName(actor));
 			if (data.xData && data.xData->IsWorn()) {
 				actor->UnequipItem(data.type, count, data.xData, 0, 0, 0);
 			}
