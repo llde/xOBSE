@@ -362,6 +362,7 @@ bool ContainerIterLoop::Update(COMMAND_ARGS)
 ContainerIterLoop::~ContainerIterLoop()
 {
 	m_elements.clear();
+	m_invRef->Release();    //Execute Deferred actions after the loop ended. Real Time Pickpocketing rely on this.
 //	delete m_invRef;
 	m_refVar->data = 0;
 }
