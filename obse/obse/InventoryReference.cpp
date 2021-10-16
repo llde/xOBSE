@@ -366,7 +366,7 @@ bool InventoryReference::CopyToContainer(TESObjectREFR* dest){
 }
 
 bool InventoryReference::SetEquipped(bool bEquipped){
-	 _MESSAGE("%s  %0X   %0X  %0X  %s", GetFullName(m_data.type), m_data.xData , m_data.xData ? m_data.xData->IsWorn() : false , bEquipped, GetFullName(m_containerRef));
+	DEBUG_PRINT("%s  %0X   %0X  %0X  %s", GetFullName(m_data.type), m_data.xData , m_data.xData ? m_data.xData->IsWorn() : false , bEquipped, GetFullName(m_containerRef));
 	if (m_data.xData == nullptr && bEquipped == false) return false; //No extra data items can't be already equipped. So bail off if bEquipped is false
 	if (m_data.xData && m_data.xData->IsWorn() == bEquipped) return false; //  If both IsWorn and bEquipped are equals the state is already what we want. Bail out.
 	SInt32 count = 1;
@@ -377,19 +377,17 @@ bool InventoryReference::SetEquipped(bool bEquipped){
 	else {
 		count = m_data.count;
 	}
-	_MESSAGE("End");
 	actions->push(new DeferredAction(Action_Equip, m_data, nullptr, count));
     return true;
 }
 
 bool InventoryReference::DeferredAction::Execute(InventoryReference* iref) {
 	TESObjectREFR* cont = iref->GetContainer();
-	_MESSAGE("Deferred action for %s", GetFullName(data.type));
+	DEBUG_PRINT("Deferred action for %s", GetFullName(data.type));
 	switch (type) {
 		case Action_Equip: {
 			if (!cont->IsActor())  return false;
 			Actor* actor = (Actor*)cont;
-			_MESSAGE("Actor %s", GetFullName(actor));
 			if (data.xData && data.xData->IsWorn()) {
 				actor->UnequipItem(data.type, count, data.xData, 0, 0, 0);
 			}

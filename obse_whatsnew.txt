@@ -1,3 +1,19 @@
+xOBSE 22.5
+	Changes/Fix:
+		- Fix for OnEventKey and OnEventControl events
+		- Fix for SetHarvested 0 not being saved in the savegame
+		- Fix for CopyIR function breaking Wax Key perk from Real Time Lockpicking
+		- Fix for IR SetEquipped not working.
+		- Containers Loop execute the associated IR delayed actions  (regression from 22.0). These last two entries fix Mig Pickpocketing mod and Break Armor.
+		- Full interop with  CSE for warnings.
+		- Add IsMiscItem Command
+	API:
+		- Fill C++latest conformance.
+		- Separate ExpressionEvaluator from ScriptUtils
+		- Standardize PASS_COMMAND_ARGS , use macro instead of hardcoding arguments for ExtractArgs, ExtractArgsEx sometimes
+	
+	Docs:
+		- Multiple docs fixed by @laulajatar
 xOBSE 22.4.1
 	Fix:
 		- Fix an issue with IsCOntrolDisabled and IsKeyDisabled, were causing an issue with Bashing Reworked
