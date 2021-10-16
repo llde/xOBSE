@@ -326,7 +326,7 @@
 <h2><a id="New_xOBSE_Features">New xOBSE Features</a></h2>
 <p>Besides fixing some long standing bugs and adding new game versions (like the GOG version) to the launcher, xOBSE adds a couple of new functions (and deprecates some others):</p>
 <ul>
-    <li><h3>xOBSE TBA</h3></li>
+    <li><h3>xOBSE v0022.5</h3></li>
 	<li><a href="#IsMiscItem">IsMiscItem</a></li>
     <li><h3>xOBSE v0022.4</h3></li>
 	<li><a href="#SetAltControl2">SetAltControl2</a></li>
@@ -651,7 +651,7 @@ OBSE v0021 introduces <a href="#Events">new event types</a>, support for <a href
 <code class="s">(powers:Array) ref.GetUsedPowers</code></p>
 
 <p><a id="HasSpell" class="f" href="http://cs.elderscrolls.com/index.php?title=HasSpell">HasSpell</a> - returns whether the actor has the specified spell<br />
-<b>Notes: </b>Return always 0 on Creatures. (TODO: Verify)<br />
+<b>Notes: </b>Before xOBSE 21.5 return always 0 on Creatures. <br />
 <code class="s">(hasSpell:bool) reference.HasSpell spell:ref</code></p>
 
 <p><a id="RemoveBaseSpell" class="f" href="http://cs.elderscrolls.com/index.php?title=RemoveBaseSpell">RemoveBaseSpell</a> - the game's RemoveSpell removes a spell from a base actor but must be called on a reference. This command does the same thing as RemoveSpell but takes a base object as an argument, returning 1 if the spell was removed.<br />

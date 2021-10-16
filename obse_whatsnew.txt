@@ -14,6 +14,7 @@ xOBSE 22.5
 	
 	Docs:
 		- Multiple docs fixed by @laulajatar
+	
 xOBSE 22.4.1
 	Fix:
 		- Fix an issue with IsCOntrolDisabled and IsKeyDisabled, were causing an issue with Bashing Reworked
