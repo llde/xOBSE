@@ -1,3 +1,7 @@
+xOBSE 22.6
+	Changes/Fix:
+		-	Fixed Use After Free  when RemoveMeIR was used with the destination container equals as the origin. Trade And Commerce Update rely on this working.  
+
 xOBSE 22.5
 	Changes/Fix:
 		- Fix for OnEventKey and OnEventControl events

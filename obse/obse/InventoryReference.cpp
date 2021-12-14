@@ -240,12 +240,12 @@ bool InventoryReference::RemoveFromContainer(){
 */
 static void MoveToDestContainerXData(InventoryReference::Data& data, ExtraContainerChanges* from, ExtraContainerChanges* dest) {
 	ExtraContainerChanges::EntryData* destEntry = dest->GetByType(data.type);
-
+	//TODO from and dest can be the same?
 	ExtraCount* count = (ExtraCount*)data.xData->GetByType(kExtraData_Count);
 	data.entry->extendData->Remove(data.xData);
-	DEBUG_PRINT("%d      %d     %s", count != NULL ? count->count : 1, data.entry->countDelta, GetFullName(data.type));
+	DEBUG_PRINT("MoveToDestContainerXData %d      %d     %s", count != NULL ? count->count : 1, data.entry->countDelta, GetFullName(data.type));
 	data.entry->countDelta -= count != NULL ? count->count : 1;
-
+	//TODO can data.entry->countDelta be different then ExtraCount?
 	if (destEntry == nullptr) {
 		destEntry = ExtraContainerChanges::EntryData::Create(count != NULL ? count->count : 1, data.type);
 		dest->data->objList->AddAt(destEntry, 0);
@@ -261,6 +261,7 @@ static void MoveToDestContainerXData(InventoryReference::Data& data, ExtraContai
 		from->data->objList->Remove(data.entry);
 	}
 
+	dest->Cleanup();
 }
 
 /*
@@ -269,35 +270,38 @@ static void MoveToDestContainerXData(InventoryReference::Data& data, ExtraContai
 */
 
 static void MoveToDestContainerEntry(InventoryReference::Data& data, ExtraContainerChanges* from, ExtraContainerChanges* dest) {
-	ExtraContainerChanges::EntryData* destEntry = dest->GetByType(data.type);
-	if (data.count <= 0) return;
-	DEBUG_PRINT("Ma limorta2 %d", data.entry->countDelta);
+	if (data.count <= 0 || from == dest) return;
+	DEBUG_PRINT("MoveToDestContainerEntry  %d %d  %08X   %08X", data.entry->countDelta, data.count , from, dest);
 	//USe the countDelta
+	//TODO can we avoid reallocation?
 	data.entry->countDelta -= data.count;
-	
 	if (data.entry->countDelta <= 0) {
 		from->data->objList->Remove(data.entry);
 		FormHeap_Free(data.entry);
 	}
+	ExtraContainerChanges::EntryData* destEntry = dest->GetByType(data.type);
 	if (destEntry == nullptr) {
 		destEntry = ExtraContainerChanges::EntryData::Create(data.count, data.type);
 		dest->data->objList->AddAt(destEntry, 0);
 	}
 	else {
-		DEBUG_PRINT("Ma limorta5   %d", destEntry->countDelta);
 		destEntry->countDelta += data.count;
-		DEBUG_PRINT("Ma limorta5   %d", destEntry->countDelta);
-		if (destEntry->extendData != nullptr &&  data.xData && data.count > 1)
+		if (destEntry->extendData != nullptr && data.xData && data.count > 1) {
 			destEntry->extendData->AddAt(data.xData, 0);  //TODO maybe unnecessary to add an explicit extraData*
+			_MESSAGE("Ma ce s'arriva mai qua?");
+		}
 	}
+	dest->Cleanup();
+//	dest->DebugDump();
 }
 
 bool InventoryReference::MoveToContainer(TESObjectREFR* dest){
 	if (dest == nullptr || !dest->GetContainer()) return false; //Check if dest reference is a valid container
+//	if (dest == m_containerRef) return true;
 	ExtraContainerChanges* destCont =  ExtraContainerChanges::GetForRef(dest);
 	if (destCont == nullptr) return false;
 	ExtraContainerChanges* xChanges = ExtraContainerChanges::GetForRef(m_containerRef);
-	DEBUG_PRINT("Porcoddio %d  %0X   %0X   %0X", m_data.temporary, m_data.entry, m_data.xData , m_data.entry != NULL ? (SInt32)m_data.entry->extendData : -1);
+	DEBUG_PRINT("Porcoddio %d  %0X   %0X   %s", m_data.temporary, m_data.entry, m_data.xData , GetFullName(m_data.type));
 	if (m_containerRef && m_tempRef && Validate()) {
 		if (m_data.xData && m_data.xData->IsWorn()) {
 			ExtraCount* count = (ExtraCount*)m_data.xData->GetByType(kExtraData_Count);
@@ -305,11 +309,9 @@ bool InventoryReference::MoveToContainer(TESObjectREFR* dest){
 		}
 		else if (m_data.entry && m_data.entry->extendData && m_data.xData) {
 			MoveToDestContainerXData(m_data, xChanges, destCont);
-			destCont->Cleanup();
 		}
 		else if (m_data.entry) {
 			MoveToDestContainerEntry(m_data, xChanges, destCont);
-			destCont->Cleanup();
 		}
 		else if (m_data.count > 0) {   //If m_data.count is 0 or negative then there is nothing to remove
 			actions->push(new DeferredAction(Action_Remove, m_data, dest, m_data.count));
