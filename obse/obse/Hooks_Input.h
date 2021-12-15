@@ -42,6 +42,7 @@ public:
 	DIMOUSESTATEInn MouseMaskState;
 	UInt32			EventCode[2];
 	float			MouseAxisMovementPerSecond[2]; 
+	float			MouseAxisAccumulator[2];
 	float			lastFrameLength;
 	DWORD			lastFrameTime;
 
@@ -66,7 +67,7 @@ private:
 	inline void SendControlEvents();
 };
 
-STATIC_ASSERT(sizeof(OSInputGlobalsEx) == sizeof(OSInputGlobals) + sizeof(DIMOUSESTATEInn) + sizeof(KeyControlState[256]) + sizeof(UInt32[2]) +sizeof(float[2]) + sizeof(float) +sizeof(DWORD));
+STATIC_ASSERT(sizeof(OSInputGlobalsEx) == sizeof(OSInputGlobals) + sizeof(DIMOUSESTATEInn) + sizeof(KeyControlState[256]) + sizeof(UInt32[2]) + 2*sizeof(float[2]) + sizeof(float) +sizeof(DWORD));
 
 extern OSInputGlobalsEx* g_inputGlobal;
 

@@ -144,7 +144,6 @@ inline void OSInputGlobalsEx::SendControlEvents() {
 *  Hammer is used for even frames, AHammer for odd ones.
 *  THIS IS MADNESS, Even undocumented PORCODDIO.
 */
-static float accumulator[2] = { 0.0f, 0.0f };
 void OSInputGlobalsEx::InputPollFakeHandle() {
 	if (MouseDisabled) {
 		CurrentMouseState.lX = 0;
@@ -163,17 +162,17 @@ void OSInputGlobalsEx::InputPollFakeHandle() {
 		float move = MouseAxisMovementPerSecond[0] * lastFrameLength;
 		CurrentMouseState.lX += move;
 		float rem = fmodf(move, 1.0f);
-		accumulator[0] += rem;
+		MouseAxisAccumulator[0] += rem;
 		if (rem > 0) {
-			if (accumulator[0] > 1) {
+			if (MouseAxisAccumulator[0] > 1) {
 				CurrentMouseState.lX += 1;
-				accumulator[0] -= 1;
+				MouseAxisAccumulator[0] -= 1;
 			}
 		}
 		else if(rem < 0) {
-			if (accumulator[0] < -1) {
+			if (MouseAxisAccumulator[0] < -1) {
 				CurrentMouseState.lX -= 1;
-				accumulator[0] += 1;
+				MouseAxisAccumulator[0] += 1;
 			}
 		}
 	}
@@ -181,17 +180,17 @@ void OSInputGlobalsEx::InputPollFakeHandle() {
 		float move = MouseAxisMovementPerSecond[1] * lastFrameLength;
 		CurrentMouseState.lY += move;
 		float rem = fmodf(move, 1.0f);
-		accumulator[1] += rem;
+		MouseAxisAccumulator[1] += rem;
 		if (rem > 0) {
-			if (accumulator[1] > 1) {
+			if (MouseAxisAccumulator[1] > 1) {
 				CurrentMouseState.lY += 1;
-				accumulator[1] -= 1;
+				MouseAxisAccumulator[1] -= 1;
 			}
 		}
 		else if (rem < 0) {
-			if (accumulator[1] < -1) {
+			if (MouseAxisAccumulator[1] < -1) {
 				CurrentMouseState.lY -= 1;
-				accumulator[1] += 1;
+				MouseAxisAccumulator[1] += 1;
 			}
 		}
 	}
@@ -288,6 +287,8 @@ OSInputGlobalsEx* __thiscall OSInputGlobalsEx::InitializeEx(IDirectInputDevice8*
 	this->MouseAxisMovementPerSecond[0] = 0;
 	this->MouseAxisMovementPerSecond[1] = 0;
 	this->lastFrameTime = GetTickCount();  //TODO QueryPerformanceCounter? Internal GetTickCount 
+	this->MouseAxisAccumulator[0] = 0;
+	this->MouseAxisAccumulator[1] = 0;
 	g_inputGlobal = this;
 	return this;
 }
