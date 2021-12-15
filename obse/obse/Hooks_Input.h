@@ -65,6 +65,8 @@ private:
 	inline void SendKeyEvent(UInt16 idx);
 	inline void SendMouseEvent(UInt16 idx);
 	inline void SendControlEvents();
+	inline void SendWheelEvents();
+
 };
 
 STATIC_ASSERT(sizeof(OSInputGlobalsEx) == sizeof(OSInputGlobals) + sizeof(DIMOUSESTATEInn) + sizeof(KeyControlState[256]) + sizeof(UInt32[2]) + 2*sizeof(float[2]) + sizeof(float) +sizeof(DWORD));

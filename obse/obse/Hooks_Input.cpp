@@ -136,8 +136,35 @@ inline void OSInputGlobalsEx::SendControlEvents() {
 	}
 }
 
-//TODO Speed(Ma davvero vogliamo sto' bordello?)
-//TODO wheel to button translation
+inline void OSInputGlobalsEx::SendWheelEvents() {
+	if (CurrentMouseState.lZ > 0  && PreviousMouseState.lZ > 0) {//264
+		EventManager::HandleEvent(EventCode[0], (void*)264, (void*)KeyEvent_Hold);
+	}
+	else if (CurrentMouseState.lZ > 0 && PreviousMouseState.lZ == 0) {
+		EventManager::HandleEvent(EventCode[0], (void*)264, (void*)KeyEvent_Down);
+	}
+	else if (CurrentMouseState.lZ > 0 && PreviousMouseState.lZ < 0) {
+		EventManager::HandleEvent(EventCode[0], (void*)265, (void*)KeyEvent_Up);
+		EventManager::HandleEvent(EventCode[0], (void*)264, (void*)KeyEvent_Down);
+
+	}
+	else if (CurrentMouseState.lZ < 0 && PreviousMouseState.lZ < 0) {//265
+		EventManager::HandleEvent(EventCode[0], (void*)265, (void*)KeyEvent_Hold);
+	}
+	else if (CurrentMouseState.lZ < 0 && PreviousMouseState.lZ == 0) {
+		EventManager::HandleEvent(EventCode[0], (void*)265, (void*)KeyEvent_Down);
+	}
+	else if (CurrentMouseState.lZ < 0 && PreviousMouseState.lZ > 0) {
+		EventManager::HandleEvent(EventCode[0], (void*)264, (void*)KeyEvent_Up);
+		EventManager::HandleEvent(EventCode[0], (void*)265, (void*)KeyEvent_Down);
+	}
+	else if (CurrentMouseState.lZ == 0 && PreviousMouseState.lZ < 0) {
+		EventManager::HandleEvent(EventCode[0], (void*)265, (void*)KeyEvent_Up);
+	}
+	else if (CurrentMouseState.lZ == 0 && PreviousMouseState.lZ > 0) {
+		EventManager::HandleEvent(EventCode[0], (void*)264, (void*)KeyEvent_Up);
+	}
+}
 /*
 *  The old DInput hook use this order: Hammer (depending on the frame), Hold (DI_data.FakeState) , Disabled, Tap 
 *  So a Disabled key win on hold and hamer but it lose on Tap. So Tap is seen as a proper input
@@ -236,6 +263,7 @@ void OSInputGlobalsEx::InputPollFakeHandle() {
 
 	}
 	SendControlEvents();
+	SendWheelEvents();
 	FrameIndex = (FrameIndex + 1) % 2;
 
 }
