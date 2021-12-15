@@ -144,15 +144,57 @@ inline void OSInputGlobalsEx::SendControlEvents() {
 *  Hammer is used for even frames, AHammer for odd ones.
 *  THIS IS MADNESS, Even undocumented PORCODDIO.
 */
+static float accumulator[2] = { 0.0f, 0.0f };
 void OSInputGlobalsEx::InputPollFakeHandle() {
 	if (MouseDisabled) {
 		CurrentMouseState.lX = 0;
 		CurrentMouseState.lY = 0;
 	}
+	DWORD time = GetTickCount();
+	lastFrameLength = (float)(time - lastFrameTime) / 1000.0f;
+	lastFrameTime = time;
+
 	CurrentMouseState.lX += MouseMaskState.lX;
 	CurrentMouseState.lY += MouseMaskState.lY;
 	MouseMaskState.lX = 0;
 	MouseMaskState.lY = 0;
+
+	if (MouseAxisMovementPerSecond[0]) {  //Move the mouse in X
+		float move = MouseAxisMovementPerSecond[0] * lastFrameLength;
+		CurrentMouseState.lX += move;
+		float rem = fmodf(move, 1.0f);
+		accumulator[0] += rem;
+		if (rem > 0) {
+			if (accumulator[0] > 1) {
+				CurrentMouseState.lX += 1;
+				accumulator[0] -= 1;
+			}
+		}
+		else if(rem < 0) {
+			if (accumulator[0] < -1) {
+				CurrentMouseState.lX -= 1;
+				accumulator[0] += 1;
+			}
+		}
+	}
+	if (MouseAxisMovementPerSecond[1]) {  //Move the mouse in y
+		float move = MouseAxisMovementPerSecond[1] * lastFrameLength;
+		CurrentMouseState.lY += move;
+		float rem = fmodf(move, 1.0f);
+		accumulator[1] += rem;
+		if (rem > 0) {
+			if (accumulator[1] > 1) {
+				CurrentMouseState.lY += 1;
+				accumulator[1] -= 1;
+			}
+		}
+		else if (rem < 0) {
+			if (accumulator[1] < -1) {
+				CurrentMouseState.lY -= 1;
+				accumulator[1] += 1;
+			}
+		}
+	}
 
 	for (UInt16 idx = 0; idx <= 255; idx++) {
 		if (idx < 8) {
@@ -243,6 +285,9 @@ OSInputGlobalsEx* __thiscall OSInputGlobalsEx::InitializeEx(IDirectInputDevice8*
 	this->FrameIndex = 0;
 	EventCode[0] = EventManager::EventIDForString("OnKeyEvent");
 	EventCode[1] = EventManager::EventIDForString("OnControlEvent");
+	this->MouseAxisMovementPerSecond[0] = 0;
+	this->MouseAxisMovementPerSecond[1] = 0;
+	this->lastFrameTime = GetTickCount();  //TODO QueryPerformanceCounter? Internal GetTickCount 
 	g_inputGlobal = this;
 	return this;
 }

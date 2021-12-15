@@ -368,11 +368,9 @@ static bool Cmd_SetMouseSpeedX_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	float speed = 0;
-	_WARNING("SetMouseSpeedX unimplemented called from mod %s", (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 
 	if(!ExtractArgs(PASS_EXTRACT_ARGS, &speed)) return true;
- //   DI_data.MouseXSpeed=speed;
-
+	g_inputGlobal->MouseAxisMovementPerSecond[0] = speed;
 	return true;
 }
 
@@ -380,11 +378,9 @@ static bool Cmd_SetMouseSpeedY_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	float speed = 0;
-	_WARNING("SetMouseSpeedY unimplemented called from mod %s", (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
 
 	if(!ExtractArgs(PASS_EXTRACT_ARGS, &speed)) return true;
-//    DI_data.MouseYSpeed=speed;
-
+	g_inputGlobal->MouseAxisMovementPerSecond[1] = speed;
 	return true;
 }
 

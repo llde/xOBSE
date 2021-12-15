@@ -41,6 +41,10 @@ public:
 	KeyControlState	KeyMaskState[256];
 	DIMOUSESTATEInn MouseMaskState;
 	UInt32			EventCode[2];
+	float			MouseAxisMovementPerSecond[2]; 
+	float			lastFrameLength;
+	DWORD			lastFrameTime;
+
 	void SetMask(UInt16 keycode);
 	void SetUnMask(UInt16 keycode);
 	UInt8 GetMaskStatus(UInt16 keycode);
@@ -62,7 +66,7 @@ private:
 	inline void SendControlEvents();
 };
 
-STATIC_ASSERT(sizeof(OSInputGlobalsEx) == sizeof(OSInputGlobals) + sizeof(DIMOUSESTATEInn) + sizeof(KeyControlState[256]) + sizeof(UInt32[2]));
+STATIC_ASSERT(sizeof(OSInputGlobalsEx) == sizeof(OSInputGlobals) + sizeof(DIMOUSESTATEInn) + sizeof(KeyControlState[256]) + sizeof(UInt32[2]) +sizeof(float[2]) + sizeof(float) +sizeof(DWORD));
 
 extern OSInputGlobalsEx* g_inputGlobal;
 
