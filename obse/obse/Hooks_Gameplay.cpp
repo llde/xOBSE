@@ -236,6 +236,7 @@ static void HandleMainLoopHook(void)
 {
 	static bool s_recordedMainThreadID = false;
 	if (!s_recordedMainThreadID) {
+		Console_Print("xOBSE %d.%d.%d Loaded Succesfully", OBSE_VERSION_INTEGER, OBSE_VERSION_INTEGER_MINOR, OBSE_VERSION_INTEGER_HOTIFX);
 		s_recordedMainThreadID = true;
 		g_mainThreadID = GetCurrentThreadId();
 	}
