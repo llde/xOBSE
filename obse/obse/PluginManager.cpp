@@ -45,7 +45,7 @@ static OBSEStringVarInterface g_OBSEStringVarInterface =
 	AssignToStringVar
 };
 
-bool IsKeyPressedOld(UInt32 key) { return PluginAPI::IsControlPressedSimulated(key); }
+bool IsKeyPressedOld(UInt32 key) { return PluginAPI::IsKeyPressedSimulated(key); }
 
 static OBSEIOInterface g_OBSEIOInterface =
 {
