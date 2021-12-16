@@ -45,10 +45,12 @@ static OBSEStringVarInterface g_OBSEStringVarInterface =
 	AssignToStringVar
 };
 
+bool IsKeyPressedOld(UInt32 key) { return PluginAPI::IsControlPressedSimulated(key); }
+
 static OBSEIOInterface g_OBSEIOInterface =
 {
 	OBSEIOInterface::kVersion,
-	OSInputGlobals::Plugin_IsKeyPressed,
+	IsKeyPressedOld,
 };
 
 static OBSEArrayVarInterface g_OBSEArrayVarInterface =
@@ -378,6 +380,7 @@ void * PluginManager::QueryInterface(UInt32 id)
 			break;
 		case kInterface_IO:
 			result = &g_OBSEIOInterface;
+			//_MESSAGE("Requesting OBSEIOInterface, but was deprecated in favor of OBSEInputInterface");
 			break;
 		case kInterface_Script:
 			result = &g_OBSEScriptInterface;

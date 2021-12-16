@@ -239,7 +239,6 @@ public:
 		}
 		return 0xFF;
 	}
-	static UInt8 Plugin_IsKeyPressed(UInt16 keycode) { return false; }
 };
 
 STATIC_ASSERT(sizeof(OSInputGlobals) == 0x1BD8);
