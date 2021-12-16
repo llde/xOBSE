@@ -25,6 +25,11 @@ IF YOU ARE USING THE STEAM VERSION OF OBLIVION:
 1. Copy obse_1_2_416.dll, obse_editor_1_2.dll, obse_steam_loader.dll and the Data folder  to your Oblivion directory. This is usually "C:\Program Files\Valve\Steam\SteamApps\common\oblivion".
 2. Launch Oblivion via Steam or by running Oblivion.exe. OBSE will automatically be run along with Oblivion when launched. To disable this, rename or move obse_steam_loader.dll. You do not need to use obse_loader.exe unless you are running the editor.
 
+IF USING STEAM PROTON ON LINUX (replace Point 2. from previous paragraph): 
+1. Backup OblivionLauncher.exe and rename obse_loader.exe to OblivionLauncher.exe
+2. Start the game from inside Steam 
+Note this is needed only when using a Linux Steam and Proton. Using Windows Steam inside Wine should work out of the box,
+
 IF YOU ARE USING MOD ORGANIZER 2:
 
 Mod organizer user need to use special instruction to allow OBSE to function properly.
@@ -37,6 +42,7 @@ Scripts written with these new commands must be written via the TESConstructionS
 WARNING: It's unadvised to install Oblivion to *Program Files*
 
 ## Support
+More information on running Oblivion and OBSE with Linux and Wine (or Proton) can be found on the [UESP Oblivion Linux](https://en.uesp.net/wiki/Oblivion:Linux) page. It should work out of the box for most people.
 
 For support, contact us in the [xOBSE Discord server](https://discord.gg/efEzqa3). For bug reports and other problems, [create a new GitHub issue](https://github.com/llde/xOBSE/issues).
 
@@ -100,17 +106,13 @@ Running OBSE and Oldblivion at the same time:
 
 - Copy your oldblivion support files in to the Oblivion folder (oldblivion.dll, oldblivion.cfg, shaders.sdp), then run the loader with the -old command argument.
 
-Some mods (specifically mods using IsKeyPressed) don't work correctly. What should I do?
-
-- Open your Oblivion.ini (found in My Documents/My Games/Oblivion) and change the "bBackground Keyboard=0" line to "bBackground Keyboard=1".
-
 How do I change the script editor font?
 
 - Hold F12 or F12 while opening the script editor. F12 will default to Lucida Console 9pt, and F11 will show a font picker dialog box.
 
 Can I modify and release my own version of OBSE based on the released source code?
 
-- This is highly discouraged. Each command must be assigned a unique and constant opcode from 0x1000-0x7FFF. Bethesda started adding commands at 0x1000, and OBSE started adding at 0x1400. If you add new commands yourself, they may conflict with later releases of OBSE. The suggested method for extending OBSE is to write a plugin. If this does not meet your needs, please email the contact addresses listed below.
+- This is highly discouraged. Each command must be assigned a unique and constant opcode from 0x1000-0x7FFF. Bethesda started adding commands at 0x1000, and OBSE started adding at 0x1400. If you add new commands yourself, they may conflict with later releases of OBSE. The suggested method for extending OBSE is to write a plugin. If this does not meet your needs, please email the contact addresses listed below. If you want a feature directly inside OBSE, or want to work improving OBSE, contribution can be done by forking the repository, and opening a Pull Request. Acceptance of the pull request is conditioned to a review.
 
 How do I write a plugin for OBSE?
 
@@ -151,4 +153,4 @@ Thanks to *EchoEclipseWolf* for decoding bits
 
 Thanks to all people who reported bugs.
 
-A special thanks to *ianpatt* that allowed us to mantian this fork.
+A special thanks to *ianpatt* that allowed us to mantain this fork.
