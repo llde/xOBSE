@@ -1,6 +1,9 @@
 xOBSE 22.6
 	Changes/Fix:
-		-	Fixed Use After Free  when RemoveMeIR was used with the destination container equals as the origin. Trade And Commerce Update rely on this working.  
+		- Fixed Use After Free  when RemoveMeIR was used with the destination container equals as the origin. Trade And Commerce Update rely on this working.
+		- Add Wheel events for OnKeyEvent event handler
+		- Re-add SetMouseSpeedX and SetMouseSpeedY (some mods use them)
+		- Fix functionality of OBSEIOInterface, fix Blockhead WASD in character creation
 
 xOBSE 22.5
 	Changes/Fix:
