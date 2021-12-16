@@ -1,9 +1,12 @@
 xOBSE 22.6
+	General: 
+		- Add CRC for DRM Removed Polish Version from Cenega (GOTY Deluxe/Anthology)
 	Changes/Fix:
 		- Fixed Use After Free  when RemoveMeIR was used with the destination container equals as the origin. Trade And Commerce Update rely on this working.
 		- Add Wheel events for OnKeyEvent event handler
 		- Re-add SetMouseSpeedX and SetMouseSpeedY (some mods use them)
 		- Fix functionality of OBSEIOInterface, fix Blockhead WASD in character creation
+		- Print xOBSE version on initialzing.
 
 xOBSE 22.5
 	Changes/Fix:
