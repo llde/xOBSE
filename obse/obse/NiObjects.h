@@ -252,6 +252,9 @@ public:
 	NiSphere					m_combinedBounds;	// 0CC
 };
 
+
+static  UInt32 SetCameraFOV_Internal = 0x00411160;
+static void(__cdecl* UpdateParticleFOVData)(float) = (void(__cdecl*)(float))0x007B70E0;
 // F0
 class SceneGraph : public NiNode
 {
@@ -264,6 +267,13 @@ public:
 	NiCullingProcess	* cullingProcess;	// 0E4
 	UInt32				unk0E8;				// 0E8
 	float				cameraFOV;			// 0EC
+
+	void UpdateParticleFOV(float FOV) {
+		UpdateParticleFOVData(FOV);
+	}
+	void SetCameraFOV(float FOV, float unk04) {
+		ThisStdCall(SetCameraFOV_Internal, this, FOV, unk04);
+	}
 };
 
 STATIC_ASSERT(sizeof(SceneGraph) == 0x0F0);

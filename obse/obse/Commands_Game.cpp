@@ -17,6 +17,7 @@
 #include "obse/GameObjects.h"
 #include "obse_common/SafeWrite.h"
 #include "NiObjects.h"
+#include <obse/NiAPI.h>
 
 // first character in name mapped to type ID
 //	b	0
@@ -1007,6 +1008,17 @@ static bool Cmd_GetModAlias_Execute (COMMAND_ARGS)
 	DEBUG_PRINT ("GetModAlias >> %s", alias.c_str ());
 	return true;
 }
+static bool Cmd_SetCameraFOV2_Execute(COMMAND_ARGS) {
+	SInt32 FOV = 0;
+	float FOVA = 0.0f;
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &FOV)) {
+		if (FOV < 0) FOVA = (1.0f / (-FOV));
+		else FOVA = FOV;
+		(*g_worldSceneGraph)->SetCameraFOV(FOVA, 0.0f);
+		(*g_worldSceneGraph)->UpdateParticleFOV(FOV);
+	}
+	return true;
+}
 
 #endif
 
@@ -1447,3 +1459,19 @@ DEFINE_COMMAND(ResolveModIndex,
 
 DEFINE_COMMAND (SetModAlias, sets the alias for a mod name, 0, 2, kParams_TwoStrings);
 DEFINE_COMMAND (GetModAlias, retrieves the alias for a mod name, 0, 1, kParams_OneString);
+
+
+CommandInfo kCommandInfo_SetCameraFOV2 =
+{
+	"SetCameraFOV2",
+	"SetFOV2",
+	0,
+	"Set the FOV for the camera. It's similar of con_etCameraFOV but it's unbounded",
+	0,
+	1,
+	kParams_OneInt,
+	HANDLER(Cmd_SetCameraFOV2_Execute),
+	Cmd_Default_Parse,
+	NULL,
+	0
+};
