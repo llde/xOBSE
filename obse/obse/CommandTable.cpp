@@ -3001,6 +3001,8 @@ void CommandTable::Init(void)
 	//OBSE 22.4
 	ADD_CMD(SetAltControl2);
 	ADD_CMD(IsMiscItem);
+	//OBSE 22.5
+	ADD_CMD(SetCameraFOV2);
 	/* to add later if problems can be solved
 	g_scriptCommands.Add(&kCommandInfo_SetCurrentClimate); // too many problems
 	g_scriptCommands.Add(&kCommandInfo_SetWorldspaceClimate);
