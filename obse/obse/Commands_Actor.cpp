@@ -1709,7 +1709,7 @@ CommandInfo kCommandInfo_GetActorLightAmount =
 	NULL,
 	HANDLER(Cmd_GetActorLightAmount_Execute),
 	Cmd_Default_Parse,
-	HANDLER_EVAL(Cmd_GetActorLightAmount_Execute),
+	HANDLER_EVAL(Cmd_GetActorLightAmount_Eval),
 	0
 };
 
