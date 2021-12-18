@@ -3004,6 +3004,12 @@ void CommandTable::Init(void)
 	//OBSE 22.5
 	ADD_CMD(SetCameraFOV2);
 	ADD_CMD(IsMajorRef);
+    ADD_CMD(IsDiseased);
+    ADD_CMD(SetInvertFastTravel);
+    ADD_CMD(IsInvertFastTravel);
+    ADD_CMD(SetCantWait);
+    ADD_CMD(IsCantWait);
+
 	/* to add later if problems can be solved
 	g_scriptCommands.Add(&kCommandInfo_SetCurrentClimate); // too many problems
 	g_scriptCommands.Add(&kCommandInfo_SetWorldspaceClimate);

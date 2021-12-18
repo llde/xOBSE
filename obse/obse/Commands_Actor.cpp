@@ -15,6 +15,29 @@
 #include "Hooks_Gameplay.h"
 #include "EventManager.h"
 
+bool HasSpell(TESForm* spell, TESActorBase* actor){
+    TESSpellList& spellList = actor->spellList;
+    TESSpellList::Entry* curEntry = &spellList.spellList;
+    while (curEntry && curEntry->type != NULL) {
+        TESForm* spellForm = curEntry->type;
+        if (spell == spellForm) {
+            return true;
+        }
+        curEntry = curEntry->next;
+    }
+    return false;
+}
+
+static bool Cmd_HasSpell_Eval(COMMAND_ARGS_EVAL){
+    *result=0;
+    if(!thisObj) return true;
+    TESActorBase* actor = (TESActorBase*)Oblivion_DynamicCast(thisObj->baseForm, 0, RTTI_TESForm, RTTI_TESActorBase, 0);
+    if(!actor) return true;
+    TESForm* spell = (TESForm*)arg1;
+    *result = HasSpell(spell, actor) ? 1:0;
+    return true;
+}
+
 static bool Cmd_HasSpell_Execute(COMMAND_ARGS){
 	*result = 0;
 
@@ -29,21 +52,44 @@ static bool Cmd_HasSpell_Execute(COMMAND_ARGS){
 
 	if(form){
 		SpellItem* spell = (SpellItem*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_SpellItem, 0);
-		if (spell == nullptr) return true;
-		TESSpellList& spellList = npc->spellList;
-		TESSpellList::Entry* curEntry = &spellList.spellList;
-		while (curEntry && curEntry->type != NULL) {
-			TESForm* spellForm = curEntry->type;
-			if (form == spellForm) {
-				*result = 1;
-				return true;
-			}
-			curEntry = curEntry->next;
-		}
+        if(spell){
+            *result = HasSpell(form,npc) ? 1 : 0;
+        }
 	}
 
 	return true;
 }
+
+bool IsDiseased(TESObjectREFR* thisObj){
+    TESForm* form = (thisObj)->GetBaseForm();
+    if(!form) return false;
+
+    TESActorBase* actor = (TESActorBase*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_TESActorBase,0);
+    if(!actor) return false;
+
+    //Which is the best method for getting the SpellList of an Actor?
+//  TESSpellList* list1 = (TESSpellList*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_TESSpellList,0);
+    TESSpellList* list = &actor->spellList;
+    for (TESSpellList::Entry* entry = &list->spellList; entry && entry->type; entry = entry->next){
+        SpellItem* spell = (SpellItem*) Oblivion_DynamicCast(entry->type,0,RTTI_TESForm, RTTI_SpellItem, 0);
+        if(spell->spellType  == SpellItem::kType_Disease) {
+            return true;
+        }
+    }
+    return false;
+}
+
+static bool Cmd_IsDiseased_Execute(COMMAND_ARGS){
+    *result = IsDiseased(thisObj) == true ? 1 : 0;
+    return true;
+}
+
+static bool Cmd_IsDiseased_Eval(COMMAND_ARGS_EVAL){
+    *result = IsDiseased(thisObj) == true ? 1 : 0;
+    return true;
+}
+
+
 
 static bool Cmd_GetSpellCount_Execute(COMMAND_ARGS)
 {
@@ -193,22 +239,29 @@ static bool Cmd_SetRefEssential_Execute(COMMAND_ARGS)
 	return true;
 }
 
-static bool Cmd_GetActorLightAmount_Execute(COMMAND_ARGS)
-{
-	*result = 100.0f;
+float GetActorLightAmount(Actor* act){
+    return act->process->GetLightAmount(act, 0);
+}
 
-	if(!thisObj) return true;
-	if(!thisObj->IsActor()) return true;
+static bool Cmd_GetActorLightAmount_Eval(COMMAND_ARGS_EVAL){
+    *result = 100.0f;
+    if(!thisObj) return true;
+    if(!thisObj->IsActor()) return true;
 
-	Actor	* actor = (Actor *)thisObj;
+    Actor* actor = (Actor*)thisObj;
+    if(!actor->process) return true;
+    *result = GetActorLightAmount(actor);
+    return true;
+}
 
-	if(!actor->process) return true;
-
-	*result = actor->process->GetLightAmount(actor, 0);
-
-	//Console_Print("light amount = %f", (float)*result);
-
-	return true;
+static bool Cmd_GetActorLightAmount_Execute(COMMAND_ARGS){
+    *result = 100.0f;
+    if(!thisObj) return true;
+    if(!thisObj->IsActor()) return true;
+    Actor    * actor = (Actor*)thisObj;
+    if(!actor->process) return true;
+    *result = GetActorLightAmount(actor);
+    return true;
 }
 
 static bool Cmd_GetMerchantContainer_Execute(COMMAND_ARGS)
@@ -1496,11 +1549,24 @@ CommandInfo kCommandInfo_HasSpell =
 	"returns 1 if the actor has the spell",
 	1,
 	1,
-	kParams_OneSpellItem,
+	kParams_OneSpellItem,  //TODO force CS to handle this or change to OneMagicItem
 	HANDLER(Cmd_HasSpell_Execute),
 	Cmd_Default_Parse,
-	NULL,
+	HANDLER_EVAL(Cmd_HasSpell_Eval),
 	0
+};
+
+CommandInfo kCommandInfo_IsDiseased = {
+    "IsDiseased",
+    "",
+    0,
+    "Return 1 if given actor is diseased",
+    1,
+    0,
+    NULL,
+    HANDLER(Cmd_IsDiseased_Execute),
+    Cmd_Default_Parse,
+    HANDLER_EVAL(Cmd_IsDiseased_Eval)
 };
 
 CommandInfo kCommandInfo_GetMerchantContainer =
@@ -1643,7 +1709,7 @@ CommandInfo kCommandInfo_GetActorLightAmount =
 	NULL,
 	HANDLER(Cmd_GetActorLightAmount_Execute),
 	Cmd_Default_Parse,
-	NULL,
+	HANDLER_EVAL(Cmd_GetActorLightAmount_Execute),
 	0
 };
 

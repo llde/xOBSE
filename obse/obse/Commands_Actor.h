@@ -3,6 +3,8 @@
 #include "CommandTable.h"
 
 extern CommandInfo kCommandInfo_HasSpell;
+extern CommandInfo kCommandInfo_IsDiseased;
+
 extern CommandInfo kCommandInfo_GetPlayerSpellCount;
 extern CommandInfo kCommandInfo_GetNthPlayerSpell;
 

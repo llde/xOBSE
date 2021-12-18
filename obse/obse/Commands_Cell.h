@@ -39,3 +39,8 @@ extern CommandInfo kCommandInfo_SetCellWaterType;
 extern CommandInfo kCommandInfo_GetCellNorthRotation;
 
 extern CommandInfo kCommandInfo_SetCellMusicType;
+
+extern CommandInfo kCommandInfo_IsInvertFastTravel;
+extern CommandInfo kCommandInfo_SetInvertFastTravel;
+extern CommandInfo kCommandInfo_IsCantWait;
+extern CommandInfo kCommandInfo_SetCantWait;

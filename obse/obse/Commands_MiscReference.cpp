@@ -1664,9 +1664,9 @@ static bool Cmd_DeleteReference_Execute(COMMAND_ARGS)
 	// Don't delete temp refs or non-dynamic refs
 	if (thisObj && thisObj->GetModIndex() == 0xFF && !(thisObj->flags & 0x4000))
 	{
-		// don't delete actors or objects in inventories
+		// don't delete objects in inventories
 		// references must be disabled before deletion
-		if (!contObj && !thisObj->IsActor() && thisObj->IsDisabled())
+		if (!contObj && thisObj->IsDisabled())
 		{
 			IOManager* ioMan = IOManager::GetSingleton();
 			if (ioMan)

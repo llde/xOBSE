@@ -435,6 +435,62 @@ static bool Cmd_CanFastTravelFromWorld_Execute(COMMAND_ARGS)
 	return true;
 }
 
+static bool Cmd_IsInvertFastTravel_Execute(COMMAND_ARGS)
+{
+    TESObjectCELL* cell = NULL;
+    *result = 0.0;
+
+    if (ExtractArgs(PASS_EXTRACT_ARGS, &cell) && cell) {
+        if (cell->IsInvertFastTravel()) {
+            *result = 1.0;
+        }
+    }
+
+    return true;
+}
+
+static bool Cmd_SetInvertFastTravel_Execute(COMMAND_ARGS)
+{
+    TESObjectCELL* cell = NULL;
+    UInt32 act = NULL;
+    *result = 0.0;
+
+    if (ExtractArgs(PASS_EXTRACT_ARGS, &cell, &act) && cell) {
+        cell->SetInvertFastTravel(act ? true : false);
+        *result = 1.0;
+    }
+
+    return true;
+}
+
+static bool Cmd_IsCantWait_Execute(COMMAND_ARGS)
+{
+    TESObjectCELL* cell = NULL;
+    *result = 0.0;
+
+    if (ExtractArgs(PASS_EXTRACT_ARGS, &cell) && cell) {
+        if (cell->IsCantWait()) {
+            *result = 1.0;
+        }
+    }
+
+    return true;
+}
+
+static bool Cmd_SetCantWait_Execute(COMMAND_ARGS)
+{
+    TESObjectCELL* cell = NULL;
+    UInt32 act = NULL;
+    *result = 0.0;
+
+    if (ExtractArgs(PASS_EXTRACT_ARGS, &cell, &act) && cell) {
+        cell->SetCantWait(act ? true : false);
+        *result = 1.0;
+    }
+
+    return true;
+}
+
 static bool Cmd_SetCanFastTravelFromWorld_Execute(COMMAND_ARGS)
 {
 	TESWorldSpace* world = NULL;
@@ -637,3 +693,9 @@ DEFINE_COMMAND(SetCellWaterType, sets the cell water type, 0, 2, kParams_OneCell
 DEFINE_COMMAND(GetCellNorthRotation, returns the rotation of the north marker for the specified cell, 0, 1, kParams_OneCell);
 
 DEFINE_COMMAND(SetCellMusicType, sets the music type for a cell, 0, 2, kParams_OneCellOneInt);
+
+DEFINE_COMMAND(SetInvertFastTravel, sets the InvertFastTravel flag, 0, 2, kParams_OneCellOneInt);
+DEFINE_COMMAND(IsInvertFastTravel, returns true if the cell has InvertFastTravel flag, 0, 1, kParams_OneCell);
+
+DEFINE_COMMAND(SetCantWait, sets the CantWait flag, 0, 2, kParams_OneCellOneInt);
+DEFINE_COMMAND(IsCantWait, returns true if the cell has CantWait flag, 0, 1, kParams_OneCell);
