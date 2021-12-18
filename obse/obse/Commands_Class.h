@@ -5,6 +5,8 @@
 extern CommandInfo kCommandInfo_GetClass;
 extern CommandInfo kCommandInfo_IsClassSkill;
 extern CommandInfo kCommandInfo_IsClassSkillC;
+extern CommandInfo kCommandInfo_IsMajorRef;
+
 extern CommandInfo kCommandInfo_IsClassAttribute;
 extern CommandInfo kCommandInfo_IsClassAttributeC;
 extern CommandInfo kCommandInfo_GetClassAttribute;

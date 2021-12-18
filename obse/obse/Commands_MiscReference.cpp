@@ -585,12 +585,13 @@ struct CellScanInfo
 	UInt8	formType;									//form type to scan for
 	UInt8	cellDepth;									//depth of adjacent cells to scan
 	bool	includeTakenRefs;
+	bool	includeDeletedRefs;
 
 	CellScanInfo()
 	{	}
 
-	CellScanInfo(UInt8 _cellDepth, UInt8 _formType, bool _includeTaken, TESObjectCELL* _cell)
-					:	cellDepth(_cellDepth), formType(_formType), includeTakenRefs(_includeTaken), prev(NULL), cell(_cell)
+	CellScanInfo(UInt8 _cellDepth, UInt8 _formType, bool _includeTaken, bool _includeDeleted ,TESObjectCELL* _cell)
+					:	cellDepth(_cellDepth), formType(_formType), includeTakenRefs(_includeTaken), includeDeletedRefs(_includeDeleted) , prev(NULL), cell(_cell)
 	{
 		world = cell->worldSpace;
 
@@ -650,6 +651,13 @@ struct CellScanInfo
 	}
 };
 
+class RefMatcherDeleted {
+public:
+	bool Accept(const TESObjectREFR* refr) {
+		return refr->IsDeleted();
+	}
+};
+
 class RefMatcherAnyForm
 {
 	bool m_includeTaken;
@@ -670,13 +678,14 @@ class RefMatcherFormType
 {
 	UInt32 m_formType;
 	bool m_includeTaken;
+	bool m_includedDeleted;
 public:
-	RefMatcherFormType(UInt32 formType, bool includeTaken) : m_formType(formType), m_includeTaken(includeTaken)
+	RefMatcherFormType(UInt32 formType, bool includeTaken, bool includeDeleted) : m_formType(formType), m_includeTaken(includeTaken), m_includedDeleted(includeDeleted)
 		{ }
 
 	bool Accept(const TESObjectREFR* refr)
 	{
-		if (refr->IsDeleted())
+		if (!m_includedDeleted && refr->IsDeleted())
 			return false;
 		else if (!m_includeTaken && refr->IsTaken())
 			return false;
@@ -689,13 +698,14 @@ public:
 
 class RefMatcherActor
 {
+	bool m_includedDeleted;
 public:
-	RefMatcherActor()
+	RefMatcherActor(bool includedDeleted) : m_includedDeleted(includedDeleted)
 		{ }
 
 	bool Accept(const TESObjectREFR* refr)
 	{
-		if (refr->IsDeleted())
+		if (!m_includedDeleted && refr->IsDeleted())
 			return false;
 		else if (refr->baseForm->typeID == kFormType_Creature)
 			return true;
@@ -708,22 +718,27 @@ public:
 
 class RefMatcherMapMarker
 {
+	bool m_includedDeleted;
+
 public:
+	RefMatcherMapMarker(bool includedDeleted) : m_includedDeleted(includedDeleted) {}
+
 	bool Accept(const TESObjectREFR* refr) {
-		return (!refr->IsDeleted() && refr->baseForm->refID == kFormID_MapMarker);
+		return ((m_includedDeleted || !refr->IsDeleted()) && refr->baseForm->refID == kFormID_MapMarker);
 	}
 };
 
 class RefMatcherItem
 {
 	bool m_includeTaken;
+	bool m_includedDeleted;
 public:
-	RefMatcherItem(bool includeTaken) : m_includeTaken(includeTaken)
+	RefMatcherItem(bool includeTaken, bool includeDeleted) : m_includeTaken(includeTaken), m_includedDeleted(includeDeleted)
 		{ }
 
 	bool Accept(const TESObjectREFR* refr)
 	{
-		if (refr->IsDeleted())
+		if (!m_includedDeleted && refr->IsDeleted())
 			return false;
 		else if (!m_includeTaken && refr->IsTaken())
 			return false;
@@ -838,7 +853,7 @@ public:
 	}
 };
 
-static const TESObjectCELL::ObjectListEntry* GetCellRefEntry(CellListVisitor visitor, UInt32 formType, const TESObjectCELL::ObjectListEntry* prev, bool includeTaken, ProjectileFinder* projFinder = NULL)
+static const TESObjectCELL::ObjectListEntry* GetCellRefEntry(CellListVisitor visitor, UInt32 formType, const TESObjectCELL::ObjectListEntry* prev, bool includeTaken, bool includeDeleted, ProjectileFinder* projFinder = NULL)
 {
 	const TESObjectCELL::ObjectListEntry* entry = NULL;
 	switch(formType)
@@ -847,26 +862,29 @@ static const TESObjectCELL::ObjectListEntry* GetCellRefEntry(CellListVisitor vis
 		entry = visitor.Find(RefMatcherAnyForm(includeTaken), prev);
 		break;
 	case 69:	//Actor
-		entry = visitor.Find(RefMatcherActor(), prev);
+		entry = visitor.Find(RefMatcherActor(includeDeleted), prev);
 		break;
 	case 70:	//Inventory Item
-		entry = visitor.Find(RefMatcherItem(includeTaken), prev);
+		entry = visitor.Find(RefMatcherItem(includeTaken,includeDeleted), prev);
 		break;
 	case 71:	//Owned Projectile
 		if (projFinder)
 			entry = visitor.Find(*projFinder, prev);
 		break;
 	case 72:	// map marker
-		entry = visitor.Find(RefMatcherMapMarker(), prev);
+		entry = visitor.Find(RefMatcherMapMarker(includeDeleted), prev);
+		break;
+	case 90:
+		entry = visitor.Find(RefMatcherDeleted(), prev);
 		break;
 	default:
-		entry = visitor.Find(RefMatcherFormType(formType, includeTaken), prev);
+		entry = visitor.Find(RefMatcherFormType(formType, includeTaken, includeDeleted), prev);
 	}
 
 	return entry;
 }
 
-static TESObjectREFR* CellScan(Script* scriptObj, TESObjectCELL* cellToScan = NULL, UInt32 formType = 0, UInt32 cellDepth = 0, bool getFirst = false, bool includeTaken = false, ProjectileFinder* projFinder = NULL)
+static TESObjectREFR* CellScan(Script* scriptObj, TESObjectCELL* cellToScan = NULL, UInt32 formType = 0, UInt32 cellDepth = 0, bool getFirst = false, bool includeTaken = false, bool includeDeleted = false ,ProjectileFinder* projFinder = NULL)
 {
 	static std::map<UInt32, CellScanInfo> scanScripts;
 	UInt32 idx = scriptObj->refID;
@@ -876,7 +894,7 @@ static TESObjectREFR* CellScan(Script* scriptObj, TESObjectCELL* cellToScan = NU
 
 	if (scanScripts.find(idx) == scanScripts.end())
 	{
-		scanScripts[idx] = CellScanInfo(cellDepth, formType, includeTaken, cellToScan);
+		scanScripts[idx] = CellScanInfo(cellDepth, formType, includeTaken, includeDeleted , cellToScan);
 		scanScripts[idx].FirstCell();
 	}
 
@@ -885,7 +903,7 @@ static TESObjectREFR* CellScan(Script* scriptObj, TESObjectCELL* cellToScan = NU
 	bool bContinue = true;
 	while (bContinue)
 	{
-		info->prev = GetCellRefEntry(CellListVisitor(&info->curCell->objectList), info->formType, info->prev, info->includeTakenRefs, projFinder);
+		info->prev = GetCellRefEntry(CellListVisitor(&info->curCell->objectList), info->formType, info->prev, info->includeTakenRefs, info->includeDeletedRefs , projFinder);
 		if (!info->prev || !info->prev->refr)				//no ref found
 		{
 			if (!info->NextCell())			//check next cell if possible
@@ -909,6 +927,7 @@ static bool GetFirstRef_Execute(COMMAND_ARGS, bool bUsePlayerCell = true)
 	UInt32 formType = 0;
 	UInt32 cellDepth = -1;
 	UInt32 bIncludeTakenRefs = 0;
+	UInt32 bIncludeDeletedRefs = 0;
 	UInt32* refResult = (UInt32*)result;
 	TESObjectCELL* cell = NULL;
 	*refResult = 0;
@@ -919,13 +938,13 @@ static bool GetFirstRef_Execute(COMMAND_ARGS, bool bUsePlayerCell = true)
 
 	if (bUsePlayerCell)
 	{
-		if (ExtractArgs(PASS_EXTRACT_ARGS, &formType, &cellDepth, &bIncludeTakenRefs))
+		if (ExtractArgs(PASS_EXTRACT_ARGS, &formType, &cellDepth, &bIncludeTakenRefs, &bIncludeDeletedRefs))
 			cell = pc->parentCell;
 		else
 			return true;
 	}
 	else
-		if (!ExtractArgs(PASS_EXTRACT_ARGS, &cell, &formType, &cellDepth, &bIncludeTakenRefs))
+		if (!ExtractArgs(PASS_EXTRACT_ARGS, &cell, &formType, &cellDepth, &bIncludeTakenRefs, &bIncludeDeletedRefs))
 			return true;
 
 	if (!cell)
@@ -934,7 +953,7 @@ static bool GetFirstRef_Execute(COMMAND_ARGS, bool bUsePlayerCell = true)
 	if (cellDepth == -1)
 		cellDepth = 0;
 
-	TESObjectREFR* refr = CellScan(scriptObj, cell, formType, cellDepth, true, bIncludeTakenRefs ? true : false);
+	TESObjectREFR* refr = CellScan(scriptObj, cell, formType, cellDepth, true, bIncludeTakenRefs ? true : false, bIncludeDeletedRefs ? true : false);
 	if (refr)
 		*refResult = refr->refID;
 
@@ -978,6 +997,7 @@ static bool GetNumRefs_Execute(COMMAND_ARGS, bool bUsePlayerCell = true)
 	UInt32 formType = 0;
 	UInt32 cellDepth = -1;
 	UInt32 includeTakenRefs = 0;
+	UInt32 includeDeletedRefs = 0;
 
 	PlayerCharacter* pc = *g_thePlayer;
 	if (!pc || !(pc->parentCell))
@@ -985,22 +1005,23 @@ static bool GetNumRefs_Execute(COMMAND_ARGS, bool bUsePlayerCell = true)
 
 	TESObjectCELL* cell = NULL;
 	if (bUsePlayerCell)
-		if (ExtractArgs(PASS_EXTRACT_ARGS, &formType, &cellDepth, &includeTakenRefs))
+		if (ExtractArgs(PASS_EXTRACT_ARGS, &formType, &cellDepth, &includeTakenRefs, &includeDeletedRefs))
 			cell = pc->parentCell;
 		else
 			return true;
 	else
-		if (!ExtractArgs(PASS_EXTRACT_ARGS, &cell, &formType, &cellDepth, &includeTakenRefs))
+		if (!ExtractArgs(PASS_EXTRACT_ARGS, &cell, &formType, &cellDepth, &includeTakenRefs, &includeDeletedRefs))
 			return true;
 
 	if (!cell)
 		return true;
 
 	bool bIncludeTakenRefs = includeTakenRefs ? true : false;
+	bool bIncludeDeltedRefs = includeDeletedRefs ? true : false;
 	if (cellDepth == -1)
 		cellDepth = 0;
 
-	CellScanInfo info(cellDepth, formType, bIncludeTakenRefs, cell);
+	CellScanInfo info(cellDepth, formType, bIncludeTakenRefs, bIncludeDeltedRefs,cell);
 	info.FirstCell();
 
 	while (info.curCell)
@@ -1012,16 +1033,19 @@ static bool GetNumRefs_Execute(COMMAND_ARGS, bool bUsePlayerCell = true)
 			*result += visitor.CountIf(RefMatcherAnyForm(bIncludeTakenRefs));
 			break;
 		case 69:
-			*result += visitor.CountIf(RefMatcherActor());
+			*result += visitor.CountIf(RefMatcherActor(bIncludeDeltedRefs));
 			break;
 		case 70:
-			*result += visitor.CountIf(RefMatcherItem(bIncludeTakenRefs));
+			*result += visitor.CountIf(RefMatcherItem(bIncludeTakenRefs, bIncludeDeltedRefs));
 			break;
 		case 72:
-			*result += visitor.CountIf(RefMatcherMapMarker());
+			*result += visitor.CountIf(RefMatcherMapMarker(bIncludeDeltedRefs));
+			break;
+		case 90:
+			*result += visitor.CountIf(RefMatcherDeleted());
 			break;
 		default:
-			*result += visitor.CountIf(RefMatcherFormType(formType, bIncludeTakenRefs));
+			*result += visitor.CountIf(RefMatcherFormType(formType, bIncludeTakenRefs, bIncludeDeltedRefs));
 		}
 		info.NextCell();
 	}
@@ -2493,11 +2517,12 @@ CommandInfo kCommandInfo_GetTeleportCell =
 	0
 };
 
-static ParamInfo kParams_GetFirstRef[3] =
+static ParamInfo kParams_GetFirstRef[4] =
 {
 	{	"form type",			kParamType_Integer,	1	},
 	{	"cell depth",			kParamType_Integer,	1	},
 	{	"include taken refs",	kParamType_Integer,	1	},
+	{	"include deleted refs",	kParamType_Integer,	1	},
 };
 
 CommandInfo kCommandInfo_GetFirstRef =
@@ -2506,7 +2531,7 @@ CommandInfo kCommandInfo_GetFirstRef =
 	0,
 	"returns the first reference of the specified type in the current cell",
 	0,
-	3,
+	4,
 	kParams_GetFirstRef,
 	HANDLER(Cmd_GetFirstRef_Execute),
 	Cmd_Default_Parse,
@@ -2534,7 +2559,7 @@ CommandInfo kCommandInfo_GetNumRefs =
 	0,
 	"returns the number of references of a given type in the current cell",
 	0,
-	3,
+	4,
 	kParams_GetFirstRef,
 	HANDLER(Cmd_GetNumRefs_Execute),
 	Cmd_Default_Parse,
@@ -2542,12 +2567,13 @@ CommandInfo kCommandInfo_GetNumRefs =
 	0
 };
 
-static ParamInfo kParams_GetFirstRefInCell[4] =
+static ParamInfo kParams_GetFirstRefInCell[5] =
 {
 	{	"cell",					kParamType_Cell,	0	},
 	{	"form type",			kParamType_Integer,	1	},
 	{	"cell depth",			kParamType_Integer,	1	},
 	{	"include taken refs",	kParamType_Integer,	1	},
+	{	"include deleted refs",	kParamType_Integer,	1	},
 };
 
 CommandInfo kCommandInfo_GetFirstRefInCell =
@@ -2556,7 +2582,7 @@ CommandInfo kCommandInfo_GetFirstRefInCell =
 	0,
 	"returns the first reference of the specified type in the specified cell",
 	0,
-	4,
+	5,
 	kParams_GetFirstRefInCell,
 	HANDLER(Cmd_GetFirstRefInCell_Execute),
 	Cmd_Default_Parse,
@@ -2570,7 +2596,7 @@ CommandInfo kCommandInfo_GetNumRefsInCell =
 	0,
 	"returns the number of references of a given type in the specified cell",
 	0,
-	4,
+	5,
 	kParams_GetFirstRefInCell,
 	HANDLER(Cmd_GetNumRefsInCell_Execute),
 	Cmd_Default_Parse,

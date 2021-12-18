@@ -121,7 +121,8 @@ static OBSECommandTableInterface g_OBSECommandTableInterface =
 	PluginAPI::GetCmdByName,
 	PluginAPI::GetCmdRetnType,
 	PluginAPI::GetReqVersion,
-	PluginAPI::GetCmdParentPlugin
+	PluginAPI::GetCmdParentPlugin,
+	PluginAPI::ReplaceCmd
 };
 
 static const OBSEInterface g_OBSEInterface =

@@ -409,6 +409,7 @@ struct OBSECommandTableInterface
 	UInt32				(* GetReturnType)(const CommandInfo* cmd);		// return type enum defined in CommandTable.h
 	UInt32				(* GetRequiredOBSEVersion)(const CommandInfo* cmd);
 	const PluginInfo*	(* GetParentPlugin)(const CommandInfo* cmd);	// returns a pointer to the PluginInfo of the OBSE plugin that adds the command, if any. returns NULL otherwise
+	bool				(*Replace)(UInt32 opCode, CommandInfo* replaceWith); //Allow to replace command
 };
 
 /**** script API docs **********************************************************
@@ -623,7 +624,7 @@ struct PluginInfo
 {
 	enum
 	{
-		kInfoVersion = 2	// incremented 0020. No change to PluginInfo structure.
+		kInfoVersion = 3	// incremented 0022. New method to CommandListInterface
 	};
 
 	UInt32			infoVersion;

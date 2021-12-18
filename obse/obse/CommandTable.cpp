@@ -3003,6 +3003,7 @@ void CommandTable::Init(void)
 	ADD_CMD(IsMiscItem);
 	//OBSE 22.5
 	ADD_CMD(SetCameraFOV2);
+	ADD_CMD(IsMajorRef);
 	/* to add later if problems can be solved
 	g_scriptCommands.Add(&kCommandInfo_SetCurrentClimate); // too many problems
 	g_scriptCommands.Add(&kCommandInfo_SetWorldspaceClimate);
@@ -3599,4 +3600,5 @@ namespace PluginAPI {
 	UInt32 GetCmdRetnType(const CommandInfo* cmd) { return g_scriptCommands.GetReturnType(cmd); }
 	UInt32 GetReqVersion(const CommandInfo* cmd) { return g_scriptCommands.GetRequiredOBSEVersion(cmd); }
 	const PluginInfo* GetCmdParentPlugin(const CommandInfo* cmd) { return g_scriptCommands.GetParentPlugin(cmd); }
+	bool ReplaceCmd(UInt32 opCode, CommandInfo* replaceWith) { return g_scriptCommands.Replace(opCode, replaceWith); }
 }

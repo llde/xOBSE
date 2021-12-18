@@ -348,7 +348,12 @@ void TESSaveLoadGame::LoadCreatedObjectsHook(UInt32 unk0)
 
 	// iterate the linked list, call DoPostFixup
 	CreatedObjectVisitor	visitor(&createdObjectList);
-
+	/*
+	* mov ecx, this
+	* or dword ptr [ecx +18h], 20000h
+	* TODO reimplement tis and decode TESSaveLoadGame structure
+	* 
+	*/
 	visitor.Visit(CallPostFixup());
 }
 

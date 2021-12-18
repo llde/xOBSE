@@ -363,4 +363,5 @@ namespace PluginAPI {
 	UInt32 GetCmdRetnType(const CommandInfo* cmd);
 	UInt32 GetReqVersion(const CommandInfo* cmd);
 	const PluginInfo* GetCmdParentPlugin(const CommandInfo* cmd);
+	bool ReplaceCmd(UInt32 opCode, CommandInfo* replaceWith);
 }

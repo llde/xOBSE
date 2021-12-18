@@ -35,6 +35,27 @@ static bool Cmd_IsMajor_Execute(COMMAND_ARGS)
 	return true;
 }
 
+static bool Cmd_IsMajorRef_Execute(COMMAND_ARGS) {
+	*result = 0;
+	UInt32 skill = 0;
+	if (!thisObj->IsActor()) return true;
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &skill)) return true;
+	if (!IsSkill(skill)) return true;
+	TESNPC* npc = OBLIVION_CAST(thisObj->baseForm, TESForm, TESNPC);
+	if (!npc || !npc->npcClass) return true;
+	*result = npc->npcClass->IsMajorSkill(skill);
+	return true;
+}
+
+static bool Cmd_IsMajorRef_Eval(COMMAND_ARGS_EVAL) {
+	*result = 0;
+	TESNPC* npc = OBLIVION_CAST(thisObj->baseForm, TESForm, TESNPC);
+	UInt32 skill = *(UInt32*)arg1;
+	if (!npc && !npc->npcClass && !IsSkill(skill)) return true;
+	*result = npc->npcClass->IsMajorSkill(skill);
+	return true;
+}
+
 static bool Cmd_IsClassAttribute_Execute(COMMAND_ARGS)
 {
 	*result = 0;
@@ -343,6 +364,10 @@ CommandInfo kCommandInfo_GetClass =
 	0
 };
 
+static ParamInfo kParams_IsMajorRef[1] = {
+	{"skill" , kParamType_ActorValue, 0}
+};
+
 static ParamInfo kParams_IsMajor[2] =
 {
 	{	"skill", kParamType_ActorValue, 0 },
@@ -367,6 +392,21 @@ CommandInfo kCommandInfo_IsClassSkill =
 	HANDLER(Cmd_IsMajor_Execute),
 	Cmd_Default_Parse,
 	NULL,
+	0
+};
+
+CommandInfo kCommandInfo_IsMajorRef =
+{
+	"IsMajorRef",
+	"",
+	0,
+	"returns 1 if the skill is a major skill of the class of the reference npc",
+	1,
+	1,
+	kParams_IsMajorRef,
+	HANDLER(Cmd_IsMajorRef_Execute),
+	Cmd_Default_Parse,
+	HANDLER_EVAL(Cmd_IsMajorRef_Eval),
 	0
 };
 

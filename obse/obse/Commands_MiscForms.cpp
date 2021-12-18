@@ -551,7 +551,24 @@ static bool Cmd_SetIsHiddenDoor_Execute(COMMAND_ARGS)
 	return SetDoorFlag_Execute(PASS_COMMAND_ARGS, TESObjectDOOR::kDoorFlag_Hidden);
 }
 
+static bool Cmd_DeleteClonedForm(COMMAND_ARGS) {
+	*result = 0;
+	TESForm* form = nullptr;
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &form)) return true;
+	if (!form || !form->IsCloned()) return true;
+	//TODO Check 0x0045C7A0 (refstuff)
+	form->Destroy(true);
+	*result = 1;
+	return true;
+}
+
 #endif
+
+static ParamInfo kOBSEParams_OneForm[1] =
+{
+	{	"object",	kOBSEParamType_Form,	0	},
+};
+
 
 static ParamInfo kParams_GetIngredient[1] =
 {
