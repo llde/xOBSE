@@ -338,7 +338,7 @@ public:
 	D3DMATRIX	unk940;						// 940
 	D3DMATRIX	viewMatrix;					// 980
 	D3DMATRIX	projMatrix;					// 9C0
-	D3DMATRIX	unkA00;						// A00
+	D3DMATRIX	invViewMatrix;				// A00
 	void		* unkA40;					// A40
 	void		* unkA44;					// A44
 	void		* unkA48;					// A48
@@ -367,6 +367,63 @@ STATIC_ASSERT(offsetof(D3DCAPS9, MaxTextureBlendStages) == 0x94);
 
 extern NiRenderer **	g_renderer;
 
+// 60
+class NiDX9TextureData
+{
+public:
+	NiDX9TextureData();
+	~NiDX9TextureData();
+
+	// 44
+	// ### are all members signed?
+	struct Unk0C
+	{								//			initialized to
+		UInt8			unk00;		// 00		1
+		UInt8			pad00[3];
+		UInt32			unk04;		// 04		2
+		UInt32			unk08;		// 08		0
+		SInt32			unk0C;		// 0C		-1
+		UInt32			unk10;		// 10		0
+		UInt32			unk14;		// 14		16
+		UInt32			unk18;		// 18		3
+		UInt8			unk1C;		// 1C		8
+		UInt8			pad1C[3];
+		UInt32			unk20;		// 20		19
+		UInt32			unk24;		// 24		5
+		UInt8			unk28;		// 28		0
+		UInt8			unk29;		// 29		1
+		UInt8			pad2A[2];
+		UInt32			unk2C;		// 2C		19
+		UInt32			unk30;		// 30		5
+		UInt8			unk34;		// 34		0
+		UInt8			unk35;		// 35		1
+		UInt8			pad36[2];
+		UInt32			unk38;		// 38		19
+		UInt32			unk3C;		// 3C		5
+		UInt8			unk40;		// 40		0
+		UInt8			unk41;		// 41		1
+		UInt8			pad42[2];
+	};
+
+	//void*							vtbl;			// 00
+	NiRenderedTexture*				unk04;			// 04	parent texture
+	NiDX9Renderer*					unk08;			// 08	parent renderer
+	Unk0C							unk0C;			// 0C
+	UInt32							unk50;			// 50
+	UInt32							unk54;			// 54
+	UInt32							surfaceWidth;	// 58
+	UInt32							surfaceHeight;	// 5C
+};
+
+// 64
+class NiDX9RenderedTextureData : public NiDX9TextureData
+{
+public:
+	NiDX9RenderedTextureData();
+	~NiDX9RenderedTextureData();
+
+	UInt32							unk60;			// 60
+};
 // 0C
 class NiAccumulator : public NiObject
 {
@@ -458,6 +515,15 @@ public:
 		UInt32	unk0C;		// 0C
 		UInt32	unk10;		// 10
 	};
+	// 2C  
+	struct Unk0074
+	{
+		BSTPersistentList <NiGeometry *>					unk00;
+		BSTPersistentList <BSShaderProperty::RenderPass *>	unk14;
+		UInt32												unk28;
+	};
+	STATIC_ASSERT(sizeof(BSShaderAccumulator::Unk0074) == 0x2C);
+		   
 
 	virtual void	Fn_18(void);
 
@@ -467,13 +533,13 @@ public:
 	UInt32	unk005C;												// 005C
 	UInt32	unk0060;												// 0060
 	NiTPointerList <ImmediateGeometryGroup *>	immGeoGroups;		// 0064
-	UInt32	unk0074;	// 0074
+	Unk0074*	unk0074;	// 0074
 	UInt32	unk0078;	// 0078
 	BSTPersistentList <BSShaderProperty::RenderPass *>	unk007C;	// 007C
 	BSTPersistentList <BSShaderProperty::RenderPass *>	unk0090;	// 0090
 	BSTPersistentList <BSShaderProperty::RenderPass *>	unk00A4;	// 00A4
 	UInt32	pad00B8[(0x00BC - 0x00B8) >> 2];	// 00B8
-	UInt32	unk00BC;	// 00BC
+	UInt32	sunOcclusionPixels;	// 00BC
 	UInt8	unk00C0;	// 00C0
 	UInt8	pad00C1[3];	// 00C1
 	float	unk00C4;	// 00C4 - init'd to 1
@@ -505,7 +571,54 @@ public:
 
 STATIC_ASSERT(offsetof(BSShaderAccumulator, unk0060) == 0x0060);
 STATIC_ASSERT(offsetof(BSShaderAccumulator, unk007C) == 0x007C);
-STATIC_ASSERT(offsetof(BSShaderAccumulator, unk00BC) == 0x00BC);
+STATIC_ASSERT(offsetof(BSShaderAccumulator, sunOcclusionPixels) == 0x00BC);
 STATIC_ASSERT(offsetof(BSShaderAccumulator, unk00C8) == 0x00C8);
 STATIC_ASSERT(offsetof(BSShaderAccumulator, unk0104) == 0x0104);
 STATIC_ASSERT(sizeof(BSShaderAccumulator) == 0x226C);
+
+// 24
+class BSRenderedTexture : public NiRefObject
+{
+public:
+	// members
+	///*00*/ NiRefObject
+	/*08*/ NiRenderTargetGroup*		renderTargets;
+	/*0C*/ UInt32					unk0C;
+	/*10*/ UInt32					unk10;
+	/*14*/ UInt32					unk14;
+	/*18*/ UInt32					unk18;
+	/*1C*/ UInt32					unk1C;
+	/*20*/ NiRenderedTexture*		renderedTexture;
+};
+
+// manages off-screen render targets
+// 48
+class BSTextureManager
+{
+public:
+	// ?
+	struct RenderedTextureData
+	{
+		UInt32		unk00;
+	};
+
+	NiTPointerList<RenderedTextureData>				unk00;				// 00
+	NiTPointerList<RenderedTextureData>				unk10;				// 10
+	NiTPointerList<BSRenderedTexture>				shadowMaps;			// 20
+	NiTPointerList<BSRenderedTexture>				unk30;				// 30
+	void*											unk40;				// 40 - smart pointer, screenshot rendertarget?
+	void*											unk44;				// 44 - smart pointer
+
+																		// methods
+	BSRenderedTexture*								FetchShadowMap(void);
+	void											DiscardShadowMap(BSRenderedTexture* Texture);
+	void											ReserveShadowMaps(UInt32 Count);
+
+	BSRenderedTexture*								GetDefaultRenderTarget(UInt32 Type);
+
+	static BSTextureManager*						CreateInstance(void);
+	void											DeleteInstance(void);
+
+	static BSTextureManager**						Singleton;
+};
+STATIC_ASSERT(sizeof(BSTextureManager) == 0x48);	 
