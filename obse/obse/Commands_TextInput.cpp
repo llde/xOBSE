@@ -8,6 +8,7 @@
 #include "FunctionScripts.h"
 #include <obse/Hooks_Input.h>
 #include <obse/Hooks_Input.h>
+#include <mbstring.h>
 
 enum {
 	kInputMenuType_Message,
@@ -267,15 +268,24 @@ void TextInputMessageBox::Init()
 	UInt32 fmtStringLen = strlen(m_fmtString);
 	char* fmtString = new char[fmtStringLen + 1];
 	strcpy_s(fmtString, fmtStringLen + 1, m_fmtString);
+	short mb_length = 0;
 
 	//separate prompt text and button text
 	for (UInt32 strPos = 0; strPos < fmtStringLen && numButtons < 10; strPos++)
 	{
-		if (fmtString[strPos] == GetSeparatorChar(m_script) && (strPos + 1 < fmtStringLen))
+		if (mb_length == 0) {
+			if (_mbsbtype((const unsigned char*)(fmtString + strPos), 1) == 2)		// get the length of a multibyte character from its first byte.
+				mb_length = _mbclen((const unsigned char*)(fmtString + strPos));
+		}
+
+		if (fmtString[strPos] == GetSeparatorChar(m_script) && (strPos + 1 < fmtStringLen) && mb_length == 0)
 		{
 			fmtString[strPos] = '\0';
 			buttons[numButtons++] = fmtString + strPos + 1;
 		}
+		if (mb_length > 0)
+			mb_length--;
+
 	}
 
 	m_promptText = fmtString;
