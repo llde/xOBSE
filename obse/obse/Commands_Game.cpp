@@ -18,6 +18,7 @@
 #include "obse_common/SafeWrite.h"
 #include "NiObjects.h"
 #include <obse/NiAPI.h>
+#include <mbstring.h>
 
 // first character in name mapped to type ID
 //	b	0
@@ -415,14 +416,23 @@ static bool Cmd_MessageBoxEX_Execute(COMMAND_ARGS)
 	//extract the buttons
 	const char* b[10] = {0};
 	UInt32 btnIdx = 0;
+	short mb_length = 0;
 
 	for (char* ch = buffer; *ch && btnIdx < 10; ch++)
 	{
-		if (*ch == GetSeparatorChar(scriptObj))
+		if (strlen(ch) > 1 && mb_length == 0) {
+			if (_mbsbtype((const unsigned char*)(ch), 1) == 2)		// get the length of a multibyte character from its first byte.
+				mb_length = _mbclen((const unsigned char*)(ch));
+		}
+
+		if (*ch == GetSeparatorChar(scriptObj) && mb_length == 0)		// bytes in multibyte characters are not considered as SeparatorChar
 		{
 			*ch = '\0';
 			b[btnIdx++] = ch + 1;
 		}
+
+		if (mb_length > 0)
+			mb_length--;
 	}
 
 	if (!btnIdx)				//supply default OK button
