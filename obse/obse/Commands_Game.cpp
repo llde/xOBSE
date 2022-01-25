@@ -416,23 +416,24 @@ static bool Cmd_MessageBoxEX_Execute(COMMAND_ARGS)
 	//extract the buttons
 	const char* b[10] = {0};
 	UInt32 btnIdx = 0;
-	short mb_length = 0;
+	UInt32 mb_length = 0;
 
 	for (char* ch = buffer; *ch && btnIdx < 10; ch++)
 	{
-		if (strlen(ch) > 1 && mb_length == 0) {
-			if (_mbsbtype((const unsigned char*)(ch), 1) == 2)		// get the length of a multibyte character from its first byte.
-				mb_length = _mbclen((const unsigned char*)(ch));
+		if (mb_length > 0) {
+			mb_length--;
+			continue;		// bytes in multibyte characters are not considered as SeparatorChar
+		} else if (strlen(ch) > 1 && _mbsbtype((const unsigned char*)(ch), 1) == 2) {
+			mb_length = _mbclen((const unsigned char*)(ch)) - 1;		// get the length of a multibyte character from its first byte.
+			continue;
 		}
 
-		if (*ch == GetSeparatorChar(scriptObj) && mb_length == 0)		// bytes in multibyte characters are not considered as SeparatorChar
+		if (*ch == GetSeparatorChar(scriptObj))
 		{
 			*ch = '\0';
 			b[btnIdx++] = ch + 1;
 		}
 
-		if (mb_length > 0)
-			mb_length--;
 	}
 
 	if (!btnIdx)				//supply default OK button
