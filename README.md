@@ -26,7 +26,11 @@ IF YOU ARE USING THE STEAM VERSION OF OBLIVION:
 2. Launch Oblivion via Steam or by running Oblivion.exe. OBSE will automatically be run along with Oblivion when launched. To disable this, rename or move obse_steam_loader.dll. You do not need to use obse_loader.exe unless you are running the editor.
 
 IF USING STEAM PROTON ON LINUX (replace Point 2. from previous paragraph): 
-1. Backup OblivionLauncher.exe and rename obse_loader.exe to OblivionLauncher.exe
+1. Either rename OblivionLauncher.exe (i.e. to OblivionLauncher.exe.bak) and rename obse_loader.exe to OblivionLauncher.exe
+or if you want to keep the launcher, copy OblivionLauncher.exe to another location, open the terminal in the Oblivion directory
+and use the following commands:
+    printf '\x90\x90\x90' | dd conv=notrunc of=obse_loader.exe bs=1 seek=$((0x14cb))
+    printf 'obse_loader\x00' | dd conv=notrunc of=OblivionLauncher.exe bs=1 seek=$((0x1347c))
 2. Start the game from inside Steam 
 Note this is needed only when using a Linux Steam and Proton. Using Windows Steam inside Wine should work out of the box,
 
