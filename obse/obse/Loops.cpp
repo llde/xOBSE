@@ -143,7 +143,6 @@ ContainerIterLoop::ContainerIterLoop(const ForEachContext* context)
 			if (cur->data && cur->data->type->typeID != kFormType_LeveledItem) {
 				DEBUG_PRINT("Base container has %d %s", cur->data->count, GetFullName(cur->data->type));
 				baseContainer[cur->data->type] = cur->data->count;
-	//			m_elements.push_back(IRefData(cur->data->type, NULL, cur->data->count));
 			}
 		}
 		ExtraContainerChanges* xChanges = (ExtraContainerChanges*)contRef->baseExtraList.GetByType(kExtraData_ContainerChanges);
@@ -175,7 +174,7 @@ ContainerIterLoop::ContainerIterLoop(const ForEachContext* context)
 						}
                     }
                 }
-				if (countExtraData > 0) {//There are still leftovers items not associated with an ExtraDataList TODO does this case actually happen?
+				if (countExtraData > 0) {//There are still leftovers items not associated with an ExtraDataList
 					DEBUG_PRINT("Got remaining  stack of %d  for %s", countExtraData, GetFullName(form));
 					m_elements.push_back(IRefData(form, entry.Get(), countExtraData));
 					//TODO Add these to the baseContainer objects if any
@@ -354,6 +353,7 @@ bool ContainerIterLoop::SetIterator()
 
 bool ContainerIterLoop::Update(COMMAND_ARGS)
 {
+	DEBUG_PRINT("Script %08X Loop", scriptObj->refID);
 	UnsetIterator();
 	m_iterIndex++;
 	return SetIterator();
@@ -373,7 +373,6 @@ void LoopManager::Add(Loop* loop, ScriptExecutionState* state, UInt32 startOffse
 	LoopInfo loopInfo;
 	loopInfo.loop = loop;
 	loopInfo.endIP = endOffset;
-
 	// save the stack
 	SavedIPInfo* savedInfo = &loopInfo.ipInfo;
 	savedInfo->ip = startOffset;
