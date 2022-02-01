@@ -46,6 +46,10 @@ public:
 	bool	Replace(const char* toReplace, const char* replaceWith); // replaces instance of toReplace with replaceWith
 	bool	Append(const char* toAppend);
 	double	Compare(const BSStringT& compareTo, bool caseSensitive = false);
+
+	BSStringT* InitAndSet(const char* string) {
+		return (BSStringT*)ThisStdCall(0x00419B10, this, string);
+	}
 };
 
 extern NiTPointerList <TESForm>	* g_quickKeyList;	//array of 8 NiTPointerLists of size 0-1 with pointers to hotkeyed items/spells

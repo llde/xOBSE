@@ -17,5 +17,6 @@ extern UInt8 warningUDFRefVar;
 extern UInt8 warningDeprecatedCmd;
 extern bool FreeRef;
 extern bool NoisyTestExpr;
+extern bool PreventCrashOnMapMarkerLoadSave;
 
 bool InitializeSettings();
