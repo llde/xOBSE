@@ -315,7 +315,7 @@ static bool Cmd_GetFPS_Execute(COMMAND_ARGS)
 //Undocumented and deprecated?
 static bool Cmd_GetCurrentFrameIndex_Execute(COMMAND_ARGS)
 {
-	*result = 30; //GetCurrentFrameIndex();
+	*result = g_timeInfo->frameTime;
 	return true;
 }
 
