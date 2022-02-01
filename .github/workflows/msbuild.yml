@@ -29,8 +29,12 @@ jobs:
 
     - name: Prepare
       run: |
-        Copy-Item -Path ".\obse\obse\Release\obse.dll" -Destination ".\obse_1_2_416.dll"
-
+        Copy-Item -Path ".\obse\obse\Release 1_2_0_416\obse.dll" -Destination ".\obse_1_2_416.dll"
+        Copy-Item -Path ".\obse\obse\Release 1_2_0_416\obse.pdb" -Destination ".\obse.pdb"
+        Copy-Item -Path ".\obse\obse_editor\Release 1_2_0_0\obse_editor.dll" -Destination ".\obse_editor_1_2.dll"
+        Copy-Item -Path ".\obse\obse_editor\Release 1_2_0_0\obse_editor.pdb" -Destination ".\obse_editor.pdb"
+        Copy-Item -Path ".\obse\loader\Release\loader.exe" -Destination ".\obse_loader.exe"
+        Copy-Item -Path ".\obse\Release\steam_loader.dll" -Destination ".\obse_steam_loader.dll"
 
 #    - name: Artifact
 #      uses: actions/upload-artifact@v2
