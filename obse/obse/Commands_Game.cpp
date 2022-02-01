@@ -19,6 +19,7 @@
 #include "NiObjects.h"
 #include <obse/NiAPI.h>
 #include <mbstring.h>
+#include <obse/Hooks_Input.h>
 
 // first character in name mapped to type ID
 //	b	0
@@ -315,7 +316,7 @@ static bool Cmd_GetFPS_Execute(COMMAND_ARGS)
 //Undocumented and deprecated?
 static bool Cmd_GetCurrentFrameIndex_Execute(COMMAND_ARGS)
 {
-	*result = g_timeInfo->frameTime;
+	*result = g_inputGlobal->FrameIndex;
 	return true;
 }
 
