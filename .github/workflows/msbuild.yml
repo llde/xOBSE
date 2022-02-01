@@ -29,7 +29,7 @@ jobs:
 
     - name: Prepare
       run: |
-        Copy-Item -Source ".\obse\obse\Release\obse.dll" -Destination ".\"
+        Copy-Item -Path ".\obse\obse\Release\obse.dll" -Destination ".\obse_1_2_416.dll"
 
 
 #    - name: Artifact
