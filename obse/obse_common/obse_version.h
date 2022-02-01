@@ -3,9 +3,9 @@
 
 // these have to be macros so they can be used in the .rc
 #define OBSE_VERSION_INTEGER		22
-#define OBSE_VERSION_INTEGER_MINOR	5   //Avoid using revision 0  (at least 1 mod break for this)
+#define OBSE_VERSION_INTEGER_MINOR	6   //Avoid using revision 0  (at least 1 mod break for this)
 #define OBSE_VERSION_INTEGER_HOTIFX 0 
-#define OBSE_VERSION_VERSTRING		"0, 22, 5, 0"
+#define OBSE_VERSION_VERSTRING		"0, 22, 6, 0"
 #define OBSE_VERSION_PADDEDSTRING	"0022"
 
 // build numbers are the month and date each build was made

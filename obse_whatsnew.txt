@@ -7,6 +7,21 @@ xOBSE 22.6
 		- Re-add SetMouseSpeedX and SetMouseSpeedY (some mods use them)
 		- Fix functionality of OBSEIOInterface, fix Blockhead WASD in character creation
 		- Print xOBSE version on initialzing.
+		- Fix a tList issue where removing last item of the iteration was causing the loop to not terminate.
+		- Fix a potential crash where map markers with no name would cause a CTD on save load.
+		- Fix multiple command issue with multibyte string. (Japanese encoding affected)
+		- DeleteReference can now delete disabled clone actors-
+	Addition:
+		- Add SetCameraFOV2 (unbounded version of SetFOV, con_SetCameraFOV)
+		- IsMajorRef,IsDiseased,  added as script and condition function.
+		- GetFirstRef / GetFirstRefInCell added parameter to include deleted reference.
+		- Type 90 now match only the deleted reference.
+		- Added SetInvertFastTravel, IsInvertFastTravel, SetCantWait,IsCantWait
+		- HasSpell, IsMajor, GetActorLightAmount added as conditional functions
+		- GetDisease vanilla unimplmented function replaced with IsDiseased
+	PluginAPI:
+		- Added Replace to OBSECommandTableInterface
+        - Bumped PluginInfo to 3
 
 xOBSE 22.5
 	Changes/Fix:
