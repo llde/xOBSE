@@ -1057,7 +1057,7 @@ bool Cmd_GetLoadedTypeArray_Execute(COMMAND_ARGS)
 	if (ExtractArgs(PASS_EXTRACT_ARGS, &formType, &index)){
         ArrayID arr = g_ArrayMap.Create(kDataType_Numeric, true, scriptObj->GetModIndex());
 		GetLoadedType(formType, index, arr);
-        *result = arr
+        *result = arr;
 	}
 	return true;
 }
@@ -1516,4 +1516,4 @@ CommandInfo kCommandInfo_SetCameraFOV2 =
 	0
 };
 
-DEFINE_COMMAND_ALT(GetLoadedTypeArray, GLTA, "Return an array with all Loaded form of type, and optionally with specific mod index" , 1, kParams_OneInt_OneOptionalInt);
+DEFINE_CMD_ALT(GetLoadedTypeArray, GLTA, Return an array with all Loaded form of type, and optionally with specific mod index , 1, kParams_OneInt_OneOptionalInt);

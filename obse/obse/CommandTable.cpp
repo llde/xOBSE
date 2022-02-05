@@ -2983,7 +2983,7 @@ void CommandTable::Init(void)
 	ADD_CMD (GetAVSkillMasteryLevelC);
 	ADD_CMD_RET(GetFactions, kRetnType_Array);
 	ADD_CMD_RET(GetLowActors, kRetnType_Array);
-	ADD_CMD_RET (GetLevCreatureTemplate, kRetnType_Form);
+	ADD_CMD_RET(GetLevCreatureTemplate, kRetnType_Form);
 	ADD_CMD (SetLevCreatureTemplate);
 	ADD_CMD (SetCalcAllLevels);
 
