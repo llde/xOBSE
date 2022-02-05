@@ -1289,20 +1289,7 @@ CommandInfo kCommandInfo_GetCrosshairRef =
 	0, 0, NULL,
 	HANDLER(Cmd_GetCrosshairRef_Execute),
 	Cmd_Default_Parse,
-	NULL,bool Cmd_GetLoadedTypeArray_Execute(COMMAND_ARGS)
-{
-	*result = 0;
-	UInt32 formType;
-	int index = -1;
-	if (ExtractArgsEx(EXTRACT_ARGS_EX, &formType, &index))
-	{
-		TempElements *tmpElements = GetTempElements();
-		tmpElements->Clear();
-		GetLoadedType(formType, index, NULL, tmpElements);
-		AssignCommandResult(CreateArray(tmpElements->Data(), tmpElements->Size(), scriptObj), result);
-	}
-	return true;
-}
+	NULL,
 	0
 };
 
