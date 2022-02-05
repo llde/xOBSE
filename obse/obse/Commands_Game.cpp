@@ -1035,11 +1035,11 @@ static bool Cmd_SetCameraFOV2_Execute(COMMAND_ARGS) {
 void GetLoadedType(UInt8 formType, int index, ArrayID arr){
     if(formType <= kFormType_TOFT){
         UInt32 idx = 0;
-        NiTPointerMap<TESForm>::Iterator iter(&linkedPathPoints);
+        NiTPointerMap<TESForm>::Iterator iter(g_formTable);
         for (TESForm* form = iter.Get(); !iter.Done(); iter.Next()) {
-            if(form->typeId == formType && (index == -1 || (UInt8)index == (form->refID >> 24))){
+            if(form->typeID == formType && (index == -1 || (UInt8)index == (form->refID >> 24))){
                 g_ArrayMap.SetElementFormID(arr, idx, form->refID);
-                idx++:
+                idx++;
             }
         }
         if(idx  == 0) _MESSAGE("No form found. It's possible that this type isn't available with the Form map, and must be taken directly from the data handler. Open an issue on github");
@@ -1054,12 +1054,10 @@ bool Cmd_GetLoadedTypeArray_Execute(COMMAND_ARGS)
 	*result = 0;
 	UInt32 formType;
 	int index = -1;
-	if (ExtractArgsEx(EXTRACT_ARGS_EX, &formType, &index))
-	{
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &formType, &index)){
         ArrayID arr = g_ArrayMap.Create(kDataType_Numeric, true, scriptObj->GetModIndex());
 		GetLoadedType(formType, index, arr);
         *result = arr
-
 	}
 	return true;
 }
