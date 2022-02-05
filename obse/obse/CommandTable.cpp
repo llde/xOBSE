@@ -3011,6 +3011,7 @@ void CommandTable::Init(void)
     ADD_CMD(IsCantWait);
 	g_scriptCommands.Add(&kCommandInfo_SetOwningFactionRequiredRank);
 	g_scriptCommands.Add(&kCommandInfo_SetParentCellOwningFactionRequiredRank);
+	ADD_CMD_RET(GetLoadedTypeArray, kRetnType_Array);
 
    	UInt32 opcodeGetDisease =  g_scriptCommands.GetByName("GetDisease")->opcode;
 	CommandInfo newgetDisease = kCommandInfo_IsDiseased;

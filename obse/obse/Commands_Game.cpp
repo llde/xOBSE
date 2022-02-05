@@ -1032,6 +1032,37 @@ static bool Cmd_SetCameraFOV2_Execute(COMMAND_ARGS) {
 	return true;
 }
 
+void GetLoadedType(UInt8 formType, int index, ArrayID arr){
+    if(formType <= kFormType_TOFT){
+        UInt32 idx = 0;
+        NiTPointerMap<TESForm>::Iterator iter(&linkedPathPoints);
+        for (TESForm* form = iter.Get(); !iter.Done(); iter.Next()) {
+            if(form->typeId == formType && (index == -1 || (UInt8)index == (form->refID >> 24))){
+                g_ArrayMap.SetElementFormID(arr, idx, form->refID);
+                idx++:
+            }
+        }
+        if(idx  == 0) _MESSAGE("No form found. It's possible that this type isn't available with the Form map, and must be taken directly from the data handler. Open an issue on github");
+    }
+    else{
+        _MESSAGE("Invalid form type (If this is an error and the form is indeed valid, open an issue on github)");
+    }
+}
+
+bool Cmd_GetLoadedTypeArray_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	UInt32 formType;
+	int index = -1;
+	if (ExtractArgsEx(EXTRACT_ARGS_EX, &formType, &index))
+	{
+        ArrayID arr = g_ArrayMap.Create(kDataType_Numeric, true, scriptObj->GetModIndex());
+		GetLoadedType(formType, index, arr);
+        *result = arr
+
+	}
+	return true;
+}
 #endif
 
 static ParamInfo kParams_SetNumericGameSetting[] =
@@ -1258,7 +1289,20 @@ CommandInfo kCommandInfo_GetCrosshairRef =
 	0, 0, NULL,
 	HANDLER(Cmd_GetCrosshairRef_Execute),
 	Cmd_Default_Parse,
-	NULL,
+	NULL,bool Cmd_GetLoadedTypeArray_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+	UInt32 formType;
+	int index = -1;
+	if (ExtractArgsEx(EXTRACT_ARGS_EX, &formType, &index))
+	{
+		TempElements *tmpElements = GetTempElements();
+		tmpElements->Clear();
+		GetLoadedType(formType, index, NULL, tmpElements);
+		AssignCommandResult(CreateArray(tmpElements->Data(), tmpElements->Size(), scriptObj), result);
+	}
+	return true;
+}
 	0
 };
 
@@ -1472,7 +1516,6 @@ DEFINE_COMMAND(ResolveModIndex,
 DEFINE_COMMAND (SetModAlias, sets the alias for a mod name, 0, 2, kParams_TwoStrings);
 DEFINE_COMMAND (GetModAlias, retrieves the alias for a mod name, 0, 1, kParams_OneString);
 
-
 CommandInfo kCommandInfo_SetCameraFOV2 =
 {
 	"SetCameraFOV2",
@@ -1487,3 +1530,5 @@ CommandInfo kCommandInfo_SetCameraFOV2 =
 	NULL,
 	0
 };
+
+DEFINE_COMMAND_ALT(GetLoadedTypeArray, GLTA, "Return an array with all Loaded form of type, and optionally with specific mod index" , 1, kParams_OneInt_OneOptionalInt);

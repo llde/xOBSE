@@ -61,3 +61,4 @@ extern CommandInfo kCommandInfo_SetModAlias;
 extern CommandInfo kCommandInfo_GetModAlias;
 
 extern CommandInfo kCommandInfo_SetCameraFOV2;
+extern CommandInfo kCommandInfo_GetLoadedTypeArray;
