@@ -20,7 +20,7 @@
 #include <obse/NiAPI.h>
 #include <mbstring.h>
 #include <obse/Hooks_Input.h>
-
+#include "ArrayVar.h"
 // first character in name mapped to type ID
 //	b	0
 //	c	1

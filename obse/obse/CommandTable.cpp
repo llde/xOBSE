@@ -3000,8 +3000,9 @@ void CommandTable::Init(void)
     ADD_CMD(IsNaked);
 	//OBSE 22.4
 	ADD_CMD(SetAltControl2);
+    //OBSE 22.5
 	ADD_CMD(IsMiscItem);
-	//OBSE 22.5
+	//OBSE 22.6
 	ADD_CMD(SetCameraFOV2);
 	ADD_CMD(IsMajorRef);
     ADD_CMD(IsDiseased);
