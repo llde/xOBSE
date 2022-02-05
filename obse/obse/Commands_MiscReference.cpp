@@ -190,11 +190,7 @@ static SInt32 SetOwningFactionRequiredRank(BaseExtraList* xDataList, UInt32 rank
 	else{
         xData = xDataList->GetByType(kExtraData_Ownership);
         if (xData){
-<<<<<<< Updated upstream
-            xOwner = (ExtraOwnership*)Oblivion_DynamicCast(xData, 0, RTTI_BSExtraData, RTTI_ExtraOwnership, 0);
-=======
             ExtraOwnership* xOwner = (ExtraOwnership*)Oblivion_DynamicCast(xData, 0, RTTI_BSExtraData, RTTI_ExtraOwnership, 0);
->>>>>>> Stashed changes
             if (xOwner){
                 fact = (TESFaction*) Oblivion_DynamicCast(xOwner->owner, 0, RTTI_TESForm, RTTI_TESFaction, 0);
             }
