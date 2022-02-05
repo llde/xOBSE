@@ -273,6 +273,8 @@ static const UInt32 s_ExtraOwnershipSize = 0x10;
 static const UInt32 s_ExtraOwnershipVtbl = 0x00A35818;
 static const UInt32 s_ExtraCannotWearVtbl = 0x00A358CC;
 static const UInt32 s_ExtraCannotWearSize = 0x0C;
+static const UInt32 s_ExtraRankVtbl = 0x00A35830;
+static const UInt32 s_ExtraRankSize = 0x10;
 
 
 // static
@@ -359,6 +361,14 @@ ExtraOwnership* ExtraOwnership::Create(TESForm* _owner)
 	xOwner->owner = _owner;
 	return xOwner;
 }
+
+ExtraRank* ExtraRank::Create(UInt32 rank)
+{
+	ExtraRank* xRank = (ExtraRank*)BSExtraData::Create(kExtraData_Rank, s_ExtraRankSize, s_ExtraRankVtbl);
+	xRank->rank = rank;
+	return xRank;
+}
+
 
 ExtraCount* ExtraCount::Create()
 {

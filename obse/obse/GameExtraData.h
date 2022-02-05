@@ -255,6 +255,7 @@ public:
 	~ExtraRank();
 
 	UInt32	rank;
+    static ExtraRank* Create(UInt32 rank);
 };
 
 class ExtraGlobal : public BSExtraData

@@ -174,6 +174,36 @@ static UInt32 GetOwningFactionRequiredRank(BaseExtraList* xDataList)
 	return 0;
 }
 
+static SInt32 SetOwningFactionRequiredRank(BaseExtraList* xDataList, UInt32 rank)
+{
+	BSExtraData* xData = xDataList->GetByType(kExtraData_Rank);
+    TESFaction* fact = NULL;
+	if (xData)
+	{
+		ExtraRank* xRank = (ExtraRank*)Oblivion_DynamicCast(xData, 0, RTTI_BSExtraData, RTTI_ExtraRank, 0);
+		if (xRank){
+            UInt32 old_Rank = xRank->rank;
+            xRank->rank = rank;
+			return old_Rank;
+        }
+	}
+	else{
+        xData = xDataList->GetByType(kExtraData_Ownership);
+        if (xData){
+            xOwner = (ExtraOwnership*)Oblivion_DynamicCast(xData, 0, RTTI_BSExtraData, RTTI_ExtraOwnership, 0);
+            if (xOwner){
+                fact = (TESFaction*) Oblivion_DynamicCast(xOwner->owner, 0, RTTI_TESForm, RTTI_TESFaction, 0);
+            }
+        }
+        if(fact){
+            ExtraRank* newRank = ExtraRank::Create(rank);
+            xDataList->Add(newRank);
+        }
+    }
+
+	return -1;
+}
+
 static bool Cmd_GetParentCellOwner_Execute(COMMAND_ARGS)
 {
 	UInt32* refResult = (UInt32*)result;
@@ -224,6 +254,33 @@ static bool Cmd_GetParentCellOwningFactionRequiredRank_Execute(COMMAND_ARGS)
 		return true;
 
 	*result = GetOwningFactionRequiredRank(&(thisObj->parentCell->extraData));
+
+	return true;
+}
+
+static bool Cmd_SetOwningFactionRequiredRank_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+    UInt32 rank = 0;
+	if (!thisObj)
+		return true;
+    if(!ExtractArgs(PASS_EXTRACT_ARGS, &rank) ) return true;
+
+	*result = SetOwningFactionRequiredRank(&(thisObj->baseExtraList), rank);
+
+	return true;
+}
+
+static bool Cmd_SetParentCellOwningFactionRequiredRank_Execute(COMMAND_ARGS)
+{
+	*result = 0;
+    UInt32 rank = 0;
+	if (!thisObj)
+		return true;
+
+    if(!ExtractArgs(PASS_EXTRACT_ARGS, &rank) ) return true;
+
+	*result = SetOwningFactionRequiredRank(&(thisObj->parentCell->extraData), rank);
 
 	return true;
 }
@@ -2451,6 +2508,34 @@ CommandInfo kCommandInfo_GetParentCellOwningFactionRequiredRank =
 	0,
 	NULL,
 	HANDLER(Cmd_GetParentCellOwningFactionRequiredRank_Execute),
+	Cmd_Default_Parse,
+	NULL,
+	0
+};
+CommandInfo kCommandInfo_SetOwningFactionRequiredRank =
+{
+	"SetOwningFactionRequiredRank",
+	"SetOwningFactionRank",
+	0,
+	"sets the required rank for ownership of the calling reference",
+	1,
+	1,
+	kParams_OneInt,
+	HANDLER(Cmd_SetOwningFactionRequiredRank_Execute),
+	Cmd_Default_Parse,
+	NULL,
+	0
+};
+CommandInfo kCommandInfo_SetParentCellOwningFactionRequiredRank =
+{
+	"SetParentCellOwningFactionRequiredRank",
+	"SetCellFactionRank",
+	0,
+	"sets the required rank for ownership of the calling reference's cell",
+	1,
+	1,
+	kParams_OneInt,
+	HANDLER(Cmd_SetParentCellOwningFactionRequiredRank_Execute),
 	Cmd_Default_Parse,
 	NULL,
 	0

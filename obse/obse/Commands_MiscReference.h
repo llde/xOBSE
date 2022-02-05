@@ -18,6 +18,8 @@ extern CommandInfo kCommandInfo_GetOwner;
 extern CommandInfo kCommandInfo_GetOwningFactionRequiredRank;
 extern CommandInfo kCommandInfo_GetParentCellOwner;
 extern CommandInfo kCommandInfo_GetParentCellOwningFactionRequiredRank;
+extern CommandInfo kCommandInfo_SetOwningFactionRequiredRank;
+extern CommandInfo kCommandInfo_SetParentCellOwningFactionRequiredRank;
 
 extern CommandInfo kCommandInfo_GetNumChildRefs;
 extern CommandInfo kCommandInfo_GetNthChildRef;
