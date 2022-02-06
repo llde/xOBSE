@@ -1516,4 +1516,4 @@ CommandInfo kCommandInfo_SetCameraFOV2 =
 	0
 };
 
-DEFINE_CMD_ALT(GetLoadedTypeArray, GLTA, "Return an array with all Loaded form of type and optionally with specific mod index" , 1, kParams_OneInt_OneOptionalInt);
+DEFINE_CMD_ALT(GetLoadedTypeArray, GLTA, "Return an array with all Loaded form of type and optionally with specific mod index" , 0, kParams_OneInt_OneOptionalInt);
