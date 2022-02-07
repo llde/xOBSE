@@ -1035,7 +1035,8 @@ static bool Cmd_SetCameraFOV2_Execute(COMMAND_ARGS) {
 void GetLoadedType(UInt8 formType, int index, ArrayID arr){
     if(formType <= kFormType_TOFT){
         UInt32 idx = 0;
-		for (NiTPointerMap<TESForm>::Entry* entry = (*(g_formTable->m_buckets)); entry != NULL; entry = entry->next) {
+        NiTPointerMap<TESForm>::Iterator iter(g_formTable);
+        for (NiTPointerMap<TESForm>::Entry* entry = iter.Current(); entry != NULL ; entry = iter.Next()) {
 			TESForm* form = entry->data;
             _MESSAGE("Form %0X  Type %0X", form->refID, form->typeID);
             if(form->typeID == formType && (index == -1 || (UInt8)index == (form->refID >> 24))){

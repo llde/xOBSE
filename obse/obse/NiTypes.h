@@ -183,9 +183,9 @@ public:
 
 		T_Data *	Get(void);
 		UInt32		GetKey(void);
-		bool		Next(void);
+		Entry*		Next(void);
 		bool		Done(void);
-
+		Entry*		Current(void) { return m_entry; }
 	private:
 		void		FindValid(void);
 
@@ -266,19 +266,18 @@ UInt32 NiTPointerMap <T_Data>::Iterator::GetKey(void)
 }
 
 template <typename T_Data>
-bool NiTPointerMap <T_Data>::Iterator::Next(void)
-{
-	if(m_entry)
-		m_entry = m_entry->next;
-
-	while(!m_entry && (m_bucket < (m_table->m_numBuckets - 1)))
-	{
-		m_bucket++;
-
+NiTPointerMap <T_Data>::Entry* NiTPointerMap <T_Data>::Iterator::Next(void){
+	if (m_entry) m_entry = m_entry->next;
+	if (m_entry) return m_entry;
+	m_bucket++;
+	while (m_bucket < m_table->m_numBuckets) {
+		if (m_table->m_buckets[m_bucket] == NULL) {
+			m_bucket++;
+			continue;
+		}
 		m_entry = m_table->m_buckets[m_bucket];
+		return m_entry;
 	}
-
-	return m_entry != NULL;
 }
 
 template <typename T_Data>
