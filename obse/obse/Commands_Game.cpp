@@ -1038,7 +1038,6 @@ void GetLoadedType(UInt8 formType, int index, ArrayID arr){
         NiTPointerMap<TESForm>::Iterator iter(g_formTable);
         for (NiTPointerMap<TESForm>::Entry* entry = iter.Current(); entry != NULL ; entry = iter.Next()) {
 			TESForm* form = entry->data;
-            _MESSAGE("Form %0X  Type %0X", form->refID, form->typeID);
             if(form->typeID == formType && (index == -1 || (UInt8)index == (form->refID >> 24))){
                 g_ArrayMap.SetElementFormID(arr, idx, form->refID);
                 idx++;
