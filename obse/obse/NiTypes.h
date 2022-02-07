@@ -278,6 +278,7 @@ NiTPointerMap <T_Data>::Entry* NiTPointerMap <T_Data>::Iterator::Next(void){
 		m_entry = m_table->m_buckets[m_bucket];
 		return m_entry;
 	}
+	return NULL;
 }
 
 template <typename T_Data>
