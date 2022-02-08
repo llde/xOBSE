@@ -79,6 +79,9 @@
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <ForcedIncludeFiles>StdAfx.h;obse_common/obse_prefix.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
