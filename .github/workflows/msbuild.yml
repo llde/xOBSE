@@ -35,6 +35,7 @@ jobs:
         Copy-Item -Path ".\obse\obse_editor\Release 1_2_0_0\obse_editor.pdb" -Destination ".\obse_editor.pdb"
         Copy-Item -Path ".\obse\loader\Release\loader.exe" -Destination ".\obse_loader.exe"
         Copy-Item -Path ".\obse\Release\steam_loader.dll" -Destination ".\obse_steam_loader.dll"
+        Copy-Item -Path ".\obse.ini" -Destination ".\Data\OBSE\obse.ini"
 
     - name: Artifact
       uses: actions/upload-artifact@v2
@@ -47,3 +48,7 @@ jobs:
             .\obse_editor.pdb
             .\obse_loader.exe
             .\obse_steam_loader.dll
+            .\obse_whatsnew.txt
+            .\obse_command_doc.html
+            .\README.md
+            .\Data\OBSE\obse.ini
