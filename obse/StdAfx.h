@@ -11,7 +11,7 @@
 #pragma warning(disable: 4018 4244 4267 4305 4288 4312 4311 4800)
 
 #define DPSAPI_VERSION	1
-
+#define _WIN32_WINNT 0x603
 //#define _CRT_NO_VA_START_VALIDATION
 // WIN32
 #include <winsock2.h>

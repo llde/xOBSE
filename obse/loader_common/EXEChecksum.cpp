@@ -324,6 +324,23 @@ void PrintError(const char * fmt, ...)
 
 	va_end(args);
 }
+UInt32 PrintOnScreen(const char* fmt, ...)
+{
+	va_list	args;
+
+	va_start(args, fmt);
+
+	gLog.Log(IDebugLog::kLevel_Warning, fmt, args);
+
+	char	buf[4096];
+	vsprintf_s(buf, sizeof(buf), fmt, args);
+
+	UInt32 pressed = MessageBox(NULL, buf, "OBSE Loader", MB_YESNO | MB_ICONEXCLAMATION);
+
+	va_end(args);
+
+	return pressed;
+}
 
 std::string GetCWD(void)
 {

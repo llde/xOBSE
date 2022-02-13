@@ -14,4 +14,6 @@ bool TestChecksum(const char * procName, std::string * dllSuffix, ProcHookInfo *
 
 // stuff that doesn't belong here
 void PrintError(const char * fmt, ...);
+UInt32 PrintOnScreen(const char* fmt, ...);
+
 std::string GetCWD(void);

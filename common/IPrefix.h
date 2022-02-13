@@ -10,7 +10,7 @@
 #pragma warning(disable: 4018 4244 4267 4305 4288 4312 4311)
 
 // win2k and above
-#define _WIN32_WINNT	0x0500
+#define _WIN32_WINNT	0x0603
 
 #include <cstdlib>
 #include <cstdio>
