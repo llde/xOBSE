@@ -76,7 +76,7 @@ int main(int argc, char ** argv)
 							memcpy(buffer, oldBuf, read);
 							buffer[read] = '\0';
 							HeapFree(GetProcessHeap(), 0, oldBuf);
-							_MESSAGE("%s", buffer);
+					//		_MESSAGE("%s", buffer);
 							std::string json = std::string(buffer);
 							size_t tag = json.find("\"tag_name\":") + 12;
 							size_t end = json.find("\"", tag);
@@ -88,17 +88,17 @@ int main(int argc, char ** argv)
 							std::string minor, hotfix;
 							if (dot2 != std::string::npos) {
 								minor = rest.substr(0, dot2);
-								hotfix = rest.substr(dot2, rest.size() - dot2);
+								hotfix = rest.substr(dot2 +1, rest.size() - dot2 - 1);
 							}
 							else {
 								minor = rest;
-								hotfix = "0";
+								hotfix = "0"; 
 							}
 							UInt32 Major = std::stoul(major);
 							UInt32 Minor = std::stoul(minor);
 							UInt32 Hotfix = std::stoul(hotfix);
 
-							_MESSAGE("%u %u  %u ", Major, Minor, Hotfix);
+//							_MESSAGE("%u %u  %u ", Major, Minor, Hotfix);
 							if (Major > OBSE_VERSION_INTEGER) {
 								pressed = PrintOnScreen("New Major xOBSE Release available: get version %s from https://github.com/llde/xOBSE/releases \n Continue to load the game", sub.c_str());
 							}

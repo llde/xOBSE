@@ -1,6 +1,7 @@
 xOBSE 22.6.1
 	Fix:
 		- Fix GetProjectile Regressions
+		- Fix loader crash when checking for hotfix releases
 xOBSE 22.6
 	General: 
 		- Add CRC for DRM Removed Polish Version from Cenega (GOTY Deluxe/Anthology)
