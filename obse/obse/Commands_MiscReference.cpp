@@ -2095,7 +2095,7 @@ static bool Cmd_GetProjectile_Execute(COMMAND_ARGS)
 	{
 		ProjectileFinder finder(projType, actor, formToMatch);
 		TESObjectCELL* pcCell = (*g_thePlayer)->parentCell;
-		TESObjectREFR* curRef = CellScan(scriptObj, pcCell, 71, 3, true, false, &finder);
+		TESObjectREFR* curRef = CellScan(scriptObj, pcCell, 71, 3, true, false, false , &finder);
 		TESObjectREFR* foundRef = NULL;
 		while (curRef)
 		{
@@ -2106,7 +2106,7 @@ static bool Cmd_GetProjectile_Execute(COMMAND_ARGS)
 				if (minLifetime == 0)
 					break;
 			}
-			curRef = CellScan(scriptObj, pcCell, 71, 3, false, false, &finder);
+			curRef = CellScan(scriptObj, pcCell, 71, 3, false, false, false, &finder);
 		}
 
 		if (foundRef)
