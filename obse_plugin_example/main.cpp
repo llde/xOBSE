@@ -325,8 +325,8 @@ bool Cmd_ExamplePlugin_SetString_Execute(COMMAND_ARGS)
 		g_strData = data;
 		Console_Print("Set string %s in script %08x", data, scriptObj->refID);
 	}
-
-	ExtractFormattedString(ScriptFormatStringArgs(0, 0, 0, 0), data);
+	auto formatString = ScriptFormatStringArgs(0, 0, 0, 0);
+	ExtractFormattedString( formatString, data);
 	return true;
 }
 
