@@ -76,6 +76,8 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <ForcedIncludeFiles>common/IPrefix.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -132,10 +134,12 @@
   <ItemGroup>
     <ClCompile Include="Inject.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Updates.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Inject.h" />
     <ClInclude Include="..\obse_common\obse_version.h" />
+    <ClInclude Include="Updates.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\obse_common\obse_version.rc" />
