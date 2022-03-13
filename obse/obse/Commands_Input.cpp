@@ -172,11 +172,11 @@ static bool Cmd_MenuTapKey_Execute(COMMAND_ARGS)
 	if(!ExtractArgs(PASS_EXTRACT_ARGS, &keycode))
 		return true;
 
-	_WARNING("MenuTapKey doesn't seem to work called from mod %s" , (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
-	/*
+	//_WARNING("MenuTapKey doesn't seem to work called from mod %s" , (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+
     if(keycode<256)
-		DInput_FakeBufferedKeyTap(keycode);
-	*/
+		g_inputGlobal->FakeBufferedKeyTap(keycode);
+
 	return true;
 }
 
@@ -207,11 +207,11 @@ static bool Cmd_MenuHoldKey_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	UInt32	keycode = 0;
-	_WARNING("MenuHoldKey doesn't seem to work called from mod %s", (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
-/*
+//	_WARNING("MenuHoldKey doesn't seem to work called from mod %s", (*g_dataHandler)->GetNthModName(scriptObj->GetModIndex()));
+
 	if(!ExtractArgs(PASS_EXTRACT_ARGS, &keycode)) return true;
-    if(keycode<256) DInput_FakeBufferedKeyPress(keycode);
-	*/
+    if(keycode<256) g_inputGlobal->FakeBufferedKeyPress(keycode);
+
 	return true;
 }
 
@@ -219,10 +219,10 @@ static bool Cmd_MenuReleaseKey_Execute(COMMAND_ARGS)
 {
 	*result = 0;
 	UInt32	keycode = 0;
-	/*
+
 	if(!ExtractArgs(PASS_EXTRACT_ARGS, &keycode)) return true;
-    if(keycode<256) DInput_FakeBufferedKeyRelease(keycode);
-	*/
+    if(keycode<256) g_inputGlobal->FakeBufferedKeyRelease(keycode);
+
 	return true;
 }
 

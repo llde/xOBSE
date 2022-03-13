@@ -1,11 +1,16 @@
 #pragma once
+#define DIRECTINPUT_VERSION 0x0800
+#include <dinput.h>
+#include <queue>
 #include "GameOSDepend.h"
+#include "GameAPI.h"
+
 static const UInt32 kPollEndHook = 0x00403C81; 
 static const UInt32 kPollEndRetn = 0x00403C85;
 static const UInt32 kPollEndNoMouseHook = 0x0040483A;
 static const UInt32 kPollEndNoMouseRetn = 0x0040483C;
 static const UInt32 kLoc_403C40 = 0x00403C40;
-
+static const UInt32 kBufferedKeyHook = 0x00403C90;
 static const UInt32 kInputGlobalAllocSize = 0x00404A77;
 static const UInt32 kInputInitializeCallAddr = 0x00404A92;
 static const UInt32 kInitializeInputGlobals = 0x00404150;
@@ -36,6 +41,56 @@ struct DIMOUSESTATEInn {
 	KeyControlState    rgbButtons[8];
 };
 
+template <typename T>
+class OSNode{
+public:
+	T val;
+	OSNode<T>* next;
+};
+
+template <typename T>
+class OSQueue{
+private:
+	OSNode<T>* head = nullptr;
+	OSNode<T>* tail = nullptr;
+public:
+	void AddLast(T item){
+		if(tail == nullptr){  //when head is null, tail is null too
+			head = (OSNode<T>*) FormHeap_Allocate(sizeof(OSNode<T>));
+			if(head == nullptr)
+				_ERROR("Can't allocate input");
+			tail = head;
+			tail->val = item;
+			tail->next = nullptr;
+		}
+		else{
+			tail->next = (OSNode<T>*) FormHeap_Allocate(sizeof(OSNode<T>));
+			if(tail->next == nullptr) _ERROR("Can't allocate input");
+			tail = tail->next;
+			tail->next = nullptr;
+			tail->val = item;
+		}
+	}
+
+	T RemoveFirst(){
+		if(head == nullptr) {
+			_ERROR("Unreachable code reached");
+			return T{};   //Should be unreachable
+		}
+		else{
+			OSNode<T>* node = head;
+			head = node->next;
+			if(head == nullptr) tail = nullptr;
+			T val = node->val;
+			FormHeap_Free(node);
+			return val;
+		}
+	}
+
+
+	bool HasElement(){return head != nullptr;}
+};
+
 class OSInputGlobalsEx : public OSInputGlobals {
 public:
 	KeyControlState	KeyMaskState[256];
@@ -45,6 +100,7 @@ public:
 	float			MouseAxisAccumulator[2];
 	float			lastFrameLength;
 	DWORD			lastFrameTime;
+	OSQueue<DIDEVICEOBJECTDATA> fakeBuffered;
 
 	void SetMask(UInt16 keycode);
 	void SetUnMask(UInt16 keycode);
@@ -58,9 +114,13 @@ public:
 	bool WasKeyPressedSimulated(UInt16 keycode);
 	bool IsKeyPressedReal(UInt16 keycode);  /*Report real keypresses*/
 	bool WasKeyPressedReal(UInt16 keycode);
+	void FakeBufferedKeyTap(UInt32 key);
+	void FakeBufferedKeyPress(UInt32 key);
+	void FakeBufferedKeyRelease(UInt32 key);
 
 	OSInputGlobalsEx* InitializeEx(IDirectInputDevice8* device);
 	void InputPollFakeHandle();
+	int GetBufferedKeyStateChangeHook(DIDEVICEOBJECTDATA* data);
 private:
 	inline void SendKeyEvent(UInt16 idx);
 	inline void SendMouseEvent(UInt16 idx);
@@ -69,7 +129,7 @@ private:
 
 };
 
-STATIC_ASSERT(sizeof(OSInputGlobalsEx) == sizeof(OSInputGlobals) + sizeof(DIMOUSESTATEInn) + sizeof(KeyControlState[256]) + sizeof(UInt32[2]) + 2*sizeof(float[2]) + sizeof(float) +sizeof(DWORD));
+STATIC_ASSERT(sizeof(OSInputGlobalsEx) == sizeof(OSInputGlobals) + sizeof(DIMOUSESTATEInn) + sizeof(KeyControlState[256]) + sizeof(UInt32[2]) + 2*sizeof(float[2]) + sizeof(float) +sizeof(DWORD) +sizeof(OSQueue<DIDEVICEOBJECTDATA>) );
 
 extern OSInputGlobalsEx* g_inputGlobal;
 

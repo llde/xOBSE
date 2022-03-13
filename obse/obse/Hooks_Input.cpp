@@ -1,3 +1,4 @@
+
 #include "Hooks_Input.h" 
 #include "obse_common/SafeWrite.h"
 #include <obse/EventManager.h>
@@ -165,6 +166,49 @@ inline void OSInputGlobalsEx::SendWheelEvents() {
 		EventManager::HandleEvent(EventCode[0], (void*)264, (void*)KeyEvent_Up);
 	}
 }
+
+void OSInputGlobalsEx::FakeBufferedKeyTap(UInt32 key){
+	DIDEVICEOBJECTDATA data;
+	data.uAppData=-1;
+	data.dwTimeStamp=GetTickCount();
+	data.dwSequence=0;
+	data.dwOfs=key;
+	data.dwData=0x80;
+	fakeBuffered.AddLast(data);
+	data.dwData=0x00;
+	fakeBuffered.AddLast(data);
+}
+void OSInputGlobalsEx::FakeBufferedKeyPress(UInt32 key){
+	DIDEVICEOBJECTDATA data;
+	data.uAppData=-1;
+	data.dwTimeStamp=GetTickCount();
+	data.dwSequence=0;
+	data.dwOfs=key;
+	data.dwData=0x80;
+	fakeBuffered.AddLast(data);
+}
+void OSInputGlobalsEx::FakeBufferedKeyRelease(UInt32 key){
+	DIDEVICEOBJECTDATA data;
+	data.uAppData=-1;
+	data.dwTimeStamp=GetTickCount();
+	data.dwSequence=0;
+	data.dwOfs=key;
+	data.dwData=0x00;
+	fakeBuffered.AddLast(data);
+}
+
+int OSInputGlobalsEx::GetBufferedKeyStateChangeHook(DIDEVICEOBJECTDATA* data) {
+	DIDEVICEOBJECTDATA temp = {};
+	if(!this->keyboardInterface) return 0;
+ 	IDirectInputDevice8* keyInterface = this->keyboardInterface;
+	UInt32 number = 1;
+	if(fakeBuffered.HasElement()) temp = fakeBuffered.RemoveFirst();
+	if(keyInterface->GetDeviceData(0x14, &temp, &number, 0) != DI_OK || number == 0) return 0;
+	data->dwOfs = temp.dwOfs;
+	data->dwData = temp.dwData;
+	data->dwTimeStamp = temp.dwTimeStamp;
+	return 2 - ((temp.dwData & 0x80) == 0x80);
+}
 /*
 *  The old DInput hook use this order: Hammer (depending on the frame), Hold (DI_data.FakeState) , Disabled, Tap 
 *  So a Disabled key win on hold and hamer but it lose on Tap. So Tap is seen as a proper input
@@ -270,6 +314,11 @@ void OSInputGlobalsEx::InputPollFakeHandle() {
 
 void __fastcall InputPollFakeHandleNoMouse(OSInputGlobals* input) { _MESSAGE("Can't still use the new input system without a mouse "); }
 
+__declspec(naked) void FakeBufferedKeyHook(){
+	__asm{
+		 jmp OSInputGlobalsEx::GetBufferedKeyStateChangeHook
+	}
+}
 
 __declspec(naked) void PollInputHook() {
 	__asm {
@@ -317,6 +366,7 @@ OSInputGlobalsEx* __thiscall OSInputGlobalsEx::InitializeEx(IDirectInputDevice8*
 	this->lastFrameTime = GetTickCount();  //TODO QueryPerformanceCounter? Internal GetTickCount 
 	this->MouseAxisAccumulator[0] = 0;
 	this->MouseAxisAccumulator[1] = 0;
+	fakeBuffered = {};
 	g_inputGlobal = this;
 	return this;
 }
@@ -327,9 +377,9 @@ void Hook_Input_Init() {
 	WriteRelCall(kInputInitializeCallAddr, (UInt32) *((void**) &InitializeExCall));
 	WriteRelJump(kPollEndHook, (UInt32) &PollInputHook);
 	WriteRelJump(kPollEndNoMouseHook, (UInt32)&PollInputNoMouseHook); //TODO clean leftovers
+	WriteRelJump(kBufferedKeyHook, (UInt32)&FakeBufferedKeyHook);
+
 }
-
-
 
 namespace PluginAPI {
 	void DisableKey(UInt16 dxCode) { g_inputGlobal->SetMask(dxCode); }
