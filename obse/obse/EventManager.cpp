@@ -1391,15 +1391,17 @@ bool RemoveHandler(UInt32 id, Script* fnScript);
 class EventHandlerCaller : public InternalFunctionCaller
 {
 public:
-	EventHandlerCaller(Script* script, EventInfo* eventInfo, void* arg0, void* arg1, TESObjectREFR* callingObj = NULL)
+	EventHandlerCaller(Script* script, EventInfo* eventInfo, void* arg0, void* arg1, TESObjectREFR* callingObj = NULL, bool ignoreNull = false)
 		: InternalFunctionCaller(script, callingObj), m_eventInfo(eventInfo)
 	{
 		UInt8 numArgs = 2;
-		if (!arg1)
-			numArgs = 1;
-		if (!arg0)
-			numArgs = 0;
 
+		if (!arg1 && !ignoreNull)
+			numArgs = 1;
+		if (!arg0 && !ignoreNull)
+			numArgs = 0;
+//TODO Rewrite this awful mess
+		//ignoreNull used only for key and control events
 		SetArgs(numArgs, arg0, arg1);
 	}
 
@@ -1446,7 +1448,7 @@ std::list<DeferredCallback> s_deferredCallbacks;
 void __stdcall HandleEventForCallingObject(UInt32 id, TESObjectREFR* callingObj, void* arg0, void* arg1)
 {
 	ScopedLock lock(s_criticalSection);
-
+	bool ignoreNull = false;
 	EventInfo* eventInfo = s_eventInfos[id];
 	if (eventInfo->callbacks) {
 		for (CallbackList::iterator iter = eventInfo->callbacks->begin(); iter != eventInfo->callbacks->end(); ) {
@@ -1461,6 +1463,7 @@ void __stdcall HandleEventForCallingObject(UInt32 id, TESObjectREFR* callingObj,
 				continue;
 			}
 			if (id == kEventID_EventKey || id == kEventID_EventControl) {
+				ignoreNull = true;
 				if (arg0 != iter->source || arg1 != iter->object) {
 					++iter;
 					continue;
@@ -1515,7 +1518,7 @@ void __stdcall HandleEventForCallingObject(UInt32 id, TESObjectREFR* callingObj,
 				iter->SetInUse(true);
 				s_eventStack.push(eventInfo->name);
 				if (iter->script) {
-					ScriptToken* result = UserFunctionManager::Call(EventHandlerCaller(iter->script, eventInfo, arg0, arg1, callingObj));
+					ScriptToken* result = UserFunctionManager::Call(EventHandlerCaller(iter->script, eventInfo, arg0, arg1, callingObj, ignoreNull));
 					// result is unused
 					delete result;
 				}
@@ -1804,7 +1807,7 @@ void Tick()
 {
 	ScopedLock lock(s_criticalSection);
 
-	// handle deferred events
+	// handle deferred events, Verify used or not used?
 	if (s_deferredCallbacks.size()) {
 		std::list< std::list<DeferredCallback>::iterator > s_removedCallbacks;
 
