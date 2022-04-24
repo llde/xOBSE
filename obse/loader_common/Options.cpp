@@ -152,6 +152,10 @@ bool Options::Read(int argc, char ** argv)
 				{
 					m_oldInject = true;
 				}
+				else if(!_stricmp(arg, "noconsole"))
+				{
+					m_noConsole = true;
+				}
 				else
 				{
 					_ERROR("unknown switch (%s)", arg);
@@ -205,6 +209,7 @@ void Options::PrintUsage(void)
 	_MESSAGE("  -waitforclose - wait for the launched program to close");
 	_MESSAGE("                  designed for use with AlacrityPC and similar");
 	_MESSAGE("  -oldinject - use the original injection method for the editor");
+	_MESSAGE("  -noconsole - do not display a terminal");
 }
 
 bool Options::Verify(void)

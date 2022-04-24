@@ -22,6 +22,7 @@ public:
 	bool	m_optionsOnly;
 	bool	m_waitForClose;
 	bool	m_oldInject;
+	bool	m_noConsole;
 
 	std::string	m_altEXE;
 	std::string	m_altDLL;

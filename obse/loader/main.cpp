@@ -3,6 +3,7 @@
 #include "loader_common/Options.h"
 #include "Inject.h"
 #include "Updates.h"
+#include <windows.h>
 
 // requires recent platform sdk
 #ifndef ERROR_ELEVATION_REQUIRED
@@ -63,6 +64,11 @@ int main(int argc, char ** argv)
 		if (pressed == IDNO) {
 			return 0;
 		}
+	}
+
+	if(g_options.m_noConsole)
+	{
+		FreeConsole();
 	}
 
 	if(g_options.m_launchCS)
