@@ -45,7 +45,6 @@ public:
 	TESObjectREFR*				m_containerRef;
 	TESObjectREFR*				m_tempRef;
 	bool						m_bRemoved;
-    bool                        m_tempEntry;  //If the current ExtraContainerChanges::EntryData* in Data is temporary.
 	bool						m_bDoValidation;
 	std::queue<DeferredAction*>* actions;
     ~InventoryReference();

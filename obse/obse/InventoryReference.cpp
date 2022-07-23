@@ -27,7 +27,6 @@ InventoryReference* InventoryReference::CreateInventoryRef(TESObjectREFR* contai
 	InventoryReference* invRefr = (InventoryReference*)FormHeap_Allocate(sizeof(InventoryReference));
 	invRefr->m_containerRef = container;
 	invRefr->m_tempRef = refr;
-	invRefr->m_tempEntry = false;
 	invRefr->m_bDoValidation = bValidate;
 	invRefr->m_bRemoved = false;
 	invRefr->m_data = Data();
@@ -54,7 +53,6 @@ TESObjectREFR* InventoryReference::CreateInventoryRefEntry(TESObjectREFR* contai
 {
 	ExtraContainerChanges::EntryData* entry = CreateTempEntry(itemForm, countDelta, xData);
 	InventoryReference* invRef = CreateInventoryRef(container, InventoryReference::Data(itemForm, entry, xData), false);
-	invRef->m_tempEntry = true;
 	return invRef->m_tempRef;
 }
 
@@ -92,6 +90,7 @@ void InventoryReference::DoDeferredActions() {
 }
 
 bool InventoryReference::SetData(Data data){
+//	WriteRefDataToContainer(); //TODO include in next beta, not hotfix release
 	DEBUG_PRINT("Set IR  %s", GetFullName(data.type));
 	m_bRemoved = false;
 	m_tempRef->baseForm = data.type;
@@ -122,7 +121,7 @@ bool InventoryReference::SetData(Data data){
 
 bool InventoryReference::WriteRefDataToContainer(){  //IR operates directly on container, maybe non-IR aware commands can modifiy the XDataList  
 	if (m_bRemoved) return true;
-	if (!m_containerRef || !Validate()) return false;
+	if (!m_containerRef || !m_data.type || !Validate()) return false;
 	if (m_data.xData) {
 		m_data.xData->RemoveAll();
 		//this->Copy(other) cause items to lose the IsWorn xData  from other, unless the this is an empty xDataList. WHY?
@@ -308,6 +307,8 @@ bool InventoryReference::MoveToContainer(TESObjectREFR* dest){
 			actions->push(new DeferredAction(Action_Remove, m_data, dest, count ? count->count : 1));
 		}
 		else if (m_data.entry && m_data.entry->extendData && m_data.xData) {
+			m_data.xData->RemoveAll();
+			m_data.xData->Copy(&m_tempRef->baseExtraList);  //Copy the changes from the temp ref. 
 			MoveToDestContainerXData(m_data, xChanges, destCont);
 		}
 		else if (m_data.entry) {

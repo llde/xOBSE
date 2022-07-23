@@ -314,7 +314,8 @@ ContainerIterLoop::ContainerIterLoop(const ForEachContext* context)
 */
 bool ContainerIterLoop::UnsetIterator()
 {
-	return m_invRef->WriteRefDataToContainer();
+//	return true;
+	return m_invRef->WriteRefDataToContainer();  //TODO call directly in IREF::SetData
 
 	/*
 	// copy extra data back to container entry
