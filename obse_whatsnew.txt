@@ -1,3 +1,8 @@
+xOBSE 22.7
+	Fix: 
+		- Moving an inventory reference to another container with RemoveMeIR copy the extradata from the temp ref.
+		- Control events weren't fired properly when triggered by mouse with controls having a keyboard binding 
+		- Introduce handling of swapped mouse buttons configuration
 xOBSE 22.6.1
 	Fix:
 		- Fix GetProjectile Regressions

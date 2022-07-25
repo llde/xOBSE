@@ -117,6 +117,7 @@ public:
 	void FakeBufferedKeyTap(UInt32 key);
 	void FakeBufferedKeyPress(UInt32 key);
 	void FakeBufferedKeyRelease(UInt32 key);
+	UInt16 GetMouseControlKey(UInt16 ctrl);
 
 	OSInputGlobalsEx* InitializeEx(IDirectInputDevice8* device);
 	void InputPollFakeHandle();

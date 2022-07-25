@@ -7,44 +7,82 @@ OSInputGlobalsEx* g_inputGlobal = nullptr;
 
 void OSInputGlobalsEx::SetMask(UInt16 keycode) {
 	//TODO handle 265 and 266
-	if (keycode >= 256 && keycode < kMaxButtons) MouseMaskState.rgbButtons[keycode - 256] |= kStateDisabled;
+	if (keycode >= 256 && keycode < kMaxButtons) {
+		if (this->oldMouseButtonSwap && keycode == 256) keycode = 257;
+		else if (this->oldMouseButtonSwap && keycode == 257) keycode = 256;
+
+		MouseMaskState.rgbButtons[keycode - 256] |= kStateDisabled;
+	}
 	else if(keycode < 256) KeyMaskState[keycode] |= kStateDisabled;
 }
 
 void OSInputGlobalsEx::SetUnMask(UInt16 keycode) {
 	//TODO handle 265 and 266
-	if (keycode >= 256 && keycode < kMaxButtons) MouseMaskState.rgbButtons[keycode - 256] &= ~kStateDisabled;
+	if (keycode >= 256 && keycode < kMaxButtons) {
+		if (this->oldMouseButtonSwap && keycode == 256) keycode = 257;
+		else if (this->oldMouseButtonSwap && keycode == 257) keycode = 256;
+
+		MouseMaskState.rgbButtons[keycode - 256] &= ~kStateDisabled;
+	}
 	else if (keycode < 256) KeyMaskState[keycode] &= ~kStateDisabled;
 }
 
 UInt8 OSInputGlobalsEx::GetMaskStatus(UInt16 keycode) {
-	if (keycode >= 256 && keycode < kMaxButtons) return MouseMaskState.rgbButtons[keycode - 256];
+	if (keycode >= 256 && keycode < kMaxButtons) {
+		if (this->oldMouseButtonSwap && keycode == 256) keycode = 257;
+		else if (this->oldMouseButtonSwap && keycode == 257) keycode = 256;
+
+		return MouseMaskState.rgbButtons[keycode - 256];
+	}
 	if (keycode < 256) return KeyMaskState[keycode];
 	return 0;
 }
 
 void OSInputGlobalsEx::SetTap(UInt16 keycode){
-	if (keycode >= 256 && keycode < kMaxButtons) MouseMaskState.rgbButtons[keycode - 256] |= kStateTap;
+	if (keycode >= 256 && keycode < kMaxButtons) {
+		if (this->oldMouseButtonSwap && keycode == 256) keycode = 257;
+		else if (this->oldMouseButtonSwap && keycode == 257) keycode = 256;
+
+		MouseMaskState.rgbButtons[keycode - 256] |= kStateTap;
+	}
 	else if (keycode < 256) KeyMaskState[keycode] |= kStateTap;
 }
 
 void OSInputGlobalsEx::SetHold(UInt16 keycode) {
-	if (keycode >= 256 && keycode < kMaxButtons) MouseMaskState.rgbButtons[keycode - 256] |= kStateHolded;
+	if (keycode >= 256 && keycode < kMaxButtons) {
+		if (this->oldMouseButtonSwap && keycode == 256) keycode = 257;
+		else if (this->oldMouseButtonSwap && keycode == 257) keycode = 256;
+
+		MouseMaskState.rgbButtons[keycode - 256] |= kStateHolded;
+	}
 	else if (keycode < 256) KeyMaskState[keycode] |= kStateHolded;
 }
 
 void OSInputGlobalsEx::SetUnHold(UInt16 keycode){
-	if (keycode >= 256 && keycode < kMaxButtons) MouseMaskState.rgbButtons[keycode - 256] &= ~kStateHolded;
+	if (keycode >= 256 && keycode < kMaxButtons) {
+		if (this->oldMouseButtonSwap && keycode == 256) keycode = 257;
+		else if (this->oldMouseButtonSwap && keycode == 257) keycode = 256;
+
+		MouseMaskState.rgbButtons[keycode - 256] &= ~kStateHolded;
+	}
 	else if (keycode < 256) KeyMaskState[keycode] &= ~kStateHolded;
 }
 
 void OSInputGlobalsEx::SetHammer(UInt16 keycode, bool AHammer){
-	if (keycode >= 256 && keycode < kMaxButtons ) MouseMaskState.rgbButtons[keycode - 256] |= (AHammer ? kStateAHammered : kStateHammered);
+	if (keycode >= 256 && keycode < kMaxButtons) {
+		if (this->oldMouseButtonSwap && keycode == 256) keycode = 257;
+		else if (this->oldMouseButtonSwap && keycode == 257) keycode = 256;
+
+		MouseMaskState.rgbButtons[keycode - 256] |= (AHammer ? kStateAHammered : kStateHammered);
+	}
 	else if (keycode < 256) KeyMaskState[keycode] |= (AHammer ?  kStateAHammered : kStateHammered);
 }
 
 void OSInputGlobalsEx::SetUnHammer(UInt16 keycode){
 	if (keycode >= 256 && keycode < kMaxButtons) {
+		if (this->oldMouseButtonSwap && keycode == 256) keycode = 257;
+		else if (this->oldMouseButtonSwap && keycode == 257) keycode = 256;
+
 		MouseMaskState.rgbButtons[keycode - 256] &= ~kStateHammered;
 		MouseMaskState.rgbButtons[keycode - 256] &= ~kStateAHammered;
 	}
@@ -55,7 +93,12 @@ void OSInputGlobalsEx::SetUnHammer(UInt16 keycode){
 }
 
 bool OSInputGlobalsEx::IsKeyPressedSimulated(UInt16 keycode) {
-	if (keycode >= 256 && keycode < kMaxButtons) return  CurrentMouseState.rgbButtons[keycode - 256] == 0x80;
+	if (keycode >= 256 && keycode < kMaxButtons) {
+		if (this->oldMouseButtonSwap && keycode == 256) keycode = 257;
+		else if (this->oldMouseButtonSwap && keycode == 257) keycode = 256;
+
+		return  CurrentMouseState.rgbButtons[keycode - 256] == 0x80;
+	}
 	else if (keycode == 264) return CurrentMouseState.lZ > 0;
 	else if (keycode == 265) return CurrentMouseState.lZ < 0;
 	else if(keycode < 256) return CurrentKeyState[keycode] == 0x80;
@@ -63,7 +106,12 @@ bool OSInputGlobalsEx::IsKeyPressedSimulated(UInt16 keycode) {
 }
 
 bool OSInputGlobalsEx::WasKeyPressedSimulated(UInt16 keycode) {
-	if (keycode >= 256 && keycode < kMaxButtons) return  PreviousMouseState.rgbButtons[keycode - 256] == 0x80;
+	if (keycode >= 256 && keycode < kMaxButtons) {
+		if (this->oldMouseButtonSwap && keycode == 256) keycode = 257;
+		else if (this->oldMouseButtonSwap && keycode == 257) keycode = 256;
+
+		return  PreviousMouseState.rgbButtons[keycode - 256] == 0x80;
+	}
 	else if (keycode == 264) return PreviousMouseState.lZ > 0;
 	else if (keycode == 265) return PreviousMouseState.lZ < 0;
 	else if (keycode < 256) return PreviousKeyState[keycode] == 0x80;
@@ -71,7 +119,12 @@ bool OSInputGlobalsEx::WasKeyPressedSimulated(UInt16 keycode) {
 }
 
 bool OSInputGlobalsEx::IsKeyPressedReal(UInt16 keycode) {
-	if (keycode >= 256 && keycode < kMaxButtons) return (MouseMaskState.rgbButtons[keycode - 256] & kStateSignalled) == kStateSignalled;
+	if (keycode >= 256 && keycode < kMaxButtons) {
+		if (this->oldMouseButtonSwap && keycode == 256) keycode = 257;
+		else if (this->oldMouseButtonSwap && keycode == 257) keycode = 256;
+
+		return (MouseMaskState.rgbButtons[keycode - 256] & kStateSignalled) == kStateSignalled;
+	}
 	else if (keycode == 264) return CurrentMouseState.lZ > 0;
 	else if (keycode == 265) return CurrentMouseState.lZ < 0;
 	else if (keycode < 256) return (KeyMaskState[keycode] & kStateSignalled) == kStateSignalled;
@@ -79,7 +132,12 @@ bool OSInputGlobalsEx::IsKeyPressedReal(UInt16 keycode) {
 }
 
 bool OSInputGlobalsEx::WasKeyPressedReal(UInt16 keycode) {
-	if (keycode >= 256 && keycode < kMaxButtons) return (MouseMaskState.rgbButtons[keycode - 256] & kStatePSignalled) == kStatePSignalled;
+	if (keycode >= 256 && keycode < kMaxButtons) {
+		if (this->oldMouseButtonSwap && keycode == 256) keycode = 257;
+		else if (this->oldMouseButtonSwap && keycode == 257) keycode = 256;
+
+		return (MouseMaskState.rgbButtons[keycode - 256] & kStatePSignalled) == kStatePSignalled;
+	}
 	else if (keycode == 264) return PreviousMouseState.lZ > 0;
 	else if (keycode == 265) return PreviousMouseState.lZ < 0;
 	else if (keycode < 256) return (KeyMaskState[keycode] & kStatePSignalled) == kStatePSignalled;
@@ -98,13 +156,18 @@ inline void OSInputGlobalsEx::SendKeyEvent(UInt16 idx) {
 }
 
 inline void OSInputGlobalsEx::SendMouseEvent(UInt16 idx) {
+	UInt16 idxs = idx;
+	if (this->oldMouseButtonSwap && idx == 1) idxs = 0;
+	else if (this->oldMouseButtonSwap && idx == 0) idxs = 1;  //Reapply swap to forward the correct event
 	void* nomralizedKey = (void*)(idx + 256);
-	if ((MouseMaskState.rgbButtons[idx] & kStateSignalled) == kStateSignalled && (MouseMaskState.rgbButtons[idx] & kStatePSignalled) != kStatePSignalled)
+//	_MESSAGE("Key %u", nomralizedKey);
+
+	if ((MouseMaskState.rgbButtons[idxs] & kStateSignalled) == kStateSignalled && (MouseMaskState.rgbButtons[idxs] & kStatePSignalled) != kStatePSignalled)
 		EventManager::HandleEvent(EventCode[0], nomralizedKey, (void*)KeyEvent_Down);
-	else if ((MouseMaskState.rgbButtons[idx] & kStateSignalled) != kStateSignalled && (MouseMaskState.rgbButtons[idx] & kStatePSignalled) == kStatePSignalled) {
+	else if ((MouseMaskState.rgbButtons[idxs] & kStateSignalled) != kStateSignalled && (MouseMaskState.rgbButtons[idxs] & kStatePSignalled) == kStatePSignalled) {
 		EventManager::HandleEvent(EventCode[0], nomralizedKey, (void*)KeyEvent_Up);
 	}
-	else if ((MouseMaskState.rgbButtons[idx] & kStateSignalled) == kStateSignalled && (MouseMaskState.rgbButtons[idx] & kStatePSignalled) == kStatePSignalled) {
+	else if ((MouseMaskState.rgbButtons[idxs] & kStateSignalled) == kStateSignalled && (MouseMaskState.rgbButtons[idxs] & kStatePSignalled) == kStatePSignalled) {
 		EventManager::HandleEvent(EventCode[0], nomralizedKey, (void*)KeyEvent_Hold);
 	}
 }
@@ -113,18 +176,25 @@ inline void OSInputGlobalsEx::SendControlEvents() {
 	for (UInt8 idx = 0; idx < 29; idx++) {
 		UInt8 key = KeyboardInputControls[idx];
 		if (key != 0xFF) {
-			if ((KeyMaskState[key] & kStateSignalled) == kStateSignalled && (KeyMaskState[key] & kStatePSignalled) != kStatePSignalled)
+			if ((KeyMaskState[key] & kStateSignalled) == kStateSignalled && (KeyMaskState[key] & kStatePSignalled) != kStatePSignalled) {
 				EventManager::HandleEvent(EventCode[1], (void*)idx, (void*)KeyEvent_Down);
+				continue;
+			}
 			else if ((KeyMaskState[key] & kStateSignalled) != kStateSignalled && (KeyMaskState[key] & kStatePSignalled) == kStatePSignalled) {
 				EventManager::HandleEvent(EventCode[1], (void*)idx, (void*)KeyEvent_Up);
+				continue;
 			}
 			else if ((KeyMaskState[key] & kStateSignalled) == kStateSignalled && (KeyMaskState[key] & kStatePSignalled) == kStatePSignalled) {
 				EventManager::HandleEvent(EventCode[1], (void*)idx, (void*)KeyEvent_Hold);
+				continue;
 			}
-			continue;
 		}
 		key = MouseInputControls[idx];
 		if (key != 0xFF) {
+			if (this->oldMouseButtonSwap && key == 0) key = 1;
+			else if (this->oldMouseButtonSwap && key == 1) key = 0;
+//			_MESSAGE("Control %u, Key %u", idx, key);
+
 			if ((MouseMaskState.rgbButtons[key] & kStateSignalled) == kStateSignalled && (MouseMaskState.rgbButtons[key] & kStatePSignalled) != kStatePSignalled)
 				EventManager::HandleEvent(EventCode[1], (void*)idx, (void*)KeyEvent_Down);
 			else if ((MouseMaskState.rgbButtons[idx] & kStateSignalled) != kStateSignalled && (MouseMaskState.rgbButtons[key] & kStatePSignalled) == kStatePSignalled) {
@@ -197,6 +267,14 @@ void OSInputGlobalsEx::FakeBufferedKeyRelease(UInt32 key){
 	fakeBuffered.AddLast(data);
 }
 
+UInt16 OSInputGlobalsEx::GetMouseControlKey(UInt16 ctrl)
+{
+	UInt16 key = MouseInputControls[ctrl];
+	if (this->oldMouseButtonSwap && key == 1) key = 0;
+	else if (this->oldMouseButtonSwap && key == 0) key = 1;
+	return key;
+}
+
 int OSInputGlobalsEx::GetBufferedKeyStateChangeHook(DIDEVICEOBJECTDATA* data) {
 	DIDEVICEOBJECTDATA temp = {};
 	if(!this->keyboardInterface) return 0;
@@ -267,25 +345,30 @@ void OSInputGlobalsEx::InputPollFakeHandle() {
 	}
 
 	for (UInt16 idx = 0; idx <= 255; idx++) {
-		if (idx < 8) {
-			if ((MouseMaskState.rgbButtons[idx] & kStateSignalled) == kStateSignalled) MouseMaskState.rgbButtons[idx] |= kStatePSignalled;
-			else MouseMaskState.rgbButtons[idx] &= ~kStatePSignalled;
-
-			if (CurrentMouseState.rgbButtons[idx] == 0x80) MouseMaskState.rgbButtons[idx] |= kStateSignalled;
-			else MouseMaskState.rgbButtons[idx] &= ~kStateSignalled;
-
-			if (FrameIndex == 0 && (MouseMaskState.rgbButtons[idx] & kStateHammered) == kStateHammered) CurrentMouseState.rgbButtons[idx] = 0x80;
-			
-			if (FrameIndex == 1 && (MouseMaskState.rgbButtons[idx] & kStateAHammered) == kStateAHammered) CurrentMouseState.rgbButtons[idx] = 0x80;
-			
-			if ((MouseMaskState.rgbButtons[idx] & kStateHolded) == kStateHolded) CurrentMouseState.rgbButtons[idx] = 0x80;
-			
-			if ((MouseMaskState.rgbButtons[idx] & kStateDisabled) == kStateDisabled) CurrentMouseState.rgbButtons[idx] = 0;
 		
-			if ((MouseMaskState.rgbButtons[idx] & kStateTap) == kStateTap) CurrentMouseState.rgbButtons[idx] = 0x80;
-			MouseMaskState.rgbButtons[idx] &= ~kStateTap;
+		if (idx < 8) {
+			UInt16 idxs = idx;
+			if (this->oldMouseButtonSwap && idx == 1) idxs = 0;
+			else if (this->oldMouseButtonSwap && idx == 0) idxs = 1;
+			
+			if ((MouseMaskState.rgbButtons[idxs] & kStateSignalled) == kStateSignalled) MouseMaskState.rgbButtons[idxs] |= kStatePSignalled;
+			else MouseMaskState.rgbButtons[idxs] &= ~kStatePSignalled;
 
-			SendMouseEvent(idx);
+			if (CurrentMouseState.rgbButtons[idxs] == 0x80) MouseMaskState.rgbButtons[idxs] |= kStateSignalled;
+			else MouseMaskState.rgbButtons[idxs] &= ~kStateSignalled;
+
+			if (FrameIndex == 0 && (MouseMaskState.rgbButtons[idxs] & kStateHammered) == kStateHammered) CurrentMouseState.rgbButtons[idxs] = 0x80;
+			
+			if (FrameIndex == 1 && (MouseMaskState.rgbButtons[idxs] & kStateAHammered) == kStateAHammered) CurrentMouseState.rgbButtons[idxs] = 0x80;
+			
+			if ((MouseMaskState.rgbButtons[idxs] & kStateHolded) == kStateHolded) CurrentMouseState.rgbButtons[idxs] = 0x80;
+			
+			if ((MouseMaskState.rgbButtons[idxs] & kStateDisabled) == kStateDisabled) CurrentMouseState.rgbButtons[idxs] = 0;
+		
+			if ((MouseMaskState.rgbButtons[idxs] & kStateTap) == kStateTap) CurrentMouseState.rgbButtons[idxs] = 0x80;
+			MouseMaskState.rgbButtons[idxs] &= ~kStateTap;
+
+			SendMouseEvent(idxs); //Invert the swap inside 
 		}
 		if ((KeyMaskState[idx] & kStateSignalled) == kStateSignalled) KeyMaskState[idx] |= kStatePSignalled;
 		else KeyMaskState[idx] &= ~kStatePSignalled;
@@ -368,6 +451,7 @@ OSInputGlobalsEx* __thiscall OSInputGlobalsEx::InitializeEx(IDirectInputDevice8*
 	this->MouseAxisAccumulator[1] = 0;
 	fakeBuffered = {};
 	g_inputGlobal = this;
+//	_MESSAGE("Swap mouse state %u", this->oldMouseButtonSwap);
 	return this;
 }
 
