@@ -7,7 +7,7 @@
 #define INI_COMPILER_WARNUNQUOTEDSTRING		"bWarningUnquotedString"
 #define INI_COMPILER_WARNFUNCTPTR			"bWarningUDFRefVar"
 #define INI_COMPILER_WARNDEPRECATEDCMD		"bWarningDeprecatedCommand"
-
+#define I
 
 static std::string s_configPath;
 
@@ -18,5 +18,6 @@ extern UInt8 warningDeprecatedCmd;
 extern bool FreeRef;
 extern bool NoisyTestExpr;
 extern bool PreventCrashOnMapMarkerLoadSave;
+extern bool IR_WriteAllRef;
 
 bool InitializeSettings();

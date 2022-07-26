@@ -5,6 +5,7 @@
 #include "ScriptUtils.h"
 #include "GameAPI.h"
 #include "GameObjects.h"
+#include <obse/Settings.h>
 
 static const UInt32 kDataDeltaStackOffset = 482;
 
@@ -315,8 +316,10 @@ ContainerIterLoop::ContainerIterLoop(const ForEachContext* context)
 bool ContainerIterLoop::UnsetIterator()
 {
 //	return true;
-	return m_invRef->WriteRefDataToContainer();  //TODO call directly in IREF::SetData
-
+	if (!IR_WriteAllRef) {
+		return m_invRef->WriteRefDataToContainer();  
+	}
+	return true; // call directly in IREF::SetData
 	/*
 	// copy extra data back to container entry
 	ExtraContainerChanges::EntryExtendData* data = m_elements[m_iterIndex].data;

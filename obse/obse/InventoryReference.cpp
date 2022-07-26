@@ -1,6 +1,7 @@
 #include "InventoryReference.h"
 #include "GameObjects.h"
 #include "GameAPI.h"
+#include "Settings.h"
 
 void WriteToExtraDataList(BaseExtraList* from, BaseExtraList* to)
 {
@@ -90,7 +91,7 @@ void InventoryReference::DoDeferredActions() {
 }
 
 bool InventoryReference::SetData(Data data){
-//	WriteRefDataToContainer(); //TODO include in next beta, not hotfix release
+	if (IR_WriteAllRef) WriteRefDataToContainer();
 	DEBUG_PRINT("Set IR  %s", GetFullName(data.type));
 	m_bRemoved = false;
 	m_tempRef->baseForm = data.type;

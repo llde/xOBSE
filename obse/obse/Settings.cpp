@@ -8,6 +8,7 @@ UInt8 warningDeprecatedCmd;
 bool FreeRef;
 bool NoisyTestExpr;
 bool PreventCrashOnMapMarkerLoadSave;
+bool IR_WriteAllRef;
 
 bool InitializeSettings() {
 	std::string	runtimePath = GetOblivionDirectory();
@@ -26,6 +27,6 @@ bool InitializeSettings() {
 	FreeRef = GetPrivateProfileInt(INI_SECTION_RUNTIME, "bDeallocateReferences", 0, s_configPath.c_str());
 	NoisyTestExpr = GetPrivateProfileInt(INI_SECTION_RUNTIME, "bTestExprComplainsOnError", 0, s_configPath.c_str());
 	PreventCrashOnMapMarkerLoadSave = GetPrivateProfileInt(INI_SECTION_RUNTIME, "bPreventCrashOnMapMarkerLoad", 1, s_configPath.c_str());
-
+	IR_WriteAllRef = GetPrivateProfileInt(INI_SECTION_RUNTIME, "bWriteAllRefInventoryReference", 1, s_configPath.c_str());
     return true;
 }
