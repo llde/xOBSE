@@ -1,0 +1,14 @@
+scn FnPow
+
+short base
+short exponent
+short sht
+
+begin function {base, exponent}
+	if exponent == 0
+		SetFunctionValue 1
+	else
+		let sht := call FnPow base, exponent - 1
+		SetFunctionValue base * sht
+	endif
+end

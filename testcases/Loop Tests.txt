@@ -1,0 +1,132 @@
+scn obseTestLoopSCR
+
+short shortVar
+short var2
+short Run
+
+short d1
+short d2
+short d3
+short d4
+short depth
+
+begin gamemode
+
+if Run
+
+	let run := 0
+
+	let d1 := d2 := d3 := d4 := 0
+	printToFile loopLog "## Stack Depth Test ##"
+	if depth > 0
+		while (d1 := d1 + 1) < 3
+			printToFile loopLog "D1: %.0f" d1
+			if depth > 1
+				let d2 := 0
+				while (d2 := d2 + 1) < 3
+					printToFile loopLog "D2: %.0f" d2
+					if depth > 2
+						let d3 := 0
+						while (d3 := d3 + 1) < 3
+							printToFile loopLog "D3: %.0f" d3
+							if depth > 3
+								let d4 := 0
+								while (d4 := d4 + 1) < 3
+									printToFile loopLog "D4: %.0f BREAKING IMMEDIATELY" d4
+									break
+								loop
+							endif
+							printToFile loopLog "D3: CONTINUING"
+							continue
+							printToFile loopLog "Bad news, bendejo!"
+						loop
+					endif
+				loop
+			endif
+		loop
+	endif
+
+
+	PrintC "Beginning test"
+	PrintToFile looplog "-----Beginning test-----"
+
+	PrinttoFile looplog "## Loop A ##"
+	PrintC "## Loop A ##"
+	
+	let shortVar := 0
+	while (shortVar < 10)										; PASSED
+		PrintC "Loop A: %.0f" shortVar
+		PrintToFile looplog "Loop A: %.0f" shortVar
+		let shortVar := shortVar + 1
+	loop
+
+	printC "## LOOP C ##"
+	printtofile looplog "## LOOP C ##"
+
+	let shortVar := 0
+	while (1234)
+		let shortVar := shortVar + 1
+		PrintC "Loop C: %.0f" shortVar
+		PrintToFile looplog "Loop C: %.0f" shortVar
+		if (shortVar > 5)
+			break
+		endif
+	loop
+
+	printC "## LOOP D ##"
+	printtofile looplog "## LOOP D ##"
+
+	let shortVar := 0
+	while (1234)
+		let shortVar := shortVar + 1
+		PrintC "Loop D: %.0f" shortVar
+		PrintToFile looplog "Loop D: %.0f" shortVar
+		if (shortVar < 5)
+			continue
+		else
+			PrintC "Var > 4, breaking"
+			PrintToFile looplog "Var > 4, breaking"
+			break
+		endif
+	loop
+
+	printC "## LOOP E ##"
+	printtofile looplog "## LOOP E ##"
+
+	let shortVar := 0
+	while (shortVar > 10)
+		printC "Loop E: should not see this"
+		printToFile looplog "Loop E: should not see this"
+	loop
+
+	printC "## LOOP F: nested ##"
+	printToFile looplog "## LOOP F: nested ##"
+	
+	let shortVar := 0
+	let var2 := 0
+	while (shortVar < 10)
+		PrintC "Loop F outer: %.0f" shortVar
+		PrintToFile looplog "Loop F outer: %.0f" shortvar
+		let shortVar := shortVar + 1
+		let var2 := 0
+		while (var2 < 5)
+			PrintC "Loop F inner: %.0f" var2
+			PrintToFile looplog "Loop F inner: %.0f" var2
+			let var2 := var2 + 1
+		loop
+	loop
+
+	PrintC "## Loop B ##"
+	PrintToFile looplog "## Loop B ##"
+
+	let shortVar := 0											; ---FAILED---
+	while (shortVar := shortVar + 1) < 10
+		PrintC "Loop B: %.0f" shortVar
+		PrintToFile looplog "Loop B: %.0f" shortVar
+	loop
+
+
+endif
+
+end
+

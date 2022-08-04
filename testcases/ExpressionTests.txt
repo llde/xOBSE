@@ -1,0 +1,221 @@
+scn obseTestExprSCR
+
+short shortVar
+float floatVar
+short shortVar2
+float floatVar2
+ref refVar
+ref refVar2
+
+short Run
+
+string_var stringVar
+string_var stringVar2
+
+array_var arr
+array_var arr_2
+
+short Dump
+
+begin gamemode
+
+; --------serialization/debug output
+if (Dump)									; PASSED: arrays are saved and loaded correctly
+	let Dump := 0
+	ar_Dump arr
+	ar_Dump arr_2
+	ar_Dump arr[0]
+
+	PrintC "stringVar: %.0f %z" stringVar stringVar
+	PrintC "stringVar2: %.0f %z" stringVar2 stringVar2
+endif
+
+if (Run)		; begin tests
+	set Run to 0
+
+	PrintToFile exprlog "%rExpression Log"
+	PrintToFile exprlog "Testing specifier %.2f" floatVar		; PASSED
+
+; --------------simple assignment and arithmetic
+	let shortVar := 1
+	PrintToFile exprlog "shortVar = %.2f" shortVar				; PASSED
+
+	let shortVar := 2.5
+	PrintToFile exprlog "shortVar = %.2f" shortVar				; PASSED
+
+	let floatVar := 1
+	PrintToFile exprlog "floatVar = %.2f" floatVar				; PASSED
+
+	let floatVar := 2.5
+	PrintToFile exprlog "floatVar = %.2f" floatVar				; PASSED
+
+	let floatVar2 := gamehour
+	PrintToFile exprlog "floatVar2 = gamehour = %.4f" floatVar2		; PASSED
+
+	let shortVar := (2 + 6) / 2 - 1
+	PrintToFile exprlog "shortVar = (2 + 6) / 2 - 1 = 3 = %.2f" shortVar	; PASSED
+
+	let shortVar := 2/3
+	PrintToFile exprlog "shortVar = 2/3 = %.2f" shortVar				; PASSED
+
+	let floatVar := 2/3
+	PrintToFile exprlog "floatVar = 2/3 = %.2f" floatVar				; PASSED
+
+	let refVar := Abhuki
+	if (refVar == Abhuki)
+		PrintToFile exprlog "refVar set to Abhuki"						; PASSED
+	else
+		PrintToFile exprlog "refVar not set to Abhuki"
+	endif
+
+	set DAClavicusVile.irokiTalk to 5.0
+	let floatVar := DAClavicusVile.irokiTalk
+	PrintToFile exprlog "floatVar = external quest  var = 5.0 = %.2f" floatVar	; PASSED
+
+	let DAClavicusVile.irokiTalk := 2.0
+	set floatVar to DAClavicusVile.irokiTalk
+	PrintToFile exprlog "external quest var = 2.0 = %.2f"  floatVar		; PASSED
+
+	;let refVar := 0																				; ---FAILED--- need assignment rule for form->number
+	;if (RefVar == 0)
+		printToFile exprlog "RefVar set to 0"
+	else
+		printtoFile exprlog "Refvar not set to 0"
+	endif
+
+	let shortVar := GetPCMiscStat 5											; PASSED
+	PrintToFile exprlog "shortVar set to GetPCMiscStat 5 = %.2f" shortVar
+
+	set refVar to 0
+	let refVar := AbhukiRef.GetSelf
+	if refVar
+		printToFile exprlog "Refvar set to getself"							; PASSED
+	else
+		printToFile exprlog "Refvar not set to getself"
+	endif
+
+	let floatVar := AbhukiRef.GetPos z
+	PrintToFile exprlog "floatVar = AbhukiRef.GetPos z = %.4f" floatVar	; PASSED
+
+	let refVar := AbhukiRef
+	if (refVar == AbhukiRef)
+		PrintToFile exprlog "refVar set to AbhukiRef"						; PASSED
+	else
+		PrintToFile exprlog "refVar not set to AbhukiRef"
+	endif
+
+	let floatVar := refVar.GetPos x
+	let floatVar2 := refVar.GetPos x + refVar.GetPos x
+	PrintToFile exprlog "GetPos x: %.2f ... plus itself: %.2f" floatVar floatVar2	; PASSED
+
+; -----------------arrays
+	let arr := ar_Construct Array
+	PrintToFile exprlog "Created array ID #%.0f" arr						; PASSED
+
+	let arr_2 := ar_Construct StringMap
+	PrintToFile exprlog "Created array ID #%.0f as StringMap" arr_2	; PASSED
+
+	let arr := ar_Construct Array
+	PrintToFile exprlog "arr now points to new array with ID #%.0f" arr	: PASSED, original arrayID retained
+
+	let arr[0] := "Element Zero"
+	let arr[1] := "Element One"
+	let arr[2] := "Element Two"
+	PrintToFile exprlog "set first three elements of arr, dumping..."		; PASSED
+	ar_Dump arr
+
+	let arr_2[ONE] := "ELEMENT ONE"
+	let arr_2["TWO"] := "ELEMENT TWO"
+	let arr_2["ONE"] := "ELEMENT ONE OVERWRITTEN"
+	PrintToFile exprlog "set first 2 elements of arr_2, overwrote arr_2[ONE]	"	; PASSED
+	ar_Dump arr_2
+
+;	let arr[5] := "Element Five"
+;	PrintToFile exprlog "Attempted to set 5th element of packed array, should fail"	; PASSED (i.e. failed correctly)
+;	ar_Dump arr
+
+	let shortVar := ar_size arr
+	PrintToFile exprlog "size of arr == %.0f" shortVar					; PASSED
+
+	let arr_2[THREE] := 1.234
+	let floatVar := arr_2[three]
+	PrinttoFile exprlog "floatVar = arr_2[three] = 1.234 = %.4f" floatVar	; PASSED
+
+;	let shortVar := ar_size arr + ar_size arr_2		; ---FAILS to parse--- no way of knowing where args to first ar_size end.....
+;	PrintToFile exprlog "shortVar := sizeof both arrays, should be 5, == %.0f" shortVar
+
+
+	let arr[0] := 1
+	let arr[1] := 2
+	let arr[2] := 3
+	let arr[3] := arr[0] + arr[1] * arr[2]
+	let floatVar := arr[3]
+	PrintToFile exprlog "arr[3] = elements { 0 + (1 * 2) } = 7 --> %.2f" floatVar		; PASSED
+
+; --------------array slicing
+	let arr_2 := arr[1:2]
+	let shortVar := ar_size arr_2																
+	ar_dump arr_2
+	PrintToFile exprlog "Set arr_2 to arr[1:2] should have size 2 and keys 0:1...size = %.0f" shortvar
+
+	let arr_2 := arr[1:-1]
+	let shortVar := ar_size arr_2				; ---FAILED--- size == 0
+	ar_dump arr_2
+	PrintToFile exprlog "Set arr_2 to arr[1:-1] should copy elements 1 through end with size 3, size = %.0f" shortVar
+
+; ---------------multidimensional arrays
+	let arr[0] := ar_Construct StringMap
+	let arr[0][A] := "First element"
+	let arr[0][B] := 2
+	let arr[0][C] := AbhukiRef
+
+	PrintToFile exprlog "arr[0] is an array containing 3 elements, dumping..."
+	ar_dump arr[0]																					; PASSED
+
+	let shortVar := ar_size arr[0]
+	PrintToFile exprlog "size of arr[0] should be 3, is %.0f" shortVar					; PASSED
+
+
+; ---------------string_vars
+	let stringVar := "Hello World"
+	PrintC "Assigned stringVar 'Hello World': %z" stringVar			; PASSED
+
+	let stringVar2 := stringVar[6]
+	PrintC "Assigned stringVar2 'W': %z" stringVar2					; PASSED
+
+	let stringVar2 := stringVar[0:4]	
+	PrintC "Assigned stringVar2 'Hello': %z" stringVar2				; PASSED
+
+	let stringVar2 := stringVar[2:7]
+	PrintC "Assigned stringVar2 'llo Wo': %z" stringVar2				; PASSED
+
+	let stringVar2 := stringVar[6:-1]
+	PrintC "Assigned stringVar2 'World': %z" stringVar2			; PASSED
+
+	let stringVar2 := stringVar[0:4] + ", " + AbhukiRef.GetName		; PASSED
+	PrintC "Assigned stringVar2 'Hello, Abhuki': %z" stringVar2
+
+
+; ---------------eval
+	if eval (stringVar == "HellO WoRLD")
+		PrintC "stringVar == 'HellO WoRLD' correctly passed"		; PASSED
+	else
+		PrintC "case-insensitive comparison of stringVar failed"
+	endif
+
+	if eval (arr[0][C] == AbhukiRef)
+		PrintC "arr[0][C] == AbhukiRef correctly passed"				; PASSED
+	else
+		PrintC "comparison of arr[0][C] to AbhukiRef failed"
+	endif
+
+	if eval (arr[0][C] == Abhuki)
+		PrintC "comparison of arr[0][C] to Abhuki incorrectly passed"
+	else
+		PrintC "comparison of arr[0][C] to Abhuki correctly failed"			; PASSED
+	endif
+
+
+endif
+	
+end

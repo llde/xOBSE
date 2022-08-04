@@ -1,0 +1,153 @@
+scn obseTest0018
+
+; ###TODO: SetPackageTarget, GetSpecialAnims, ToggleSpecialAnim, GetLeveledSpells
+
+
+short run
+array_var arr
+string_var str
+array_var iter
+short sht
+ref refVar
+float fl
+
+begin gamemode
+
+if run
+
+set run to 0
+
+; ----- Get/SetClassSkills, ActorValueToCode, operator+= ------
+; verify these in the class menu
+; (must run after chargen in order to have an effect)
+
+let arr := player.GetClassSkills 
+foreach iter <- arr
+	let sht := iter["value"]
+	Print ActorValueToStringC sht
+loop
+
+let arr := ar_Construct Array
+set sht to 0
+while sht <  7
+	let arr[sht] := sht + ActorValuetoCode Armorer
+	let sht += 1
+loop
+
+let refVar := player.GetClass
+SetClassSkills arr refVar
+
+;----- SetClassSpecialization/Attribute -----
+if GetClassSpecialization refVar == 0
+	setclassspecialization 1 refVar
+else
+	setClassSpecialization 0 refVar
+endif
+
+if GetClassAttribute 0 refVar == 0
+	SetClassAttributeC 0 1 refVar
+else
+	SetClassAttribute 0 Strength refVar
+endif
+
+; ----- GetCreatureModelPaths -----
+; backhair, boarbody, boarhead
+let arr := GetCreatureModelPaths ArenaBoar
+if eval (!arr || (ar_Size arr) != 3)
+	dbg_echo "GetCreatureModelPaths returned null array or array of incorrect size"
+else
+	dbg_echo "Should see BackHair, BoarBody, BoarHead"
+	ar_Dump arr
+endif
+
+; ----- GetUserTime -----
+let arr := GetUserTime
+Print "User Time: " + $arr["hour"] + ":" + $arr["minute"] + " " + $arr["month"] + "/" + $arr["day"] + "/" + $arr["year"]
+
+; ----- Get/SetSkillGoverningAttribute -----
+let sht := GetSkillGoverningAttribute Armorer
+Print "Armorer is governed by " + ActorValueToStringC sht
+SetSkillGoverningAttribute Armorer Intelligence
+let sht := GetSkillGoverningAttribute Armorer
+Print "Armorer set to use " + ActorValuetoStringC sht
+
+; ----- GetWeatherClassification -----
+if GetWeatherClassification Snow != 8 || GetWeatherClassification Rain != 4
+	dbg_echo "GetWeatherClassification failed"
+else
+	dbg_echo "GetWeatherClassification succeeded"
+endif
+
+; ----- ToNumber, float precision compensation -----
+let fl := ToNumber "0.1"
+if eval fl != 0.1
+	dbg_echo "ToNumber 0.1 failed"
+endif
+
+let sht := ToNumber "Ff" 1
+if sht != 255
+	dbg_echo "ToNumber Ff failed"
+endif
+
+let sht := ToNumber "0xFF" 1
+if sht != 255
+	dbg_echo "ToNumber 0xFF failed"
+endif
+
+; ----- GetActiveEffectCodes/Casters
+let arr := player.GetActiveEffectCodes
+if eval (ar_size arr) != player.GetAECount
+	dbg_echo "GetActiveEffectCodes returned array of incorrect size"
+else
+	let sht := 0
+	while sht < ar_Size arr
+		if eval arr[sht] != player.GetNthAECode sht
+			dbg_echo "Active effect code doesn't match expected code"
+		endif
+		let sht += 1
+	loop
+endif
+
+let arr := player.GetActiveEffectCasters
+if eval (ar_size arr) != player.GetAECount
+	dbg_echo "GetActiveEffectCasters returned array of incorrect size"
+else
+	let sht := 0
+	while sht < ar_Size arr
+		if eval arr[sht] != player.GetNthAECaster sht
+			dbg_echo "Active effect caster doesn't match expected code"
+		endif
+		let sht += 1
+	loop
+endif
+
+; ----- GetCurrentRegions -----
+;  test this after COW Tamriel 0 0 to get multiple regions
+let arr := player.GetCurrentRegions
+if eval player.GetParentWorldSpace && !ar_Size arr
+	dbg_Echo "Player is an exterior but GetCurrentRegions returned array of size 0"
+elseif eval (ar_size arr) == 1
+	if eval GetCurrentRegion != arr[0]
+		dbg_Echo "Region returned by GetCurrentRegions doesn't match GetCurrentRegion"
+	endif
+else
+	dbg_Echo "Player is in multiple regions."
+	ar_Dump arr
+endif
+
+; ----- Get/Set combat style flags
+if GetCombatStyleWillYield defaultboar != 0 || GetCombatStylePrefersRanged defaultboar != 0
+	dbg_echo "Combat style flags don't match editor settings"
+endif
+
+SetCombatStyleWillYield defaultboar 1
+SetCombatStylePrefersRanged defaultboar 1
+
+if GetCombatStyleWillYield defaultboar != 1 || GetCombatStylePrefersRanged defaultboar != 1
+	dbg_echo "Combat style flags don't match modified settings"
+endif
+
+; ----- GetLeveledSpells
+
+endif
+end

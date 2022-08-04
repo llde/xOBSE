@@ -1,0 +1,507 @@
+scn obseUnitTest
+
+; inventory commands
+
+; GetNumItems
+; GetInventoryItemtype
+; GetInventoryObject
+; GetEquipmentSlottype
+; GetEquippedObject
+; GetEquippedCurrentValue
+; GetEquippedObjectValue
+; SetEquippedObjectValue
+; SetEquippedCurrentValue
+; GetObjectValue
+; GetCurrentValue
+; GetBaseObject
+; GetType
+
+begin onActivate
+	PrintToConsole "Starting Inventory Unit Test"
+
+	long failed
+	float weight
+	float nuWeight
+	long goldValue
+	long nuGoldValue
+	long objectHealth
+	long nuObjectHealth
+	long baseCharge
+	long nuBaseCharge
+	long damage
+	long nuDamage
+	float speed
+	float nuSpeed
+	float reach
+	float nuReach
+	short weaponType
+	long armorRating
+	long nuArmorRating
+	ref equippedObject
+	long curHealth
+	long nuCurHealth
+	ref poison
+	ref oldPoison
+	ref oldEnchantment
+	ref weaponEnchantment
+	ref enchantment
+
+
+	; GetWeight
+	set weight to GetWeight LowerRobe01white
+	if (weight != 2.0)
+		PrintToConsole "GetWeight LowerRob01white failed!"
+		set failed to failed+ 1
+	endif
+
+	; ModWeight
+	ModWeight -1 LowerRobe01white
+	set nuWeight to GetWeight LowerRobe01white
+	if (nuWeight != (weight -1))
+		PrintToConsole "ModWeight -1 failed"
+		set failed to failed+ 1
+	endif
+	ModWeight 2 LowerRobe01white
+	set nuWeight to GetWeight LowerRobe01white
+	if (nuWeight != weight+1)
+		PrintToConsole "ModWeight +2 failed!"
+		set failed to failed+ 1
+	endif
+
+	; SetWeight
+	SetWeight weight LowerRobe01white
+	set nuWeight to GetWeight LowerRobe01white
+	if (nuWeight != weight)
+		PrintToConsole "SetWeight failed"
+		set failed to failed+ 1
+	endif
+
+	; GetGoldValue
+	set goldValue to GetGoldValue DAEbonyBlade
+	if (goldValue != 5000)
+		PrintToConsole "GetGoldValue failed!" 
+		set failed to failed+ 1
+	endif
+	
+	; ModGoldValue
+	ModGoldValue -100 DAEbonyBlade
+	set nuGoldValue to GetGoldValue DAEbonyBlade
+	if (nuGoldValue != (goldValue - 100))
+		PrintToConsole "ModGoldValue failed!" 
+		set failed to failed+ 1
+	endif
+
+	; SetGoldValue
+	SetGoldValue goldValue DAEbonyBlade
+	set nuGoldValue to GetGoldValue DAEbonyBlade
+	if (goldValue != nuGoldValue)
+		PrinttoConsole "SetGoldValue failed!"
+		set failed to failed+ 1
+	endif
+
+
+	; GetObjectHealth
+	set objectHealth to GetObjectHealth DAEbonyBlade
+	if (objectHealth != 800)
+		PrintToConsole "GetObjectHealth failed"
+		set failed to failed+ 1
+	endif
+
+	; ModObjectHealth
+	ModObjectHealth 50 DAEbonyBlade
+	set nuObjectHealth to GetObjectHealth DAEbonyBlade
+	if (nuObjectHealth != 850)
+		PrintToConsole "ModObjectHealth failed!"
+		set failed to failed+ 1
+	endif
+	; SetObjectHealth
+	SetObjectHealth objectHealth DAEbonyBlade
+	set objectHealth to GetObjectHealth DAEbonyBlade
+	if (objectHealth != 800)
+		PrintToConsole "GetObjectHealth failed"
+		set failed to failed+ 1
+	endif
+
+	; GetEquipmentSlot
+	if (GetEquipmentSlot DAEbonyBlade != 16)
+		PrintToConsole "GetEquipmentSlot DAEbonyBlade failed!"
+		set failed to failed+ 1
+	endif 
+
+	if (GetEquipmentSlot LowerRobe05 != 18)
+		PrintToConsole "GetEquipmentSlot LowerRobe05 failed!"
+		set failed to failed+ 1
+	endif
+	; SetEquipmentSlot
+	SetEquipmentSlot 20 LowerRobe05 
+	if (GetEquipmentSlot LowerRobe05 != 20)
+		PrintToConsole "SetEquipmentSlot 20 LowerRobe05 failed!"
+		set failed to failed+ 1
+	endif
+	SetEquipmentSlot 18 LowerRobe05 
+	if (GetEquipmentSlot LowerRobe05 != 18)
+		PrintToConsole "SetEquipmentSlot 18 LowerRobe05 failed!"
+		set failed to failed+ 1
+	endif
+
+	; GetEnchantmentCharge
+	set baseCharge to GetEnchantmentCharge DASanguineRose
+	if (baseCharge != 3000) 
+		PrintToConsole "GetEquipmentCharge failed"
+		set failed to failed+ 1
+	endif
+
+	; ModEnchantmentCharge
+	ModEnchantmentCharge -1000 DASanguineRose
+	set nuBaseCharge to GetEnchantmentCharge DASanguineRose
+	if (nuBaseCharge != 2000)
+		PrintToConsole "ModEnchantmentCharge failed!"
+		set failed to failed+ 1
+	endif
+	; SetEnchantmentCharge
+	SetEnchantmentCharge baseCharge DASanguineRose
+	set nuBaseCharge to GetEnchantmentCharge DASanguineRose
+	if (nuBaseCharge != baseCharge)
+		PrintToConsole "SetEnchantmentCharge failed!"
+		set failed to failed+ 1
+	endif
+
+	; IsQuestItem
+	if ((IsQuestItem TG01RohssansSword == 0) || (IsQuestItem DASanguineRose == 1))
+		PrintToConsole "IsQuestItem failed!"
+		set failed to failed+1
+	endif
+	; SetQuestItem
+	SetQuestItem 0 TG01RohssansSword
+	if (IsQuestItem TG01RohssansSword == 1)
+		PrintToConsole "SetQuestItem failed!"
+		set failed to failed+1
+	endif
+	SetQuestItem 1 TG01RohssansSword
+	if (IsQuestItem TG01RohssansSword == 0)
+		PrintToConsole "SetQuestItem failed!"
+		set failed to failed+1
+	endif	
+
+	; GetAttackDamage
+	set damage to GetAttackDamage TestQASword2
+	if (damage != 10)
+		PrintToConsole "GetAttackDamage weapon failed!"
+		set failed to failed+1
+	endif
+	; ModAttackDamage
+	ModAttackDamage 5 TestQASword2
+	set nuDamage to GetAttackDamage TestQASword2
+	if (nuDamage != 15)
+		PrintToConsole "ModAttackDamage weapon failed!"
+		set failed to failed+1
+	endif
+	; SetAttackDamage
+	SetAttackDamage damage TestQASword2
+	set nuDamage to GetAttackDamage TestQASword2
+	if (nuDamage != damage)
+		PrintToConsole "SetAttackDamage weapon failed!"
+		set failed to failed+1
+	endif
+
+	; GetAttackDamage
+	set damage to GetAttackDamage EncArrow2SteelFireDamage
+	if (damage != 9)
+		PrintToConsole "GetAttackDamage ammo failed!"
+		set failed to failed+1
+	endif
+	; ModAttackDamage
+	ModAttackDamage 5 EncArrow2SteelFireDamage
+	set nuDamage to GetAttackDamage EncArrow2SteelFireDamage
+	if (nuDamage != 14)
+		PrintToConsole "ModAttackDamage ammo failed!"
+		set failed to failed+1
+	endif
+	; SetAttackDamage
+	SetAttackDamage damage EncArrow2SteelFireDamage
+	set nuDamage to GetAttackDamage EncArrow2SteelFireDamage
+	if (nuDamage != damage)
+		PrintToConsole "SetAttackDamage ammo failed!"
+		set failed to failed+1
+	endif
+
+	; GetWeaponSpeed
+	set speed to GetWeaponSpeed EnchSteelShortswordDraSpeed
+	if (speed < 1.19 || speed > 1.21 )
+		PrintToConsole "GetWeaponSpeed weapon failed!"
+		set failed to failed+1
+	endif
+	; ModWeaponSpeed
+	ModWeaponSpeed -.3 EnchSteelShortswordDraSpeed
+	set nuSpeed to GetWeaponSpeed EnchSteelShortswordDraSpeed
+	if (nuSpeed < .89 || nuSpeed > .91)
+		PrintToConsole "ModWeaponSpeed weapon failed!"
+		set failed to failed+1
+	endif 
+	; SetWeaponSpeed
+	SetWeaponSpeed speed EnchSteelShortswordDraSpeed
+	set nuSpeed to GetWeaponSpeed EnchSteelShortswordDraSpeed
+	if (nuSpeed < 1.19 || speed > 1.21)
+		PrintToConsole "SetWeaponSpeed weapon failed!"
+		set failed to failed+1
+	endif 
+	; GetWeaponSpeed
+	set speed to GetWeaponSpeed Arrow5Elven
+	if (speed != 1.0)
+		PrintToConsole "GetWeaponSpeed ammo failed!"
+		set failed to failed+1
+	endif
+	; ModWeaponSpeed
+	ModWeaponSpeed -.3 Arrow5Elven
+	set nuSpeed to GetWeaponSpeed Arrow5Elven
+	if (nuSpeed < .69 || nuSpeed > .71)
+		PrintToConsole "ModWeaponSpeed ammo failed!"
+		set failed to failed+1
+	endif 
+	; SetWeaponSpeed
+	SetWeaponSpeed speed Arrow5Elven
+	set nuSpeed to GetWeaponSpeed Arrow5Elven
+	if (nuSpeed != speed)
+		PrintToConsole "SetWeaponSpeed ammo failed!"
+		set failed to failed+1
+	endif 
+
+	; GetWeaponReach
+	set reach to GetWeaponReach EnchSteelShortswordDraSpeed
+	if (reach < .79 || reach > .81)
+		PrintToConsole "GetWeaponReach failed!"
+		set failed to failed+1
+	endif
+	; ModWeaponReach
+	ModWeaponReach .1 EnchSteelShortswordDraSpeed
+	set nuReach to GetWeaponReach EnchSteelShortswordDraSpeed
+	if (nuReach < .89 || nuReach > .91)
+		PrintToConsole "ModWeaponReach failed!"
+		set failed to failed+1
+	endif
+	; SetWeaponReach
+	SetWeaponReach reach EnchSteelShortswordDraSpeed
+	set nuReach to GetWeaponReach EnchSteelShortswordDraSpeed
+	if (nuReach  < .79 || nuReach > .81)
+		PrintToConsole "SetWeaponReach failed!"
+		set failed to failed+1
+	endif
+
+	; GetWeaponType
+	if (GetWeaponType EnchSteelShortswordDraSpeed != 0 || GetWeaponType WeapSteelClaymoreFine !=1)
+		PrintToConsole "GetWeaponType blade failed!"
+		set failed to failed+1
+	endif
+	if (GetWeaponType WeapSteelMaceFine != 2 || GetWeaponType WeapSteelWarhammer != 3)
+		PrintToConsole "GetWeaponType blunt failed!"
+		set failed to failed+1
+	endif
+	if (GetWeaponType MS92SteelBlackBow != 5 || GetWeaponType MG03Staff != 4)
+		PrintToConsole "GetWeaponType  bow or staff failed!"
+		set failed to failed+1
+	endif
+	; SetWeaponType
+	set weaponType to GetWeaponType TestQASword2
+	SetWeaponType 2 TestQASword2 
+	if (GetWeaponType TestQASword2 != 2)
+		PrintToConsole "SetWeaponType failed!"
+		set failed to failed+1
+	endif
+	SetWeaponType 0 TestQASword2 
+	if (GetWeaponType TestQASword2 != 0)
+		PrintToConsole "SetWeaponType failed!"
+		set failed to failed+1
+	endif
+
+	; GetIgnoresResistence
+	; SetIgnoresResistence
+	if (GetIgnoresResistence TestQASword2 == 1)
+		PrintToConsole "GetIgnoresResistence weapon failed!"
+		set failed to failed+1
+	endif
+
+	SetIgnoresResistence 1 TestQASword2
+	if (GetIgnoresResistence TestQASword2 == 0)
+		PrintToConsole "SetIgnoresResistence weapon 1 failed!"
+		set failed to failed+1
+	endif
+	SetIgnoresResistence 0 TestQASword2
+	if (GetIgnoresResistence TestQASword2 == 1)
+		PrintToConsole "SetIgnoresResistence weapon 2 failed!"
+		set failed to failed+1
+	endif
+	
+	if (GetIgnoresResistence Arrow8Daedric == 0)
+		PrintToConsole "GetIgnoresResistence ammo failed!"
+		set failed to failed+1
+	endif
+
+	SetIgnoresResistence 0 Arrow8Daedric
+	if (GetIgnoresResistence Arrow8Daedric == 1)
+		PrintToConsole "SetIgnoresResistence ammo failed!"
+		set failed to failed+1
+	endif
+	SetIgnoresResistence 1 Arrow8Daedric
+	if (GetIgnoresResistence Arrow8Daedric == 0)
+		PrintToConsole "SetIgnoresResistence ammo failed!"
+		set failed to failed+1
+	endif
+
+	; GetArmorAR
+	set armorRating to GetArmorAR ChainmailCuirass
+	if (armorRating != 800)
+		PrintToConsole "GetArmorAR failed!"
+		set failed to failed+1
+	endif
+	; ModArmorAR
+	ModArmorAR 50 ChainmailCuirass
+	set nuArmorRating to GetArmorAR ChainmailCuirass
+	if (nuArmorRating != 850)
+		PrintToConsole "ModArmorAR failed!"
+		set failed to failed+1
+	endif	
+	; SetArmorAR
+	SetArmorAR armorRating ChainmailCuirass
+	set nuArmorRating to GetArmorAR ChainmailCuirass
+	if (nuArmorRating != armorRating)
+		PrintToConsole "SetArmorAR failed!"
+		set failed to failed+1
+	endif
+
+	; GetArmorType
+	if (GetArmorType ChainmailCuirass != 0 || GetArmorType OrcishBoots != 1)
+		PrintToConsole "GetArmorType failed!"
+		set failed to failed+1
+	endif
+	
+	; SetArmorType
+	SetArmorType 1 ChainMailCuirass
+	if (GetArmorType ChainmailCuirass != 1)
+		PrintToConsole "SetArmorType failed!"
+		set failed to failed+1
+	endif
+	SetArmorType 0 ChainMailCuirass
+	if (GetArmorType ChainmailCuirass != 0)
+		PrintToConsole "SetArmorType failed!"
+		set failed to failed+1
+	endif
+
+	; GetSoulLevel
+	if (GetSoulLevel SoulGemEmpty1Petty != 0 || GetSoulLevel SoulGem5Grand3CommonSoul != 3)
+		PrintToConsole "GetSoulLevel failed!"
+		set failed to failed+1
+	endif 
+	; GetSoulGemCapacity
+	if (GetSoulGemCapacity SoulGemEmpty1Petty != 1 || GetSoulGemCapacity SoulGem5Grand3CommonSoul != 5)
+		PrintToConsole "GetSoulGemCapacity failed!"
+		set failed to failed+1
+	endif 
+
+	; GetEquippedCurrentHealth
+	; ModEquippedCurrentHealth
+	; SetEquippedCurrentHealth
+	set equippedObject to player.GetEquippedObject 16
+	set objectHealth to player.GetObjectHealth equippedObject
+
+	player.SetECHealth objectHealth 16
+
+	set curHealth to player.GetECHealth 16
+	if (curHealth != objectHealth)
+		PrintToConsole "SetEquippedCurrentHealth failed!"
+		set failed to failed+1
+	endif	
+
+	set nuObjectHealth to (objectHealth - 50)
+	player.ModEquippedCurrentHealth -50 16
+	set nuCurHealth to player.GetECHealth 16
+	if (nuobjectHealth != nuCurHealth)
+		PrintToConsole "ModEquippedCurrentHealth failed!"
+		set failed to failed+1
+	endif
+
+	player.SetECHealth objectHealth 16
+
+	; SetEquippedWeaponPoison
+	; GetEquippedWeaponPoison
+	; SetEquippedPoison
+	set poison to player.RemoveEquippedWeaponPoison
+	if (player.GetEquippedWeaponPoison != 0  || poison != 0)
+		PrintToConsole "RemoveEquippedWeaponPoison failed!"
+		set failed to failed+1
+	endif
+
+	set oldPoison to player.SetEquippedWeaponPoison PotionDamageAttrAgilityS
+	if (player.GetEquippedWeaponPoison != PotionDamageAttrAgilityS || oldPoison != 0)
+		PrintToConsole "SetEquippedWeaponPoison failed!"
+		set failed to failed+1
+	endif
+	set poison to player.RemoveEquippedWeaponPoison
+	if (player.GetEquippedWeaponPoison != 0 || poison != PotionDamageAttrAgilityS)
+		PrintToConsole "SetEquippedWeaponPoison failed!"
+		set failed to failed+1
+	endif
+	player.AddItem poison 1
+
+	
+	; GetEnchantment
+	if (GetEnchantment WeapSteelShortsword != 0)
+		PrintToConsole "GetEnchantment failed!"
+		set failed to failed+1
+	endif
+	; SetEnchantment
+	set oldEnchantment to SetEnchantment DAEbonyBladeENCH WeapSteelShortsword
+	set weaponEnchantment to GetEnchantment WeapSteelShortsword
+	if (weaponEnchantment != DAEbonyBladeENCH || oldEnchantment != 0)
+		PrintToConsole "GetEnchantment failed!"
+		set failed to failed+1
+	endif
+	set enchantment to RemoveEnchantment WeapSteelShortsword
+	if (enchantment != DAEbonyBladeENCH || GetEnchantment WeapSteelShortsword != 0)
+		PrintToConsole "SetEnchantment failed!"
+		set failed to failed+1
+		
+	endif
+
+	; GetEquippedCurrentCharge
+	; SetEquippedCurrentCharge
+	; ModEquippedCurrentCharge
+
+
+	PrintToConsole "Ending Inventory Unit Test: %.0f failed", failed
+
+
+	; SetCurrentHealth
+
+
+; IsClonedForm
+; CloneForm
+
+; SetName
+; SetModelPath
+; SetMaleBipedPath
+; SetFemaleBipedPath
+; SetMaleGroundPath
+; SetFemaleGroundPath
+; SetMaleIconPath
+; SetFemaleIconPath
+
+
+; SetIsFood
+; SetIsPoison
+; IsWeapon
+; IsAmmo
+; IsArmor
+; IsClothing
+; IsBook
+; IsIngredient
+; IsContainer
+; isKey
+; IsAlchemyItem
+; IsApparatus
+; IsSoulGem
+; IsSigilStone
+; IsDoor
+; IsActivator
+; IsLight
+; IsFurniture
+

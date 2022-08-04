@@ -1,0 +1,205 @@
+scn obseDemoQuestScript
+
+float fQuestDelayTime
+long state
+short kWeaponSlot
+
+ref baseWeapon
+ref clonedWeapon
+short bStateDone
+short bWaitingForButton
+short button
+ref oldEnchant
+ref clonedEnchant
+ref poison
+ref diluted
+long oldMagnitude
+long nuMagnitude
+long oldDuration
+long nuDuration
+short effectCount
+
+
+begin GameMode
+
+if (IsKeyPressed2 50)
+		MessageBox "OBSE v0009 Demo" "Proceed"
+endif
+
+if (bStateDone == 1 && IsKeyPressed2 49)
+	if (state == 0)
+		MessageBox "Clone the Weapon" "Proceed" "Wait"
+	elseif (state == 1)
+		MessageBox "Rename the Weapon" "Proceed" "Wait"
+	elseif (state == 2)
+		MessageBox "Increase Damage and Reduce Speed" "Proceed" "Wait"
+	elseif (state == 3)
+		MessageBox "Boost Enchantment" "Proceed" "Wait"
+	elseif (state == 4)
+		MessageBox "Change Model to Sabre" "Proceed" "Wait"
+	elseif (state == 5)
+		MessageBox "Switch to 2-handed" "Proceed" "Wait"
+	elseif (state == 6)
+		MessageBox "Switch to 1-handed Blunt" "Proceed" "Wait"
+	elseif (state == 7)
+		MessageBox "Switch to 2-handed Blunt" "Proceed" "Wait"
+	elseif (state == 8)
+		MessageBox "Switch to Staff" "Proceed" "Wait"
+	elseif (state == 9)
+		MessageBox "Switch back to 1-handed Blade" "Proceed" "Wait"
+	elseif (state == 10)
+		MessageBox "Add Poison to blade" "Proceed" "Wait"
+	elseif (state == 11)
+		MessageBox "Wipe off the poison" "Proceed" "Wait"
+	elseif (state == 12)
+		MessageBox "Dilute the poison" "Proceed" "Wait"
+	endif
+	set state to state + 1
+	set bWaitingForButton to 1
+endif
+
+if (bWaitingForButton)
+	set button to GetButtonPressed
+	if (button > -1) 
+		if (button == 0)
+			PrintToConsole "Proceed: %.0f", state
+			set bStateDone to 0
+		elseif (button == 1)
+			PrintToConsole "Wait: %.0f", state
+			if (state != 0)
+				set state to state - 1
+			endif
+		endif
+		set bWaitingForButton to 0
+	endif
+endif
+
+
+if (bStateDone == 0)
+	if (state == 0)
+		set fQuestDelayTime to .5
+		set kWeaponSlot to 16
+	elseif (state == 1)
+		; clone and add a new copy of the weapon =======================================
+		set baseWeapon to player.GetEquippedObject kWeaponSlot
+		set clonedWeapon to CloneForm baseWeapon
+		player.AddItem clonedWeapon 1
+	elseif (state == 2)
+		; reset the name of the weapon =======================================
+		SetName "Sabre of Flame" clonedWeapon
+	elseif (state == 3)
+		; Increase damage and decrease speed =======================================
+		ModAttackDamage 20.0 clonedWeapon
+		ModWeaponSpeed -.3 clonedWeapon
+	elseif (state == 4)
+		; Boost enchantment =======================================
+		set oldEnchant to GetEnchantment clonedWeapon
+		set clonedEnchant to CloneForm oldEnchant
+		SetNthEffectItemMagnitude 15 clonedEnchant
+		SetEnchantment clonedEnchant clonedWeapon
+	elseif (state == 5)
+		; Change Model =======================================
+		player.unequipitem clonedWeapon
+		SetWeaponType 0 clonedWeapon
+		SetModelPath "Weapons\Adonnay\ebony_sabre_1h.NIF" clonedWeapon
+		SetIconPath "Weapons\Adonnay\SBebony_1h.dds" clonedWeapon
+		player.equipitem clonedWeapon
+	elseif (state == 6)
+		; Switch to 2 handed =======================================
+		player.unequipitem clonedWeapon
+		SetWeaponType 1 clonedWeapon
+		SetModelPath "Weapons\Adonnay\ebony_sabre_2h.NIF" clonedWeapon
+		SetIconPath "Weapons\Adonnay\SBebony_2h.dds" clonedWeapon
+		player.equipitem clonedWeapon
+	elseif (state == 7)
+		; Switch to 1h Blunt =======================================
+		player.unequipitem clonedWeapon
+		SetWeaponType 2 clonedWeapon
+		SetModelPath "Weapons\Steel\Mace.NIF" clonedWeapon
+		SetIconPath "Weapons\Steel\Mace.dds" clonedWeapon
+		player.equipitem clonedWeapon
+	elseif (state == 8)
+		; Switch to 2h Blunt  =======================================
+		player.unequipitem clonedWeapon
+		SetWeaponType 3 clonedWeapon
+		SetModelPath "Weapons\Steel\Warhammer.NIF" clonedWeapon
+		SetIconPath "Weapons\Steel\Warhammer.dds" clonedWeapon
+		player.equipitem clonedWeapon
+	elseif (state == 9)
+		; Switch to Staff  =======================================
+		player.unequipitem clonedWeapon
+		SetWeaponType 4 clonedWeapon
+		SetModelPath "Staffs\TestStaff.NIF" clonedWeapon
+		SetIconPath "Weapons\Weapons\Staff.dds" clonedWeapon
+
+		; set the enchantment type to staff
+		SetEnchantmentType 1 clonedEnchant
+		; set the range of the 1st item in the enchantment to 2 (target)
+		SetNthEffectItemRange 2 clonedEnchant 0
+		player.equipitem clonedWeapon
+
+	elseif (state == 10)
+		; Change back to  1-h blade =====================
+		player.unequipitem clonedWeapon
+		SetWeaponType 0 clonedWeapon
+		SetModelPath "Weapons\Adonnay\ebony_sabre_1h.NIF" clonedWeapon
+		SetIconPath "Weapons\Adonnay\SBebony_1h.dds" clonedWeapon
+		player.equipitem clonedWeapon
+
+		; set the enchantment type to staff
+		SetEnchantmentType 2 clonedEnchant
+		; set the range of the 1st item in the enchantment to 2 (target)
+		SetNthEffectItemRange 1 clonedEnchant 0
+		player.equipitem clonedWeapon
+	elseif (state == 11)
+		; Add poison to blade =======================================
+		player.SetEWPoison TestQAPoison
+	elseif (state == 12)
+		; Wipe off poison =======================================		
+		set poison to player.RemEWPoison		
+		player.additem poison 1
+	elseif (state == 13)
+		; Dilute Poison =========================================
+		set diluted to CloneForm poison
+		set effectCount to GetMagicItemEffectCount diluted
+		; cut the magnitude and the duration in half of the first 4 effect items
+		if (effectCount > 0)
+			set oldMagnitude to GetNthEffectItemMagnitude diluted 0
+			set nuMagnitude to oldMagnitude / 2
+			SetNthEffectItemMagnitude nuMagnitude diluted 0
+			set oldDuration to GetNthEffectItemDuration diluted 0
+			set nuDuration to oldDuration / 2
+			SetNthEffectItemDuration nuDuration diluted 0
+		endif
+		if (effectCount > 1)
+			set oldMagnitude to GetNthEffectItemMagnitude diluted 1
+			set nuMagnitude to oldMagnitude / 2
+			SetNthEffectItemMagnitude nuMagnitude diluted 1
+			set oldDuration to GetNthEffectItemDuration diluted 1
+			set nuDuration to oldDuration / 2
+			SetNthEffectItemDuration nuDuration diluted 1
+		endif
+		if (effectCount > 2)
+			set oldMagnitude to GetNthEffectItemMagnitude diluted 2
+			set nuMagnitude to oldMagnitude / 2
+			SetNthEffectItemMagnitude nuMagnitude diluted 2
+			set oldDuration to GetNthEffectItemDuration diluted 2
+			set nuDuration to oldDuration / 2
+			SetNthEffectItemDuration nuDuration diluted 2
+		endif
+		if (effectCount > 3)
+			set oldMagnitude to GetNthEffectItemMagnitude diluted 3
+			set nuMagnitude to oldMagnitude / 2
+			SetNthEffectItemMagnitude nuMagnitude diluted 3
+			set oldDuration to GetNthEffectItemDuration diluted 3
+			set nuDuration to oldDuration / 2
+			SetNthEffectItemDuration nuDuration diluted 3
+		endif
+		;player.removeitem poison 1
+		player.additem diluted 1
+	endif
+
+	set bStateDone to 1
+endif
+
+end

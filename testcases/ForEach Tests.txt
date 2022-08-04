@@ -1,0 +1,88 @@
+scn obseTestForEachSCR
+
+array_var arr
+array_var arrIter
+
+string_var str
+string_var strIter
+
+short Run
+
+short short1
+short short2
+
+string_var output
+
+begin gamemode
+
+if (Run == 1)
+	let Run := 0
+
+	let arr := ar_Construct Array
+	let arr[0] := 0
+	let arr[1] := 1
+	let arr[2] := 2
+	let arr[3] := 3
+
+	PrintToFile eachlog "## Array, 4 elems ##"
+	PrintC "## Array, 4 elems ##"
+
+	ForEach arrIter <- arr
+		let short1 := arrIter["key"]
+		let short2 := arrIter["value"]
+		PrintC "  %.0f : %.0f" short1 short2
+		PrintToFile eachlog "%.0f %.0f" short1 short2								; PASSED
+	Loop
+
+	PrintToFile eachlog "## String 'Peace Love and Pretzels' ##"
+	PrintC "## String 'Peace Love and Pretzels' ##"
+
+	let str := "Peace Love and Pretzels"
+	let short1 := 0
+
+	ForEach strIter <- str
+		PrintC "  %.0f : %z" short1 strIter
+		PrintToFile eachlog $strIter
+		let short1 := short1 + 1
+	Loop																						; PASSED
+
+	PrintToFile eachlog "## Empty array ##"
+	PrintC "## Empty Array ##"
+
+	let arr := ar_Construct StringMap
+
+	ForEach arrIter <- arr
+		PrintC "  No elems in array, why are you seeing this?"					; PASSED (loop not entered)
+		PrintToFile eachlog "  No elems in array, why are you seeing this?"
+	Loop
+
+	let arr["Apple"] := "Orange"
+	let arr["Banana"] := "Whonana?"
+	let arr[viligovaxis] := "What?"
+	
+	PrintC "## StringMap 3 elems ##"
+	PrintToFile eachlog "## StringMap 3 elems ##"
+
+	ForEach arrIter <- arr																	; PASSED
+		let output := "  " + arrIter[key] + " : " + arrIter[value]
+		PrintC $output
+		PrintToFile eachlog $output
+	Loop
+
+	PrintC "## StringMap 4 elems print elems banana:pear ##"
+	PrintToFile eachlog "## StringMap 4 elems print elems banana:pear ##"
+
+	let arr["pear"] := "Donde estan mis pinsas?"
+
+	ForEach arrIter <- arr["banana":"pear"]											; PASSED
+		let output := "  " + arrIter[key] + " : " + arrIter[value]
+		PrintC $output
+		PrintToFile eachlog $output
+	Loop
+endif
+
+end
+
+		
+
+	

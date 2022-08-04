@@ -1,0 +1,227 @@
+*******************@shadeMe
+[[[		FIX
+- Port NVSE fixes
+- Recent Steam update broke the steam loader?
+- GetNumRefsInCell - wrong return type (currently ref)
+- IsModLoaded spams the console when called from a result script
+- The error offset in the runtime error messages seems to be off when inside UDF calls? (Fixed?)
+- HasBeenPickedUp
+	Never worked? Investigate
+- GetGroundSurfaceMaterial needs to be more consistent
+	>> Look into foot collision sounds and work backwards, grass detection?
+- SetCurrentSoulLevel doesn't seem to work on references of cloned form soul gems either.
+	http://forums.bethsoft.com/topic/1410286-rel-oblivion-script-extender-obse-0021-beta/page__view__findpost__p__21812865
+	>> Reproducible but I can't get regular InvRefs to work either, the travesty!
+- GetClimateVolatility has invalid ParamInfo, doesn't return the correct value
+	
+
+[[[		ENHANCEMENT
+- Clarify string var lifetimes in the docs
+- Add support for deleting actors with DeleteReference
+- Expose scroll (TESObjectBOOK) info to OnScrollCast
+	>> Will probably need to hook the spell item queuing code, implement a GetEventExtraData command to fetch it
+- Modify GetAttackDamage to return the calculated damage for an actor when called on one., same for GetArmorAR
+
+	[[[		Plugin API
+	- IsCompilerOverrideActive()
+		>> Check if the num of args in the bytecode is negative - If yes, override is active
+			numArgs = *(UInt16*)((*opcodeOffsetPtr) + (UInt32)arg1) (as passed by the COMMAND_ARGS macro, see 0x004FAE96)
+	- Expose ModLocalDataManager
+		>> Will involve conversion of data from ArrayElement to the interface's wrapper class and vice versa
+	- Look into exposing the ExpressionParser/Evaluator class
+		>> Worth the trouble?
+	- The ability for plugins to request/create an inventory reference (by passing things like ExtraContainerChanges::EntryData & Co).
+	
+
+[[[		ADDITION
+- actor.TriggerAttackOn target
+- ModifyFaceGen, wie Skyrim
+- Look into ray casting with havok
+- Aliases, wie Skyrims
+
+	[[[		Events
+	- OnCollision
+		>> Hook Havok narrow phase code/collision listener?
+	- OnRecharge
+		http://forums.bethsoft.com/topic/1427044-rel-oblivion-script-extender-obse-0021-beta-2/page__view__findpost__p__22147949
+	- Animation events, like when a sound annotation event plays	
+
+
+	[[[		Commands
+	- GetWorldSpaceMapMarkers
+		http://forums.bethsoft.com/topic/1479430-rel-oblivion-script-extender-obse-0021/?p=23227985
+	- ApplySpell, applies a non-ability/disease spell on the calling magic target
+		>> Must trigger the onMagicApply event
+	- SetBaseLevel, works the same as setLevel but accepts base object ref (except for the player, use setlevel there)
+		>> Will need to reproduce all the code in SetLevel's handler
+	- GetRegionWeather, returns an array with weather ids of a region (to check if it can snow for instance)
+		>> Need to decode TESRegionWeatherData and co.
+	- Drop2, keeps the extra data on the dropping ref
+		http://forums.bethsoft.com/topic/1427044-rel-oblivion-script-extender-obse-0021-beta-2/page__view__findpost__p__21958870
+
+
+[[[		LIMBO
+- Compiler override causes if expressions to eat up opening brackets
+	http://forums.bethsoft.com/topic/1450528-rel-construction-set-extender/?p=22817115
+	>> See how hlp worked around this in NVSE
+- Fix SetLevel crashing when called on an actor using a bow
+	>> Local buffer overrun somewhere in the NetImmerse/renderer code
+- Look into tList::Remove - It seems to corrupt the list's state somehow (Various improvement to tList were made)
+	>> Does it?
+- Fix vanilla magic effect script issue
+	http://forums.bethsoft.com/topic/1390476-relz-oblivion-script-extender-obse-0020/page__view__findpost__p__21416595
+- Investigate housekeeping for array variables owned by scripts on temporary references/tokens. Currently refcounts for such variables are not decremented when the reference is destroyed by or the token is removed from the game, which means scripters have to be careful with their use.
+	>> Would require storing info about the objects to which scripts are attached and at least a couple of hooks.
+
+
+
+##################
+## 0019
+##################
+
+
+******************* @scruggsy
+
+-Allow Update3D to be called on the player while in first-person, and to update the first-person skeleton as well.
+
+-Remove/Replace nif for a loaded TESWeather (Reneer)
+
+-Figure out if multiple instances of a sound will play; if not see about adding support for it (Exelixis)
+
+@scruggsy-SetPackageType (QQuix)
+	:: would need to verify data matches that expected for type (target, location)
+
+-Allow forms like TESPackage to be saved in savegame when cloned (QQuix)
+
+
+-GetRaceDefaultEyes (LogicDragon)
+
+-GetQuickKeyMenuOpen
+
+-Make GetBoundingBox work on non-actors (which don't have a BBX in their .nifs)
+
+-(QQuix) Adjust path grid edges to accommodate dynamically-added or -removed objects (primarily buildings in exterior cells)
+
+-CalcEnchantmentCharge - get the game to calculate the enchantment value for an object enchanted with SetEnchantment as if it had been enchanted using the in-game menu (Claviticus)
+
+-Get ground height <- what they really want is collision with nearest surface below a point.
+
+-get displayed topics, text for a particular topic
+
+-SetPathNodePreferred
+
+-SetPathEdgeExists
+
+-SetCellMusicType (Arthmoor) <- he wants to be able to turn the music off too
+
+-Get contents of a file stored in a bsa (DragoonWraith)
+
+-Trigger/IncrementPlayerSkillUse do not account for major/minor/specialization variation <- add new cmds that do.
+
+-"SetForceSpecialanims:
+"If Specialanims is defined about the motion of any "NPC", always do the motion of Specialanims.""
+	-(cotyounoyume) he's implementing custom attack anims based on equipped weapon.
+
+-Compiler override minor annoyances:
+	-"if (somefunc)" <- "if" eats the open paren, producing mismatched paren error (fix: remove parens or use eval)
+	-can't pass string/ref/array as format string params (but format strings largely deprecated)
+	-Parens required around command/function calls <- can be at least a little more graceful with this
+	-args like actor values generate "unquoted argument" warning if not quoted
+
+-Maegfaer *really* wants something like an OnTrigger event handler.
+
+-Ability to change color of text in MessageBox
+
+-Script effect always applies not applying correctly?
+	::appears to have no effeect, whether set in editor or via script.
+
+******************************
+
+## Test
+
+
+## (Possible) Bug
+
+-Investigate Enhanced Music Control plugin -> seems to be pretty crashy/stuttery, figure out if it's OBSE's fault.
+	:: It's sometimes failing to initialize, then crashing on a NULL pointer in emcCreatePlaylist or emcPlaylistExists.
+
+-Get/Set/ModAVMod not fully case-insensitive? (tejon)
+	-Not able to repro this using exact code given.
+
+
+## Bug
+
+-AddSpell in OnMGEF event handler crashes if spell is an ability, due to the way MiddleHighProcess applies magic effects. Document this or accomodate it
+	::Documented; a fix would be nice, even if we just hook and defer the action
+
+-(vanilla) Activating a persistent reference to transfer it to an inventory adds an ExtraReferencePointer to the object in the container. When dropped, the *original* reference is dropped at the current location. However, the game fails to properly record the change in position in some circumstances, causing it to vanish when the cell is unloaded.
+	:: reported by utumno, repro esp provided.
+
+-Prevent commands that modify inventory (Drop, RemoveItem, etc) from invalidating ExtraContainerChanges when called from within a foreach loop <- probably make cmd handlers check the calling object, defer the action until loop has terminated
+
+## Request
+
+-Allow EquipMe/UnequipMe to be used successfully in OnUnequip/OnEquip event handlers (handlers invoked *before* the equip/unequip action takes place, so commands currently have no net effect)
+
+-GetLastConsumedIngredient/Potion
+
+-SaveGameExists, GetSavegamePath (for plugin API) (kyoma)
+
+
+
+-GetCasterRef, similar to GetActionRef, would return the caster from within an OnMGEFHit event handler (demolishun)
+
+
+
+-Return spell NPC is currently casting/last spell he cast/whether or not he's currently casting (MrFurious)
+
+-GetKillerRef (GlassBoy): within an OnDeath block returns ref to actor who killed calling actor
+
+-RefreshMenu (kyoma, others): update menu e.g. when an item is added to a container during container menu
+
+-IsAutoRun/AlwaysMoveEnabled
+
+-File I/O: probably give each loaded plugin access to a Oblivion/Data/OBSE/Mods/<modname> folder
+
+-Ini file I/O: probably a single command to read an ini and return an array of key/value pairs
+
+-Get/SetAge: requires  facegen decoding
+
+-Get/SetRegionWeatherChance (shademe)
+
+-Default argument values for user-defined functions (haama)
+
+-SetRaceXXX functions
+
+-ModCurrentHealth
+
+-GetActiveMenuSelection return info about Active Effects page of SpellMenu (Asesino)
+
+-Make SetPCSkeleton work in first person & update first person skeleton as well
+
+
+-(kyoma) GetCallingScript (script invoking a function script), GetFunctionValue, IsFunctionScript, GetFunctionArgumentList for function scripts
+
+-(spookyfx) GetHeadTrackTarget
+
+-SetRace
+
+-GetCurrentEffectShader(s): probably on MiddleHighProcess
+	::No, it's particle shader geometry added directly to object's NiNode via BSTempEffect. Probably a job for NifSE
+
+-raycasting with havok
+
+-Make GetProjectile/GetProjectileSource work for nonactor magic casters (spookyfx)
+
+-MenuOpen/MenuClose event handlers (Claviticus)
+
+## Internal
+
+
+## Plugin API
+
+## Docs
+-AI Package, Apparatus, Birthsign, Climate, Combat Style, Enchantment, Flora, Leveled List, Magic Target, Projectile, Sigil Stone, and Weather Types are all missing Qualities. Some of them may legitimately not have any qualities common to other types. In those cases, I'd still recommend having a Qualities box with "None" as its text.
+
+-Misc and Key Types are missing entirely from Oblivion Types
+

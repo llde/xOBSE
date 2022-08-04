@@ -1,0 +1,38 @@
+scn FnReverseArray
+
+; takes an Array and reverses its elements
+; returns 1 if successful, 0 otherwise
+
+array_var toReverse
+
+short index
+short midPoint
+short maxIndex
+
+Begin Function {toReverse}
+	if eval !toReverse
+		Print "Error: Uninitialized array"
+		SetFunctionValue 0
+		return
+	elseif eval (TypeOf toReverse) != "Array"
+		Print "Error: array must be of type Array"
+		SetFunctionValue 0
+		return
+	elseif eval (ar_size toReverse) <= 1
+		SetFunctionValue 1	; nothing more to do, return true
+		return
+	endif
+
+	let midPoint := (ar_Size toReverse) / 2
+	let maxIndex := (ar_Size toReverse) - 1
+
+	while (index < midPoint)
+		let toReverse[maxIndex + 1] := toReverse[index]	; use last element of array as temp storage for element to be swapped
+		let toReverse[index] := toReverse[maxIndex - index]
+		let toReverse[maxIndex - index] := toReverse[maxIndex + 1]
+		let index := index + 1
+	loop
+
+	er_Erase toReverse maxIndex	+ 1 ; remove temp element from end of array
+	SetFunctionValue 1
+end
