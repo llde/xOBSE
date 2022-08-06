@@ -3,7 +3,6 @@
 #include "loader_common/Options.h"
 #include "Inject.h"
 #include "Updates.h"
-
 // requires recent platform sdk
 #ifndef ERROR_ELEVATION_REQUIRED
 #define ERROR_ELEVATION_REQUIRED 740
@@ -33,12 +32,12 @@ bool IsCheckForUpdateEnabled() {
 }
 
 
-int main(int argc, char ** argv)
+int WINAPI WinMain(HINSTANCE instance, HINSTANCE prevInstnce, LPSTR arguments, int nShowCmd)
 {
 	gLog.SetPrintLevel(IDebugLog::kLevel_Error);
 	gLog.SetLogLevel(IDebugLog::kLevel_DebugMessage);
 
-	if(!g_options.Read(argc, argv))
+	if(!g_options.Read(arguments))
 	{
 		PrintError("Couldn't read arguments.");
 		g_options.PrintUsage();

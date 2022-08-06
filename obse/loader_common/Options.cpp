@@ -1,4 +1,9 @@
 #include "Options.h"
+#include <vector>
+#include <iostream>
+#include <string>
+#include <sstream> 
+#include <obse/loader_common/EXEChecksum.h>
 
 Options g_options;
 
@@ -26,153 +31,44 @@ Options::~Options()
 #pragma warning (push)
 #pragma warning (disable : 4065)
 
-bool Options::Read(int argc, char ** argv)
-{
-	if(argc >= 1)
-	{
-		// remove app name
-		argc--;
-		argv++;
+std::vector<std::string> Options::GetArgumentsList(LPSTR args) {
+	std::vector<std::string> tokens;
+	std::string orig = args;
+	std::stringstream   mySstream(orig);
+	std::string         temp;
 
-		int	freeArgCount = 0;
-
-		while(argc > 0)
-		{
-			char	* arg = *argv++;
-			argc--;
-
-			if(arg[0] == '-')
-			{
-				// switch
-				arg++;
-
-				if(!_stricmp(arg, "editor"))
-				{
-					m_launchCS = true;
-				}
-				else if(!_stricmp(arg, "old"))
-				{
-					m_loadOldblivion = true;
-				}
-				else if(!_stricmp(arg, "priority"))
-				{
-					if(argc >= 1)
-					{
-						arg = *argv++;
-						argc--;
-
-						m_setPriority = true;
-
-						if(!_stricmp(arg, "above_normal"))
-						{
-							m_priority = ABOVE_NORMAL_PRIORITY_CLASS;
-						}
-						else if(!_stricmp(arg, "below_normal"))
-						{
-							m_priority = BELOW_NORMAL_PRIORITY_CLASS;
-						}
-						else if(!_stricmp(arg, "high"))
-						{
-							m_priority = HIGH_PRIORITY_CLASS;
-						}
-						else if(!_stricmp(arg, "idle"))
-						{
-							m_priority = IDLE_PRIORITY_CLASS;
-						}
-						else if(!_stricmp(arg, "normal"))
-						{
-							m_priority = NORMAL_PRIORITY_CLASS;
-						}
-						else if(!_stricmp(arg, "realtime"))
-						{
-							m_priority = REALTIME_PRIORITY_CLASS;
-						}
-						else
-						{
-							m_setPriority = false;
-
-							_ERROR("couldn't read priority argument (%s)", arg);
-							return false;
-						}
-					}
-					else
-					{
-						_ERROR("priority not specified");
-						return false;
-					}
-				}
-				else if(!_stricmp(arg, "altexe"))
-				{
-					if(argc >= 1)
-					{
-						m_altEXE = *argv++;
-						argc--;
-					}
-					else
-					{
-						_ERROR("exe path not specified");
-						return false;
-					}
-				}
-				else if(!_stricmp(arg, "altdll"))
-				{
-					if(argc >= 1)
-					{
-						m_altDLL = *argv++;
-						argc--;
-					}
-					else
-					{
-						_ERROR("dll path not specified");
-						return false;
-					}
-				}
-				else if(!_stricmp(arg, "notimeout"))
-				{
-					m_threadTimeout = INFINITE;
-				}
-				else if(!_stricmp(arg, "crconly"))
-				{
-					m_crcOnly = true;
-				}
-				else if(!_stricmp(arg, "nosync"))
-				{
-					// ### only intended for use on WINE
-					m_noSync = true;
-				}
-				else if(!_stricmp(arg, "h") || !_stricmp(arg, "help"))
-				{
-					m_optionsOnly = true;
-				}
-				else if(!_stricmp(arg, "waitforclose"))
-				{
-					m_waitForClose = true;
-				}
-				else if(!_stricmp(arg, "oldinject"))
-				{
-					m_oldInject = true;
-				}
-				else
-				{
-					_ERROR("unknown switch (%s)", arg);
-					return false;
-				}
-			}
-			else
-			{
-				// free arg
-
-				switch(freeArgCount)
-				{
-					default:
-						_ERROR("too many free args (%s)", arg);
-						return false;
-				}
-			}
-		}
+	while (getline(mySstream, temp, ' ')) {
+		tokens.push_back(temp);
 	}
 
-	return Verify();
+	return tokens;
+}
+
+bool Options::Read(LPSTR args)
+{
+	auto argl = GetArgumentsList(args);
+	int	freeArgCount = 0;
+	bool alt_dll = false;
+	for (std::string&  arg : argl){
+		if (alt_dll) {
+			if (arg.starts_with('-')) {
+				PrintError("Expected alternative DLL path got another option");
+				return false;
+			}
+			m_altDLL = arg;
+			alt_dll = false;
+		}
+		else if (arg == "-editor") { m_launchCS = true; }
+		else if (arg == "-h" || arg == "--help") { m_optionsOnly = true; }
+		else if (arg == "-altdll") { alt_dll = true; }
+		else {
+			PrintError("Unsupported option %s", arg.c_str());
+			return false;
+		}
+	}
+	
+
+	return true;
 }
 
 #pragma warning (pop)
@@ -207,9 +103,3 @@ void Options::PrintUsage(void)
 	_MESSAGE("  -oldinject - use the original injection method for the editor");
 }
 
-bool Options::Verify(void)
-{
-	// nothing to verify currently
-
-	return true;
-}

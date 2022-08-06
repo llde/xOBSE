@@ -1,4 +1,5 @@
 #pragma once
+#include <vector>
 
 class Options
 {
@@ -6,9 +7,10 @@ public:
 	Options();
 	~Options();
 
-	bool	Read(int argc, char ** argv);
+	bool	Read(LPSTR args);
 
 	void	PrintUsage(void);
+	std::vector<std::string> GetArgumentsList(LPSTR args);
 
 	bool	m_launchCS;
 	bool	m_loadOldblivion;
@@ -25,9 +27,6 @@ public:
 
 	std::string	m_altEXE;
 	std::string	m_altDLL;
-
-private:
-	bool	Verify(void);
 };
 
 extern Options g_options;
