@@ -33,8 +33,7 @@ static void OnAttach(void)
 	// /extreme/ paranoia check
 	if(!procHookInfo.steamVersion)
 	{
-		_ERROR("not a steam version!?");
-		return;
+		_MESSAGE("Not a steam version? Try loading it however");
 	}
 
 	// build full path to our dll
