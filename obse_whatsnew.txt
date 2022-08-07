@@ -5,6 +5,10 @@ xOBSE 22.7
 		- Write All IR extradata to the parent container extradata
 	Additions:
 		- Introduce handling of swapped mouse buttons configuration
+	Changes:
+		- Change the loader to use the Windows and not the Console subsystems. Should fix issues with Steam Deck.
+		- Bypass stricter check in the steam loader, for confusion about Steam version being applied the japanese patch (CRC marked as GOG version))
+		
 xOBSE 22.6.1
 	Fix:
 		- Fix GetProjectile Regressions
