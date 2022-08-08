@@ -38,17 +38,6 @@ jobs:
         Copy-Item -Path ".\obse\loader\Release\loader.exe" -Destination ".\build\obse_loader.exe"
         Copy-Item -Path ".\obse\Release\steam_loader.dll" -Destination ".\build\obse_steam_loader.dll"
         Copy-Item -Path ".\obse.ini" -Destination ".\build\Data\OBSE\obse.ini"
-
-    - name: VirusTotal
-      uses: crazy-max/ghaction-virustotal@v3
-      with:
-       vt_api_key: '${{ secrets.VIRUSTOTAL }}'
-       update_release_body: true
-       files: |
-            .\build\obse_1_2_416.dll
-            .\build\obse_editor_1_2.dll
-            .\build\obse_loader.exe
-            .\build\obse_steam_loader.dll
             
     - name: Zipping         
       uses: thedoctor0/zip-release@main
@@ -61,4 +50,14 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: .\build\release.zip
-          
+
+    - name: VirusTotal
+      uses: crazy-max/ghaction-virustotal@v3
+      with:
+       vt_api_key: '${{ secrets.VIRUSTOTAL }}'
+       update_release_body: true
+       files: |
+            .\build\obse_1_2_416.dll
+            .\build\obse_editor_1_2.dll
+            .\build\obse_loader.exe
+            .\build\obse_steam_loader.dll
