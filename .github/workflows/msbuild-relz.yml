@@ -30,13 +30,13 @@ jobs:
 
     - name: Prepare
       run: |
+        New-Item ".\build\Data\OBSE\" -ItemType Directory -Force
         Copy-Item -Path ".\obse\obse\Release 1_2_0_416\obse.dll" -Destination ".\build\obse_1_2_416.dll"
         Copy-Item -Path ".\obse\obse\Release 1_2_0_416\obse.pdb" -Destination ".\build\obse.pdb"
         Copy-Item -Path ".\obse\obse_editor\Release 1_2_0_0\obse_editor.dll" -Destination ".\build\obse_editor_1_2.dll"
         Copy-Item -Path ".\obse\obse_editor\Release 1_2_0_0\obse_editor.pdb" -Destination ".\build\obse_editor.pdb"
         Copy-Item -Path ".\obse\loader\Release\loader.exe" -Destination ".\build\obse_loader.exe"
         Copy-Item -Path ".\obse\Release\steam_loader.dll" -Destination ".\build\obse_steam_loader.dll"
-        New-Item ".\build\Data\OBSE\" -ItemType Directory -Force
         Copy-Item -Path ".\obse.ini" -Destination ".build\Data\OBSE\obse.ini"
 
     - name: VirusTotal
