@@ -52,5 +52,17 @@ jobs:
             
             
     - name: Release            
-      uses: technote-space/release-github-actions@v6
-    
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+            .\obse_1_2_416.dll
+            .\obse.pdb
+            .\obse_editor_1_2.dll
+            .\obse_editor.pdb
+            .\obse_loader.exe
+            .\obse_steam_loader.dll
+            .\obse_whatsnew.txt
+            .\obse_command_doc.html
+            .\README.md
+            .\Data\OBSE\obse.ini
+          
