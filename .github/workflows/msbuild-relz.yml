@@ -53,10 +53,8 @@ jobs:
             .\obse_editor_1_2.dll
             .\obse_loader.exe
             .\obse_steam_loader.dll
-           
-    - name: Release
-      release:
-        name: xOBSE Release
-        runs-on: windows-2019
-        steps:
-          - uses: technote-space/release-github-actions@v6
+            
+            
+    - name: Release            
+      uses: technote-space/release-github-actions@v6
+    
