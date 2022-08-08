@@ -54,7 +54,7 @@ jobs:
       uses: thedoctor0/zip-release@main
       with:
         type: 'zip'
-        path: '.\build'
+        directory: '.\build'
         filename: 'release.zip'
         
     - name: Release            
