@@ -37,7 +37,7 @@ jobs:
         Copy-Item -Path ".\obse\obse_editor\Release 1_2_0_0\obse_editor.pdb" -Destination ".\build\obse_editor.pdb"
         Copy-Item -Path ".\obse\loader\Release\loader.exe" -Destination ".\build\obse_loader.exe"
         Copy-Item -Path ".\obse\Release\steam_loader.dll" -Destination ".\build\obse_steam_loader.dll"
-        Copy-Item -Path ".\obse.ini" -Destination ".build\Data\OBSE\obse.ini"
+        Copy-Item -Path ".\obse.ini" -Destination ".\build\Data\OBSE\obse.ini"
 
     - name: VirusTotal
       uses: crazy-max/ghaction-virustotal@v3
