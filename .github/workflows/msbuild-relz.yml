@@ -1,6 +1,6 @@
-name: MSBuild
+name: MSBuild-Release
 
-on: [push]
+on: [create]
 
 env:
   # Path to the solution file relative to the root of the project.
@@ -38,6 +38,9 @@ jobs:
         Copy-Item -Path ".\obse\Release\steam_loader.dll" -Destination ".\obse_steam_loader.dll"
         New-Item ".\Data\OBSE\" -ItemType Directory -Force
         Copy-Item -Path ".\obse.ini" -Destination ".\Data\OBSE\obse.ini"
+        Copy-Item -Path ".\obse_command_doc.html" -Destination ".\obse_command_doc.html"
+        Copy-Item -Path ".\obse_whatsnew.txt" -Destination ".\obse_whatsnew.txt"
+        Copy-Item -Path ".\README.md" -Destination ".\README.md"
 
 
     - name: VirusTotal
@@ -51,18 +54,9 @@ jobs:
             .\obse_loader.exe
             .\obse_steam_loader.dll
            
-    - name: Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: xOBSE
-        path: |
-            .\obse_1_2_416.dll
-            .\obse.pdb
-            .\obse_editor_1_2.dll
-            .\obse_editor.pdb
-            .\obse_loader.exe
-            .\obse_steam_loader.dll
-            .\obse_whatsnew.txt
-            .\obse_command_doc.html
-            .\README.md
-            .\Data\OBSE\obse.ini
+    - name: Release
+      release:
+        name: xOBSE Release
+        runs-on: windows-2019
+        steps:
+          - uses: technote-space/release-github-actions@v6
