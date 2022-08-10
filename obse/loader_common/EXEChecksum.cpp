@@ -296,7 +296,7 @@ bool TestChecksum(const char * procName, std::string * dllSuffix, ProcHookInfo *
 					break;
 
 				default:	// unknown checksum
-					PrintError("You have an unknown version of Oblivion. Please check http://obse.silverlock.org to make sure you're using the latest version of OBSE, then send an email to the contact addresses listed in obse_readme.txt if this version is not supported in the latest release. (CRC = %08X)", crc);
+					PrintError("You have an unknown version of Oblivion. Please check https://github.com/llde/xOBSE/releases to make sure you're using the latest version of OBSE, then open a github issue if this version is not supported in the latest release. (CRC = %08X)", crc);
 					break;
 			}
 		}
