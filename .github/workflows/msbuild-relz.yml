@@ -44,12 +44,12 @@ jobs:
       with:
         type: 'zip'
         directory: '.\build'
-        filename: 'release.zip'
+        filename: xOBSE-${{ github.event.release.tag_name }}.zip
         
     - name: Release            
       uses: softprops/action-gh-release@v1
       with:
-        files: .\build\release.zip
+        files: .\build\xOBSE-${{ github.event.release.tag_name }}.zip
 
     - name: VirusTotal
       uses: crazy-max/ghaction-virustotal@v3
