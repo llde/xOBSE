@@ -74,6 +74,8 @@ bool Options::Read(LPSTR args)
 		else if (arg == "-old") { m_loadOldblivion = true; }
 		else if (arg == "-oldinject") { m_oldInject = true; }
 		else if (arg == "-notimeout") { m_threadTimeout = INFINITE; }
+		else if (arg == "-crconly") { m_crcOnly = true; }
+		else if (arg == "-ignorecrc") { m_ignorecrc = true; }
 		else {
 			PrintError("Unsupported option %s", arg.c_str());
 			return false;
@@ -114,5 +116,6 @@ void Options::PrintUsage(void)
 //	_MESSAGE("  -waitforclose - wait for the launched program to close");
 //	_MESSAGE("                  designed for use with AlacrityPC and similar");
 	_MESSAGE("  -oldinject - use the original injection method for the editor");
+	_MESSAGE("  -ignorecrc - ignore crc and assume a valid 1.2.416 version");
 }
 

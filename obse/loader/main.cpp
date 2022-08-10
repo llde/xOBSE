@@ -100,7 +100,8 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE prevInstnce, LPSTR arguments, i
 	if(!TestChecksum(procName, &dllSuffix, &procHookInfo))
 	{
 		_ERROR("checksum not found");
-		return -1;
+		if (g_options.m_ignorecrc) 	dllSuffix = "1_2_416";
+		else return -1;
 	}
 
 	if(procHookInfo.steamVersion)

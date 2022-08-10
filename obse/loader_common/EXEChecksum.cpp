@@ -274,6 +274,7 @@ bool TestChecksum(const char * procName, std::string * dllSuffix, ProcHookInfo *
 				case 0x9E284932:	// 1.2.0.416 Polish Antology by Cenega
 				case 0x2D73D2FF:	// 1.2.0.416 japanese unofficial v15 (GOG executable)
 				case 0x0F434E4F:	// 1.2.0.416 Polish GOTY Deluxe (or Antology) from Cenega (after DRM removal)
+				case 0xBF654A48:    // 1.2.0.416 Yet another polish version. 
 					*dllSuffix = "1_2_416";
 					result = true;
 					break;
