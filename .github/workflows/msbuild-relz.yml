@@ -1,7 +1,7 @@
 name: MSBuild-Release
-
-on: [create]
-
+on:
+  release:
+    types: [created]
 env:
   # Path to the solution file relative to the root of the project.
   SOLUTION_FILE_PATH: .\obse
