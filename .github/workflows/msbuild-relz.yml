@@ -57,7 +57,4 @@ jobs:
        vt_api_key: '${{ secrets.VIRUSTOTAL }}'
        update_release_body: true
        files: |
-            .\build\obse_1_2_416.dll
-            .\build\obse_editor_1_2.dll
-            .\build\obse_loader.exe
-            .\build\obse_steam_loader.dll
+            xOBSE-${{ github.event.release.tag_name }}.zip
