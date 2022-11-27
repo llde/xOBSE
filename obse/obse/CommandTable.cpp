@@ -3405,7 +3405,7 @@ bool IsParamOptionalCallingRef(UInt32 paramType)
 
 void CommandTable::DumpCommandDocumentation(UInt32 startWithID)
 {
-	_MESSAGE("FOSE Commands from: %#x", startWithID);
+	_MESSAGE("OBSE Commands from: %#x", startWithID);
 
 	CommandList::iterator itEnd = m_commands.end();
 	_MESSAGE("<br><b>Function List</b>\n<ul>\n");
