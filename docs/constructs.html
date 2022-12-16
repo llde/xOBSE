@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>constructs</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">
+body {
+padding: 10%;
+}
+
+h1 {
+font-size: 150%;
+font-weight: normal;
+}
+h2 {
+font-size: 130%;
+font-weight: normal;
+margin-top: 40px;
+}
+h3 {
+font-size: 110%;
+font-weight: normal;
+margin-top: 30px;
+color: #000099;
+background-color: #ffffff;
+}
+h4 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+}
+h5 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+color: #000099;
+background-color: #ffffff;
+}
+
+table {
+border: 1px solid black;
+margin: 20px 0px 20px 0px;
+}
+caption {
+text-align: left;
+margin-bottom: 10px;
+}
+td, th {
+padding: 5px;
+}
+tr.alt {
+color: black;
+background-color: #dedede;
+}
+code.alt {
+color: 770000;
+background-color: #dedede;
+}
+table.functionIndex td{
+padding: 0px 30px 0px 5px;
+}
+
+ul {
+list-style-type: none;
+}
+
+.boxhl {
+border: 1px dotted black;
+padding: 8px;
+color: #000000;
+background-color: #eeeeff;
+}
+
+.code {
+border: 1px solid black;
+padding: 20px;
+font-family: monospace;
+color: #770000;
+background-color: #ffffff;
+}
+
+pre {
+color: #770000;
+background-color: #ffffff;
+}
+
+code.s {
+margin-left: 40px;
+font-weight: normal;
+color: #770000;
+background-color: #ffffff;
+}
+
+code {
+color: #000000;
+background-color: #ffffff;
+}
+
+span.op {
+font-style: italic;
+color: #666666;
+background-color: #ffffff;
+}
+
+pre.msgbox {
+color: #777700;
+background-color: #ffffff;
+font-family: serif;
+}
+
+.ind {
+margin-left: 40px;
+}
+.c {
+text-align: center;
+}
+.l {
+text-align: left;
+}
+
+.f {
+color: #3333cc;
+background-color: white;
+}
+a:link.f{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.f {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.f {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link.cf{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.cf {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.cf {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link img {
+border-style: none;
+}
+a:visited img {
+border-style: none;
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 id="loose-language">Loose Language</h1>
+<p><code>obl</code> is completely case insensitive, and is also
+whitespace insensitive (assuming constructs are completed within their
+line).</p>
+<h1 id="literal-language">Literal Language</h1>
+<p><code>obl</code> is a literal language, and thus everything must be
+declared within the language file. While the scripts written can be
+attached to game objects, or used as their own functions, the name as
+such must be the first thing declared by the script file:</p>
+<pre class="ebnf"><code>nameDeclare = scriptDeclarator, scriptName, eol;
+scriptDeclarator = &quot;scn&quot; | &quot;scriptname&quot;;
+scriptName = identifier;
+eol = &quot;\n&quot; | &quot;\r&quot;;
+identifier = {ascii};</code></pre>
+<pre class="obse"><code>scn ThisIsTheName</code></pre>
+<h2 id="identifiers">Identifiers</h2>
+<p>It is not know the extent to which ASCII characters are allowed in
+<code>obl</code> for identifiers. There is a distinct difference
+between, for instance, script names and variable names that are accepted
+by the compiler. Thus for this reason it is <strong>highly</strong>
+recommended to only ever use unaccented ASCII Latin and Arabic-Indic
+characters. Snakecasing can work for variables, but this behavior is
+unknown. In addition, do not start a script name with a numeral. The
+game may attempt to process the script name as a number. If one wishes
+to set their script name apart from others alphanumerically, it is
+better to only use a alphabetical prefix.</p>
+<h1 id="script-body">Script Body</h1>
+<p><code>obl</code> can not run functions arbitrarily. As it is a
+game-oriented language, the scripts run in certain game-specific blocks.
+Everything outside is top-level script information.</p>
+<pre class="ebnf"><code>script = nameDeclare, [{variableDeclaration | beginBlock}];</code></pre>
+<pre class="obse"><code>scn ScriptName
+int intVariable
+begin GameMode
+  set intVariable to 1 + intVariable
+  PrintC &quot;%g&quot;, intVariable
+end
+float floatVariable
+begin MenuMode
+  set floatVariable to 1.33
+  PrintC &quot;%.0f&quot;, floatVariable
+end</code></pre>
+<p>See <a href="statements/statements.md#begin-blocks">“Begin”
+Blocks</a> and <a href="statements/statements.md#variable-declarators">Variable
+Declarators</a> for more information on top-level information.</p>
+<h1 id="script-type">Script Type</h1>
+<p>While not a part of the language spec itself, <code>obl</code>
+language files when brought into the game’s development tools can be
+defined as one of 3 types: “Quest Script”, “Object Script”, and “Magic
+Effect Script”, with “Object Script” being the default. More details
+about these will be discussed in <a href="language/script-types.md#script-types">Script Types</a>.</p>
+<h1 id="static-typing-by-assumption">Static Typing by Assumption</h1>
+<p><code>obl</code> is technically dynamically typed. There are a lot of
+scenarios where the compiler does keep static typing, however there are
+an equal amount of times where a runtime error will occur. Static typing
+can be ignored with a type forcing construct, however this does not
+prevent runtime errors:</p>
+<pre class="obse"><code>; the following will fail as AddItem is a vanilla function
+; explained a later section, this is an error when trying to use an array, a non-vanilla
+;   feature
+AddItem Torch02 array[0]
+; by using parentheses we can force the type during runtime
+AddItem Torch02 (array[0])</code></pre>
+<p>Thus typing can be dynamic with intervention. For the ease of
+development, it is best to assume that typing is static. The exact
+reasons why this is the case will be discussed later.</p>
+<h1 id="manifest-typing">Manifest Typing</h1>
+<p>Types are declared explicitly in <code>obl</code>, and therefore
+variables cannot change type inside their scope:</p>
+<pre class="obse"><code>scn ScriptName
+; types must be declared
+int i
+begin gamemode
+let i := 1
+; they also can&#39;t be changed
+let i := &quot;string&quot; ; ERROR
+end</code></pre>
+<h1 id="strongweak-typing">Strong/Weak Typing</h1>
+<p><code>obl</code> has a mix of strong and weak typing. It is similar
+to implicitly typed languages like Lua and Javascript, where some types
+can be converted (i.e.: <code>let x = 1 + &quot;hi&quot;</code>), however the
+scenarios in which implicit type conversion actually happens is
+limited.</p>
+<h2 id="implicit-type-forcing-via-obse-expressions-oe">Implicit Type
+Forcing via OBSE Expressions (OE)</h2>
+<p>As <code>obl</code> has been expanded by community efforts via OBSE,
+new data types have been introduced. In order to directly integrate
+itself with the features available in the original game, a mechanism to
+detect and force types to be weak:</p>
+<pre class="ebnf"><code>OE = &quot;(&quot;, expr, &quot;)&quot;;</code></pre>
+<pre class="obse"><code>; array[0] contains an integer, but AddItem only sees the array type
+; the parentheses forces array[0] to be parsed internally to the type it contains
+AddItem Torch02 (array[0])</code></pre>
+<p>Note that OE also overlaps with parentheses for operation ordering.
+This might lead to unexpected behavior if one is unaware.</p>
+<h2 id="compile-with-obse-expressions-enabled-coee">Compile with OBSE
+Expressions Enabled (COEE)</h2>
+<p>Any expression can be attempted to be evaluated with OE. If more
+direct control is needed, you can compile with OBSE expressions enabled
+for everything:</p>
+<pre class="ebnf"><code>beginBlock = startBlock, innerBlock, endBlock;
+startBlock = &quot;begin&quot;, (gameFeature 
+                     | function 
+                     | coeeGameFeature 
+                     | coeeFunction)
+                    , eol;
+function = &quot;function&quot;, &quot;{&quot;, {paramter}, &quot;}&quot;;
+coeeGameFeature = &quot;_&quot;, gameFeature;
+coeeFunction = &quot;_&quot;, function;
+endBlock = &quot;end&quot;, eol;</code></pre>
+<pre class="obse"><code>scn coeeExample
+int i
+begin _gamemode
+  AddItem Torch02 array[0] ; no longer an error
+  let i := &quot;hello&quot; ; however this is a runtime error
+end
+begin _function {}
+end</code></pre>
+<p>This removes the need for strict OE usage (instead delegating
+parentheses to evaluation order), but COEE may also present its own
+issues. Only use if OE fails.</p>
+<blockquote>
+<p>COEE can be considered a semantical problem, not a syntaxical one</p>
+</blockquote>
+</body>
+</html>

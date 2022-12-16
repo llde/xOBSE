@@ -1,0 +1,265 @@
+/* body */
+body {
+
+  padding: 10%;
+}
+/* headings */
+h1 {
+
+  font-size: 150%;
+
+  font-weight: normal;
+}
+h2 {
+
+  font-size: 130%;
+
+  font-weight: normal;
+
+  margin-top: 40px;
+}
+h3 {
+
+  font-size: 110%;
+
+  font-weight: normal;
+
+  margin-top: 30px;
+
+  color: #000099;
+
+  background-color: #ffffff;
+}
+h4 {
+
+  font-size: 100%;
+
+  font-weight: bold;
+
+  margin-bottom: 0px;
+}
+h5 {
+
+  font-size: 100%;
+
+  font-weight: bold;
+
+  margin-bottom: 0px;
+
+  color: #000099;
+
+  background-color: #ffffff;
+}
+/* tables */
+table {
+
+  border: 1px solid black;
+
+  margin: 20px 0px 20px 0px;
+}
+caption {
+
+  text-align: left;
+
+  margin-bottom: 10px;
+}
+td, th {
+
+  padding: 5px;
+}
+tr.alt {
+
+  color: black;
+
+  background-color: #dedede;
+}
+code.alt {
+
+  color: 770000;
+
+  background-color: #dedede;
+}
+table.functionIndex td{
+
+  padding: 0px 30px 0px 5px;
+}
+/* lists */
+ul {
+
+  list-style-type: none;
+}
+/* box highlighting */
+.boxhl {
+
+  border: 1px dotted black;
+
+  padding: 8px;
+
+  color: #000000;
+
+  background-color: #eeeeff;
+}
+/* box hl for calling conventions */
+.code {
+
+  border: 1px solid black;
+
+  padding: 20px;
+
+  font-family: monospace;
+
+  color: #770000;
+
+  background-color: #ffffff;
+}
+/* code box */
+pre {
+
+  color: #770000;
+
+  background-color: #ffffff;
+}
+/* code syntax */
+code.s {
+
+  margin-left: 40px;
+
+  font-weight: normal;
+
+  color: #770000;
+
+  background-color: #ffffff;
+}
+/* code syntax in descriptive text */
+code {
+
+  color: #000000;
+
+  background-color: #ffffff;
+}
+/* optional parameters */
+span.op {
+
+  font-style: italic;
+
+  color: #666666;
+
+  background-color: #ffffff;
+}
+/* message box examples */
+pre.msgbox {
+
+  color: #777700;
+
+  background-color: #ffffff;
+
+  font-family: serif;
+}
+/* indentation and text alignment */
+.ind {
+
+  margin-left: 40px;
+}
+.c {
+
+  text-align: center;
+}
+.l {
+
+  text-align: left;
+}
+/* links */
+.f {
+
+  color: #3333cc;
+
+  background-color: white;
+}
+a:link.f{
+
+  text-decoration: none;
+
+  color: #3333cc;
+
+  background-color: white;
+}
+a:visited.f {
+
+  text-decoration: none;
+
+  color: #3333cc;
+
+  background-color: white;
+}
+a:focus.f {
+
+  text-decoration: underline;
+
+  color: #0000ff;
+
+  background-color: white;
+}
+a:hover.f {
+
+  text-decoration: underline;
+
+  color: #0000ff;
+
+  background-color: white;
+}
+a:active.f {
+
+  text-decoration: none;
+
+  color: #ff0000;
+
+  background-color: white;
+}
+a:link.cf{
+
+  text-decoration: none;
+
+  color: #3333cc;
+
+  background-color: white;
+}
+a:visited.cf {
+
+  text-decoration: none;
+
+  color: #3333cc;
+
+  background-color: white;
+}
+a:focus.cf {
+
+  text-decoration: underline;
+
+  color: #0000ff;
+
+  background-color: white;
+}
+a:hover.cf {
+
+  text-decoration: underline;
+
+  color: #0000ff;
+
+  background-color: white;
+}
+a:active.cf {
+
+  text-decoration: none;
+
+  color: #ff0000;
+
+  background-color: white;
+}
+a:link img {
+
+  border-style: none;
+}
+a:visited img {
+
+  border-style: none;
+}
