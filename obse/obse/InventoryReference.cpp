@@ -75,8 +75,10 @@ InventoryReference::~InventoryReference(){
 }
 
 void InventoryReference::Release(){
+	if(m_bRemoved) return; /*Impl change to not set removed when queueing a deferred actions*/
 	DoDeferredActions();
-	SetData(Data());
+	if (IR_WriteAllRef) WriteRefDataToContainer();
+	m_bRemoved = true;
 }
 
 void InventoryReference::DoDeferredActions() { 
@@ -182,7 +184,6 @@ InventoryReference* InventoryReference::GetForRefID(UInt32 refID){
 void InventoryReference::Clean(){
 	for (auto iter = s_refmap.begin(); iter != s_refmap.end(); ++iter) {
 		iter->second->~InventoryReference();
-	//	iter->second->Release();
 		FormHeap_Free(iter->second); //TODO override new and delete
 	}
 	s_refmap.clear();
@@ -228,6 +229,7 @@ bool InventoryReference::RemoveFromContainer(){
 		else if(m_data.count > 0){   //If m_data.count is 0 or negative then there is nothing to remove
 			//TODO free extradata
 			actions->push(new DeferredAction(Action_Remove, m_data, nullptr, m_data.count));
+			return true;
 		}
 		SetRemoved();
 		return true;
@@ -306,6 +308,7 @@ bool InventoryReference::MoveToContainer(TESObjectREFR* dest){
 		if (m_data.xData && m_data.xData->IsWorn()) {
 			ExtraCount* count = (ExtraCount*)m_data.xData->GetByType(kExtraData_Count);
 			actions->push(new DeferredAction(Action_Remove, m_data, dest, count ? count->count : 1));
+			return true;
 		}
 		else if (m_data.entry && m_data.entry->extendData && m_data.xData) {
 			m_data.xData->RemoveAll();
@@ -317,6 +320,7 @@ bool InventoryReference::MoveToContainer(TESObjectREFR* dest){
 		}
 		else if (m_data.count > 0) {   //If m_data.count is 0 or negative then there is nothing to remove
 			actions->push(new DeferredAction(Action_Remove, m_data, dest, m_data.count));
+			return true;
 		}
 		SetRemoved();
 		return true;
@@ -404,7 +408,7 @@ bool InventoryReference::DeferredAction::Execute(InventoryReference* iref) {
 		case Action_Remove: {
 			cont->RemoveItem(data.type, data.xData, count, 0, 0, dest, nullptr, nullptr, 1, 0);
 			iref->SetRemoved();
-			iref->SetData(InventoryReference::Data());
+//			iref->SetData(InventoryReference::Data());
 			return true;
 		}
 		default: {

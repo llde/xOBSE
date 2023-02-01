@@ -350,7 +350,7 @@ bool ContainerIterLoop::SetIterator()
 	else {
 		// loop ends, ref will shortly be invalid so zero out the var
 		m_refVar->data = 0;
-		m_invRef->SetData(IRefData(nullptr, nullptr, nullptr));
+//		m_invRef->SetData(IRefData(nullptr, nullptr, nullptr)); /*Reference released in the destructor*/
 		return false;
 	}
 }
@@ -367,7 +367,6 @@ ContainerIterLoop::~ContainerIterLoop()
 {
 	m_elements.clear();
 	m_invRef->Release();    //Execute Deferred actions after the loop ended. Real Time Pickpocketing rely on this.
-//	delete m_invRef;
 	m_refVar->data = 0;
 }
 
