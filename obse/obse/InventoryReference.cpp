@@ -62,6 +62,7 @@ InventoryReference::~InventoryReference(){
 	if (m_tempRef) Release();
 	DEBUG_PRINT("Destroying IR1");
 	delete actions;
+	m_tempRef->baseExtraList.RemoveAll(); //Possible distruction of xScript in Destroy, causing CTD
 	if (m_tempRef) m_tempRef->Destroy(true);
 	DEBUG_PRINT("Destroying IR2");
 
@@ -179,6 +180,15 @@ InventoryReference* InventoryReference::GetForRefID(UInt32 refID){
 	}
 
 	return NULL;
+}
+
+void InventoryReference::InvalidateByItemAndContainer(TESObjectREFR* cont, TESForm* item){
+	for (auto iter = s_refmap.begin(); iter != s_refmap.end(); ++iter) {
+		InventoryReference* ir = iter->second;
+		if(ir->m_containerRef == cont && ir->m_data.type == item){
+			ir->SetRemoved();
+		}
+	}
 }
 
 void InventoryReference::Clean(){

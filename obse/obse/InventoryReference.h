@@ -25,7 +25,7 @@ public:
 		}  
 		Data(TESForm* form, SInt32 count) : type(form), entry(nullptr), xData(nullptr), count(count),temporary(0) { }
     };
-    
+
 	enum DeferredActionType {
 		Action_Equip,
 		Action_Remove
@@ -53,7 +53,6 @@ public:
 	void SetContainer(TESObjectREFR* cont) { m_containerRef = cont; }
 	bool SetData(Data data);
 	TESObjectREFR* GetRef() { return m_tempRef; }
-	static TESObjectREFR* GetRefBySelf(InventoryReference* self) { return self ? self->GetRef() : NULL; }	// Needed to get convert the address to a void*
 
 	bool WriteRefDataToContainer();
 	bool RemoveFromContainer();			// removes and frees Data pointers
@@ -71,6 +70,8 @@ public:
 	static InventoryReference* CreateInventoryRef(TESObjectREFR* container, InventoryReference::Data data, bool bValidate);
 	static ExtraContainerChanges::EntryData* CreateTempEntry(TESForm* itemForm, SInt32 countDelta, ExtraDataList* xData);
 	static TESObjectREFR* CreateInventoryRefEntry(TESObjectREFR* container, TESForm* itemForm, SInt32 countDelta, ExtraDataList* xData);
+	static TESObjectREFR* GetRefBySelf(InventoryReference* self) { return self ? self->GetRef() : NULL; }	// Needed to get convert the address to a void*
+	static void InvalidateByItemAndContainer(TESObjectREFR* cont, TESForm* item);
 
     static void Clean();									// called from main loop to destroy any temp refs
 	static bool HasData() { return !s_refmap.empty(); }	// provides a quick check from main loop to avoid unnecessary calls to Clean()

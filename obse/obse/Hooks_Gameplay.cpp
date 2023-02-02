@@ -1223,6 +1223,27 @@ BSStringT* __fastcall BSStringHook(BSStringT*  This, UInt32 edx, const char* str
 	return This;
 }
 
+void __stdcall RemoveItemInvalidateIR(TESForm* item, TESObjectREFR* container){
+	InventoryReference::InvalidateByItemAndContainer(container,item); //TODO add filter script
+}
+
+static const UInt32 kRemoveItemHook = 0x0051389F;
+static const UInt32 kRemoveItemHookRet = 0x005138A4;
+static __declspec(naked) void RemoveItemHook(void){
+	__asm{
+		call	ExtractArgs
+		pushad
+		mov 	eax, [esp+0x184-0x12C] // - 0x184 is stack pointer register here 
+		mov     edi, [esp+0x184+0xC] 
+		push 	edi
+		push 	eax
+		call 	RemoveItemInvalidateIR
+		popad
+
+		jmp kRemoveItemHookRet
+	}
+}
+
 void Hook_Gameplay_Init(void)
 {
 	// game main loop
@@ -1301,6 +1322,9 @@ void Hook_Gameplay_Init(void)
 
 	// patch the fly camera update function
 	Init_PlayerFlyCamPatch();
+
+	//Hook RemoveItem to invalidate IR related to the removed object
+	WriteRelJump(kRemoveItemHook, (UInt32)&RemoveItemHook);
 
 	// this seems stable and helps in debugging, but it makes large files during gameplay
 #if defined(_DEBUG) && 0
@@ -1541,5 +1565,3 @@ void Init_PlayerFlyCamPatch( void )
 	for (int i = 0; i < 4; i++)
 		SafeWrite32(kPatchLocation[i] + 2, (UInt32)&g_PlayerFlyCamSpeed);
 }
-
-
