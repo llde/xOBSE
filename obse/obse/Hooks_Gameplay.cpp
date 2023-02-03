@@ -1244,6 +1244,59 @@ static __declspec(naked) void RemoveItemHook(void){
 	}
 }
 
+void __stdcall RemoveItemInvalidateIRByREf(TESObjectREFR* item, TESObjectREFR* container){
+	InventoryReference::InvalidateByItemAndContainer(container,item->baseForm); //TODO add filter script
+}
+
+static const UInt32 kRemoveMeHook = 0x005004B0;
+static const UInt32 kRemoveMeHookRet = 0x005004B5;
+
+static __declspec(naked) void RemoveMeHook(void){
+	__asm{
+		pushad
+		push edi 
+		push esi //Ref 
+		call RemoveItemInvalidateIRByREf
+		popad
+		call Oblivion_DynamicCast
+		jmp kRemoveMeHookRet
+	}
+}
+
+static const UInt32 kDropHook = 0x00500691;
+static const UInt32 kDropHookRet = 0x00500696;
+
+static __declspec(naked) void DropHook(void){
+	__asm{
+		call	ExtractArgs
+		pushad
+		mov     esi, [esp+0x50+0xC] //thisObj
+		mov 	ecx, [esp+0x50-0x4] //item
+		push 	esi
+		push 	ecx
+		call 	RemoveItemInvalidateIR
+		popad
+		
+		jmp kDropHookRet
+	}
+}
+
+static const UInt32 kDropMeHook = 0x00500604;
+static const UInt32 kDropMeHookRet = 0x0050060A;
+
+static __declspec(naked) void DropMeHook(void){
+	__asm{
+		 mov     edx, [eax+170h]
+		 pushad
+		 push	 edi //container ref
+		 push 	 esi //item ref
+		 call 	 RemoveItemInvalidateIRByREf
+		 popad
+		 
+		 jmp kDropMeHookRet
+	}
+}
+
 void Hook_Gameplay_Init(void)
 {
 	// game main loop
@@ -1325,6 +1378,9 @@ void Hook_Gameplay_Init(void)
 
 	//Hook RemoveItem to invalidate IR related to the removed object
 	WriteRelJump(kRemoveItemHook, (UInt32)&RemoveItemHook);
+	WriteRelJump(kRemoveMeHook, (UInt32)&RemoveMeHook);
+	WriteRelJump(kDropMeHook, (UInt32)&DropMeHook);
+	WriteRelJump(kDropHook, (UInt32)&DropHook);
 
 	// this seems stable and helps in debugging, but it makes large files during gameplay
 #if defined(_DEBUG) && 0
