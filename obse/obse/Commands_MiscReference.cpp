@@ -145,7 +145,7 @@ static bool Cmd_SetOpenKey_Execute(COMMAND_ARGS)
 	return true;
 }
 
-static TESForm* GetOwner(BaseExtraList* xDataList)
+static TESForm* GetOwner(ExtraDataList* xDataList)
 {
 	BSExtraData* xData = xDataList->GetByType(kExtraData_Ownership);
 	ExtraOwnership* xOwner = NULL;
@@ -161,7 +161,7 @@ static TESForm* GetOwner(BaseExtraList* xDataList)
 	return owner;
 }
 
-static UInt32 GetOwningFactionRequiredRank(BaseExtraList* xDataList)
+static UInt32 GetOwningFactionRequiredRank(ExtraDataList* xDataList)
 {
 	BSExtraData* xData = xDataList->GetByType(kExtraData_Rank);
 	if (xData)
@@ -174,7 +174,7 @@ static UInt32 GetOwningFactionRequiredRank(BaseExtraList* xDataList)
 	return 0;
 }
 
-static SInt32 SetOwningFactionRequiredRank(BaseExtraList* xDataList, UInt32 rank)
+static SInt32 SetOwningFactionRequiredRank(ExtraDataList* xDataList, UInt32 rank)
 {
 	BSExtraData* xData = xDataList->GetByType(kExtraData_Rank);
     TESFaction* fact = NULL;
@@ -285,7 +285,7 @@ static bool Cmd_SetParentCellOwningFactionRequiredRank_Execute(COMMAND_ARGS)
 	return true;
 }
 
-static SInt8 IsOffLimits(BaseExtraList* xDataList, TESNPC* actor)
+static SInt8 IsOffLimits(ExtraDataList* xDataList, TESNPC* actor)
 {
 	SInt8 offLimits = -1;					//return -1 if ownership is ambiguous
 
@@ -2368,7 +2368,7 @@ static bool Cmd_GetTimeLeft_Execute(COMMAND_ARGS)
 	return true;
 }
 
-void SetExtraTimeLeft(BaseExtraList* list, float time)
+void SetExtraTimeLeft(ExtraDataList* list, float time)
 {
 	ThisStdCall(0x0041EDF0, list, time);
 

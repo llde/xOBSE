@@ -74,7 +74,7 @@ public:
 	float	scale;					// 044 
 	NiNode	* niNode;				// 048
 	TESObjectCELL	* parentCell;	// 04C
-	BaseExtraList	baseExtraList;	// 050
+	ExtraDataList	baseExtraList;	// 050
 };
 
 

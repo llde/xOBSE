@@ -487,7 +487,7 @@ static bool Cmd_GetAlchMenuApparatus_Execute(COMMAND_ARGS)
 	return true;
 }
 
-/*	Need to figure out what BaseExtraList* and unk4 do in ApparatusInfo struct first
+/*	Need to figure out what ExtraDataList* and unk4 do in ApparatusInfo struct first
 static bool Cmd_SetAlchMenuApparatus_Execute(COMMAND_ARGS)
 {
 	UInt32 whichAppa = 0;

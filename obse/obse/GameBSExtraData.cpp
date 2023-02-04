@@ -3,14 +3,14 @@
 
 static LPCRITICAL_SECTION BSExtraDataSection = (LPCRITICAL_SECTION) 0x00B33800;
 
-bool BaseExtraList::HasType(UInt32 type) const
+bool ExtraDataList::HasType(UInt32 type) const
 {
 	UInt32 index = (type >> 3);
 	UInt8 bitMask = 1 << (type % 8);
 	return (m_presenceBitfield[index] & bitMask) != 0;
 }
 
-BSExtraData* BaseExtraList::GetByType(UInt32 type) const{
+BSExtraData* ExtraDataList::GetByType(UInt32 type) const{
 	EnterCriticalSection(BSExtraDataSection);
 	bool hasType = HasType(type);
 	LeaveCriticalSection(BSExtraDataSection);
@@ -30,7 +30,7 @@ BSExtraData* BaseExtraList::GetByType(UInt32 type) const{
 	return NULL;
 }
 
-void BaseExtraList::MarkType(UInt32 type, bool bCleared)
+void ExtraDataList::MarkType(UInt32 type, bool bCleared)
 {
 	UInt32 index = (type >> 3);
 	UInt8 bitMask = 1 << (type % 8);
@@ -42,7 +42,7 @@ void BaseExtraList::MarkType(UInt32 type, bool bCleared)
 	}
 }
 
-bool BaseExtraList::Remove(BSExtraData* toRemove)
+bool ExtraDataList::Remove(BSExtraData* toRemove)
 {
 	if (!toRemove) return false;
 	EnterCriticalSection(BSExtraDataSection);
@@ -70,7 +70,7 @@ bool BaseExtraList::Remove(BSExtraData* toRemove)
 	return false;
 }
 
-bool BaseExtraList::RemoveByType(UInt32 type)
+bool ExtraDataList::RemoveByType(UInt32 type)
 {
 	bool res = false;
 	EnterCriticalSection(BSExtraDataSection);
@@ -81,7 +81,7 @@ bool BaseExtraList::RemoveByType(UInt32 type)
 	return res;
 }
 
-void BaseExtraList::RemoveAll()
+void ExtraDataList::RemoveAll()
 {
 	EnterCriticalSection(BSExtraDataSection);
 	while (m_data) {
@@ -93,7 +93,7 @@ void BaseExtraList::RemoveAll()
 	LeaveCriticalSection(BSExtraDataSection);
 }
 
-bool BaseExtraList::Add(BSExtraData* toAdd)
+bool ExtraDataList::Add(BSExtraData* toAdd)
 {
 	if (!toAdd || HasType(toAdd->type)) return false;
 
@@ -106,13 +106,13 @@ bool BaseExtraList::Add(BSExtraData* toAdd)
 	return true;
 }
 
-void BaseExtraList::Copy(BaseExtraList* from)
+void ExtraDataList::Copy(ExtraDataList* from)
 {
 	ThisStdCall(0x00428920, this, from);
 
 }
 
-bool BaseExtraList::IsWorn()
+bool ExtraDataList::IsWorn()
 {
 
 	EnterCriticalSection(BSExtraDataSection);
@@ -122,9 +122,13 @@ bool BaseExtraList::IsWorn()
 	return res;
 }
 
-void BaseExtraList::DebugDump()
+bool ExtraDataList::IsEmpty(){
+	return m_data == nullptr; //TODO lock CS? Should be unnecessary
+}
+
+void ExtraDataList::DebugDump()
 {
-	_MESSAGE("BaseExtraList Dump:");
+	_MESSAGE("ExtraDataList Dump:");
 	gLog.Indent();
 
 	EnterCriticalSection(BSExtraDataSection);
@@ -141,7 +145,7 @@ void BaseExtraList::DebugDump()
 	gLog.Outdent();
 }
 
-bool BaseExtraList::MarkScriptEvent(UInt32 eventMask, TESForm* eventTarget)
+bool ExtraDataList::MarkScriptEvent(UInt32 eventMask, TESForm* eventTarget)
 {
 	return MarkBaseExtraListScriptEvent(eventTarget, this, eventMask);
 }

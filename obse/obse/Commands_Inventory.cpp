@@ -975,7 +975,7 @@ static bool Cmd_GetType_Execute(COMMAND_ARGS)
 	return true;
 }
 
-static bool GetCurrentValue(BaseExtraList& extraList, UInt32 whichValue, double* result)
+static bool GetCurrentValue(ExtraDataList& extraList, UInt32 whichValue, double* result)
 {
 	UInt8 extraType = 0;	// set the extra type based on the value requested
 	switch (whichValue) {
@@ -1068,7 +1068,7 @@ static bool GetCurrentValue_Execute(COMMAND_ARGS, UInt32 whichValue)
 {
 	*result = 0;
 	if (!thisObj) return true;
-	BaseExtraList& extraList = thisObj->baseExtraList;
+	ExtraDataList& extraList = thisObj->baseExtraList;
 	if (GetCurrentValue(extraList, whichValue, result)) {
 		return true;
 	} else {
@@ -1200,7 +1200,7 @@ public:
 			if (healthForm) {
 				UInt32 baseHealth = healthForm->health;
 				// see if there is a current override
-				BaseExtraList *baseExtraList = entryData->extendData->data;
+				ExtraDataList *baseExtraList = entryData->extendData->data;
 				BSExtraData* extraData = baseExtraList->GetByType(kExtraData_Health);
 				ExtraHealth* health = (ExtraHealth*)Oblivion_DynamicCast(extraData, 0, RTTI_BSExtraData, RTTI_ExtraHealth, 0);
 				if (m_value == (float)baseHealth) {
@@ -1794,7 +1794,7 @@ bool ChangeObjectBaseValue(TESForm* form, ChangeValueState& state, double* resul
 //	return FindEquipped(thisObj, slotIdx, &setObjectValue, result);
 //}
 
-static bool ChangeCurrentHealth(TESForm* baseForm, BaseExtraList* baseExtraList, ChangeValueState& state, double* result)
+static bool ChangeCurrentHealth(TESForm* baseForm, ExtraDataList* baseExtraList, ChangeValueState& state, double* result)
 {
 	*result = 0;
 	if (!baseForm || !baseExtraList || !result) return false;
@@ -1841,7 +1841,7 @@ static bool ChangeCurrentHealth(TESForm* baseForm, BaseExtraList* baseExtraList,
 	return true;
 }
 
-static bool ChangeCurrentCharge(TESForm* baseForm, BaseExtraList* baseExtraList, ChangeValueState& state, double* result)
+static bool ChangeCurrentCharge(TESForm* baseForm, ExtraDataList* baseExtraList, ChangeValueState& state, double* result)
 {
 	*result = 0;
 	if (!baseForm || !baseExtraList || !result) return false;
@@ -1885,7 +1885,7 @@ static bool ChangeCurrentCharge(TESForm* baseForm, BaseExtraList* baseExtraList,
 	return true;
 }
 
-static bool ChangeCurrentPoison(TESForm* baseForm, BaseExtraList* baseExtraList, ChangeValueState& state, double* result)
+static bool ChangeCurrentPoison(TESForm* baseForm, ExtraDataList* baseExtraList, ChangeValueState& state, double* result)
 {
 	*result = 0;
 	if (!baseForm || !baseExtraList || !result) return false;

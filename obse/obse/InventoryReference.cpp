@@ -3,22 +3,6 @@
 #include "GameAPI.h"
 #include "Settings.h"
 
-void WriteToExtraDataList(BaseExtraList* from, BaseExtraList* to)
-{
-	ASSERT(to || from);
-
-	if (from) {
-		if (to) {
-			to->m_data = from->m_data;
-			memcpy(to->m_presenceBitfield, from->m_presenceBitfield, 0xC);
-		}
-	}
-	else if (to) {
-		to->m_data = NULL;
-		memset(to->m_presenceBitfield, 0, 0xC);
-	}
-}
-
 std::map<UInt32, InventoryReference*> InventoryReference::s_refmap;
 
 
@@ -132,11 +116,11 @@ bool InventoryReference::WriteRefDataToContainer(){  //IR operates directly on c
 		//Maybe it's the effect of ExtraDataList__RemoveAllCopyableExtraData at 0x0041E3D0?
 		m_data.xData->Copy(&m_tempRef->baseExtraList);   //TODO only do this if extradata is changed. How to check?
 	}
-	else if(m_data.entry && m_tempRef->baseExtraList.m_data != nullptr /*TODO use function*/ ){ /*PAth if the original item didn't have an ExtraDataList but only and Entry*/
+	else if(m_data.entry && !m_tempRef->baseExtraList.IsEmpty() /*TODO use function*/ ){ /*PAth if the original item didn't have an ExtraDataList but only and Entry*/
 		ExtraDataList* extra = ExtraDataList::Create();
 		extra->Copy(&m_tempRef->baseExtraList);
 		m_data.entry->Add(extra);
-		//TODO IMPORTANT: IF the entry represent a bigger then 1 stack. Create a xCount.
+		//At this point there may already exists an ExtraCount in the temp-reference.
 	}
 	else{
 		DEBUG_PRINT("No Xdata nor EntryData present. MAybe an item from a base container? Changes made to IR tempRef won't mirror to the real Reference");

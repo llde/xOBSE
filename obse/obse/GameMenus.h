@@ -12,7 +12,7 @@ class TileRect;
 class SpellItem;
 class Character;
 class ValueModifierEffect;
-struct BaseExtraList;
+class ExtraDataList;
 class TESClass;
 class TESDescription;
 
@@ -539,7 +539,7 @@ public:
 	~RepairMenu();
 
 	struct RepairMenuItemAndIndex {
-		BaseExtraList	* extraList;
+		ExtraDataList	* extraList;
 		UInt32			unk04;		//index?
 		TESForm			* object;
 	};
@@ -656,7 +656,7 @@ public:
 	~AlchemyMenu();
 
 	struct ApparatusInfo {
-		BaseExtraList	** extraList;
+		ExtraDataList	** extraList;
 		UInt8			unk4;			// quality?
 		TESObjectAPPA	* apparatus;
 	};
@@ -672,7 +672,7 @@ public:
 	};
 
 	struct IngredientInfo {
-		BaseExtraList		** extraList;
+		ExtraDataList		** extraList;
 		UInt32				count;
 		IngredientItem		* ingredient;
 	};

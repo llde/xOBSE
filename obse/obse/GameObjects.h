@@ -550,11 +550,11 @@ public:
 	virtual void	GetStartingPos(float * pos) = 0;
 	virtual void	MoveInitialPosition(float* pos) = 0;
 	virtual bool	UpdateLights(void) = 0;
-	virtual void	RemoveItem(TESForm* toRemove, BaseExtraList* extraList, UInt32 quantity, UInt32 useContainerOwnership, UInt32 drop, TESObjectREFR* destRef,
+	virtual void	RemoveItem(TESForm* toRemove, ExtraDataList* extraList, UInt32 quantity, UInt32 useContainerOwnership, UInt32 drop, TESObjectREFR* destRef,
 		float* dropPos, float* dropRot, UInt32 unk8, UInt8 useExistingEntryData) = 0;	// 40
 	virtual void	RemoveItemByType(UInt32 formType, bool useContainerOwnership, UInt32 count) = 0;
-	virtual void	Equip(TESForm* toEquip, UInt32 quantity, BaseExtraList* extraList, UInt32 noUnequip ) = 0;  //Quantity used for arrows? noUnequip is ignored
-	virtual void	Unequip(TESForm* toUnEquip, UInt32 quantity, BaseExtraList* extraList) = 0;
+	virtual void	Equip(TESForm* toEquip, UInt32 quantity, ExtraDataList* extraList, UInt32 noUnequip ) = 0;  //Quantity used for arrows? noUnequip is ignored
+	virtual void	Unequip(TESForm* toUnEquip, UInt32 quantity, ExtraDataList* extraList) = 0;
 	virtual void	Unk_44(void) = 0;
 	virtual void	AddItem(TESForm* item, ExtraDataList* xDataList, UInt32 count) = 0;
 	virtual void	Unk_46(void) = 0;
@@ -602,7 +602,7 @@ public:
 	float	scale;					// 038
 	NiNode	* niNode;				// 03C
 	TESObjectCELL	* parentCell;	// 040
-	BaseExtraList	baseExtraList;	// 044
+	ExtraDataList	baseExtraList;	// 044
 
 	ScriptEventList* GetEventList() const;
 	bool IsTaken() const		{	return ((flags & kFlags_Taken) == kFlags_Taken) ? true : false;	}
@@ -804,8 +804,8 @@ public:
 
 	// unk1 looks like quantity, usu. 1; ignored for ammo (equips entire stack)
 	// itemExtraList is NULL as the container changes entry is not resolved before the call
-	void				EquipItem(TESForm * objType, UInt32 unk1, BaseExtraList* itemExtraList, UInt32 unk3, bool lockEquip);
-	void				UnequipItem(TESForm* objType, UInt32 unk1, BaseExtraList* itemExtraList, UInt32 unk3, bool lockUnequip, UInt32 unk5);
+	void				EquipItem(TESForm * objType, UInt32 unk1, ExtraDataList* itemExtraList, UInt32 unk3, bool lockEquip);
+	void				UnequipItem(TESForm* objType, UInt32 unk1, ExtraDataList* itemExtraList, UInt32 unk3, bool lockUnequip, UInt32 unk5);
 
 	UInt32				GetBaseActorValue(UInt32 value);
 	EquippedItemsList	GetEquippedItems();

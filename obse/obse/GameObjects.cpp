@@ -32,12 +32,12 @@ static const UInt32				s_Sky_RefreshClimate = 0x00543200;
 
 
 
-void Actor::EquipItem(TESForm * objType, UInt32 unk1, BaseExtraList* itemExtraList, UInt32 unk3, bool lockEquip)
+void Actor::EquipItem(TESForm * objType, UInt32 unk1, ExtraDataList* itemExtraList, UInt32 unk3, bool lockEquip)
 {
 	ThisStdCall(s_Actor_EquipItem, this, objType, unk1, itemExtraList, unk3, lockEquip);
 }
 
-void Actor::UnequipItem(TESForm* objType, UInt32 unk1, BaseExtraList* itemExtraList, UInt32 unk3, bool lockUnequip, UInt32 unk5)
+void Actor::UnequipItem(TESForm* objType, UInt32 unk1, ExtraDataList* itemExtraList, UInt32 unk3, bool lockUnequip, UInt32 unk5)
 {
 	ThisStdCall(0x005F2E70, this, objType, unk1, itemExtraList, unk3, lockUnequip, unk5);
 

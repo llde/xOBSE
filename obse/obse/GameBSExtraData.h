@@ -227,8 +227,9 @@ public:
 };
 
 // 014+
-struct BaseExtraList
+class ExtraDataList
 {
+public:
 	virtual	void Destroy(bool Dealloc);	// removes and frees all of m_data
 
 	bool			HasType(UInt32 type) const;
@@ -242,20 +243,17 @@ struct BaseExtraList
 
 	bool			MarkScriptEvent(UInt32 eventMask, TESForm* eventTarget);
 
-	void			Copy(BaseExtraList* from);
+	void			Copy(ExtraDataList* from);
 
 	void			DebugDump();
 
 	bool			IsWorn();
-
+	bool			IsEmpty();
+	
+	static  ExtraDataList* 	Create();
 	// void		** m_vtbl;					// 000
 	BSExtraData	* m_data;					// 004
 	UInt8		m_presenceBitfield[0x0C];	// 008 - if a bit is set, then the extralist should contain that extradata
 											// bits are numbered starting from the lsb
 };
-
-struct ExtraDataList : public BaseExtraList
-{
-	static ExtraDataList * Create();
-	//
-};
+STATIC_ASSERT(sizeof(ExtraDataList) == 0x14);

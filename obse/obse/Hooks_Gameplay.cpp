@@ -1061,7 +1061,7 @@ static __declspec(naked) void Hook_ContainerMenuDanglingPointer(void)
 
 // RemoveAllItems cmd and SendPlayerToJail function remove all items from player, but if a removed quest item was equipped and enchanted, the enchantment remains on the player
 // fix by unequipping everything before removing all items
-// In both cases overwrite a call to BaseExtraList::RemoveAllItems (TESObjectREFR* from, TESObjectREFR* to, UInt32 unk2, bool bRetainOwnership, UInt32 unk4)
+// In both cases overwrite a call to ExtraDataList::RemoveAllItems (TESObjectREFR* from, TESObjectREFR* to, UInt32 unk2, bool bRetainOwnership, UInt32 unk4)
 // Could reasonably just patch that function instead, but don't want to mess with other code that may call it
 static const UInt32 kRemoveAllItems_CallAddr	= 0x00492E70;
 static const UInt32 kRemoveAllItems_PatchAddr	= 0x00507578;

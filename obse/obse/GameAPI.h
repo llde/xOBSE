@@ -24,7 +24,7 @@ class Tile;
 class Menu;
 class FormatStringArgs;
 struct ScriptLineBuffer;
-struct BaseExtraList;
+class ExtraDataList; //TODO try to avoid forward definitions
 class NiTexturingProperty;
 class NiD3DShaderConstantMapEntry;
 
@@ -138,7 +138,7 @@ ScriptEventList* EventListFromForm(TESForm* form);
 typedef void (* _Console_Print)(const char * buf, ...);
 extern const _Console_Print Console_Print;
 
-typedef bool (* _MarkBaseExtraListScriptEvent)(TESForm* target, BaseExtraList* extraList, UInt32 eventMask);
+typedef bool (* _MarkBaseExtraListScriptEvent)(TESForm* target, ExtraDataList* extraList, UInt32 eventMask);
 extern const _MarkBaseExtraListScriptEvent MarkBaseExtraListScriptEvent;
 
 typedef bool (* _ExtractArgs)(ParamInfo * paramInfo, void * arg1, UInt32 * arg2, TESObjectREFR * thisObj, TESObjectREFR* contObj, Script * script, ScriptEventList * eventList, ...);
