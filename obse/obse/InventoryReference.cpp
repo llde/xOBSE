@@ -136,6 +136,7 @@ bool InventoryReference::WriteRefDataToContainer(){  //IR operates directly on c
 		ExtraDataList* extra = ExtraDataList::Create();
 		extra->Copy(&m_tempRef->baseExtraList);
 		m_data.entry->Add(extra);
+		//TODO IMPORTANT: IF the entry represent a bigger then 1 stack. Create a xCount.
 	}
 	else{
 		DEBUG_PRINT("No Xdata nor EntryData present. MAybe an item from a base container? Changes made to IR tempRef won't mirror to the real Reference");

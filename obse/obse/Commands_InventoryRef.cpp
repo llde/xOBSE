@@ -116,11 +116,18 @@ static bool Cmd_GetInvRefsForItem_Execute(COMMAND_ARGS)
 							baseCount -= GetCountForExtraDataList(extend.Get());
 						}
 					}
+					if(baseCount > 0){
+						InventoryReference::Data data(item, ed, baseCount);
+						InventoryReference* iref = InventoryReference::CreateInventoryRef(thisObj, data, false);
+						g_ArrayMap.SetElementFormID(arrID, arrIndex, iref->GetRef()->refID);
+						arrIndex += 1.0;
+						baseCount -= baseCount;
+					}
 				}
 			}
 
 			if (baseCount > 0) {
-				// create temp ref for items in base container not accounted for by container changes
+				// create temp ref for items in base container not accounted for by an EntryData
 				//TODO if extend max count?
 				TESObjectREFR* iref = InventoryReference::CreateInventoryRefEntry(thisObj, item, baseCount, NULL);
 				g_ArrayMap.SetElementFormID(arrID, arrIndex, iref->refID);
