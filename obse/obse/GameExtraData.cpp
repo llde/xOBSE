@@ -82,11 +82,6 @@ ExtraContainerChanges::EntryExtendData* ExtraContainerChanges::EntryData::Add(Ex
 	return extendData;
 }
 
-ExtraContainerChanges::EntryExtendData* ExtraContainerChanges::EntryData::Add(ExtraDataList* newList)
-{
-	EntryExtendData* newData = EntryExtendData::Create(newList);
-	return Add(newData);
-}
 
 ExtraContainerChanges::EntryExtendData* ExtraContainerChanges::Add(TESForm* form, ExtraDataList* dataList)
 {
@@ -129,6 +124,14 @@ ExtraContainerChanges::Entry* ExtraContainerChanges::Entry::Create()
 	return entry;
 }
 */
+
+void ExtraContainerChanges::EntryData::Add(ExtraDataList* newList)
+{
+	if(extendData == nullptr) extendData = (tList<ExtraDataList>*) tList<ExtraDataList>::Create();
+	extendData->AddAt(newList,0);
+}
+
+
 void ExtraContainerChanges::EntryData::Cleanup()
 {
 	ThisStdCall(0x00484660, this);

@@ -185,7 +185,7 @@ ContainerIterLoop::ContainerIterLoop(const ForEachContext* context)
         }
 		for (auto& elem : baseContainer) {
 			if (elem.second > 0) {
-				m_elements.push_back(IRefData(elem.first, nullptr, elem.second));
+				m_elements.push_back(IRefData(elem.first, nullptr, elem.second)); //TODO provide these with an temp Entry?
 			}
 		}
 		baseContainer.clear();

@@ -130,9 +130,16 @@ bool InventoryReference::WriteRefDataToContainer(){  //IR operates directly on c
 		m_data.xData->RemoveAll();
 		//this->Copy(other) cause items to lose the IsWorn xData  from other, unless the this is an empty xDataList. WHY?
 		//Maybe it's the effect of ExtraDataList__RemoveAllCopyableExtraData at 0x0041E3D0?
-		m_data.xData->Copy(&m_tempRef->baseExtraList);   //TODO only do this if extradata is changed  
+		m_data.xData->Copy(&m_tempRef->baseExtraList);   //TODO only do this if extradata is changed. How to check?
 	}
-	//TODO if the Xdata is changed and no xData was passed originally, create an xData and assing it to the corrispondent EntryData 
+	else if(m_data.entry && m_tempRef->baseExtraList.m_data != nullptr /*TODO use function*/ ){ /*PAth if the original item didn't have an ExtraDataList but only and Entry*/
+		ExtraDataList* extra = ExtraDataList::Create();
+		extra->Copy(&m_tempRef->baseExtraList);
+		m_data.entry->Add(extra);
+	}
+	else{
+		DEBUG_PRINT("No Xdata nor EntryData present. MAybe an item from a base container? Changes made to IR tempRef won't mirror to the real Reference");
+	}
 	return true;
 }
 

@@ -43,9 +43,9 @@ public:
 
 		static EntryData* Create(SInt32 countDelta, TESForm* type);
 		void Cleanup();
-	/*	EntryExtendData * Add(EntryExtendData* newData);
-		EntryExtendData * Add(ExtraDataList* newList);
-		bool Remove(EntryExtendData* toRemove, bool bFree);*/
+	//	EntryExtendData * Add(EntryExtendData* newData);
+		void Add(ExtraDataList* newList);
+	//	bool Remove(EntryExtendData* toRemove, bool bFree);
 	};
 
 	struct Data
