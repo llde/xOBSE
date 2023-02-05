@@ -218,7 +218,7 @@ public:
 	Operator *				GetOperator() const;
 	Script::VariableInfo *	GetVarInfo() const;
 	CommandInfo *			GetCommandInfo() const;
-	Script::RefVariable*	GetRefVariable() const;
+	Script::RefVariable*	GetRefVariable() const {return type == kTokenType_Ref ? value.refVar : NULL;}
 	UInt16					GetRefIndex() const { return IsGood() ? refIdx : 0; }
 	UInt8					GetVariableType() const { return IsVariable() ? variableType : Script::eVarType_Invalid; }
 
@@ -228,12 +228,12 @@ public:
 	UInt32					GetAnimGroup() const;		// TESAnimGroup::kAnimGroup_XXX (kAnimGroup_Max if none)
 	EffectSetting *			GetEffectSetting() const;	// from string, effect code, or TESForm*
 
+
 	bool					Write(ScriptLineBuffer* buf);
 	Token_Type				Type() const		{ return type; }
 
 	bool					IsGood() const		{ return type != kTokenType_Invalid;	}
 	bool					IsVariable() const	{ return type >= kTokenType_NumericVar && type <= kTokenType_ArrayVar; }
-
 	double					GetNumericRepresentation(bool bFromHex);	// attempts to convert string to number
 
 	static ScriptToken* Read(ExpressionEvaluator* context);

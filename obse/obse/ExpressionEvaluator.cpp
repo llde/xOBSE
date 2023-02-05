@@ -35,6 +35,7 @@ void ExpressionEvaluator::Error(const char* fmt, ...)
 	// include script data offset and command name/opcode
 //	UInt16* opcodePtr = (UInt16*)((UInt8*)m_scriptData + m_baseOffset);
 	//	UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + m_baseOffset);
+	_MESSAGE("%0X   %0X   %0X %0X ", m_scriptData,script->data, m_baseOffset, *m_opcodeOffsetPtr);
 	UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + (*m_opcodeOffsetPtr - 4));
 	CommandInfo* cmd = g_scriptCommands.GetByOpcode(*opcodePtr);
 
@@ -65,15 +66,36 @@ void ExpressionEvaluator::Error(const char* fmt, ScriptToken* tok, ...)
 
 	char	errorMsg[0x400];
 	vsprintf_s(errorMsg, 0x400, fmt, args);
+	char	errorMsgTok[0x400];
 	CommandInfo* cmd = nullptr;
-	if (tok != nullptr && tok->Type() == Token_Type::kTokenType_Command) cmd = tok->GetCommandInfo();
-	else {
+	if(tok != nullptr){
+		if (tok->Type() == Token_Type::kTokenType_Command) cmd = tok->GetCommandInfo();
+		else if (tok->Type() == Token_Type::kTokenType_Form ){
+			sprintf_s(errorMsgTok, 0x400, "Evaluating Form %08X", tok->GetFormID() );
+		}
+		else if (tok->Type() == Token_Type::kTokenType_Ref ){
+			sprintf_s(errorMsgTok, 0x400, "Evaluating Reference %08X  %s", tok->GetFormID(), tok->GetRefVariable()->name.m_data);
+		}
+		else if(tok->Type() == kTokenType_Operator){
+			sprintf_s(errorMsgTok, 0x400, "Operator %s", tok->GetOperator()->symbol);			
+		}
+		else {
+			sprintf_s(errorMsgTok, 0x400, "<unknow>");
+		}
+	}
+	else{
+		sprintf_s(errorMsgTok, 0x400, "<unknow>");
+	}
+	const char* buf = cmd ? cmd->longName : errorMsgTok;
+//TODO Command is mostly NULL here, so stub to avoid pollution of the log.
+//until I find  away to properly the the operand Name (I can get the value with the token)
+	//	else {
 		// include script data offset and command name/opcode
 	//	UInt16* opcodePtr = (UInt16*)((UInt8*)m_scriptData + m_baseOffset);
 		//	UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + m_baseOffset);
-		UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + (*m_opcodeOffsetPtr - 4));
-		cmd = g_scriptCommands.GetByOpcode(*opcodePtr);
-	}
+//		UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + (*m_opcodeOffsetPtr - 4));
+//		cmd = g_scriptCommands.GetByOpcode(*opcodePtr);
+//	}
 	// include mod filename, save having to ask users to figure it out themselves
 	const char* modName = "Savegame";
 	if (script->GetModIndex() != 0xFF)
@@ -83,9 +105,9 @@ void ExpressionEvaluator::Error(const char* fmt, ScriptToken* tok, ...)
 			modName = "Unknown";
 	}
 
-	ShowRuntimeError(script, "%s\n    File: %s Offset: 0x%04X Command: %s", errorMsg, modName, m_baseOffset, cmd ? cmd->longName : "<unknown>");
+	ShowRuntimeError(script, "%s\n    File: %s Offset: 0x%04X Command: %s", errorMsg, modName, m_baseOffset, buf);
 	//	if (m_flags.IsSet(kFlag_StackTraceOnError))
-	PrintStackTrace();
+//	PrintStackTrace();
 }
 void ExpressionEvaluator::PrintStackTrace() {
 	std::stack<const ExpressionEvaluator*> stackCopy;
@@ -766,9 +788,9 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 
 			if (op->numOperands > operands.size())
 			{
+				Error("Too few operands for operator %s", op->symbol);
 				delete curToken;
 				curToken = NULL;
-				Error("Too few operands for operator %s", op->symbol);
 				break;
 			}
 
@@ -785,14 +807,17 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 			ScriptToken* opResult = op->Evaluate(lhOperand, rhOperand, this);
 			delete lhOperand;
 			delete rhOperand;
-			delete curToken;
-			curToken = NULL;
 
 			if (!opResult)
 			{
-				Error("Operator %s failed to evaluate to a valid result", op->symbol);
+				Error("Operator %s failed to evaluate to a valid result",curToken, op->symbol);
+				delete curToken;
+				curToken = NULL;
 				break;
 			}
+			
+			delete curToken;
+			curToken = NULL;
 
 			operands.push(opResult);
 		}
@@ -803,7 +828,7 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 
 	if (operands.size() != 1)		// should have one operand remaining - result of expression
 	{
-		Error("An expression failed to evaluate to a valid result");
+		Error("An expression failed to evaluate to a valid result", (ScriptToken*)nullptr);
 		while (operands.size())
 		{
 			delete operands.top();

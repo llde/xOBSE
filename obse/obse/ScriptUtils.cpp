@@ -998,11 +998,15 @@ ScriptToken* Eval_In(OperatorType op, ScriptToken* lh, ScriptToken* rh, Expressi
 				ScriptToken* forEach = ScriptToken::Create(&con);
 				return forEach;
 			}
-			context->Error("Source is a base form, must be a reference");
+			if(form)
+				context->Error("Source is a base form, must be a reference", rh);
+			else
+				context->Error("Source form is a NULL form", rh);
+				
 			return NULL;
 		}
 	}
-	context->Error("Unsupported variable type, only array_Var, string_var and ref are supported");
+	context->Error("Unsupported variable type, only array_Var, string_var and ref are supported", lh);
 	return NULL;
 }
 
