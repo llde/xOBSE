@@ -71,7 +71,8 @@ void ExpressionEvaluator::Error(const char* fmt, ScriptToken* tok, ...)
 	if(tok != nullptr){
 		if (tok->Type() == Token_Type::kTokenType_Command) cmd = tok->GetCommandInfo();
 		else if (tok->Type() == Token_Type::kTokenType_Form ){
-			sprintf_s(errorMsgTok, 0x400, "Evaluating Form %08X", tok->GetFormID() );
+			TESForm* form = tok->GetTESForm();
+			sprintf_s(errorMsgTok, 0x400, "Evaluating Form %s : %08X", form ? form->GetEditorID() : "<No EDID>", form ? form->refID : NULL );
 		}
 		else if (tok->Type() == Token_Type::kTokenType_Ref ){
 			sprintf_s(errorMsgTok, 0x400, "Evaluating Reference %08X  %s", tok->GetFormID(), tok->GetRefVariable()->name.m_data);

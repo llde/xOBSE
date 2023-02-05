@@ -502,9 +502,8 @@ const char* TESForm::GetEditorID()
 	TESWorldSpace* worldspace = OBLIVION_CAST(this, TESForm, TESWorldSpace);
 	if (worldspace)
 		return worldspace->editorID.m_data;
-
-	// nothing else handled
-	return NULL;
+	//TODO detect REID, this works only with that (maybe MessageLogger??)
+	return this->GetEditorName();
 }
 
 bool TESForm::IsInventoryObject() const
