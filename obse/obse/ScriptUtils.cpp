@@ -992,7 +992,7 @@ ScriptToken* Eval_In(OperatorType op, ScriptToken* lh, ScriptToken* rh, Expressi
 		{
 			TESForm* form = rh->GetTESForm();
 			TESObjectREFR* src = OBLIVION_CAST(form, TESForm, TESObjectREFR);
-//			if (!src && form && form->refID == (*g_thePlayer)->refID) src = *g_thePlayer;  //From xNVSE, check if actually useful
+			if (!src && form && form->refID == 0x00000007) src = *g_thePlayer;  //If Player default to PlayerRef as vanilla script engine
 			if (src) {
 				ForEachContext con((UInt32)src, 0, Script::eVarType_Ref, lh->GetVar());
 				ScriptToken* forEach = ScriptToken::Create(&con);
