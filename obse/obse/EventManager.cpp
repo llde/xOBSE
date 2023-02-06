@@ -1464,7 +1464,7 @@ void __stdcall HandleEventForCallingObject(UInt32 id, TESObjectREFR* callingObj,
 			}
 			if (id == kEventID_EventKey || id == kEventID_EventControl) {
 				ignoreNull = true;
-				if (arg0 != iter->source || arg1 != iter->object) {
+				if ((arg0 != iter->source && (SInt32)iter->source != -1) || arg1 != iter->object & (SInt32)iter->object != -1) {
 					++iter;
 					continue;
 				}

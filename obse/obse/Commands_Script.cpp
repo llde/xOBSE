@@ -423,21 +423,25 @@ static bool ExtractEventCallback(ExpressionEvaluator& eval, EventManager::EventC
 			TESObjectREFR* sourceFilter = NULL;
 			TESForm* targetFilter = NULL;
 			TESObjectREFR* thisObjFilter = NULL;
-
+			bool found_f = false, found_s = false;
+			bool isInputEvent = (_stricmp(eventName, "OnKeyEvent") == 0 || _stricmp(eventName, "OnControlEvent") == 0);
 			// any filters?
 			//TODO respect the parameters
+			//TODO rewrite the event system parameter handling. The type punning here is HORRIBLE
 			for (UInt32 i = 2; i < eval.NumArgs(); i++) {
 				const TokenPair* pair = eval.Arg(i)->GetPair();
 				if (pair && pair->left && pair->right) {
 					const char* key = pair->left->GetString();
 					if (key) {
 						if (!_stricmp(key, "ref") || !_stricmp(key, "first")) {
-							if (_stricmp(eventName, "OnKeyEvent") == 0 || _stricmp(eventName, "OnControlEvent") == 0) 
+							found_f = true;
+							if (isInputEvent) 
 								sourceFilter = (TESObjectREFR*)(UInt32)pair->right->GetNumber();
 							else sourceFilter = OBLIVION_CAST(pair->right->GetTESForm(), TESForm, TESObjectREFR);
 						}
 						else if (!_stricmp(key, "object") || !_stricmp(key, "second")) {
-							if (_stricmp(eventName, "OnKeyEvent") == 0 || _stricmp(eventName, "OnControlEvent") == 0)
+							found_s = true;
+							if (isInputEvent)
 								targetFilter = (TESObjectREFR*)(UInt32)pair->right->GetNumber();
 
 							// special-case MGEF
@@ -458,7 +462,10 @@ static bool ExtractEventCallback(ExpressionEvaluator& eval, EventManager::EventC
 					}
 				}
 			}
-
+			if(isInputEvent){
+				if(!found_f) sourceFilter = (TESObjectREFR*) -1;
+				if(!found_s) targetFilter = (TESObjectREFR*) -1;
+			}
 			*outCallback = EventManager::EventCallback(script, sourceFilter, targetFilter, thisObjFilter);
 			return true;
 		}
