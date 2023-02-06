@@ -193,11 +193,10 @@ inline void OSInputGlobalsEx::SendControlEvents() {
 		if (key != 0xFF) {
 			if (this->oldMouseButtonSwap && key == 0) key = 1;
 			else if (this->oldMouseButtonSwap && key == 1) key = 0;
-//			_MESSAGE("Control %u, Key %u", idx, key);
 
 			if ((MouseMaskState.rgbButtons[key] & kStateSignalled) == kStateSignalled && (MouseMaskState.rgbButtons[key] & kStatePSignalled) != kStatePSignalled)
 				EventManager::HandleEvent(EventCode[1], (void*)idx, (void*)KeyEvent_Down);
-			else if ((MouseMaskState.rgbButtons[idx] & kStateSignalled) != kStateSignalled && (MouseMaskState.rgbButtons[key] & kStatePSignalled) == kStatePSignalled) {
+			else if ((MouseMaskState.rgbButtons[key] & kStateSignalled) != kStateSignalled && (MouseMaskState.rgbButtons[key] & kStatePSignalled) == kStatePSignalled) {
 				EventManager::HandleEvent(EventCode[1], (void*)idx, (void*)KeyEvent_Up);
 			}
 			else if ((MouseMaskState.rgbButtons[key] & kStateSignalled) == kStateSignalled && (MouseMaskState.rgbButtons[key] & kStatePSignalled) == kStatePSignalled) {
