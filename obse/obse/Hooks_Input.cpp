@@ -402,13 +402,13 @@ void OSInputGlobalsEx::ObjaReplace(){
 		if(!--boh) boh = 2 * (kObjaFunc(1) == 2);
 	}
 	else{
-		if(kObjaArrray[0] == 0x80){
+		if(CurrentKeyState[kObjaArrray[0]] == 0x80){
 			boh = 2 * (kObjaFunc(1) == 2);
 		}
-		if(kObjaArrray[1] == 0x80){
+		if(CurrentKeyState[kObjaArrray[1]] == 0x80){
 			this->CurrentKeyState[0x29] = 0x80;
 		}
-		if(kObjaArrray[2] == 0x80){
+		if(CurrentKeyState[kObjaArrray[2]] == 0x80){
 		    *kObjaA0AC = 0;
 		    *kObjaA070 = (UInt8)kSub480F(kObjaA100) != 0;
 		}
