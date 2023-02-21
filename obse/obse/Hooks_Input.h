@@ -14,7 +14,19 @@ static const UInt32 kBufferedKeyHook = 0x00403C90;
 static const UInt32 kInputGlobalAllocSize = 0x00404A77;
 static const UInt32 kInputInitializeCallAddr = 0x00404A92;
 static const UInt32 kInitializeInputGlobals = 0x00404150;
+static const UInt32 kInputObjaHook1Loc = 0x00404835;
+static const UInt32 kInputObjaHook2Loc = 0x0040480E;
+static const UInt32 kInputOriginalObjaJumpLoc = 0x00403C30;
 
+
+//OBJA  these are baseless as they must handle the relocation
+static UInt32 (__stdcall* kObjaFunc)(UInt8) = (UInt32 (__stdcall*)(UInt8)) 0x0000487B;
+//0x1000A060 is used internallly in the hook
+static UInt32* kObjaArrray = (UInt32*)0x0000A064 ;  // 3 sized array, this is setted at runtime, so cannot  be hardcoded
+static UInt32* kObjaA0AC = (UInt32*)0x0000A0AC;
+static UInt8* kObjaA070 = (UInt8*)0x0000A070;
+static UInt16* kObjaA100 = (UInt16*)0x0000A100;
+static UInt32 (__stdcall* kSub480F)(UInt16*) = (UInt32 (__stdcall*)(UInt16*)) 0x0000480F;
 
 enum  KeyControlState : UInt8 {
 	kStateUnmodified = 0,
@@ -118,9 +130,10 @@ public:
 	void FakeBufferedKeyPress(UInt32 key);
 	void FakeBufferedKeyRelease(UInt32 key);
 	UInt16 GetMouseControlKey(UInt16 ctrl);
-
+	
 	OSInputGlobalsEx* InitializeEx(IDirectInputDevice8* device);
 	void InputPollFakeHandle();
+	void ObjaReplace();
 	int GetBufferedKeyStateChangeHook(DIDEVICEOBJECTDATA* data);
 private:
 	inline void SendKeyEvent(UInt16 idx);

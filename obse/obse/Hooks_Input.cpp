@@ -1,7 +1,8 @@
 
 #include "Hooks_Input.h" 
 #include "obse_common/SafeWrite.h"
-#include <obse/EventManager.h>
+#include "EventManager.h"
+#include "PluginManager.h"
 
 OSInputGlobalsEx* g_inputGlobal = nullptr;
 
@@ -300,7 +301,6 @@ void OSInputGlobalsEx::InputPollFakeHandle() {
 	DWORD time = GetTickCount();
 	lastFrameLength = (float)(time - lastFrameTime) / 1000.0f;
 	lastFrameTime = time;
-
 	CurrentMouseState.lX += MouseMaskState.lX;
 	CurrentMouseState.lY += MouseMaskState.lY;
 	MouseMaskState.lX = 0;
@@ -395,6 +395,25 @@ void OSInputGlobalsEx::InputPollFakeHandle() {
 }
 
 void __fastcall InputPollFakeHandleNoMouse(OSInputGlobals* input) { _MESSAGE("Can't still use the new input system without a mouse "); }
+static UInt8 boh = 0;
+
+void OSInputGlobalsEx::ObjaReplace(){
+	if(boh){
+		if(!--boh) boh = 2 * (kObjaFunc(1) == 2);
+	}
+	else{
+		if(kObjaArrray[0] == 0x80){
+			boh = 2 * (kObjaFunc(1) == 2);
+		}
+		if(kObjaArrray[1] == 0x80){
+			this->CurrentKeyState[0x29] = 0x80;
+		}
+		if(kObjaArrray[2] == 0x80){
+		    *kObjaA0AC = 0;
+		    *kObjaA070 = (UInt8)kSub480F(kObjaA100) != 0;
+		}
+	}
+}
 
 __declspec(naked) void FakeBufferedKeyHook(){
 	__asm{
@@ -417,6 +436,27 @@ __declspec(naked) void PollInputHook() {
 	}
 
 }
+
+__declspec(naked) void PollInputHookObja() {
+	__asm {
+		jle short loc_cont
+		pop edi
+		pop esi
+		pushad
+		push ecx
+		call OSInputGlobalsEx::ObjaReplace
+		pop ecx
+		call OSInputGlobalsEx::InputPollFakeHandle
+		popad
+		retn
+
+	loc_cont:
+		jmp [kLoc_403C40]
+	}
+
+}
+
+
 __declspec(naked) void PollInputNoMouseHook() {
 	__asm {
 		pop edi
@@ -454,14 +494,56 @@ OSInputGlobalsEx* __thiscall OSInputGlobalsEx::InitializeEx(IDirectInputDevice8*
 	return this;
 }
 
+/*
+if ( dword_3DAA060[0] )
+  {
+    if ( --LOBYTE(dword_3DAA060[0]) )
+      goto LABEL_21;
+LABEL_23:
+    dword_3DAA060[0] = 2 * (((int (__cdecl *)(int, InputGlobal *, int, int))obja_12416_1)(1, this, v23, v9) == 2);
+    goto LABEL_21;
+  }
+  if ( (char)CurrentKeyState[dword_3DAA060[1]] < 0 )
+    goto LABEL_23;
+  if ( (char)CurrentKeyState[dword_3DAA060[2]] < 0 )ObjaReplace
+  {
+    this->CurrentKeyState[0x29] = 0x80;
+  }
+  else if ( (char)CurrentKeyState[dword_3DAA060[3]] < 0 )
+  {
+    dword_3DAA0AC = 0;
+    byte_3DAA070 = ((int (__cdecl *)(void *, InputGlobal *, int, int))unk_3DA480F)(&unk_3DAA100, this, v23, v9) != 0;
+  }
+*/
+
 void Hook_Input_Init() {
 	SafeWrite32(kInputGlobalAllocSize, sizeof(OSInputGlobalsEx));
 	OSInputGlobalsEx* (__thiscall OSInputGlobalsEx::* InitializeExCall)(IDirectInputDevice8*) = &OSInputGlobalsEx::InitializeEx;
 	WriteRelCall(kInputInitializeCallAddr, (UInt32) *((void**) &InitializeExCall));
-	WriteRelJump(kPollEndHook, (UInt32) &PollInputHook);
 	WriteRelJump(kPollEndNoMouseHook, (UInt32)&PollInputNoMouseHook); //TODO clean leftovers
+	SafeWrite8(0x0040483F,0x90);
+	SafeWrite8(0x00404840,0x90);
 	WriteRelJump(kBufferedKeyHook, (UInt32)&FakeBufferedKeyHook);
+	if (PluginManager::GetPluginLoaded("OBJA")) {
+		UInt32 obja =  (UInt32)PluginManager::GetModuleAddressByName("OBJA");
+		_MESSAGE("OBJA detected, module relocated at %08X", obja);
+		kObjaArrray = (UInt32*) ( (UInt32)kObjaArrray +  obja);
+		kObjaA0AC = (UInt32*) ( (UInt32)kObjaA0AC +  obja);
+		kObjaA070 = (UInt8*) ( (UInt32)kObjaA070 +  obja);
+		kObjaA100 = (UInt16*) ( (UInt32)kObjaA100 +  obja);
+		
+		kObjaFunc = (UInt32 (__stdcall*)(UInt8)) ( (UInt32)kObjaFunc +  obja);
+		kSub480F =  (UInt32 (__stdcall*)(UInt16*)) ( (UInt32)kSub480F +  obja);
 
+		_MESSAGE("%08X", kObjaArrray);
+		WriteRelJump(kInputObjaHook1Loc, kInputOriginalObjaJumpLoc); 
+		WriteRelJump(kInputObjaHook2Loc, kInputOriginalObjaJumpLoc); 
+		WriteRelJump(kPollEndHook, (UInt32) &PollInputHookObja);
+
+	}
+	else{
+		WriteRelJump(kPollEndHook, (UInt32) &PollInputHook);
+	}
 }
 
 namespace PluginAPI {
