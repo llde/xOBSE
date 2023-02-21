@@ -244,6 +244,19 @@ PluginInfo * PluginManager::GetInfoByName(const char * name)
 	return NULL;
 }
 
+HMODULE  PluginManager::GetModuleAddressByName(const char * name)
+{
+	for(LoadedPluginList::iterator iter = g_pluginManager.m_plugins.begin(); iter != g_pluginManager.m_plugins.end(); ++iter)
+	{
+		LoadedPlugin	* plugin = &(*iter);
+
+		if(plugin->info.name && !_stricmp(name, plugin->info.name))
+			return plugin->handle;
+	}
+
+	return NULL;
+}
+
 PluginInfo * PluginManager::GetInfoFromHandle(PluginHandle handle)
 {
 	if(handle > 0 && handle <= m_plugins.size())
@@ -288,7 +301,7 @@ bool PluginManager::RegisterTypedCommand(CommandInfo * _info, CommandReturnType 
 	// modify callbacks for editor
 
 	info.execute = Cmd_Default_Execute;
-	info.eval = NULL;	// not supporting this yet
+	info.eval = NULL;	// not supporting this yetg_pluginManager
 #endif
 
 	if(!info.parse) {

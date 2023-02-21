@@ -29,6 +29,7 @@ public:
 	static const char *	GetOblivionDir();
 	static bool			GetPluginLoaded(const char* pluginName);
 	static UInt32		GetPluginVersion(const char* pluginName);
+	static HMODULE		GetModuleAddressByName(const char * name);
 
 	static bool Dispatch_Message(PluginHandle sender, UInt32 messageType, void * data, UInt32 dataLen, const char* receiver);
 	static bool	RegisterListener(PluginHandle listener, const char* sender, OBSEMessagingInterface::EventCallback handler);
