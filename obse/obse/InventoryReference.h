@@ -15,15 +15,14 @@ public:
         ExtraContainerChanges::EntryData*	entry;
 		ExtraDataList*						xData;
 		SInt32								count; //count of the IR if xData NULL or without xCount, -1 otherwise
-		UInt32                              temporary;  //0 non temp or null, 1 temp xData persistent EntryData, 2 both temp 
-		Data(TESForm* t, ExtraContainerChanges::EntryData* en, ExtraDataList* ex) : type(t), entry(en), xData(ex), count(-1),temporary(0) { }
-		Data(const Data& rhs) : type(rhs.type), entry(rhs.entry), xData(rhs.xData), count(rhs.count), temporary(rhs.temporary) { }
-		Data() : type(NULL), entry(NULL), xData(NULL),count(-1),temporary(0) { }
-		Data(TESForm* t, ExtraContainerChanges::EntryData* en, SInt32 count) : type(t), entry(en), xData(nullptr), count(count){ //if EntryData* NULL, it's an object in ther base container.
-			temporary = (en  == nullptr || en->extendData == nullptr) ? 2 : 1;
-			//TODO use flags
-		}  
-		Data(TESForm* form, SInt32 count) : type(form), entry(nullptr), xData(nullptr), count(count),temporary(0) { }
+		bool 								fromBaseContainer; //EntryData for base container items have special handling
+		Data(TESForm* t, ExtraContainerChanges::EntryData* en, ExtraDataList* ex) : type(t), entry(en), xData(ex), count(-1), fromBaseContainer(false) { }
+		Data(TESForm* t, ExtraContainerChanges::EntryData* en, ExtraDataList* ex, bool isFromBaseContainer) : type(t), entry(en), xData(ex), count(-1), fromBaseContainer(isFromBaseContainer) { }
+		Data(const Data& rhs) : type(rhs.type), entry(rhs.entry), xData(rhs.xData), count(rhs.count), fromBaseContainer(rhs.fromBaseContainer) { }
+		Data() : type(NULL), entry(NULL), xData(NULL),count(-1), fromBaseContainer(false) { }
+		Data(TESForm* t, ExtraContainerChanges::EntryData* en, SInt32 count) : type(t), entry(en), xData(nullptr), count(count), fromBaseContainer(false) {}
+		Data(TESForm* t, ExtraContainerChanges::EntryData* en, SInt32 count, bool isFromBaseContainer) : type(t), entry(en), xData(nullptr), count(count),  fromBaseContainer(isFromBaseContainer) {}
+		Data(TESForm* form, SInt32 count) : type(form), entry(nullptr), xData(nullptr), count(count), fromBaseContainer(false) { }
     };
 
 	enum DeferredActionType {

@@ -60,8 +60,8 @@ InventoryReference::~InventoryReference(){
 }
 
 void InventoryReference::Release(){
-	if(m_bRemoved) return; /*Impl change to not set removed when queueing a deferred actions*/
 	DoDeferredActions();
+	if(m_bRemoved) return;
 	if (IR_WriteAllRef) WriteRefDataToContainer();
 	m_bRemoved = true;
 }
@@ -121,6 +121,9 @@ bool InventoryReference::WriteRefDataToContainer(){  //IR operates directly on c
 		extra->Copy(&m_tempRef->baseExtraList);
 		m_data.entry->Add(extra);
 		//At this point there may already exists an ExtraCount in the temp-reference.
+	}
+	else if(m_data.entry){
+		DEBUG_PRINT("Original reference don't have ExtraData and there are no ExtraData in the temp Ref. Don't write anything");
 	}
 	else{
 		DEBUG_PRINT("No Xdata nor EntryData present. MAybe an item from a base container? Changes made to IR tempRef won't mirror to the real Reference");
@@ -213,23 +216,22 @@ bool InventoryReference::RemoveFromContainer(){
 		}
 		if (m_data.entry && m_data.entry->extendData && m_data.xData) {
 			ExtraCount* count = (ExtraCount*)m_data.xData->GetByType(kExtraData_Count);
-			m_data.entry->extendData->Remove(m_data.xData);  //TODO remember to free
+			m_data.entry->extendData->Remove(m_data.xData); 
 			FormHeap_Free(m_data.xData);
 			m_data.entry->countDelta -= count != NULL ? count->count : 1;
 		}
 		if (m_data.entry) {
-			if (m_data.count > 0 && (m_data.entry->extendData == nullptr || m_data.entry->extendData->IsEmpty())) {
+			if (m_data.count > 0 && !m_data.xData) {
 				//USe the countDelta
 				m_data.entry->countDelta -= m_data.count;
 			}
-			if (m_data.entry->countDelta <= 0) {
+			if (m_data.entry->countDelta <= 0 && !m_data.fromBaseContainer) {
 				ExtraContainerChanges* xChanges = ExtraContainerChanges::GetForRef(m_containerRef);
 				xChanges->data->objList->Remove(m_data.entry);
 				FormHeap_Free(m_data.entry);
 			}
 		}
 		else if(m_data.count > 0){   //If m_data.count is 0 or negative then there is nothing to remove
-			//TODO free extradata
 			actions->push(new DeferredAction(Action_Remove, m_data, nullptr, m_data.count));
 			return true;
 		}
@@ -261,7 +263,7 @@ static void MoveToDestContainerXData(InventoryReference::Data& data, ExtraContai
 		destEntry->extendData = (tList<ExtraDataList>*) tList<ExtraDataList>::Create();
 	}
 	destEntry->extendData->AddAt(data.xData, 0);
-	if (data.entry->countDelta <= 0) {
+	if (data.entry->countDelta <= 0 && !data.fromBaseContainer ) {
 		from->data->objList->Remove(data.entry);
 	}
 
@@ -279,7 +281,7 @@ static void MoveToDestContainerEntry(InventoryReference::Data& data, ExtraContai
 	//USe the countDelta
 	//TODO can we avoid reallocation?
 	data.entry->countDelta -= data.count;
-	if (data.entry->countDelta <= 0) {
+	if (data.entry->countDelta <= 0  && !data.fromBaseContainer) {
 		from->data->objList->Remove(data.entry);
 		FormHeap_Free(data.entry);
 	}
@@ -305,7 +307,7 @@ bool InventoryReference::MoveToContainer(TESObjectREFR* dest){
 	ExtraContainerChanges* destCont =  ExtraContainerChanges::GetForRef(dest);
 	if (destCont == nullptr) return false;
 	ExtraContainerChanges* xChanges = ExtraContainerChanges::GetForRef(m_containerRef);
-	DEBUG_PRINT("Porcoddio %d  %0X   %0X   %s", m_data.temporary, m_data.entry, m_data.xData , GetFullName(m_data.type));
+	DEBUG_PRINT("Porcoddio %0X   %0X   %s", m_data.entry, m_data.xData , GetFullName(m_data.type));
 	if (m_containerRef && m_tempRef && Validate()) {
 		if (m_data.xData && m_data.xData->IsWorn()) {
 			ExtraCount* count = (ExtraCount*)m_data.xData->GetByType(kExtraData_Count);

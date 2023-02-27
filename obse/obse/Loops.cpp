@@ -158,10 +158,22 @@ ContainerIterLoop::ContainerIterLoop(const ForEachContext* context)
                 DEBUG_PRINT("ExtraContainer has %d %s", countExtraData, GetFullName(form));
                 //TODO what's the difference between countDelta and iterating the extendextradatas to get the count?
 				//if entry->countDelta <0 negate a base container item
+				//if 0 represent the item in the base container? Assume this
 				if (countExtraData < 0) {
 					baseContainer[form] += countExtraData;
 					continue;
 				}
+				bool IsFromBaseCont = false;
+				if (countExtraData == 0){
+					countExtraData = baseContainer[form];
+					baseContainer[form] = 0;
+					IsFromBaseCont = true;
+				}
+				//An entryData "extends" the base container form. If there is a count of 0 it means there is data for the items in the basecontainer (equipment data maybe )
+				// If positive it means that there are more items then the ones in the base.
+				//If negative it meanst that there are less items that the ones defined in the base
+				//TODO what happens when we have items where only 1 have the extra data? How to test?
+				//Base item are define din extra container only if the item have an extradata defined (clothing has always one?)
                 if (entry->extendData) {
                     for (tList<ExtraDataList>::Iterator iter = entry->extendData->Begin(); !iter.End(); ++iter) {
                         /*Every EntryExtendData represent a separate stack?*/
@@ -170,14 +182,15 @@ ContainerIterLoop::ContainerIterLoop(const ForEachContext* context)
 							SInt32 count = xCount != NULL ? xCount->count : 1;
 							DEBUG_PRINT("Got stack of %d  for %s", count, GetFullName(form));
 							countExtraData -= count;
-							InventoryReference::Data data = IRefData(form, entry.Get(), iter.Get());
+							InventoryReference::Data data = IRefData(form, entry.Get(), iter.Get(), IsFromBaseCont);
 							m_elements.push_back(data);
 						}
                     }
                 }
 				if (countExtraData > 0) {//There are still leftovers items not associated with an ExtraDataList
 					DEBUG_PRINT("Got remaining  stack of %d  for %s", countExtraData, GetFullName(form));
-					m_elements.push_back(IRefData(form, entry.Get(), countExtraData));
+					m_elements.push_back(IRefData(form, entry.Get(), countExtraData, IsFromBaseCont));
+					countExtraData = 0;
 					//TODO Add these to the baseContainer objects if any
 				}
                 DEBUG_PRINT("ExtraContainer has %d %s after loop", countExtraData, GetFullName(form));
