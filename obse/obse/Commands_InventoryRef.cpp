@@ -74,7 +74,7 @@ static bool Cmd_GetInvRefsForItem_Execute(COMMAND_ARGS)
 	TESForm* item = NULL;
 	ArrayID arrID = g_ArrayMap.Create(kDataType_Numeric, true, scriptObj->GetModIndex());
 	*result = arrID;
-
+	
 	if (thisObj && ExtractArgs(PASS_EXTRACT_ARGS, &item) && item) {
 		double arrIndex = 0.0;
 		DEBUG_PRINT("%s", GetFullName(item));
@@ -83,6 +83,7 @@ static bool Cmd_GetInvRefsForItem_Execute(COMMAND_ARGS)
 		if (cont) {
 			TESContainer::Data* data = cont->DataByType(item);
 			SInt32 baseCount = 0;
+			bool isBaseItem = data != NULL ? true : false;
 			if (data) {
 				baseCount = (data->count > 0) ? data->count : 0;
 			}
@@ -109,7 +110,7 @@ static bool Cmd_GetInvRefsForItem_Execute(COMMAND_ARGS)
 							if (!*extend) {
 								continue;
 							}
-							InventoryReference::Data data(item, ed, extend.Get());
+							InventoryReference::Data data(item, ed, extend.Get(), isBaseItem);
 							InventoryReference* iref = InventoryReference::CreateInventoryRef(thisObj, data, false);
 							g_ArrayMap.SetElementFormID(arrID, arrIndex, iref->GetRef()->refID);
 							arrIndex += 1.0;
@@ -117,7 +118,7 @@ static bool Cmd_GetInvRefsForItem_Execute(COMMAND_ARGS)
 						}
 					}
 					if(baseCount > 0){
-						InventoryReference::Data data(item, ed, baseCount);
+						InventoryReference::Data data(item, ed, baseCount, isBaseItem);
 						InventoryReference* iref = InventoryReference::CreateInventoryRef(thisObj, data, false);
 						g_ArrayMap.SetElementFormID(arrID, arrIndex, iref->GetRef()->refID);
 						arrIndex += 1.0;
