@@ -164,10 +164,11 @@ ContainerIterLoop::ContainerIterLoop(const ForEachContext* context)
 					continue;
 				}
 				bool IsFromBaseCont = false;
-				if (countExtraData == 0){
-					countExtraData = baseContainer[form];
+				if (baseContainer.contains(form)){
+					countExtraData += baseContainer[form];
 					baseContainer[form] = 0;
 					IsFromBaseCont = true;
+					DEBUG_PRINT("Item refers to a base container item");
 				}
 				//An entryData "extends" the base container form. If there is a count of 0 it means there is data for the items in the basecontainer (equipment data maybe )
 				// If positive it means that there are more items then the ones in the base.
