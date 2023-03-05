@@ -1,3 +1,19 @@
+xOBSE 22.8
+	Fix:
+		- Fixed an issue for using RemoveItem in a Container Loop, fixing a crash with Maskar Oblivion Overhaul
+		- Properly process base container item in container loops 
+		- Fix modifying extra data with InventoryReference when  original item had no extra data (fix some instances of SetCurrentSoulLevel for instance)
+		- Allow OnEventKey and OnEventControl unfiltered if no first or sencond filter are specified
+		- Fix OnControl Release event never triggered for mouse controls.
+		- Allow using Player in OBSE expressions as PlayerRef (mimicking vanilla compiler/evaluator)
+	Changes:
+		- Added compatibility with OBJA v16 (Oblivion Japanese Patch OBSE plugin version) for the Input System
+		- Improve some error messages for Scripts failures in the ExpressionEvaluator, prevent some spam
+		- Try to print better info about form and reference tokens (some info with RuntimeEditorID only)
+	API:
+		- Merge BaseExtraList with ExtraDataList
+		- Added InventoryReference::InvalidateByItemAndContainer 
+
 xOBSE 22.7
 	Fix: 
 		- Moving an inventory reference to another container with RemoveMeIR copy the extradata from the temp ref.
