@@ -46,12 +46,12 @@ jobs:
       with:
         type: 'zip'
         directory: '.\build'
-        filename: xOBSE-${{ github.event.ref }}.zip
+        filename: xOBSE-${{ github.ref_name }}.zip
         
     - name: Release            
       uses: softprops/action-gh-release@v1
       with:
-        files: .\build\xOBSE-${{ github.event.ref }}.zip
+        files: .\build\xOBSE-${{ github.ref_name }}.zip
 
     - name: VirusTotal
       uses: crazy-max/ghaction-virustotal@v3
@@ -59,4 +59,4 @@ jobs:
        vt_api_key: '${{ secrets.VIRUSTOTAL }}'
        update_release_body: true
        files: |
-            xOBSE-${{ github.event.ref }}.zip
+            xOBSE-${{ github.ref_name }}.zip
