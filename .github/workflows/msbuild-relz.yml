@@ -53,6 +53,11 @@ jobs:
       with:
         files: .\build\xOBSE-${{ github.ref_name }}.zip
 
+    - name: Debug
+      run: |
+          ls
+          ls .\build
+
     - name: VirusTotal
       uses: crazy-max/ghaction-virustotal@v3
       with:
