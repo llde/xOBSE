@@ -64,4 +64,4 @@ jobs:
        vt_api_key: '${{ secrets.VIRUSTOTAL }}'
        update_release_body: true
        files: |
-            xOBSE-${{ github.ref_name }}.zip
+            ./build/xOBSE-${{ github.ref_name }}.zip
