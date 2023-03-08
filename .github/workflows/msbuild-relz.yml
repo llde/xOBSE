@@ -59,7 +59,7 @@ jobs:
           ls .\build
 
     - name: VirusTotal
-      uses: crazy-max/ghaction-virustotal@v3
+      uses: llde/ghaction-virustotal@v3
       with:
        vt_api_key: '${{ secrets.VIRUSTOTAL }}'
        update_release_body: true
