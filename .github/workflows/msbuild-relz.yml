@@ -51,6 +51,7 @@ jobs:
     - name: Release            
       uses: softprops/action-gh-release@v1
       with:
+        name: 'xOBSE ${{ github.ref_name }}'
         files: ./build/xOBSE-${{ github.ref_name }}.zip
 
     - name: Debug
