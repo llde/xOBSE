@@ -407,6 +407,7 @@ bool InventoryReference::DeferredAction::Execute(InventoryReference* iref) {
 				//TODO check explicitly the stack count only for arrows?
 				actor->EquipItem(data.type, count, data.xData, 0, 0);
 			}
+			iref->SetRemoved(); //TEST
 			return true;
 		}
 		case Action_Remove: {
