@@ -69,7 +69,6 @@ static bool Cmd_CreateTempRef_Execute(COMMAND_ARGS)
 
 static bool Cmd_GetInvRefsForItem_Execute(COMMAND_ARGS)
 {
-	DEBUG_PRINT("GetInvRefsForItem executed");
 	// returns an array of inventory references for the specified base object in the calling object's inventory
 	TESForm* item = NULL;
 	ArrayID arrID = g_ArrayMap.Create(kDataType_Numeric, true, scriptObj->GetModIndex());
@@ -77,7 +76,7 @@ static bool Cmd_GetInvRefsForItem_Execute(COMMAND_ARGS)
 	
 	if (thisObj && ExtractArgs(PASS_EXTRACT_ARGS, &item) && item) {
 		double arrIndex = 0.0;
-		DEBUG_PRINT("%s", GetFullName(item));
+		DEBUG_PRINT("GetInvRefsForItem executed for %08X %s   %08X", item->refID , GetFullName(item), scriptObj->refID);
 		// get count for base container
 		TESContainer* cont = OBLIVION_CAST(thisObj->baseForm, TESForm, TESContainer);
 		if (cont) {
@@ -87,7 +86,7 @@ static bool Cmd_GetInvRefsForItem_Execute(COMMAND_ARGS)
 			if (data) {
 				baseCount = (data->count > 0) ? data->count : 0;
 			}
-			DEBUG_PRINT("%d", baseCount);
+			DEBUG_PRINT("Got count %d in baseContainer", baseCount);
 			// get container changes for refr
 			ExtraContainerChanges* xChanges = (ExtraContainerChanges*)thisObj->baseExtraList.GetByType(kExtraData_ContainerChanges);
 			if (xChanges &&  xChanges->data && xChanges->data->objList) {
@@ -102,7 +101,7 @@ static bool Cmd_GetInvRefsForItem_Execute(COMMAND_ARGS)
 				// create temp refs for each stack
 				if (ed) {
 					baseCount += ed->countDelta;
-					DEBUG_PRINT("%d", baseCount);
+					DEBUG_PRINT("got count %d in ExtraContainer", baseCount);
 					DEBUG_PRINT("%0X", ed->extendData);
 					if (baseCount > 0  && ed->extendData) {  //Investigate why this may be null
 						for (tList<ExtraDataList>::Iterator extend = ed->extendData->Begin(); !extend.End(); ++extend) {
@@ -136,7 +135,7 @@ static bool Cmd_GetInvRefsForItem_Execute(COMMAND_ARGS)
 			}
 		}
 	}
-
+	DEBUG_PRINT("GetInvRefsForItem End");
 	return true;
 }
 
