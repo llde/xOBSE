@@ -253,9 +253,10 @@ static void HandleMainLoopHook(void)
 	DoDeferredDelete();
 
 	// if any temporary references to inventory objects exist, clean them up
-	if (InventoryReference::HasData())
+	if (InventoryReference::HasData()){
+		DEBUG_PRINT("IR still present at frame end");
 		InventoryReference::Clean();
-
+	}
 	// execute queued tasks if any
 	if (TaskManager::HasTasks())
 		TaskManager::Run();
@@ -273,7 +274,7 @@ static __declspec(naked) void _TESSaveLoadGame_LoadCreatedObjectsHook(void)
 	}
 }
 
-class CallPostFixup
+class CallPostFixup 
 {
 public:
 	bool	Accept(UInt32 formID)
@@ -1297,6 +1298,29 @@ static __declspec(naked) void DropMeHook(void){
 	}
 }
 
+/*
+ */
+/*bool inFunctionScript = false;
+
+void ClearIRAfterScript(){
+//	DEBUG_PRINT("%u", inFunctionScript);
+	if (InventoryReference::HasData()  && !inFunctionScript)
+		InventoryReference::Clean();
+}
+
+static const UInt32 kRunScriptEndHook = 0x004FBEEE;
+static const UInt32 kRunScriptEndRet = 0x004FBEF3;
+static const UInt32 Unk004FB430 = 0x004FB430;
+static __declspec(naked) void RunScriptHook(void){
+	__asm{
+		call Unk004FB430
+		pushad
+		call ClearIRAfterScript
+		popad
+		jmp [kRunScriptEndRet]
+	}
+}*/
+
 void Hook_Gameplay_Init(void)
 {
 	// game main loop
@@ -1381,6 +1405,9 @@ void Hook_Gameplay_Init(void)
 	WriteRelJump(kRemoveMeHook, (UInt32)&RemoveMeHook);
 	WriteRelJump(kDropMeHook, (UInt32)&DropMeHook);
 	WriteRelJump(kDropHook, (UInt32)&DropHook);
+
+	
+//	WriteRelJump(kRunScriptEndHook, (UInt32)&RunScriptHook);
 
 	// this seems stable and helps in debugging, but it makes large files during gameplay
 #if defined(_DEBUG) && 0

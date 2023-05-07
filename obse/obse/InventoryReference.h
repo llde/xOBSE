@@ -45,6 +45,8 @@ public:
 	TESObjectREFR*				m_tempRef;
 	bool						m_bRemoved;
 	bool						m_bDoValidation;
+	Script*						m_associatedScript;
+	
 	std::queue<DeferredAction*>* actions;
     ~InventoryReference();
 
@@ -71,9 +73,10 @@ public:
 	static TESObjectREFR* CreateInventoryRefEntry(TESObjectREFR* container, TESForm* itemForm, SInt32 countDelta, ExtraDataList* xData);
 	static TESObjectREFR* GetRefBySelf(InventoryReference* self) { return self ? self->GetRef() : NULL; }	// Needed to get convert the address to a void*
 	static void InvalidateByItemAndContainer(TESObjectREFR* cont, TESForm* item);
-
+	static void ReleaseNonDeferred(TESObjectREFR* cont);
     static void Clean();									// called from main loop to destroy any temp refs
 	static bool HasData() { return !s_refmap.empty(); }	// provides a quick check from main loop to avoid unnecessary calls to Clean()
 	static std::map<UInt32, InventoryReference*> s_refmap;
+	static bool  releaseNonDeferred;
 };
 

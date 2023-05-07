@@ -75,3 +75,5 @@ void UnsetQuestStageItemText(QuestStageItem* item);
 extern long double g_PlayerFlyCamSpeed;
 
 void Init_PlayerFlyCamPatch(void);
+
+extern bool inFunctionScript;

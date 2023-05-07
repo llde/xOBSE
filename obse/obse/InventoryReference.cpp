@@ -4,12 +4,13 @@
 #include "Settings.h"
 
 std::map<UInt32, InventoryReference*> InventoryReference::s_refmap;
-
+bool InventoryReference::releaseNonDeferred = true;
 
 InventoryReference* InventoryReference::CreateInventoryRef(TESObjectREFR* container, InventoryReference::Data data, bool bValidate)
 {
 	TESObjectREFR *refr = TESObjectREFR::Create(false);
 	InventoryReference* invRefr = (InventoryReference*)FormHeap_Allocate(sizeof(InventoryReference));
+	ZeroMemory(invRefr, sizeof(InventoryReference));
 	invRefr->m_containerRef = container;
 	invRefr->m_tempRef = refr;
 	invRefr->m_bDoValidation = bValidate;
@@ -18,6 +19,7 @@ InventoryReference* InventoryReference::CreateInventoryRef(TESObjectREFR* contai
 	invRefr->SetData(data);
 	invRefr->actions = new std::queue<DeferredAction*>();
 	InventoryReference::s_refmap[refr->refID] = invRefr;
+	InventoryReference::releaseNonDeferred = true; //Allow fixup for newer IR
 	return invRefr;
 }
 
@@ -42,12 +44,14 @@ TESObjectREFR* InventoryReference::CreateInventoryRefEntry(TESObjectREFR* contai
 }
 
 InventoryReference::~InventoryReference(){
-	DEBUG_PRINT("Destroying IR");
+	DEBUG_PRINT("Destroying IR  %08X  %u   %s",  this, m_bRemoved, GetFullName(m_data.type));
 	if (m_tempRef) Release();
 	DEBUG_PRINT("Destroying IR1");
 	delete actions;
-	m_tempRef->baseExtraList.RemoveAll(); //Possible distruction of xScript in Destroy, causing CTD
-	if (m_tempRef) m_tempRef->Destroy(true);
+	if (m_tempRef){
+		m_tempRef->baseExtraList.RemoveAll(); //Possible distruction of xScript in Destroy, causing CTD
+		m_tempRef->Destroy(true);
+	}
 	DEBUG_PRINT("Destroying IR2");
 
 	if (m_containerRef) {
@@ -67,6 +71,7 @@ void InventoryReference::Release(){
 }
 
 void InventoryReference::DoDeferredActions() { 
+	if(InventoryReference::releaseNonDeferred && !actions->empty()) ReleaseNonDeferred(m_containerRef);
 	while (!actions->empty()) {
 		DeferredAction* action = actions->front();
 		if (!action->Execute(this)) {
@@ -79,7 +84,7 @@ void InventoryReference::DoDeferredActions() {
 
 bool InventoryReference::SetData(Data data){
 	if (IR_WriteAllRef) WriteRefDataToContainer();
-	DEBUG_PRINT("Set IR  %s", GetFullName(data.type));
+	DEBUG_PRINT("Set IR %08X %s", this, GetFullName(data.type));
 	m_bRemoved = false;
 	m_tempRef->baseForm = data.type;
 	m_data = data;
@@ -187,11 +192,30 @@ void InventoryReference::InvalidateByItemAndContainer(TESObjectREFR* cont, TESFo
 }
 
 void InventoryReference::Clean(){
-	for (auto iter = s_refmap.begin(); iter != s_refmap.end(); ++iter) {
-		iter->second->~InventoryReference();
-		FormHeap_Free(iter->second); //TODO override new and delete
+	for (auto iter = s_refmap.begin(); iter != s_refmap.end();) {
+		InventoryReference* ir = iter->second;
+		iter = s_refmap.erase(iter);
+		ir->~InventoryReference();
+		FormHeap_Free(ir); //TODO override new and delete
 	}
-	s_refmap.clear();
+	InventoryReference::releaseNonDeferred = true;
+//	s_refmap.clear();
+}
+
+/*
+ * Release IR that doens't have deferred actions. 
+ * To be called before executing a deferred action to avoid these IR to be invalidated
+ * TODO try to fixup instead? 
+ * Most of this wouldn't be needed if we can use per script IR Releases
+ */
+void InventoryReference::ReleaseNonDeferred(TESObjectREFR* cont){
+	for (auto iter = s_refmap.begin(); iter != s_refmap.end(); iter++) {
+		InventoryReference* ir = iter->second;
+		if(ir->actions->empty() && ir->m_containerRef == cont){
+			ir->Release();
+		}
+	}
+	InventoryReference::releaseNonDeferred = false;
 }
 
 /*
@@ -209,6 +233,7 @@ static void RemoveFromContainerEntry(InventoryReference::Data& data, ExtraContai
 
 bool InventoryReference::RemoveFromContainer(){
 	if (m_containerRef && m_tempRef && Validate()) {
+		DEBUG_PRINT("Porcoddio %0X %0X   %0X   %s",  this, m_data.entry, m_data.xData , GetFullName(m_data.type));
 		if (m_data.xData &&  m_data.xData->IsWorn()) {
 			ExtraCount* count = (ExtraCount*)m_data.xData->GetByType(kExtraData_Count);
 			actions->push(new DeferredAction(Action_Remove, m_data, nullptr , count ? count->count : 1));
@@ -378,15 +403,18 @@ bool InventoryReference::CopyToContainer(TESObjectREFR* dest){
 }
 
 bool InventoryReference::SetEquipped(bool bEquipped){
-	DEBUG_PRINT("%s  %0X   %0X  %0X  %s", GetFullName(m_data.type), m_data.xData , m_data.xData ? m_data.xData->IsWorn() : false , bEquipped, GetFullName(m_containerRef));
+	DEBUG_PRINT("%08X %s  %0X   %0X  %0X  %s", this, GetFullName(m_data.type), m_data.xData , m_data.xData ? m_data.xData->IsWorn() : false , bEquipped, GetFullName(m_containerRef));
 	if (m_data.xData == nullptr && bEquipped == false) return false; //No extra data items can't be already equipped. So bail off if bEquipped is false
 	if (m_data.xData && m_data.xData->IsWorn() == bEquipped) return false; //  If both IsWorn and bEquipped are equals the state is already what we want. Bail out.
 	SInt32 count = 1;
 	if (m_data.xData) {
+		m_data.xData->RemoveAll();
+		m_data.xData->Copy(&m_tempRef->baseExtraList);  //Copy the changes from the temp ref. Equip action is deferred and the IR is invalidated after, so do the copy here
 		ExtraCount* co = (ExtraCount*) m_data.xData->GetByType(kExtraData_Count);
 		count = co ? co->count : 1;
 	}
 	else {
+		//TODO no extradata in origin, but ir modified with extradata, handle
 		count = m_data.count;
 	}
 	actions->push(new DeferredAction(Action_Equip, m_data, nullptr, count));
@@ -395,7 +423,7 @@ bool InventoryReference::SetEquipped(bool bEquipped){
 
 bool InventoryReference::DeferredAction::Execute(InventoryReference* iref) {
 	TESObjectREFR* cont = iref->GetContainer();
-	DEBUG_PRINT("Deferred action for %s", GetFullName(data.type));
+	DEBUG_PRINT("Deferred action for %08X %s", iref, GetFullName(data.type));
 	switch (type) {
 		case Action_Equip: {
 			if (!cont->IsActor())  return false;
@@ -407,12 +435,14 @@ bool InventoryReference::DeferredAction::Execute(InventoryReference* iref) {
 				//TODO check explicitly the stack count only for arrows?
 				actor->EquipItem(data.type, count, data.xData, 0, 0);
 			}
-			iref->SetRemoved(); //TEST
+			iref->SetRemoved();
+			InvalidateByItemAndContainer(cont,data.type); //HACK: invalidate other IR with the same form and container, it may be invalid after this point. This should become unnecessary after reworking IR to be per Script.	
 			return true;
 		}
 		case Action_Remove: {
 			cont->RemoveItem(data.type, data.xData, count, 0, 0, dest, nullptr, nullptr, 1, 0);
 			iref->SetRemoved();
+			InvalidateByItemAndContainer(cont,data.type); //HACK: invalidate other IR with the same form and container, it may be invalid after this point. This should become unnecessary after reworking IR to be per Script.	
 //			iref->SetData(InventoryReference::Data());
 			return true;
 		}

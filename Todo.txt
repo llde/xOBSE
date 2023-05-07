@@ -1,3 +1,6 @@
+Ear slot is more strict then other slots, failing with a parameter validation leading to CTD both game and CS
+
+
 *******************@shadeMe
 [[[		FIX
 - Port NVSE fixes

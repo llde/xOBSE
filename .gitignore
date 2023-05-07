@@ -6,8 +6,13 @@
 /common/Release
 /obse/.vs
 /obse/obse/Debug 1_2_0_416
+/obse/obse/Release 1_2_0_416
 /obse/obse_editor/Debug 1_2_0_0
+/obse/obse_editor/Release 1_2_0_0
 /obse/Debug
+/obse/Release
 /obse/loader/Debug
 /obse/loader_common/Debug
+/obse/loader_common/Release
 /obse/steam_loader/Debug
+/obse/steam_loader/Release
