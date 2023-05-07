@@ -254,7 +254,7 @@ static void HandleMainLoopHook(void)
 
 	// if any temporary references to inventory objects exist, clean them up
 	if (InventoryReference::HasData()){
-		DEBUG_PRINT("IR still present at frame end");
+	//	DEBUG_PRINT("IR still present at frame end");
 		InventoryReference::Clean();
 	}
 	// execute queued tasks if any
