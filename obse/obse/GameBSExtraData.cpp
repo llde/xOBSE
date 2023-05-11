@@ -70,12 +70,13 @@ bool ExtraDataList::Remove(BSExtraData* toRemove)
 	return false;
 }
 
-bool ExtraDataList::RemoveByType(UInt32 type)
+BSExtraData* ExtraDataList::RemoveByType(UInt32 type)
 {
-	bool res = false;
+	BSExtraData* res = nullptr;
 	EnterCriticalSection(BSExtraDataSection);
 	if (HasType(type)) {
-		res = Remove(GetByType(type));
+		res = GetByType(type);
+		Remove(res);
 	}
 	LeaveCriticalSection(BSExtraDataSection);
 	return res;

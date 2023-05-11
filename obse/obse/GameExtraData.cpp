@@ -152,12 +152,12 @@ void ExtraContainerChanges::Cleanup()
 	if (data) {
 		for (tList<ExtraContainerChanges::EntryData>::Iterator cur = data->objList->Begin(); !cur.End(); ++cur) {
 			if (*cur) {
-				DEBUG_PRINT("cur %0X", *cur);
+//				DEBUG_PRINT("cur %0X", *cur);
 				// make sure we don't have any NULL ExtraDataList's in extend data, game will choke when saving
 				tList<ExtraDataList>::_Node* prev = NULL;
 				if (cur->extendData == NULL  /*|| cur->extendData->IsEmpty()*/) continue;
 				for (tList<ExtraDataList>::Iterator xtendData = cur->extendData->Begin(); !xtendData.End();) {
-					DEBUG_PRINT("xtend %0X", *xtendData);
+			//		DEBUG_PRINT("xtend %0X", *xtendData);
 					if (!(*xtendData)) {
 						//Node is null remove
 						DEBUG_PRINT("Removing ExtraDataList Node %0X", xtendData);

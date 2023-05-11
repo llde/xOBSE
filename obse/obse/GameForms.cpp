@@ -1819,7 +1819,8 @@ void TESObjectCELL::SetHasWater(bool bHas)
 		flags0 |= kFlags0_HasWater;
 	}
 	else if (HasWater()) {
-		flags0 &= ~kFlags0_HasWater;
+		flags0 &= ~kFlags0_HasWater; 
+		//TODO memory leak?  What about readding them?
 		extraData.RemoveByType(kExtraData_CellWaterType);
 		extraData.RemoveByType(kExtraData_WaterHeight);
 	}

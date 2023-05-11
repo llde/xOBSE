@@ -237,7 +237,7 @@ public:
 
 	void			MarkType(UInt32 type, bool bCleared);
 	bool			Remove(BSExtraData* toRemove);
-	bool			RemoveByType(UInt32 type);
+	BSExtraData*	RemoveByType(UInt32 type);
 	bool			Add(BSExtraData* toAdd);
 	void			RemoveAll();
 
