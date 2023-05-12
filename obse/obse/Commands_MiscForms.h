@@ -7,6 +7,7 @@ extern CommandInfo kCommandInfo_GetIngredientChance;
 extern CommandInfo kCommandInfo_SetIngredientChance;
 extern CommandInfo kCommandInfo_GetBookText;
 extern CommandInfo kCommandInfo_GetEditorID;
+extern CommandInfo kCommandInfo_GetEditorID2;
 extern CommandInfo kCommandInfo_MatchPotion;
 
 extern CommandInfo kCommandInfo_GetDescription;

@@ -458,6 +458,7 @@ public:
 	TESForm *	TryGetREFRParent(void);
 	TESFullName* GetFullName();
 	const char* GetEditorID();
+	const char* GetEditorID2();
 	bool	IsInventoryObject() const;
 };
 

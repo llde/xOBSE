@@ -484,7 +484,12 @@ TESFullName* TESForm::GetFullName()
 
 	return fullName;
 }
-
+/**
+ It's dangerous to break a function contract.
+ Realtime Interactions excpect the mod to return the formid and it's using the resulting string as a key in a map
+ Despite existing  better functions to do that job (GetFormIDString / GetRawFormIDString )
+ Returnin an EDitor ID (from REID) but some references may not have an edid at all.
+ */
 const char* TESForm::GetEditorID()
 {
 	TESQuest* quest = OBLIVION_CAST(this, TESForm, TESQuest);
@@ -502,8 +507,28 @@ const char* TESForm::GetEditorID()
 	TESWorldSpace* worldspace = OBLIVION_CAST(this, TESForm, TESWorldSpace);
 	if (worldspace)
 		return worldspace->editorID.m_data;
+	return  NULL;
+}
+
+const char* TESForm::GetEditorID2()
+{
+	TESQuest* quest = OBLIVION_CAST(this, TESForm, TESQuest);
+	if (quest)
+		return quest->editorName.m_data;
+
+	TESObjectCELL* cell = OBLIVION_CAST(this, TESForm, TESObjectCELL);
+	if (cell)
+	{
+		ExtraEditorID* xData = (ExtraEditorID*)cell->extraData.GetByType(kExtraData_EditorID);
+		if (xData)
+			return xData->editorID.m_data;
+	}
+	TESWorldSpace* worldspace = OBLIVION_CAST(this, TESForm, TESWorldSpace);
+	if (worldspace)
+		return worldspace->editorID.m_data;
 	//TODO detect REID, this works only with that (maybe MessageLogger??)
-	return this->GetEditorName();
+	const char* edid = this->GetEditorName();
+	return (edid == NULL || strcmp(edid, "") == 0) ? NULL : edid;
 }
 
 bool TESForm::IsInventoryObject() const

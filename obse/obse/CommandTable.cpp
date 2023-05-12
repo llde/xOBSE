@@ -3013,6 +3013,7 @@ void CommandTable::Init(void)
 	g_scriptCommands.Add(&kCommandInfo_SetOwningFactionRequiredRank);
 	g_scriptCommands.Add(&kCommandInfo_SetParentCellOwningFactionRequiredRank);
 	ADD_CMD_RET(GetLoadedTypeArray, kRetnType_Array);
+	g_scriptCommands.Add(&kCommandInfo_GetEditorID2, kRetnType_String);
 
    	UInt32 opcodeGetDisease =  g_scriptCommands.GetByName("GetDisease")->opcode;
 	CommandInfo newgetDisease = kCommandInfo_IsDiseased;

@@ -173,6 +173,24 @@ static bool Cmd_GetEditorID_Execute(COMMAND_ARGS)
 	return true;
 }
 
+static bool Cmd_GetEditorID2_Execute(COMMAND_ARGS)
+{
+	// if editorID not available, return empty string
+	const char* idStr = "";
+
+	TESForm* form = NULL;
+	if (ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form) && form)
+	{
+		const char* edID = form->GetEditorID2();
+		if (edID)
+			idStr = edID;
+	}
+
+	AssignToStringVar(PASS_COMMAND_ARGS, idStr);
+	return true;
+}
+
+
 static bool Cmd_MatchPotion_Execute(COMMAND_ARGS)
 {
 	TESForm* potionForm = NULL;
@@ -631,7 +649,9 @@ static ParamInfo kParams_GetEditorID[2] =
 	{ "bNoFormID",	kParamType_Integer,			1 },
 };
 
-DEFINE_COMMAND(GetEditorID, returns the editorID of a form if possible, 0, 2, kParams_GetEditorID);
+DEFINE_COMMAND_DEPRECATED(GetEditorID, returns the editorID of a form if possible, 0, 2, kParams_GetEditorID);
+
+DEFINE_COMMAND(GetEditorID2, returns the editorID of a form if possible, 0, 1, kParams_OneInventoryObject);
 
 DEFINE_COMMAND(MatchPotion, returns a potion matching the effects of the passed potion if any, 0, 1, kParams_OneInventoryObject);
 
