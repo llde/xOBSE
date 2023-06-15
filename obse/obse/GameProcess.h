@@ -651,7 +651,7 @@ public:
 	~BaseProcess();
 
 	virtual void	Destructor(void);
-	virtual void	Unk_01(void) = 0;
+	virtual void	Unk_01(BaseProcess*) = 0; /*Copy*/
 	virtual UInt32	GetProcessLevel(void) = 0;	// 0 - high, 3 - low
 	virtual void	Unk_03(Actor* act, UInt32 arg1) = 0;
 	virtual void	ManagePackProcedure(Actor* arg0) = 0;
@@ -717,12 +717,12 @@ public:
 	virtual UInt32	Unk_3A(UInt32 arg0) = 0;
 	virtual UInt32	Unk_3B(UInt32 arg0) = 0;
 	virtual ExtraContainerChanges::EntryData* GetEquippedWeaponData(bool arg0) = 0;
-	virtual UInt32	Unk_3D(UInt32 arg0) = 0;
+	virtual ExtraContainerChanges::EntryData* GetEquippedLightData(UInt32 arg0) = 0;
 	virtual ExtraContainerChanges::EntryData* GetEquippedAmmoData(bool arg0) = 0;
 	virtual void	Unk_3F(UInt32 arg0) = 0;
-	virtual bool	Unk_40(UInt32 arg0, UInt32 arg1) = 0;
-	virtual bool	Unk_41(UInt32 arg0) = 0;
-	virtual bool	Unk_42(UInt32 arg0) = 0;
+	virtual bool	GetAV(UInt32 arg0, UInt32 arg1) = 0;
+	virtual bool	SetAV(UInt32 arg0) = 0;
+	virtual bool	SetEquippedWeaponData(UInt32 arg0) = 0;
 	virtual bool	Unk_43(UInt32 arg0) = 0;
 	virtual bool	Unk_44(UInt32 arg0) = 0;
 	virtual UInt32	Unk_45(UInt32 arg0) = 0;
@@ -1032,7 +1032,7 @@ public:
 	virtual void	Unk_152(void) = 0;
 	virtual void	Unk_153(void) = 0;
 	virtual void	Unk_154(void) = 0;
-	virtual void	Unk_155(void) = 0;
+	virtual void	Unk_155(Actor*) = 0; /*Called when HighProcess isn't following*/
 	virtual void	Unk_156(void) = 0;
 	virtual UInt8	MountHorse(Actor* act) = 0;
 	virtual UInt8	DismoutHorse(Actor* act) = 0;

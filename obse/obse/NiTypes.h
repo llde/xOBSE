@@ -266,7 +266,7 @@ UInt32 NiTPointerMap <T_Data>::Iterator::GetKey(void)
 }
 
 template <typename T_Data>
-NiTPointerMap <T_Data>::Entry* NiTPointerMap <T_Data>::Iterator::Next(void){
+typename NiTPointerMap<T_Data>::Entry* NiTPointerMap<T_Data>::Iterator::Next(void){
 	if (m_entry) m_entry = m_entry->next;
 	if (m_entry) return m_entry;
 	m_bucket++;
