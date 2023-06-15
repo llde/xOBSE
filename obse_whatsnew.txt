@@ -1,3 +1,14 @@
+xOBSE 22.9
+	Fix:
+		- Commit new ExtraData to container only if ExtraCount isn't the only data present. Fix duplicated items in inventory using MOO companions
+		- Flush IR, when another IR is created on the same container (workaround to common instabilities as for Break Armors and Take or Equip, precursor to script based lifetime IRs ) and it's executing a DeferredAction
+		- Invalidate IR after SetEquip Deferred actions 
+		- Revert GetEditorID changes for REID as Realtime Interactions depended strictly on the old beahviours. Deprecate it and add GetEditorID2 as the contract was funcky and there are better functions to operate on formIDs
+		- Copy ExtraDataList of the IR in case of SetEquip Actions (non deferred)
+		- Fix a couple of Memory leaks  related to ExtraWorn data and IRs
+	 Documentation:
+		- Fix documentation for Alchemy Types
+
 xOBSE 22.8
 	Fix:
 		- Fixed an issue for using RemoveItem in a Container Loop, fixing a crash with Maskar Oblivion Overhaul
