@@ -834,7 +834,7 @@ CommandInfo kCommandInfo_RemoveEventHandler =
 	"removes event handlers matching the event, script, and optional filters specified",
 	0, 4, kOBSEParams_SetEventHandler,
 	HANDLER(Cmd_RemoveEventHandler_Execute),
-	Cmd_Expression_Parse,
+	Cmd_SetEventHandler_Parse,
 	NULL,
 	0
 };
@@ -845,7 +845,7 @@ CommandInfo kCommandInfo_EventHandlerExist =
 	"check if an event handler matching the event, script, and optional filters specified exists",
 	0, 4, kOBSEParams_SetEventHandler,
 	HANDLER(Cmd_EventHandlerExist_Execute),
-	Cmd_Expression_Parse,
+	Cmd_SetEventHandler_Parse,
 	NULL,
 	0
 };
