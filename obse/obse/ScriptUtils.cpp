@@ -1752,11 +1752,7 @@ bool ExpressionParser::ParseArgs(ParamInfo* params, UInt32 numParams, bool bUses
 		{
 			if (!ValidateArgType(params[m_numArgsParsed].typeID, argType, bUsesOBSEParamTypes))
 			{
-				#if OBLIVION
-					ShowCompilerError(m_lineBuf, "Invalid expression for parameter %d. Expected %s.", m_numArgsParsed + 1, params[m_numArgsParsed].typeStr);
-				#else
-					ShowCompilerError(m_scriptBuf, "Invalid expression for parameter %d. Expected %s.", m_numArgsParsed + 1, params[m_numArgsParsed].typeStr);
-				#endif
+				CompilerMessages::Show(CompilerMessages::kError_InvalidParametersExpression, m_scriptBuf, m_numArgsParsed + 1, params[m_numArgsParsed].typeStr);
 				return false;
 			}
 		}
@@ -2194,6 +2190,9 @@ ErrOutput::Message CompilerMessages::s_Messages[] =
 		ErrOutput::Message ("Usage of ref variables as pointers to user-defined functions prevents type-checking of function arguments. Make sure the arguments provided match those expected by the function being called.", true, true),
 		ErrOutput::Message ("Command '%s' is deprecated. Consult the command documentation for an alternative command.", true, true),
 
+		"Argument filter string is not recognized : %s. Should be \"first\" or \"ref\" for the first filter and \"second\" or \"object\" for the second one",
+		"Invalid expression for parameter %d. Expected %s.",
+		ErrOutput::Message("Event %s  is not found between the game events. User defined events must be manually dispatched", true, true),
 	// default
 		"Undefined message."
 };

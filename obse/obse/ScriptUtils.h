@@ -102,7 +102,9 @@ struct CompilerMessages
 		kWarning_UnquotedString,		// string:unquotedString
 		kWarning_FunctionPointer,
 		kWarning_DeprecatedCommand,		// string:commandName
-
+		kError_InvalidEventFilter,  //events
+		kError_InvalidParametersExpression,
+		kWarning_EventNotAvailable,
 		kMessageCode_Max
 	};
 private:

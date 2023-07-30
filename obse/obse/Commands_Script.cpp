@@ -568,6 +568,35 @@ static bool Cmd_DispatchEvent_Execute (COMMAND_ARGS)
 
 #endif
 
+
+static bool Cmd_SetEventHandler_Parse(UInt32 numParams, ParamInfo* paramInfo, ScriptLineBuffer* lineBuf, ScriptBuffer* scriptBuf) {
+	bool res =  Cmd_Expression_Parse(numParams, paramInfo, lineBuf, scriptBuf);
+	char* context;
+	strtok_s(lineBuf->paramText, " ", &context); //TODO validate handler;
+	strtok_s(NULL, " ", &context); //Script already validated;
+	char* tok = strtok_s(NULL, " ", &context);
+	if (tok == NULL) return true; //No arguments specified
+	std::string  inner = tok;
+	inner = inner.substr(0, inner.find(':')); 
+	if (inner.find("\"") != std::string::npos) inner = inner.substr(1, inner.size() - 1);
+	bool valid = inner.starts_with("first") || inner.starts_with("ref") || inner.starts_with("second") || inner.starts_with("object");
+	if (!valid) {
+		CompilerMessages::Show(CompilerMessages::kError_InvalidEventFilter, scriptBuf, inner.data());
+		res = false;
+	}
+	tok = strtok_s(NULL, " ", &context);
+	if (tok == NULL) return true; //No  more arguments specified
+	inner = tok;
+	inner = inner.substr(0, inner.find(':'));
+	if (inner.find("\"") != std::string::npos) inner = inner.substr(1, inner.size() - 1);
+	valid = inner.starts_with("first") || inner.starts_with("ref") || inner.starts_with("second") || inner.starts_with("object");
+	if (!valid) {
+		CompilerMessages::Show(CompilerMessages::kError_InvalidEventFilter, scriptBuf, inner.data());
+		res = false;
+	}
+	return res;
+}
+
 CommandInfo kCommandInfo_IsScripted =
 {
 	"IsScripted",
@@ -794,7 +823,7 @@ CommandInfo kCommandInfo_SetEventHandler =
 	"defines a function script to serve as a callback for game events",
 	0, 4, kOBSEParams_SetEventHandler,
 	HANDLER(Cmd_SetEventHandler_Execute),
-	Cmd_Expression_Parse,
+	Cmd_SetEventHandler_Parse,
 	NULL,
 	0
 };
