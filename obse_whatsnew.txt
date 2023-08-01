@@ -1,3 +1,8 @@
+xOBSE 22.10
+	Additions:
+		- Compiler: add error when using invalid filter strings identifier (the first element of a zz::yy pair) in SetEventHandler and related functions 
+	Fix : 
+		- Compiler: fix SetEventHandler filters when the identifier was used unquoted and defined as a variable name
 xOBSE 22.9
 	Fix:
 		- Commit new ExtraData to container only if ExtraCount isn't the only data present. Fix duplicated items in inventory using MOO companions
