@@ -428,6 +428,7 @@ static bool ExtractEventCallback(ExpressionEvaluator& eval, EventManager::EventC
 			// any filters?
 			//TODO respect the parameters
 			//TODO rewrite the event system parameter handling. The type punning here is HORRIBLE
+		//TODO make the checks on the compile command, and optimize runtime code.
 			for (UInt32 i = 2; i < eval.NumArgs(); i++) {
 				const TokenPair* pair = eval.Arg(i)->GetPair();
 				if (pair && pair->left && pair->right) {
@@ -570,31 +571,29 @@ static bool Cmd_DispatchEvent_Execute (COMMAND_ARGS)
 
 
 static bool Cmd_SetEventHandler_Parse(UInt32 numParams, ParamInfo* paramInfo, ScriptLineBuffer* lineBuf, ScriptBuffer* scriptBuf) {
-	bool res =  Cmd_Expression_Parse(numParams, paramInfo, lineBuf, scriptBuf);
+	bool res = true;
 	char* context;
-	strtok_s(lineBuf->paramText, " ", &context); //TODO validate handler;
-	strtok_s(NULL, " ", &context); //Script already validated;
-	char* tok = strtok_s(NULL, " ", &context);
-	if (tok == NULL) return true; //No arguments specified
-	std::string  inner = tok;
-	inner = inner.substr(0, inner.find(':')); 
-	if (inner.find("\"") != std::string::npos) inner = inner.substr(1, inner.size() - 1);
-	bool valid = inner.starts_with("first") || inner.starts_with("ref") || inner.starts_with("second") || inner.starts_with("object");
-	if (!valid) {
-		CompilerMessages::Show(CompilerMessages::kError_InvalidEventFilter, scriptBuf, inner.data());
-		res = false;
+	std::string sanitized = strtok_s(lineBuf->paramText, " ", &context);
+	sanitized += ' ';
+	sanitized += strtok_s(NULL, " ", &context); //Script already validated;
+	sanitized += ' ';
+	/*
+	This take care of unquoted string warnings for thefirst element of filter pair as well the token mismatch when the token name is defined as a variable when unquoted
+	TODO take a chance to create a more optimized code path for runtime
+	*/
+	while (char* tok = strtok_s(NULL, " ", &context)) {
+		std::string  inner = tok;
+		std::string internal_inner = inner.substr(0, inner.find(':'));
+		if (internal_inner.find("\"") != std::string::npos) internal_inner = internal_inner.substr(1, internal_inner.size() - 1);
+		bool valid = internal_inner._Equal("first") || internal_inner._Equal("ref") || internal_inner._Equal("second") || internal_inner._Equal("object");
+		if (!valid) {
+			CompilerMessages::Show(CompilerMessages::kError_InvalidEventFilter, scriptBuf, internal_inner.data());
+			res = false;
+		}
+		sanitized += "\"" + internal_inner + "\"" + inner.substr(inner.find(':'), inner.length()) + " ";
 	}
-	tok = strtok_s(NULL, " ", &context);
-	if (tok == NULL) return true; //No  more arguments specified
-	inner = tok;
-	inner = inner.substr(0, inner.find(':'));
-	if (inner.find("\"") != std::string::npos) inner = inner.substr(1, inner.size() - 1);
-	valid = inner.starts_with("first") || inner.starts_with("ref") || inner.starts_with("second") || inner.starts_with("object");
-	if (!valid) {
-		CompilerMessages::Show(CompilerMessages::kError_InvalidEventFilter, scriptBuf, inner.data());
-		res = false;
-	}
-	return res;
+	strcpy_s(lineBuf->paramText, sanitized.c_str());
+	return res &&  Cmd_Expression_Parse(numParams, paramInfo, lineBuf, scriptBuf);
 }
 
 CommandInfo kCommandInfo_IsScripted =
