@@ -44,6 +44,8 @@ public:
 
 	void			Error(const char* fmt, ...);
 	void			Error(const char* fmt, ScriptToken* tok, ...);
+	void			Error(const char* fmt, Operator* tok, ...);
+
 	bool			HasErrors() { return m_flags.IsSet(kFlag_ErrorOccurred); }
 
 	// extract args compiled by ExpressionParser

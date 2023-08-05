@@ -14,31 +14,32 @@ char s_ExpressionParserAltBuffer[0x500] = {0};
 
 #include "StringVar.h"
 
-	const UInt32 ExtractStringPatchAddr = 0x004FB1EB;
-	const UInt32 ExtractStringRetnAddr = 0x004FB1F4;
+const UInt32 ExtractStringPatchAddr = 0x004FB1EB;
+const UInt32 ExtractStringRetnAddr = 0x004FB1F4;
 
-	static const UInt32 kResolveRefVarPatchAddr		= 0x004FA9F1;
-	static const UInt32 kResolveNumericVarPatchAddr = 0x004FA11E;
-	static const UInt32 kEndOfLineCheckPatchAddr	= 0;	// not yet supported at run-time
+static const UInt32 kResolveRefVarPatchAddr		= 0x004FA9F1;
+static const UInt32 kResolveNumericVarPatchAddr = 0x004FA11E;
+static const UInt32 kEndOfLineCheckPatchAddr	= 0;	// not yet supported at run-time
 
-	// incremented on each recursive call to Activate, limit of 5 hard-coded
-	static UInt32* kActivationRecurseDepth = (UInt32*)0x00B35F00;
+// incremented on each recursive call to Activate, limit of 5 hard-coded
+static UInt32* kActivationRecurseDepth = (UInt32*)0x00B35F00;
 
-	static const UInt32 kExpressionParserBufferOverflowHookAddr_1 = 0x004F40F9;
-	static const UInt32 kExpressionParserBufferOverflowRetnAddr_1 = 0x004F40FE;
+static const UInt32 kExpressionParserBufferOverflowHookAddr_1 = 0x004F40F9;
+static const UInt32 kExpressionParserBufferOverflowRetnAddr_1 = 0x004F40FE;
 
-	static const UInt32 kExpressionParserBufferOverflowHookAddr_2 = 0x004F42A4;
-	static const UInt32 kExpressionParserBufferOverflowRetnAddr_2 = 0x004F42A9;
+static const UInt32 kExpressionParserBufferOverflowHookAddr_2 = 0x004F42A4;
+static const UInt32 kExpressionParserBufferOverflowRetnAddr_2 = 0x004F42A9;
 
-	static const UInt32 kExtractArgsNumArgsHookAddr = 0x004FB4B2;
-	static const UInt32 kExtractArgsEndProcAddr = 0x004FB34B;		// returns true from ExtractArgs()
-	static const UInt32 kExtractArgsReadNumArgsPatchAddr = 0x004FAE9A;	// movzx edx, word ptr (num args)
-	static const UInt32 kExtractArgsNoArgsPatchAddr = 0x004FAEBA;			// jle kExtractArgsEndProcAddr (if num args == 0)
+static const UInt32 kExtractArgsNumArgsHookAddr = 0x004FB4B2;
+static const UInt32 kExtractArgsEndProcAddr = 0x004FB34B;		// returns true from ExtractArgs()
+static const UInt32 kExtractArgsReadNumArgsPatchAddr = 0x004FAE9A;	// movzx edx, word ptr (num args)
+static const UInt32 kExtractArgsNoArgsPatchAddr = 0x004FAEBA;			// jle kExtractArgsEndProcAddr (if num args == 0)
 
-	static const UInt32 kScriptRunner_RunHookAddr = 0x0051737F;
-	static const UInt32 kScriptRunner_RunRetnAddr = kScriptRunner_RunHookAddr + 5;
-	static const UInt32 kScriptRunner_RunCallAddr = 0x005792E0;			// overwritten call
-	static const UInt32 kScriptRunner_RunEndProcAddr = 0x00517637;		// retn 0x20
+static const UInt32 kScriptRunner_RunHookAddr = 0x0051737F;
+static const UInt32 kScriptRunner_RunRetnAddr = kScriptRunner_RunHookAddr + 5;
+static const UInt32 kScriptRunner_RunCallAddr = 0x005792E0;			// overwritten call
+static const UInt32 kScriptRunner_RunEndProcAddr = 0x00517637;		// retn 0x20
+static const UInt32 kScriptRunner_CommandResult = 0x0051757B;		
 
 
 static void __stdcall DoExtractString(char* scriptData, UInt32 dataLen, char* dest, ScriptEventList* eventList)
@@ -126,6 +127,43 @@ static __declspec(naked) void ExpressionParserBufferOverflowHook_2(void)
 	}
 }
 
+std::string Message = "";
+
+static void  LogScriptError(Script* faultScript) {
+	size_t pos = Message.rfind("\r\n");
+	if (pos != std::string::npos) {
+		_MESSAGE("%u %s ", pos, Message.c_str());
+		Message = Message.substr(0, pos);
+	}
+	ShowRuntimeError(faultScript, Message.c_str());
+	Message = "";
+}
+
+void __declspec(naked) ScriptRunnerLineExecutionFailedHook(void)
+{
+	__asm
+	{
+		cmp     [esp + 0x16], 0
+		jz      normal
+
+		mov		edi, [esp + 0x770]
+		pushad
+		call	LogScriptError
+		popad
+
+		
+		normal:
+		mov		ecx, 0x00517582
+		cmp     [esp + 0x780], bl
+		jmp		ecx
+	}
+}
+
+static void  WINAPI DetourErrorMessage(const char* Messaged) {
+	Message = Messaged;
+}
+
+
 void Hook_Script_Init()
 {
 	WriteRelJump(ExtractStringPatchAddr, (UInt32)&ExtractStringHook);
@@ -147,6 +185,9 @@ void Hook_Script_Init()
 
 	// hook ExtractArgs() to handle commands normally compiled with Cmd_Default_Parse which were instead compiled with Cmd_Expression_Parse
 	ExtractArgsOverride::Init_Hooks();
+
+	WriteRelJump(kScriptRunner_CommandResult, (UInt32)&ScriptRunnerLineExecutionFailedHook);
+	SafeWrite32(0x00A3DA0C, (UInt32) &DetourErrorMessage);
 }
 
 void ResetActivationRecurseDepth()

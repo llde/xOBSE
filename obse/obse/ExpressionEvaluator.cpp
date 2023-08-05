@@ -35,7 +35,7 @@ void ExpressionEvaluator::Error(const char* fmt, ...)
 	// include script data offset and command name/opcode
 //	UInt16* opcodePtr = (UInt16*)((UInt8*)m_scriptData + m_baseOffset);
 	//	UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + m_baseOffset);
-	_MESSAGE("%0X   %0X   %0X %0X ", m_scriptData,script->data, m_baseOffset, *m_opcodeOffsetPtr);
+	//_MESSAGE("%0X   %0X   %0X %0X ", m_scriptData,script->data, m_baseOffset, *m_opcodeOffsetPtr);
 	UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + (*m_opcodeOffsetPtr - 4));
 	CommandInfo* cmd = g_scriptCommands.GetByOpcode(*opcodePtr);
 
@@ -48,11 +48,43 @@ void ExpressionEvaluator::Error(const char* fmt, ...)
 			modName = "Unknown";
 	}
 
-	ShowRuntimeError(script, "%s\n    File: %s Offset: 0x%04X Command: %s", errorMsg, modName, m_baseOffset, cmd ? cmd->longName : "<unknown>");
+	ShowRuntimeError(script, "%s\n    File: %s Offset: 0x%04X Command: %s", errorMsg, modName, m_baseOffset , cmd ? cmd->longName : "<unknown>");
 	//	if (m_flags.IsSet(kFlag_StackTraceOnError))
 	PrintStackTrace();
 }
 
+
+void ExpressionEvaluator::Error(const char* fmt, Operator* tok, ...)
+{
+	m_flags.Set(kFlag_ErrorOccurred);
+
+	if (m_flags.IsSet(kFlag_SuppressErrorMessages))
+		return;
+
+	va_list args;
+	va_start(args, tok);
+
+	char	errorMsg[0x400];
+	vsprintf_s(errorMsg, 0x400, fmt, args);
+	char	errorMsgTok[0x400];
+	if (tok != nullptr) {
+		sprintf_s(errorMsgTok, 0x400, "Operator %s", tok->symbol);
+	}
+	else {
+		sprintf_s(errorMsgTok, 0x400, "<unknow>");
+	}
+	const char* modName = "Savegame";
+	if (script->GetModIndex() != 0xFF)
+	{
+		modName = (*g_dataHandler)->GetNthModName(script->GetModIndex());
+		if (!modName || !modName[0])
+			modName = "Unknown";
+	}
+
+	ShowRuntimeError(script, "%s\n    File: %s Offset: 0x%04X Operator: %s", errorMsg, modName, m_baseOffset, errorMsgTok);
+	//	if (m_flags.IsSet(kFlag_StackTraceOnError))
+//	PrintStackTrace();
+}
 
 void ExpressionEvaluator::Error(const char* fmt, ScriptToken* tok, ...)
 {
@@ -198,8 +230,8 @@ void ExpressionEvaluator::PushOnStack()
 	localData.expressionEvaluator = this;
 	// inherit properties of parent
 	if (top) {
-		/*
-		_MESSAGE("%08X   %08X", m_baseOffset, top->m_data - (UInt8*)script->data - 4);
+		
+		//_MESSAGE("%08X   %08X", m_baseOffset, top->m_data - (UInt8*)script->data - 4);
 		// figure out base offset into script data
 		if (top->script == script) {
 			m_baseOffset = top->m_data - (UInt8*)script->data - 4;
@@ -207,7 +239,7 @@ void ExpressionEvaluator::PushOnStack()
 		else {	// non-recursive user-defined function call
 			m_baseOffset = m_data - (UInt8*)script->data - 4;
 		}
-		*/
+		
 		// inherit flags
 		m_flags.RawSet(top->m_flags.Get());
 		m_flags.Clear(kFlag_ErrorOccurred);
@@ -677,16 +709,19 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 	while (m_data < endData)
 	{
 		ScriptToken* curToken = ScriptToken::Read(this);
-		if (!curToken)
+		if (!curToken->IsGood()){
+			Error("Cannot read token", curToken);
+			delete curToken;
+			curToken = NULL;
 			break;
-
+		}
 		if (curToken->Type() == kTokenType_Command)
 		{
 			// execute the command
 			CommandInfo* cmdInfo = curToken->GetCommandInfo();
 			if (!cmdInfo)
 			{
-				Error("Command is NULL");
+				Error("Command is NULL", curToken);
 				delete curToken;
 				curToken = NULL;
 				break;
@@ -722,17 +757,16 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 
 			if (!bExecuted)
 			{
+				Error("Command %s failed to execute", curToken, cmdInfo->longName);
 				delete curToken;
 				curToken = NULL;
-				Error("Command %s failed to execute", curToken, cmdInfo->longName);
 				break;
 			}
 
 			m_data += argsLen - 2;
 
 			// create a new ScriptToken* based on result type, delete command token when done
-			ScriptToken* cmdToken = curToken;
-			curToken = ScriptToken::Create(cmdResult);
+			delete curToken;
 			// adjust token type if we know command return type
 			CommandReturnType retnType = g_scriptCommands.GetReturnType(cmdInfo);
 			if (retnType == kRetnType_Ambiguous || retnType == kRetnType_ArrayIndex)	// return type ambiguous, cmd will inform us of type to expect
@@ -743,7 +777,6 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 			case kRetnType_String:
 			{
 				StringVar* strVar = g_StringMap.Get(cmdResult);
-				delete curToken;
 				curToken = ScriptToken::Create(strVar ? strVar->GetCString() : "");
 				break;
 			}
@@ -752,7 +785,6 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 				// ###TODO: cmds can return arrayID '0', not necessarily an error, does this support that?
 				if (g_ArrayMap.Exists(cmdResult) || !cmdResult)
 				{
-					delete curToken;
 					curToken = ScriptToken::CreateArray(cmdResult);
 					break;
 				}
@@ -764,20 +796,15 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 			}
 			case kRetnType_Form:
 			{
-				delete curToken;
 				curToken = ScriptToken::CreateForm(*((UInt64*)&cmdResult));
 				break;
 			}
 			case kRetnType_Default:
-				delete curToken;
 				curToken = ScriptToken::Create(cmdResult);
 				break;
 			default:
 				Error("Unknown command return type %d while executing command in ExpressionEvaluator::Evaluate()", curToken, retnType);
 			}
-
-			delete cmdToken;
-			cmdToken = NULL;
 		}
 
 		if (!(curToken->Type() == kTokenType_Operator))
@@ -790,7 +817,7 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 
 			if (op->numOperands > operands.size())
 			{
-				Error("Too few operands for operator %s", op->symbol);
+				Error("Too few operands for operator expected %u got %u", op, op->numOperands, operands.size());
 				delete curToken;
 				curToken = NULL;
 				break;
@@ -812,7 +839,7 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 
 			if (!opResult)
 			{
-				Error("Operator %s failed to evaluate to a valid result",curToken, op->symbol);
+				Error("Operator %s failed to evaluate to a valid result",op, op->symbol);
 				delete curToken;
 				curToken = NULL;
 				break;

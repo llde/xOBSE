@@ -140,9 +140,9 @@ ForEachContextToken::ForEachContextToken(UInt32 srcID, UInt32 iterID, UInt32 var
 
 ScriptToken* ScriptToken::Create(ForEachContext* forEach)
 {
-	if (!forEach)
+	if (!forEach) {
 		return NULL;
-
+	}
 	if (forEach->variableType == Script::eVarType_String)
 	{
 		if (!g_StringMap.Get(forEach->iteratorID) || !g_StringMap.Get(forEach->sourceID))
@@ -561,11 +561,11 @@ bool ScriptToken::CanConvertTo(Token_Type to) const
 ScriptToken* ScriptToken::Read(ExpressionEvaluator* context)
 {
 	ScriptToken* newToken = new ScriptToken();
-	if (newToken->ReadFrom(context) != kTokenType_Invalid)
-		return newToken;
+	newToken->ReadFrom(context);
+	return newToken;
 
-	delete newToken;
-	return NULL;
+//	delete newToken;
+//	return NULL;
 }
 
 Token_Type ScriptToken::ReadFrom(ExpressionEvaluator* context)
@@ -594,11 +594,9 @@ Token_Type ScriptToken::ReadFrom(ExpressionEvaluator* context)
 		value.num = context->ReadFloat();
 		break;
 	case 'S':
-		{
-			type = kTokenType_String;
-			value.str = context->ReadString();
-			break;
-		}
+		type = kTokenType_String;
+		value.str = context->ReadString();
+		break;
 	case 'R':
 		type = kTokenType_Ref;
 		refIdx = context->Read16();
@@ -702,7 +700,7 @@ Token_Type ScriptToken::ReadFrom(ExpressionEvaluator* context)
 			}
 			else
 			{
-				context->Error("Unexpected token type %d (%02x) encountered", typeCode, typeCode);
+				context->Error("Unexpected token type %d (0x%02x) encountered", this ,typeCode, typeCode);
 				type = kTokenType_Invalid;
 			}
 		}
@@ -794,7 +792,7 @@ ScriptToken* ScriptToken::ToBasicToken() const
 	else if (CanConvertTo(kTokenType_Number))
 		return Create(GetNumber());
 	else
-		return NULL;
+		return NULL ;
 }
 
 double ScriptToken::GetNumericRepresentation(bool bFromHex)

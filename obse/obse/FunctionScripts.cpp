@@ -106,9 +106,10 @@ public:
 
 	virtual bool PopulateArgs(ScriptEventList* eventList, FunctionInfo* info) {
 		m_eval.SetParams(info->Params());
-		if (!m_eval.ExtractArgs())
+		if (!m_eval.ExtractArgs()) {
+			m_eval.Error("Cannot Extract function arguments  %s", info->GetScript()->GetEditorID2());
 			return false;
-
+		}
 		// populate event list variables
 		for (UInt32 i = 0; i < m_eval.NumArgs(); i++)
 		{
@@ -211,9 +212,10 @@ ScriptToken* UserFunctionManager::Call(FunctionCaller&& caller)
 	funcMan->Push(context);
 
 	funcMan->m_nestDepth++;
-	if (info->Execute(caller, context) && funcMan->Top(funcScript) && context->Result())
+	if (info->Execute(caller, context) && funcMan->Top(funcScript) && context->Result()) {
 		funcResult = context->Result()->ToBasicToken();
-
+		if (!funcResult) ShowRuntimeError(funcScript, "Function Script Could not return Result");
+	}
 	funcMan->m_nestDepth--;
 
 	if (!funcMan->Pop(funcScript))
@@ -450,7 +452,6 @@ m_invokingScript(invokingScript), m_callerVersion(version), m_bad(true), m_resul
 		ShowRuntimeError(info->GetScript(), "Couldn't create eventlist");
 		return;
 	}
-
 	// successfully constructed
 	m_bad = false;
 }

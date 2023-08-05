@@ -303,9 +303,9 @@ static bool Cmd_Call_Execute(COMMAND_ARGS)
 		}
 		else
 			ShowRuntimeError(scriptObj, "Function call returned unexpected token type %d", funcResult->Type());
+		delete funcResult;
 	}
 
-	delete funcResult;
 	return true;
 }
 
