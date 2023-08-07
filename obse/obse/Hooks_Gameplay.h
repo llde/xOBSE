@@ -1,4 +1,5 @@
 #pragma once
+
 class Menu;
 class TESRace;
 class TESForm;
@@ -10,7 +11,7 @@ struct QuestStageItem;
 void Hook_Gameplay_Init(void);
 void ToggleUIMessages(bool enableSpam);
 void ToggleConsoleOutput(bool enable);
-bool ToggleMenuShortcutKeys(bool bEnable, Menu* menu = NULL);
+bool ToggleMenuShortcutKeys(bool bEnable, Menu* menu = nullptr);
 void SetRaceAlias(TESRace* race, TESRace* alias, bool bEnableAlias);
 
 void ModPlayerSpellEffectiveness(double modBy, bool recordChange = false);
@@ -37,7 +38,7 @@ double GetPersistentPlayerMovementSpeedModifier();
 UInt32 GetPCLastDroppedItemRef();
 TESForm* GetPCLastDroppedItem();		// returns the base object
 
-bool SetDescriptionTextForForm(TESForm* form, const char* newText, UInt8 skillIndex = -1);
+bool SetDescriptionTextForForm(TESForm* form, const char* newText, UInt8 skillIndex = std::numeric_limits<UInt8>::max());
 bool SetDescriptionText(TESDescription* desc, const char* newText);
 bool IsDescriptionModified(TESDescription* desc);
 

@@ -25,8 +25,8 @@
 
 static void HandleMainLoopHook(void);
 
-static const UInt32 kMainLoopHookPatchAddr = 0x0040F19D;
-static const UInt32 kMainLoopHookRetnAddr = 0x0040F1A3;
+static constexpr UInt32 kMainLoopHookPatchAddr = 0x0040F19D;
+static constexpr UInt32 kMainLoopHookRetnAddr = 0x0040F1A3;
 
 static __declspec(naked) void MainLoopHook(void)
 {
@@ -40,58 +40,58 @@ static __declspec(naked) void MainLoopHook(void)
 	}
 }
 
-static const UInt32	kNewGamePatchAddr = 0x005B5EFD;
+static constexpr UInt32	kNewGamePatchAddr = 0x005B5EFD;
 
-static const UInt32	QUIMsgPatchAddr = 0x0057ACC0;
-static const UInt8	QUIMsgData = 0x51;	//code overwritten by retn
-static const UInt32	QUIMsg_2PatchAddr = 0x0057ADD0;
-static const UInt8	QUIMsg_2Data = 0xD9;
+static constexpr UInt32	QUIMsgPatchAddr = 0x0057ACC0;
+static constexpr UInt8	QUIMsgData = 0x51;	//code overwritten by retn
+static constexpr UInt32	QUIMsg_2PatchAddr = 0x0057ADD0;
+static constexpr UInt8	QUIMsg_2Data = 0xD9;
 
-static const UInt32	kOriginalLoadCreatedObjectsAddr = 0x00461310;
-static const UInt32	kLoadCreatedObjectsHookAddr = 0x0046344B;
+static constexpr UInt32	kOriginalLoadCreatedObjectsAddr = 0x00461310;
+static constexpr UInt32	kLoadCreatedObjectsHookAddr = 0x0046344B;
 
-static const UInt32 kEnchantItemHookPatchAddr = 0x005A2F1B;
-static const UInt32 kEnchantItemHookRetnAddr =  0x005A2F27;
+static constexpr UInt32 kEnchantItemHookPatchAddr = 0x005A2F1B;
+static constexpr UInt32 kEnchantItemHookRetnAddr =  0x005A2F27;
 
-static const UInt32 kCreateSpellHookPatchAddr = 0x005D7F2E;
-static const UInt32 kCreateSpellHookRetnAddr =  0x005D7F3A;
+static constexpr UInt32 kCreateSpellHookPatchAddr = 0x005D7F2E;
+static constexpr UInt32 kCreateSpellHookRetnAddr =  0x005D7F3A;
 
-static const UInt32 kCreatePotionHookPatchAddr = 0x00594CFA;
-static const UInt32 kCreatePotionHookRetnAddr  = 0x00594CFF;
-static const UInt32 kCreatePotionHookCallAddr  = 0x0044A750;	// compares passed AlchemyItem with created potions
+static constexpr UInt32 kCreatePotionHookPatchAddr = 0x00594CFA;
+static constexpr UInt32 kCreatePotionHookRetnAddr  = 0x00594CFF;
+static constexpr UInt32 kCreatePotionHookCallAddr  = 0x0044A750;	// compares passed AlchemyItem with created potions
 
-static const UInt32 kDataHandler_GetCreatedPotion = kCreatePotionHookCallAddr;
+static constexpr UInt32 kDataHandler_GetCreatedPotion = kCreatePotionHookCallAddr;
 
-static const UInt32 kPlayerBuyHookAddr = 0x0059AE3D;
-static const UInt32 kPlayerBuyRetnAddr = 0x0059AE42;
+static constexpr UInt32 kPlayerBuyHookAddr = 0x0059AE3D;
+static constexpr UInt32 kPlayerBuyRetnAddr = 0x0059AE42;
 
-static const UInt32 kPlayerSellHookAddr = 0x0059AB1E;
-static const UInt32 kPlayerSellRetnAddr = 0x0059AB23;
+static constexpr UInt32 kPlayerSellHookAddr = 0x0059AB1E;
+static constexpr UInt32 kPlayerSellRetnAddr = 0x0059AB23;
 
 static const UInt32* kBuySellQuantity = (const UInt32*)0x00B13E94;
 
-static const UInt32 kSigilStoneCreatePatchAddr = 0x005D4F52;
-static const UInt32 kSigilStoneCreateRetnAddr = 0x005D4F57;
+static constexpr UInt32 kSigilStoneCreatePatchAddr = 0x005D4F52;
+static constexpr UInt32 kSigilStoneCreateRetnAddr = 0x005D4F57;
 
-static const UInt32 kChangeCellHookPatchAddr = 0x0066765A;
-static const UInt32 kChangeCellHookCallAddr = 0x004C97F0;
+static constexpr UInt32 kChangeCellHookPatchAddr = 0x0066765A;
+static constexpr UInt32 kChangeCellHookCallAddr = 0x004C97F0;
 
 // boolean, used by ExtraDataList::IsExtraDefaultForContainer() to determine if ExtraOwnership should be treated
 // as 'non-default' for an inventory object. Is 0 in vanilla, set to 1 to make ownership NOT treated as default
-static const UInt32 kExtraOwnershipDefaultSetting = 0x0041FE59;
-static const UInt32 kExtraOwnershipDefaultSetting2 = 0x0041FE0D;
+static constexpr UInt32 kExtraOwnershipDefaultSetting = 0x0041FE59;
+static constexpr UInt32 kExtraOwnershipDefaultSetting2 = 0x0041FE0D;
 
-static const UInt32 kConsoleManager_PrintAddr = 0x00585C90;
+static constexpr UInt32 kConsoleManager_PrintAddr = 0x00585C90;
 
-static const UInt32 kContainerMenuDanglingPointerPatchAddr = 0x00597D26;
-static const UInt32 kContainerMenuSecondDanglingPointerPatchAddr = 0x00599B41;
-static const UInt32 kContainerMenuSecondDanglingPointerRetnAddr = 0x00599B47;
+static constexpr UInt32 kContainerMenuDanglingPointerPatchAddr = 0x00597D26;
+static constexpr UInt32 kContainerMenuSecondDanglingPointerPatchAddr = 0x00599B41;
+static constexpr UInt32 kContainerMenuSecondDanglingPointerRetnAddr = 0x00599B47;
 
 
 
 // this stores a pointer to the most recently enchanted item at the moment it is created
-TESForm* g_LastEnchantedItem = 0;
-static const UInt32 kEnchantEventID = EventManager::kEventID_OnEnchant;	// workaround for use in inline asm
+TESForm* g_LastEnchantedItem = nullptr;
+static constexpr UInt32 kEnchantEventID = EventManager::kEventID_OnEnchant;	// workaround for use in inline asm
 
 static __declspec(naked) void EnchantItemHook(void)
 {
@@ -118,8 +118,8 @@ static __declspec(naked) void EnchantItemHook(void)
 }
 
 // this stores a pointer to the most recently created spell
-TESForm* g_LastCreatedSpell = 0;
-static const UInt32 kSpellEventID = EventManager::kEventID_OnCreateSpell;
+TESForm* g_LastCreatedSpell = nullptr;
+static constexpr UInt32 kSpellEventID = EventManager::kEventID_OnCreateSpell;
 
 static __declspec(naked) void CreateSpellHook(void)
 {
@@ -146,9 +146,9 @@ static __declspec(naked) void CreateSpellHook(void)
 }
 
 // Pointers to the most recently created potion, and the most recently created unique potion
-TESForm* g_LastCreatedPotion = 0;
-TESForm* g_LastUniqueCreatedPotion = 0;
-static const UInt32 kOnCreatePotionEventID = EventManager::kEventID_OnCreatePotion;
+TESForm* g_LastCreatedPotion = nullptr;
+TESForm* g_LastUniqueCreatedPotion = nullptr;
+static constexpr UInt32 kOnCreatePotionEventID = EventManager::kEventID_OnCreatePotion;
 
 static __declspec(naked) void CreatePotionHook(void)
 {
@@ -196,7 +196,7 @@ static void DoDeferredDelete()
 	if (!ioMan)
 		return;
 
-	for (std::set<UInt32>::iterator iter = deletedREFRs.begin(); iter != deletedREFRs.end(); )
+	for (auto iter = deletedREFRs.begin(); iter != deletedREFRs.end(); )
 	{
 		TESForm* refForm = LookupFormByID(*iter);
 		if (refForm)
@@ -221,7 +221,7 @@ static void HandleNewGameHook(void)
 
 	// event sent from here because Serialization::HandleNewGame() can be invoked when loading a save with no
 	// associated co-save - which should not be reported as a New Game event
-	EventManager::HandleEvent(EventManager::kEventID_OnNewGame, NULL, NULL);
+	EventManager::HandleEvent(EventManager::kEventID_OnNewGame, nullptr, nullptr);
 
 	// Updated v0020: Make GetGameLoaded return true whenever user starts a new game
 	// (previously returned true on new game only if user started new game immediately after launching Oblivion)
@@ -360,7 +360,7 @@ void TESSaveLoadGame::LoadCreatedObjectsHook(UInt32 unk0)
 
 bool TESSaveLoadGame::LoadGame(const char* filename){
 
-	bool bFileFound = ThisStdCall(0x00465860, this, 0, filename, 0) ? true : false;
+	const bool bFileFound = ThisStdCall(0x00465860, this, 0, filename, 0) ? true : false;
 	return bFileFound;
 
 }
@@ -464,7 +464,7 @@ static __declspec(naked) bool DummyKeyboardInputHandler(char inputChar)
 //		Menu* param not required to enable
 bool ToggleMenuShortcutKeys(bool bEnable, Menu* menu)
 {
-	static UInt32* handlerAddr = 0;			//vtbl offset of handler function
+	static UInt32* handlerAddr = nullptr;			//vtbl offset of handler function
 	static UInt32 originalHandler = 0;		//address of "real" handler function
 
 	if (bEnable)
@@ -472,7 +472,7 @@ bool ToggleMenuShortcutKeys(bool bEnable, Menu* menu)
 		if (handlerAddr && originalHandler)
 		{
 			SafeWrite32((UInt32)handlerAddr, originalHandler);	//restore original function
-			handlerAddr = 0;
+			handlerAddr = nullptr;
 			originalHandler = 0;
 			return true;
 		}
@@ -600,7 +600,7 @@ float __stdcall GetPlayerSpellEffectiveness(UInt32 arg0, UInt32 arg1)
 	}
 
 	// add script modifier and return
-	return baseEffectiveness + s_playerSpellEffectivenessModifier;
+	return baseEffectiveness + static_cast<float>(s_playerSpellEffectivenessModifier);
 }
 
 bool DoGetSpellEffectivenessHook()
@@ -650,14 +650,14 @@ double GetPersistentPlayerSpellEffectivenessModifier ()
 AlchemyItem* MatchPotion(AlchemyItem* toMatch)
 {
 	if (!toMatch)
-		return NULL;
+		return nullptr;
 
 	return (AlchemyItem*)ThisStdCall(kDataHandler_GetCreatedPotion, *g_dataHandler, toMatch);
 }
 
-static const UInt32		kPlayer_GetActorValueAddr = 0x0065E030;
-static const UInt32		kPlayer_GetActorValueVtblAddr = 0x00A73C90;
-static const UInt32		kPlayer_GetActorValueRetnAddresses[] ={
+static constexpr UInt32		kPlayer_GetActorValueAddr = 0x0065E030;
+static constexpr UInt32		kPlayer_GetActorValueVtblAddr = 0x00A73C90;
+static constexpr UInt32		kPlayer_GetActorValueRetnAddresses[] ={
 	0x005E3818,		// run speed
 	0x005E39C7,		// swim speed
 	0x005E3B77,		// fast swim speed
@@ -724,17 +724,17 @@ double GetPersistentPlayerMovementSpeedModifier()
 	return s_recordedPCSpeedModifier;
 }
 
-static const UInt32 kCreateReferenceCallAddr		= 0x0048FBC0;
-static const UInt32 kCreateDroppedReferenceHookAddr = 0x004D87C7;
-static const UInt32 kCreateDroppedReferenceRetnAddr = 0x004D87CC;
+static constexpr UInt32 kCreateReferenceCallAddr		= 0x0048FBC0;
+static constexpr UInt32 kCreateDroppedReferenceHookAddr = 0x004D87C7;
+static constexpr UInt32 kCreateDroppedReferenceRetnAddr = 0x004D87CC;
 
-static TESForm* s_lastDroppedItem = NULL;
-static TESObjectREFR* s_lastDroppedItemRef = NULL;
+static TESForm* s_lastDroppedItem = nullptr;
+static TESObjectREFR* s_lastDroppedItemRef = nullptr;
 static UInt32 s_lastDroppedItemRefID = 0;
 
 static void __stdcall HandleDroppedItem(TESObjectREFR* dropper)
 {
-	TESObjectREFR* ref = s_lastDroppedItemRef;
+	auto* ref = s_lastDroppedItemRef;
 	if (ref)
 	{
 		s_lastDroppedItem = ref->baseForm;
@@ -770,17 +770,17 @@ TESForm* GetPCLastDroppedItem()
 	return s_lastDroppedItem;
 }
 
-static const UInt32 kExitGameFromIngameMenuPatchAddr = 0x005BDE60;
-static const UInt32 kExitGameFromIngameMenuRetnAddr  =  0x005BDE66;
+static constexpr UInt32 kExitGameFromIngameMenuPatchAddr = 0x005BDE60;
+static constexpr UInt32 kExitGameFromIngameMenuRetnAddr  =  0x005BDE66;
 
-static const UInt32 kMainMenuFromIngameMenuPatchAddr = 0x005BDE23;
-static const UInt32 kMainMenuFromIngameMenuRetnAddr  = 0x005BDE29;
+static constexpr UInt32 kMainMenuFromIngameMenuPatchAddr = 0x005BDE23;
+static constexpr UInt32 kMainMenuFromIngameMenuRetnAddr  = 0x005BDE29;
 
-static const UInt32 kExitGameFromMainMenuPatchAddr   = 0x005B5A0D;
-static const UInt32 kExitGameFromMainMenuRetnAddr    = 0x005B5A12;
+static constexpr UInt32 kExitGameFromMainMenuPatchAddr   = 0x005B5A0D;
+static constexpr UInt32 kExitGameFromMainMenuRetnAddr    = 0x005B5A12;
 
-static const UInt32 kExitGameViaQQQPatchAddr		 = 0x005077F2;
-static const UInt32 kExitGameViaQQQRetnAddr			 = 0x005077F7;
+static constexpr UInt32 kExitGameViaQQQPatchAddr		 = 0x005077F2;
+static constexpr UInt32 kExitGameViaQQQRetnAddr			 = 0x005077F7;
 
 
 enum QuitGameMessage
@@ -798,8 +798,8 @@ void __stdcall SendQuitGameMessage(QuitGameMessage msg)
 	else if (msg == kQuit_QQQ)
 		msgToSend = OBSEMessagingInterface::kMessage_ExitGame_Console;
 
-	PluginManager::Dispatch_Message(0, msgToSend, NULL, 0, NULL);
-	EventManager::HandleOBSEMessage(msgToSend, NULL);
+	PluginManager::Dispatch_Message(0, msgToSend, nullptr, 0, nullptr);
+	EventManager::HandleOBSEMessage(msgToSend, nullptr);
 }
 
 static __declspec(naked) void ExitGameFromIngameMenuHook(void)
@@ -862,7 +862,7 @@ static __declspec(naked) void MainMenuFromIngameMenuHook(void)
 	}
 }
 
-static TESForm* s_lastTransactionItem = NULL;
+static TESForm* s_lastTransactionItem = nullptr;
 static UInt32 s_lastTransactionQuantity = 0;
 
 // set of scripts that have been informed about the most recent transaction
@@ -870,8 +870,8 @@ static std::set<UInt32>	s_transactionInformedScripts[2];
 
 TransactionInfo s_transactionHistories[2] =
 {
-	{ NULL, NULL, NULL, 0, 0 },
-	{ NULL, NULL, NULL, 0, 0 }
+	{nullptr, nullptr, nullptr, 0, 0 },
+	{nullptr, nullptr, nullptr, 0, 0 }
 };
 
 void __stdcall DoBuySellHook(eTransactionType type, ContainerMenu* menu, TESForm* item, Actor* seller, UInt32 price)
@@ -892,7 +892,7 @@ void __stdcall DoBuySellHook(eTransactionType type, ContainerMenu* menu, TESForm
 	// a new transaction exists, so clear informed scripts
 	s_transactionInformedScripts[type].clear();
 
-	menu->selectedItemTile = NULL;
+	menu->selectedItemTile = nullptr;
 }
 
 static __declspec(naked) void PlayerBuyHook(void)
@@ -946,13 +946,13 @@ bool GetLastTransactionInfo(TESForm** form, UInt32* quantity)
 
 const TransactionInfo* GetLastTransactionInfo(eTransactionType type, UInt32 callingScriptRefID)
 {
-	const TransactionInfo* info = NULL;
+	const TransactionInfo* info{ nullptr };
 	std::set<UInt32>& informedScripts = s_transactionInformedScripts[type];
-	if (!callingScriptRefID || informedScripts.find(callingScriptRefID) == informedScripts.end()) {
+	if (!callingScriptRefID || !informedScripts.contains(callingScriptRefID)) {
 		info =  &s_transactionHistories[type];
 		if (!info->quantity) {
 			// indicates no transaction has yet taken place during this game session
-			info = NULL;
+			info = nullptr;
 		}
 		else if (callingScriptRefID) {
 			informedScripts.insert(callingScriptRefID);
@@ -962,9 +962,9 @@ const TransactionInfo* GetLastTransactionInfo(eTransactionType type, UInt32 call
 	return info;
 }
 
-static TESForm*	s_lastUsedSigilStone = NULL;
-static TESForm*			s_lastEnchantedSigilStoneItem = NULL;
-static TESForm*			s_lastCreatedSigilStoneItem = NULL;
+static TESForm*			s_lastUsedSigilStone{};
+static TESForm*			s_lastEnchantedSigilStoneItem{};
+static TESForm*			s_lastCreatedSigilStoneItem{};
 
 static __declspec(naked) void SigilStoneCreateHook(void)
 {
@@ -998,10 +998,10 @@ bool GetLastSigilStoneInfo(TESForm** outStone, TESForm** outOldItem, TESForm** o
 	return true;
 }
 
-static UInt32 g_cellChanged = false;
+static UInt32 g_cellChanged{};
 bool GetCellChanged()
 {
-	bool changed = g_cellChanged ? true : false;
+	const bool changed = g_cellChanged ? true : false;
 	g_cellChanged = 0;
 	return changed;
 }
@@ -1014,7 +1014,7 @@ static __declspec(naked) void ChangeCellHook(void)
 	//	-ebx == newCell
 	// however it's possible that newCell is equal to the previous cell, so check for that
 
-	static TESObjectCELL* s_lastCell = NULL;
+	static TESObjectCELL* s_lastCell = nullptr;
 	__asm {
 		push eax
 		mov eax, [s_lastCell]
@@ -1064,9 +1064,9 @@ static __declspec(naked) void Hook_ContainerMenuDanglingPointer(void)
 // fix by unequipping everything before removing all items
 // In both cases overwrite a call to ExtraDataList::RemoveAllItems (TESObjectREFR* from, TESObjectREFR* to, UInt32 unk2, bool bRetainOwnership, UInt32 unk4)
 // Could reasonably just patch that function instead, but don't want to mess with other code that may call it
-static const UInt32 kRemoveAllItems_CallAddr	= 0x00492E70;
-static const UInt32 kRemoveAllItems_PatchAddr	= 0x00507578;
-static const UInt32 kGotoJail_PatchAddr			= 0x00670328;
+static constexpr UInt32 kRemoveAllItems_CallAddr	= 0x00492E70;
+static constexpr UInt32 kRemoveAllItems_PatchAddr	= 0x00507578;
+static constexpr UInt32 kGotoJail_PatchAddr			= 0x00670328;
 
 
 static void __stdcall DoUnequipAllItems(TESObjectREFR* refr)
@@ -1089,10 +1089,10 @@ static __declspec(naked) void RemoveAllItemsHook(void)
 
 // AddSpell cmd will trigger a CTD if an effectitem-less spellitem is added to the player
 // caused by the handler dereferencing a NULL effectitem ptr to get its icon path for the notification message
-static const UInt32 kAddSpellPlayer_PatchAddr = 0x00514A98;
-static const UInt32 kAddSpellPlayer_CallAddr = 0x004152C0;
-static const UInt32 kAddSpellPlayer_RetnAddr = 0x00514A9D;
-static const UInt32 kAddSpellPlayer_JumpAddr = 0x00514AA7;
+static constexpr UInt32 kAddSpellPlayer_PatchAddr = 0x00514A98;
+static constexpr UInt32 kAddSpellPlayer_CallAddr = 0x004152C0;
+static constexpr UInt32 kAddSpellPlayer_RetnAddr = 0x00514A9D;
+static constexpr UInt32 kAddSpellPlayer_JumpAddr = 0x00514AA7;
 
 static __declspec(naked) void AddSpellPlayerHook(void)
 {
@@ -1141,7 +1141,7 @@ static ICriticalSection s_RefActivationCS;
 
 bool __stdcall DoRefActivationCallSiteHook(TESObjectREFR* thisObj, TESObjectREFR* arg1, UInt32 arg2, TESForm* arg3, UInt32 arg4)
 {
-	ReferenceActivationContext context = {0};
+	ReferenceActivationContext context{};
 	context.activatedRef = thisObj;
 	context.activatingRef = arg1;
 	context.arg2 = arg2;
@@ -1149,7 +1149,7 @@ bool __stdcall DoRefActivationCallSiteHook(TESObjectREFR* thisObj, TESObjectREFR
 	context.arg4 = arg4;
 
 	s_RefActivationContexts.push(context);
-	bool result = ThisStdCall(0x004DD260, thisObj, arg1, arg2, arg3, arg4);
+	const bool result = ThisStdCall(0x004DD260, thisObj, arg1, arg2, arg3, arg4);
 	s_RefActivationContexts.pop();
 
 	return result;
@@ -1161,7 +1161,7 @@ bool __stdcall DoRefActivationCmdHandlerHook(TESObjectREFR* thisObj, TESObjectRE
 
 	bool result = false;
 
-	if (s_RefActivationContexts.size())
+	if (!s_RefActivationContexts.empty())
 	{
 		const ReferenceActivationContext& current = s_RefActivationContexts.top();
 
@@ -1228,8 +1228,8 @@ void __stdcall RemoveItemInvalidateIR(TESForm* item, TESObjectREFR* container){
 	InventoryReference::InvalidateByItemAndContainer(container,item); //TODO add filter script
 }
 
-static const UInt32 kRemoveItemHook = 0x0051389F;
-static const UInt32 kRemoveItemHookRet = 0x005138A4;
+static constexpr UInt32 kRemoveItemHook = 0x0051389F;
+static constexpr UInt32 kRemoveItemHookRet = 0x005138A4;
 static __declspec(naked) void RemoveItemHook(void){
 	__asm{
 		call	ExtractArgs
@@ -1249,8 +1249,8 @@ void __stdcall RemoveItemInvalidateIRByREf(TESObjectREFR* item, TESObjectREFR* c
 	InventoryReference::InvalidateByItemAndContainer(container,item->baseForm); //TODO add filter script
 }
 
-static const UInt32 kRemoveMeHook = 0x005004B0;
-static const UInt32 kRemoveMeHookRet = 0x005004B5;
+static constexpr UInt32 kRemoveMeHook = 0x005004B0;
+static constexpr UInt32 kRemoveMeHookRet = 0x005004B5;
 
 static __declspec(naked) void RemoveMeHook(void){
 	__asm{
@@ -1264,8 +1264,8 @@ static __declspec(naked) void RemoveMeHook(void){
 	}
 }
 
-static const UInt32 kDropHook = 0x00500691;
-static const UInt32 kDropHookRet = 0x00500696;
+static constexpr UInt32 kDropHook = 0x00500691;
+static constexpr UInt32 kDropHookRet = 0x00500696;
 
 static __declspec(naked) void DropHook(void){
 	__asm{
@@ -1282,8 +1282,8 @@ static __declspec(naked) void DropHook(void){
 	}
 }
 
-static const UInt32 kDropMeHook = 0x00500604;
-static const UInt32 kDropMeHookRet = 0x0050060A;
+static constexpr UInt32 kDropMeHook = 0x00500604;
+static constexpr UInt32 kDropMeHookRet = 0x0050060A;
 
 static __declspec(naked) void DropMeHook(void){
 	__asm{
@@ -1417,9 +1417,9 @@ void Hook_Gameplay_Init(void)
 
 static TESDescription** s_LastRetrievedDescription = (TESDescription**)0x00B33C04;
 static BSStringT*			s_LastRetrievedDescriptionText = (BSStringT*)0x00B33C08;
-static const UInt32		kTESDescription_GetText_Addr = 0x0046A710;
-static const UInt32		kTESDescriptionHook_RetnAddr = 0x0046A715;
-static const UInt32		kTlsIndex = 0x00BA9DE4;
+static constexpr UInt32		kTESDescription_GetText_Addr = 0x0046A710;
+static constexpr UInt32		kTESDescriptionHook_RetnAddr = 0x0046A715;
+static constexpr UInt32		kTlsIndex = 0x00BA9DE4;
 
 
 static std::map<TESDescription*, std::string> s_descriptionChanges;
@@ -1428,13 +1428,13 @@ static bool s_bHookInstalled = false;
 const char* GetDescription(TESDescription* desc)
 {
 	if (desc) {
-		std::map<TESDescription*, std::string>::iterator found = s_descriptionChanges.find(desc);
+		const auto found = s_descriptionChanges.find(desc);
 		if (found != s_descriptionChanges.end()) {
 			return found->second.c_str();
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 static void __stdcall DoTESDescriptionHook(TESDescription* desc)
@@ -1448,7 +1448,7 @@ static void __stdcall DoTESDescriptionHook(TESDescription* desc)
 
 static __declspec(naked) void TESDescription_GetTextHook(void)
 {
-	static TESDescription* _this = NULL;
+	static TESDescription* _this = nullptr;
 
 	__asm {
 		pushad
@@ -1470,14 +1470,14 @@ void AddDescription(TESDescription* desc, const char* newText) {
 	s_descriptionChanges[desc] = newText;
 
 	// clear the cache in case the data for the form being modified is cached
-	*s_LastRetrievedDescription = NULL;
-	s_LastRetrievedDescriptionText->Set(NULL);
+	*s_LastRetrievedDescription = nullptr;
+	s_LastRetrievedDescriptionText->Set(nullptr);
 }
 
 bool SetDescriptionTextForForm(TESForm* form, const char* newText, UInt8 skillIndex)
 {
-	TESDescription* desc = NULL;
-	if (skillIndex != -1) {
+	TESDescription* desc = nullptr;
+	if (skillIndex != std::numeric_limits<decltype(skillIndex)>::max()) {
 		TESSkill* skill = OBLIVION_CAST(form, TESForm, TESSkill);
 		if (skill && skillIndex < 4) {
 			desc = &skill->levelQuote[skillIndex];
@@ -1502,19 +1502,19 @@ bool SetDescriptionText(TESDescription* desc, const char* newText)
 
 bool IsDescriptionModified(TESDescription* desc)
 {
-	return s_descriptionChanges.find(desc) != s_descriptionChanges.end();
+	return s_descriptionChanges.contains(desc);
 }
 
 void SetRetainExtraOwnership(bool bRetain)
 {
-	UInt8 retain = bRetain ? 1 : 0;
+	const UInt8 retain = bRetain ? 1 : 0;
 	SafeWrite8(kExtraOwnershipDefaultSetting, retain);
 	SafeWrite8(kExtraOwnershipDefaultSetting2, retain);
 }
 
 bool ToggleBlockPerk(UInt32 mastery, bool bEnable){
-	static const UInt32 kJMPatchAddr = 0x005F5C67;
-	static const UInt16 kJMOverwrittenBytes = 0x6D7F;
+	static constexpr UInt32 kJMPatchAddr = 0x005F5C67;
+	static constexpr UInt16 kJMOverwrittenBytes = 0x6D7F;
 
 
 	switch (mastery) {
@@ -1533,10 +1533,10 @@ bool ToggleBlockPerk(UInt32 mastery, bool bEnable){
 
 bool ToggleMercantilePerk (UInt32 mastery, bool bEnable){
 	// for both, we replace a short 'jl' instruction with a 'jmp' to turn off the perk
-	static const UInt32 kJMPatchAddr = 0x00485627;
-	static const UInt32 kMSPatchAddr = 0x00488F81;
+	static constexpr UInt32 kJMPatchAddr = 0x00485627;
+	static constexpr UInt32 kMSPatchAddr = 0x00488F81;
 	// master perk: extra 500 barter gold, replace jnz with jmp to toggle off
-	static const UInt32 kMSPatchAddr2 = 0x005FAAC5;
+	static constexpr UInt32 kMSPatchAddr2 = 0x005FAAC5;
 
 	switch (mastery) {
 		case kMasteryLevel_Journeyman:
@@ -1570,16 +1570,16 @@ bool ToggleSkillPerk(UInt32 actorVal, UInt32 mastery, bool bEnable)
 // quest log text is read from disk as needed
 // SetQuestStageText cmd allows changing the text, so we have to
 // hook QuestStageItem::GetLogText() to support that
-static const UInt32 kQuestStageItem_GetLogText_RetnAddr = 0x0052AF46;
-static const UInt32 kQuestStageItem_GetLogText_PatchAddr = 0x0052AF40;
+static constexpr UInt32 kQuestStageItem_GetLogText_RetnAddr = 0x0052AF46;
+static constexpr UInt32 kQuestStageItem_GetLogText_PatchAddr = 0x0052AF40;
 
 
 static std::map<QuestStageItem*, std::string> s_questStageTextMap;
 
 const char* __stdcall GetQuestStageItemText(QuestStageItem* item)
 {
-	const char* text = NULL;
-	std::map<QuestStageItem*, std::string>::iterator iter = s_questStageTextMap.find(item);
+	const char* text = nullptr;
+	const auto iter = s_questStageTextMap.find(item);
 	if (iter != s_questStageTextMap.end()) {
 		text = iter->second.c_str();
 	}
@@ -1589,7 +1589,7 @@ const char* __stdcall GetQuestStageItemText(QuestStageItem* item)
 
 static __declspec(naked) void Hook_QuestStageItem_GetLogText(void)
 {
-	static UInt32 s_stageText = NULL;
+	static UInt32 s_stageText{};
 
 	__asm {
 		pushad
@@ -1628,7 +1628,7 @@ void SetQuestStageItemText(QuestStageItem* item, const char* text)
 
 void UnsetQuestStageItemText(QuestStageItem* item)
 {
-	std::map<QuestStageItem*, std::string>::iterator iter = s_questStageTextMap.find(item);
+	const auto iter = s_questStageTextMap.find(item);
 	if (iter != s_questStageTextMap.end())
 		s_questStageTextMap.erase(iter);
 }
@@ -1637,7 +1637,7 @@ long double g_PlayerFlyCamSpeed = 10.f;
 
 void Init_PlayerFlyCamPatch( void )
 {
-	static const UInt32	kPatchLocation[] =
+	static constexpr std::array<UInt32,4> kPatchLocation
 	{
 		0x00664470,
 		0x0066448D,
@@ -1645,6 +1645,6 @@ void Init_PlayerFlyCamPatch( void )
 		0x006644C7
 	};
 
-	for (int i = 0; i < 4; i++)
+	for (std::size_t i{}; i < kPatchLocation.size(); ++i)
 		SafeWrite32(kPatchLocation[i] + 2, (UInt32)&g_PlayerFlyCamSpeed);
 }
