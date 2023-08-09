@@ -226,7 +226,7 @@ static bool SetRGBFromArray(ArrayID arr, RGBA& outRGB)
 		double rgb[3];
 		for (UInt32 i=0; i < 3; i++) {
 			if (g_ArrayMap.GetElementNumber(arr, i, &rgb[i])) {
-				rgb[i] = min(max(0.0, rgb[i]), 255.0);
+				rgb[i] = std::min(std::max(0.0, rgb[i]), 255.0);
 			}
 			else {
 				return false;

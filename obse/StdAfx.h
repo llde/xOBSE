@@ -14,6 +14,10 @@
 #define _WIN32_WINNT 0x603
 //#define _CRT_NO_VA_START_VALIDATION
 // WIN32
+
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #include <winsock2.h>
 #include <windows.h>
 #include <windowsx.h>
@@ -52,6 +56,7 @@
 #include <queue>
 #include <stack>
 #include <string>
+#include <array>
 #include <fstream>
 #include <stdexcept>
 #include <exception>
@@ -62,6 +67,7 @@
 #include <iomanip>
 #include <numeric>
 #include <functional>
+#include <limits>
 
 // RPC
 #include <Rpc.h>
