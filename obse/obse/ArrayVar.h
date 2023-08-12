@@ -1,6 +1,6 @@
 #pragma once
 
-typedef UInt32 ArrayID;
+using ArrayID = UInt32;
 class ArrayVar;
 class ArrayVarMap;
 struct Slice;
@@ -134,7 +134,7 @@ public:
 	bool operator<=(const ArrayKey& rhs) const { return !(*this > rhs); }
 };
 
-typedef std::map<ArrayKey, ArrayElement>::iterator ArrayIterator;
+using ArrayIterator = std::map<ArrayKey, ArrayElement>::iterator;
 
 class ArrayVar
 {
@@ -142,7 +142,7 @@ class ArrayVar
 	friend class Matrix;
 	friend class PluginAPI::ArrayAPI;
 
-	typedef std::map<ArrayKey, ArrayElement> _ElementMap;
+	using _ElementMap = std::map<ArrayKey, ArrayElement>;
 	_ElementMap m_elements;
 	ArrayID				m_ID;
 	UInt8				m_owningModIndex;
