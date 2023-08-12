@@ -19,8 +19,8 @@ ArrayVarMap g_ArrayMap;
 ArrayElement::ArrayElement()
 	: m_dataType(kDataType_Invalid), m_owningArray(0)
 {	
-	m_data.formID = 0;
-	m_data.str = "";
+	Data.formID = 0;
+	Data.str = "";
 }
 
 bool ArrayElement::operator<(const ArrayElement& rhs) const
@@ -35,11 +35,11 @@ bool ArrayElement::operator<(const ArrayElement& rhs) const
 	}
 
 	if (DataType() == kDataType_String)
-		return (_stricmp(m_data.str.c_str(), rhs.m_data.str.c_str()) < 0);
+		return (_stricmp(Data.str.c_str(), rhs.Data.str.c_str()) < 0);
 	else if (DataType() == kDataType_Form)
-		return m_data.formID < rhs.m_data.formID;
+		return Data.formID < rhs.Data.formID;
 	else
-		return m_data.num < rhs.m_data.num;
+		return Data.num < rhs.Data.num;
 }
 
 bool ArrayElement::Equals(const ArrayElement& compareTo) const
@@ -50,11 +50,11 @@ bool ArrayElement::Equals(const ArrayElement& compareTo) const
 	switch (DataType())
 	{
 	case kDataType_String:
-		return (m_data.str.length() == compareTo.m_data.str.length()) ? !_stricmp(m_data.str.c_str(), compareTo.m_data.str.c_str()) : false;
+		return (Data.str.length() == compareTo.Data.str.length()) ? !_stricmp(Data.str.c_str(), compareTo.Data.str.c_str()) : false;
 	case kDataType_Form:
-		return m_data.formID == compareTo.m_data.formID;
+		return Data.formID == compareTo.Data.formID;
 	default:
-		return m_data.num == compareTo.m_data.num;
+		return Data.num == compareTo.Data.num;
 	}
 }
 
@@ -65,16 +65,16 @@ std::string ArrayElement::ToString() const
 	switch (m_dataType)
 	{
 	case kDataType_Numeric:
-		sprintf_s(buf, sizeof(buf), "%f", m_data.num);
+		sprintf_s(buf, sizeof(buf), "%f", Data.num);
 		return buf;
 	case kDataType_String:
-		return m_data.str;
+		return Data.str;
 	case kDataType_Array:
-		sprintf_s(buf, sizeof(buf), "Array ID %.0f", m_data.num);
+		sprintf_s(buf, sizeof(buf), "Array ID %.0f", Data.num);
 		return buf;
 	case kDataType_Form:
 		{
-			UInt32 refID = m_data.formID;
+			UInt32 refID = Data.formID;
 			TESForm* form = LookupFormByID(refID);
 			if (form)
 			{
@@ -108,7 +108,7 @@ bool ArrayElement::SetForm(const TESForm* form)
 	Unset();
 
 	m_dataType = kDataType_Form;
-	m_data.formID = form ? form->refID : 0;
+	Data.formID = form ? form->refID : 0;
 	return true;
 }
 
@@ -117,7 +117,7 @@ bool ArrayElement::SetFormID(UInt32 refID)
 	Unset();
 
 	m_dataType = kDataType_Form;
-	m_data.formID = refID;
+	Data.formID = refID;
 	return true;
 }
 
@@ -126,7 +126,7 @@ bool ArrayElement::SetString(const std::string& str)
 	Unset();
 
 	m_dataType = kDataType_String;
-	m_data.str = str;
+	Data.str = str;
 	return true;
 }
 
@@ -136,10 +136,10 @@ bool ArrayElement::SetArray(ArrayID arr, UInt8 modIndex)
 
 	m_dataType = kDataType_Array;
 	if (m_owningArray) {
-		g_ArrayMap.AddReference(&m_data.num, arr, modIndex);
+		g_ArrayMap.AddReference(&Data.num, arr, modIndex);
 	}
 	else {	// this element is not inside any array, so it's just a temporary
-		m_data.num = arr;
+		Data.num = arr;
 	}
 
 	return true;
@@ -150,7 +150,7 @@ bool ArrayElement::SetNumber(double num)
 	Unset();
 
 	m_dataType = kDataType_Numeric;
-	m_data.num = num;
+	Data.num = num;
 	return true;
 }
 
@@ -162,16 +162,16 @@ bool ArrayElement::Set(const ArrayElement& elem)
 	switch (m_dataType)
 	{
 	case kDataType_String:
-		SetString(elem.m_data.str);
+		SetString(elem.Data.str);
 		break;
 	case kDataType_Array:
-		SetArray(elem.m_data.num, g_ArrayMap.GetOwningModIndex(m_owningArray));
+		SetArray(elem.Data.num, g_ArrayMap.GetOwningModIndex(m_owningArray));
 		break;
 	case kDataType_Numeric:
-		SetNumber(elem.m_data.num);
+		SetNumber(elem.Data.num);
 		break;
 	case kDataType_Form:
-		SetFormID(elem.m_data.formID);
+		SetFormID(elem.Data.formID);
 		break;
 	default:
 		m_dataType = kTokenType_Invalid;
@@ -185,10 +185,10 @@ bool ArrayElement::GetAsArray(ArrayID* out) const
 {
 	if (!out || m_dataType != kDataType_Array)
 		return false;
-	else if (m_data.num != 0 && !g_ArrayMap.Exists(m_data.num))	// it's okay for arrayID to be 0, otherwise check if array exists
+	else if (Data.num != 0 && !g_ArrayMap.Exists(Data.num))	// it's okay for arrayID to be 0, otherwise check if array exists
 		return false;
 
-	*out = m_data.num;
+	*out = Data.num;
 	return true;
 }
 
@@ -196,7 +196,7 @@ bool ArrayElement::GetAsFormID(UInt32* out) const
 {
 	if (!out || m_dataType != kDataType_Form)
 		return false;
-	*out = m_data.formID;
+	*out = Data.formID;
 	return true;
 }
 
@@ -204,7 +204,7 @@ bool ArrayElement::GetAsNumber(double* out) const
 {
 	if (!out || m_dataType != kDataType_Numeric)
 		return false;
-	*out = m_data.num;
+	*out = Data.num;
 	return true;
 }
 
@@ -212,17 +212,17 @@ bool ArrayElement::GetAsString(std::string& out) const
 {
 	if (m_dataType != kDataType_String)
 		return false;
-	out = m_data.str;
+	out = Data.str;
 	return true;
 }
 
 void ArrayElement::Unset()
 {
 	if (m_dataType == kDataType_Array)
-		g_ArrayMap.RemoveReference(&m_data.num, g_ArrayMap.GetOwningModIndex(m_owningArray));
+		g_ArrayMap.RemoveReference(&Data.num, g_ArrayMap.GetOwningModIndex(m_owningArray));
 	
 	m_dataType = kDataType_Invalid;
-	m_data.num = 0;
+	Data.num = 0;
 }
 
 ///////////////////////
@@ -445,21 +445,21 @@ void ArrayVar::Dump()
 		switch (iter->second.m_dataType)
 		{
 		case kDataType_Numeric:
-			sprintf_s(numBuf, sizeof(numBuf), "%f", iter->second.m_data.num);
+			sprintf_s(numBuf, sizeof(numBuf), "%f", iter->second.Data.num);
 			elementInfo += numBuf;
 			break;
 		case kDataType_String:
-			elementInfo += iter->second.m_data.str;
+			elementInfo += iter->second.Data.str;
 			break;
 		case kDataType_Array:
 			elementInfo += "(Array ID #";
-			sprintf_s(numBuf, sizeof(numBuf), "%.0f", iter->second.m_data.num);
+			sprintf_s(numBuf, sizeof(numBuf), "%.0f", iter->second.Data.num);
 			elementInfo += numBuf;
 			elementInfo += ")";
 			break;
 		case kDataType_Form:
 			{
-				UInt32 refID = iter->second.m_data.formID;
+				UInt32 refID = iter->second.Data.formID;
 				sprintf_s(numBuf, sizeof(numBuf), "%08X", refID);
 				TESForm* form = LookupFormByID(refID);
 				if (form)
@@ -1081,7 +1081,7 @@ bool ArrayVarMap::GetElementCString(ArrayID id, const ArrayKey& key, const char*
 		ArrayElement* elem = arr->Get(key, false);
 		if (elem && elem->DataType() == kDataType_String)
 		{
-			*out = elem->m_data.str.c_str();
+			*out = elem->Data.str.c_str();
 			return true;
 		}
 	}
@@ -1152,7 +1152,7 @@ bool ArrayVarMap::GetElementAsBool(ArrayID id, const ArrayKey& key, bool* out)
 	if (elem->DataType() == kDataType_String)
 		*out = true;			// strings are always "true", whatever that means in this context
 	else
-		*out = elem->m_data.num ? true : false;
+		*out = elem->Data.num ? true : false;
 
 	return true;
 }
@@ -1219,23 +1219,23 @@ void ArrayVarMap::Save(OBSESerializationInterface* intfc)
 			switch (elems->second.m_dataType)
 			{
 			case kDataType_Numeric:
-				intfc->WriteRecordData(&elems->second.m_data.num, sizeof(double));
+				intfc->WriteRecordData(&elems->second.Data.num, sizeof(double));
 				break;
 			case kDataType_String:
 				{
-					UInt16 len = elems->second.m_data.str.length();
+					UInt16 len = elems->second.Data.str.length();
 					intfc->WriteRecordData(&len, sizeof(len));
-					intfc->WriteRecordData(elems->second.m_data.str.c_str(), elems->second.m_data.str.length());
+					intfc->WriteRecordData(elems->second.Data.str.c_str(), elems->second.Data.str.length());
 					break;
 				}
 			case kDataType_Array:
 				{
-					ArrayID id = elems->second.m_data.num;
+					ArrayID id = elems->second.Data.num;
 					intfc->WriteRecordData(&id, sizeof(id));
 					break;
 				}
 			case kDataType_Form:
-				intfc->WriteRecordData(&elems->second.m_data.formID, sizeof(UInt32));
+				intfc->WriteRecordData(&elems->second.Data.formID, sizeof(UInt32));
 				break;
 			default:
 				_MESSAGE("Error in ArrayVarMap::Save() - unhandled element type %d. Element not saved.", elems->second.m_dataType);
@@ -1402,7 +1402,7 @@ void ArrayVarMap::Load(OBSESerializationInterface* intfc)
 								if (elem)
 								{
 									elem->m_dataType = kDataType_Array;
-									elem->m_data.num = id;
+									elem->Data.num = id;
 									elem->m_owningArray = arrayID;
 								}
 							}
