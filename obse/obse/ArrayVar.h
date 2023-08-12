@@ -79,10 +79,10 @@ struct ArrayElement
 	friend class ArrayVar;
 	friend class ArrayVarMap;
 public:
-	ArrayType	Data;
+	ArrayType	Data{ .formID = 0 };
 private:
-	UInt8		m_dataType;
-	ArrayID		m_owningArray;
+	UInt8		m_dataType{ kDataType_Invalid };
+	ArrayID		m_owningArray{};
 
 	void  Unset();
 	std::string ToString() const;
@@ -101,14 +101,12 @@ public:
 	bool SetNumber(double num);
 	bool Set(const ArrayElement& elem);
 
-	ArrayElement();
+	[[nodiscard]] static bool CompareAsString(const ArrayElement& lhs, const ArrayElement& rhs);
 
-	static bool CompareAsString(const ArrayElement& lhs, const ArrayElement& rhs);
+	[[nodiscard]] bool operator<(const ArrayElement& rhs) const;
+	[[nodiscard]] bool Equals(const ArrayElement& compareTo) const;
 
-	bool operator<(const ArrayElement& rhs) const;
-	bool Equals(const ArrayElement& compareTo) const;
-
-	bool IsGood() { return m_dataType != kDataType_Invalid;	}
+	[[nodiscard]] bool IsGood() const { return m_dataType != kDataType_Invalid; }
 };
 
 struct ArrayKey
