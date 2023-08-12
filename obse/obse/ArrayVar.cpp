@@ -16,13 +16,6 @@ ArrayVarMap g_ArrayMap;
 // ArrayElement
 /////////////////
 
-ArrayElement::ArrayElement()
-	: m_dataType(kDataType_Invalid), m_owningArray(0)
-{	
-	Data.formID = 0;
-	Data.str = "";
-}
-
 bool ArrayElement::operator<(const ArrayElement& rhs) const
 {
 	// if we ever try to compare 2 elems of differing types (i.e. string and number) we violate strict weak
