@@ -76,13 +76,11 @@ struct ArrayType
 
 struct ArrayElement
 {
-//	ArrayElement(const ArrayElement& copyFrom);
-//	ArrayElement& operator=(const ArrayElement& rhs);
-
 	friend class ArrayVar;
 	friend class ArrayVarMap;
-
-	ArrayType	m_data;
+public:
+	ArrayType	Data;
+private:
 	UInt8		m_dataType;
 	ArrayID		m_owningArray;
 

@@ -49,19 +49,19 @@ void ArrayIterLoop::UpdateIterator(const ArrayElement* elem)
 	switch (elem->DataType())
 	{
 	case kDataType_String:
-		g_ArrayMap.SetElementString(m_iterID, val, elem->m_data.str);
+		g_ArrayMap.SetElementString(m_iterID, val, elem->Data.str);
 		break;
 	case kDataType_Numeric:
-		g_ArrayMap.SetElementNumber(m_iterID, val, elem->m_data.num);
+		g_ArrayMap.SetElementNumber(m_iterID, val, elem->Data.num);
 		break;
 	case kDataType_Form:
 		{
-			g_ArrayMap.SetElementFormID(m_iterID, val, elem->m_data.formID);
+			g_ArrayMap.SetElementFormID(m_iterID, val, elem->Data.formID);
 			break;
 		}
 	case kDataType_Array:
 		{
-			ArrayID arrID = elem->m_data.num;
+			ArrayID arrID = elem->Data.num;
 			g_ArrayMap.SetElementArray(m_iterID, val, arrID);
 			break;
 		}
