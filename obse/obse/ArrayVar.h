@@ -63,8 +63,10 @@ enum
 	kDataType_Array,
 };
 
-struct ArrayType {
-	union {
+struct ArrayType
+{
+	union
+	{
 		double		num;
 		UInt32		formID;
 	};
