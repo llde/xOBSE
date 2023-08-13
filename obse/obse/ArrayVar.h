@@ -232,7 +232,7 @@ public:
 	bool	SetSize(ArrayID id, UInt32 newSize, const ArrayElement& padWith);
 	bool	Insert(ArrayID id, UInt32 atIndex, const ArrayElement& toInsert);
 	bool	Insert(ArrayID id, UInt32 atIndex, ArrayID rangeID);
-	bool	Merge(ArrayID dest, ArrayID toMerge);
+	//bool	Merge(ArrayID dest, ArrayID toMerge);
 
 	// operations on ArrayElements
 	bool SetElementNumber(ArrayID id, const ArrayKey& key, double num);
@@ -285,7 +285,7 @@ namespace PluginAPI
 
 		// helper fns
 		static bool InternalElemToPluginElem(ArrayElement& src, OBSEArrayVarInterface::Element& out);
-		static bool ScriptTokenToPluginElem(ScriptToken* token, OBSEArrayVarInterface::Element& out);
+		//static bool ScriptTokenToPluginElem(ScriptToken* token, OBSEArrayVarInterface::Element& out);
 	};
 }
 
