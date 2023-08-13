@@ -392,7 +392,7 @@ void ArrayVar::Dump()
 		{
 			case kDataType_Numeric:
 			{
-				elementInfo += std::vformat("{}", std::make_format_args(iter->first.Key().num));
+				elementInfo += std::to_string(iter->first.Key().num);
 				break;
 			}
 		case kDataType_String:
