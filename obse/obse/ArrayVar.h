@@ -1,4 +1,5 @@
 #pragma once
+#include <ranges>
 
 using ArrayID = UInt32;
 class ArrayVar;
@@ -112,10 +113,10 @@ public:
 struct ArrayKey
 {
 private:
-	ArrayType	key;
-	UInt8		keyType;
+	ArrayType	key{};
+	UInt8		keyType{ kDataType_Invalid };
 public:
-	ArrayKey();
+	ArrayKey() = default;
 	ArrayKey(const std::string& _key);
 	ArrayKey(double _key);
 	ArrayKey(const char* _key);
@@ -140,25 +141,31 @@ class ArrayVar
 	friend class Matrix;
 	friend class PluginAPI::ArrayAPI;
 
-	using _ElementMap = std::map<ArrayKey, ArrayElement>;
-	_ElementMap m_elements;
-	ArrayID				m_ID;
+	using AVElementMap = std::map<ArrayKey, ArrayElement>;
+	AVElementMap m_elements;
+	ArrayID				m_ID{};
 	UInt8				m_owningModIndex;
-	UInt8				m_keyType;
-	bool				m_bPacked;
+	UInt8				m_keyType{kDataType_Invalid};
+	bool				m_bPacked{false};
 	std::vector<UInt8>	m_refs;		// data is modIndex of referring object; size() is number of references
 
 
-	explicit ArrayVar(UInt8 modIndex);
-	ArrayVar(UInt32 keyType, bool packed, UInt8 modIndex);
-
-
+	explicit ArrayVar(UInt8 modIndex) : m_owningModIndex(modIndex) { }
+	ArrayVar(UInt32 keyType, bool packed, UInt8 modIndex) : m_owningModIndex(modIndex), m_keyType(static_cast<UInt8>(keyType)), m_bPacked(packed) { }
 public:
-	~ArrayVar();
+	~ArrayVar()
+	{
+		// erase all elements. Important because doing so decrements refCounts of arrays stored within this array
+		for(const auto& key : m_elements | std::views::keys)
+		{
+			if (ArrayElement* arrElem = Get(key, false))
+				arrElem->Unset();
+		}
+	}
 
-	UInt32 GetUnusedIndex();
+	UInt32 GetUnusedIndex() const;
 	ArrayElement* Get(ArrayKey key, bool bCanCreateNew);
-	UInt32 ID() { return m_ID; }
+	UInt32 ID() const { return m_ID; }
 	void Pack();
 	void Dump();
 	bool SetElementNumber(const ArrayKey* key, double number);
@@ -175,7 +182,7 @@ public:
 class ArrayVarMap : public VarMap<ArrayVar>
 {
 	// this gets incremented whenever serialization format changes
-	static const UInt32 kVersion = 1;
+	static constexpr UInt32 kVersion{ 1 };
 
 	void Add(ArrayVar* var, UInt32 varID, UInt32 numRefs, UInt8* refs);
 public:
@@ -215,8 +222,8 @@ public:
 	UInt32	SizeOf(ArrayID id);
 	UInt32  EraseElements(ArrayID id, const ArrayKey& lo, const ArrayKey& hi);	// returns num erased
 	UInt32	EraseAllElements(ArrayID id);
-	ArrayID Sort(ArrayID src, SortOrder order, SortType type, UInt8 modIndex, Script* comparator=NULL);
-	ArrayKey Find(ArrayID toSearch, const ArrayElement& toFind, const Slice* range = NULL);
+	ArrayID Sort(ArrayID src, SortOrder order, SortType type, UInt8 modIndex, Script* comparator= nullptr);
+	ArrayKey Find(ArrayID toSearch, const ArrayElement& toFind, const Slice* range = nullptr);
 	std::string GetTypeString(ArrayID arr);
 	UInt8	GetOwningModIndex(ArrayID id);
 	ArrayID GetKeys(ArrayID id, UInt8 modIndex);

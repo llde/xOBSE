@@ -2,6 +2,7 @@
 #include "ArrayVar.h"
 #include "GameForms.h"
 #include <algorithm>
+#include <format>
 
 #if OBLIVION
 #include "GameAPI.h"
@@ -53,30 +54,29 @@ bool ArrayElement::Equals(const ArrayElement& compareTo) const
 
 std::string ArrayElement::ToString() const
 {
-	char buf[0x50];
-
 	switch (m_dataType)
 	{
-	case kDataType_Numeric:
-		sprintf_s(buf, sizeof(buf), "%f", Data.num);
-		return buf;
-	case kDataType_String:
-		return Data.str;
-	case kDataType_Array:
-		sprintf_s(buf, sizeof(buf), "Array ID %.0f", Data.num);
-		return buf;
-	case kDataType_Form:
+		case kDataType_Numeric:
 		{
-			UInt32 refID = Data.formID;
-			TESForm* form = LookupFormByID(refID);
-			if (form)
+			return std::to_string(Data.num);
+		}
+		case kDataType_String:
+		{
+			return Data.str;
+		}
+		case kDataType_Array:
+		{
+			return std::vformat("Array ID {:0.f}", std::make_format_args(Data.num));
+		}
+		case kDataType_Form:
+		{
+			const UInt32 refID = Data.formID;
+			if (TESForm* form = LookupFormByID(refID))
 			{
-				const char* formName = GetFullName(form);
-				if (formName)
+				if (const char* formName = GetFullName(form))
 					return formName;
 			}
-			sprintf_s(buf, sizeof(buf), "%08x", refID);
-			return buf;
+			return std::vformat("{:08x}", std::make_format_args(refID));
 		}
 	default:
 		return "<INVALID>";
@@ -88,13 +88,10 @@ bool ArrayElement::CompareAsString(const ArrayElement& lhs, const ArrayElement& 
 	// used by std::sort to sort elements by string representation
 	// for forms, this is the name, or the actorvaluestring representation of formID if no name
 
-	std::string lhStr = lhs.ToString();
-	std::string rhStr = rhs.ToString();
-
+	const std::string lhStr = lhs.ToString();
+	const std::string rhStr = rhs.ToString();
 	return _stricmp(lhStr.c_str(), rhStr.c_str()) < 0;
 }
-
-
 
 bool ArrayElement::SetForm(const TESForm* form)
 {
@@ -176,12 +173,15 @@ bool ArrayElement::Set(const ArrayElement& elem)
 
 bool ArrayElement::GetAsArray(ArrayID* out) const
 {
-	if (!out || m_dataType != kDataType_Array)
+	const auto intNum{ static_cast<ArrayID>(Data.num) };
+	if (out == nullptr)
 		return false;
-	else if (Data.num != 0 && !g_ArrayMap.Exists(Data.num))	// it's okay for arrayID to be 0, otherwise check if array exists
+	if (m_dataType != kDataType_Array)
+		return false;
+	if (intNum != 0 && !g_ArrayMap.Exists(intNum))	// it's okay for arrayID to be 0, otherwise check if array exists
 		return false;
 
-	*out = Data.num;
+	*out = intNum;
 	return true;
 }
 
@@ -221,11 +221,6 @@ void ArrayElement::Unset()
 ///////////////////////
 // ArrayKey
 //////////////////////
-
-ArrayKey::ArrayKey() : keyType(kDataType_Invalid)
-{
-	key.num = 0;
-}
 
 ArrayKey::ArrayKey(const std::string& _key)
 {
@@ -289,31 +284,6 @@ bool ArrayKey::operator==(const ArrayKey& rhs) const
 // ArrayVar
 //////////////////////
 
-
-ArrayVar::ArrayVar(UInt8 modIndex)
-	: m_ID(0), m_keyType(kDataType_Invalid), m_bPacked(false), m_owningModIndex(modIndex)
-{
-	//
-}
-
-ArrayVar::ArrayVar(UInt32 _keyType, bool _packed, UInt8 modIndex)
-	: m_ID(0), m_keyType(_keyType), m_bPacked(_packed), m_owningModIndex(modIndex)
-{
-	//
-}
-
-ArrayVar::~ArrayVar()
-{
-	// erase all elements. Important because doing so decrements refCounts of arrays stored within this array
-	for (ArrayIterator iter = m_elements.begin(); iter != m_elements.end(); ++iter)
-	{
-		ArrayKey key = iter->first;
-		ArrayElement* elem = Get(key, false);
-		if (elem)
-			elem->Unset();
-	}
-}
-
 ArrayElement* ArrayVar::Get(ArrayKey key, bool bCanCreateNew)
 {
 	//TODO what do this?
@@ -322,12 +292,12 @@ ArrayElement* ArrayVar::Get(ArrayKey key, bool bCanCreateNew)
 		double idx = key.Key().num;
 		if (idx < 0)
 			idx += Size();
-		UInt32 intIdx = idx;
+		const auto intIdx = static_cast<UInt32>(idx);
 		key.SetNumericKey(intIdx);
 	}
 
-	_ElementMap::iterator it = m_elements.find(key);
-	if (it != m_elements.end()) {
+	const auto it = m_elements.find(key);
+	if (it != m_elements.cend()) {
 		return &it->second;
 	}
 
@@ -345,7 +315,7 @@ ArrayElement* ArrayVar::Get(ArrayKey key, bool bCanCreateNew)
 		}
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 bool ArrayVar::SetElementNumber(const ArrayKey* key, double num)
@@ -387,20 +357,20 @@ bool ArrayVar::SetElementArray(const ArrayKey* key, ArrayID srcID)
 
 bool ArrayVar::GetElementNumber(const ArrayKey* key, double* out)
 {
-	ArrayElement* elem = this->Get(*key, false);
+	const ArrayElement* elem = this->Get(*key, false);
 	return (elem && elem->GetAsNumber(out));
 }
 
 bool ArrayVar::GetElementString(const ArrayKey* key, std::string& out)
 {
-	ArrayElement* elem = this->Get(*key, false);
+	ArrayElement const* elem = this->Get(*key, false);
 	return (elem && elem->GetAsString(out));
 }
 
-UInt32 ArrayVar::GetUnusedIndex()
+UInt32 ArrayVar::GetUnusedIndex() const
 {
 	UInt32 id = 0;
-	while (m_elements.find(id) != m_elements.end())
+	while (m_elements.contains(id))
 	{
 		id++;
 	}
@@ -415,58 +385,58 @@ void ArrayVar::Dump()
 	Console_Print("Refs: %d Owner %02X: %s", m_refs.size(), m_owningModIndex, owningModName);
 	_MESSAGE("Refs: %d Owner %02X: %s", m_refs.size(), m_owningModIndex, owningModName);
 
-	for (std::map<ArrayKey, ArrayElement>::iterator iter = m_elements.begin(); iter != m_elements.end(); ++iter)
+	for (auto iter = m_elements.begin(); iter != m_elements.end(); ++iter)
 	{
-		char numBuf[0x50] = { 0 };
 		std::string elementInfo("[ ");
-
 		switch (KeyType())
 		{
-		case kDataType_Numeric:
-			sprintf_s(numBuf, sizeof(numBuf), "%f", iter->first.Key().num);
-			elementInfo += numBuf;
-			break;
+			case kDataType_Numeric:
+			{
+				elementInfo += std::vformat("{}", std::make_format_args(iter->first.Key().num));
+				break;
+			}
 		case kDataType_String:
-			elementInfo += iter->first.Key().str;
-			break;
+			{
+				elementInfo += iter->first.Key().str;
+				break;
+			}
 		default:
-			elementInfo += "?Unknown Key Type?";
+			{
+				elementInfo += "?Unknown Key Type?";
+			}
 		}
 
 		elementInfo += " ] : ";
 
 		switch (iter->second.m_dataType)
 		{
-		case kDataType_Numeric:
-			sprintf_s(numBuf, sizeof(numBuf), "%f", iter->second.Data.num);
-			elementInfo += numBuf;
-			break;
-		case kDataType_String:
-			elementInfo += iter->second.Data.str;
-			break;
-		case kDataType_Array:
-			elementInfo += "(Array ID #";
-			sprintf_s(numBuf, sizeof(numBuf), "%.0f", iter->second.Data.num);
-			elementInfo += numBuf;
-			elementInfo += ")";
-			break;
-		case kDataType_Form:
+			case kDataType_Numeric:
 			{
-				UInt32 refID = iter->second.Data.formID;
-				sprintf_s(numBuf, sizeof(numBuf), "%08X", refID);
-				TESForm* form = LookupFormByID(refID);
-				if (form)
-					elementInfo += GetFullName(form);
-				else
-					elementInfo += "<?NAME?>";
-
-				elementInfo += " (";
-				elementInfo += numBuf;
-				elementInfo += ")";
+				elementInfo += std::vformat("{}", std::make_format_args(iter->second.Data.num));
 				break;
 			}
-		default:
-			elementInfo += "?Unknown Element Type?";
+			case kDataType_String:
+			{
+				elementInfo += iter->second.Data.str;
+				break;
+			}
+			case kDataType_Array:
+			{
+				elementInfo += std::vformat("(Array ID #{})", std::make_format_args(iter->second.Data.num));
+				break;
+			}
+			case kDataType_Form:
+			{
+				const auto refID = iter->second.Data.formID;
+				const auto formPtr = LookupFormByID(refID);
+				const std::string nameVal = formPtr != nullptr ? GetFullName(formPtr) : "<?NAME?>";
+				elementInfo += std::vformat("{1} ({0:08X})", std::make_format_args(refID, nameVal));
+				break;
+			}
+			default:
+			{
+				elementInfo += "?Unknown Element Type?";
+			}
 		}
 
 		Console_Print("%s", elementInfo.c_str());
@@ -483,15 +453,14 @@ void ArrayVar::Pack()
 	// these are double but will always hold integer values for packed arrays
 	double curIdx = 0;		// last correct index
 
-	ArrayIterator iter;
-	for (iter = m_elements.begin(); iter != m_elements.end(); )
+	for (auto iter = m_elements.begin(); iter != m_elements.end(); )
 	{
 		if (!(iter->first == curIdx))
 		{
 			ArrayElement* elem = Get(ArrayKey(curIdx), true);
 			elem->Set(iter->second);
 			iter->second.Unset();
-			ArrayIterator toDelete = iter;
+			const auto toDelete = iter;
 			++iter;
 			m_elements.erase(toDelete);
 		}
@@ -508,8 +477,7 @@ void ArrayVar::Pack()
 
 UInt8 ArrayVarMap::GetOwningModIndex(ArrayID id)
 {
-	ArrayVar* arr = Get(id);
-	if (arr)
+	if (const ArrayVar* arr = Get(id))
 		return arr->m_owningModIndex;
 
 	return 0;
@@ -517,15 +485,14 @@ UInt8 ArrayVarMap::GetOwningModIndex(ArrayID id)
 
 void ArrayVarMap::Erase(ArrayID toErase)
 {
-	ArrayVar* var = Get(toErase);
-	if (var)
+	if (ArrayVar* var = Get(toErase))
 	{
 		// delete any arrays contained in array
-		for (ArrayIterator iter = var->m_elements.begin(); iter != var->m_elements.end(); ++iter)
+		for (auto iter = var->m_elements.begin(); iter != var->m_elements.end(); ++iter)
 		{
 			iter->second.Unset();
 		}
-			
+
 		delete var;
 	}
 
@@ -554,8 +521,8 @@ void ArrayVarMap::Add(ArrayVar* var, UInt32 varID, UInt32 numRefs, UInt8* refs)
 
 ArrayID	ArrayVarMap::Create(UInt32 keyType, bool bPacked, UInt8 modIndex)
 {
-	ArrayVar* newVar = new ArrayVar(keyType, bPacked, modIndex);
-	ArrayID varID = GetUnusedID();
+	const auto newVar = new ArrayVar(keyType, bPacked, modIndex);
+	const ArrayID varID = GetUnusedID();
 	newVar->m_ID = varID;
 	VarMap::Insert(varID, newVar);
 	MarkTemporary(varID, true);		// queue for deletion until a reference to this array is made
@@ -568,8 +535,8 @@ ArrayID ArrayVarMap::Copy(ArrayID from, UInt8 modIndex, bool bDeepCopy)
 	if (!src)
 		return 0;
 
-	ArrayID copyID = Create(src->KeyType(), src->IsPacked(), modIndex);
-	for (ArrayIterator iter = src->m_elements.begin(); iter != src->m_elements.end(); ++iter)
+	const ArrayID copyID = Create(src->KeyType(), src->IsPacked(), modIndex);
+	for (auto iter = src->m_elements.begin(); iter != src->m_elements.end(); ++iter)
 	{
 		if (iter->second.DataType() == kDataType_Array && bDeepCopy)
 		{
@@ -603,8 +570,7 @@ void ArrayVarMap::AddReference(ArrayID* ref, ArrayID toRef, UInt8 referringModIn
 	if (*ref)			// refers to a different array, remove that reference
 		RemoveReference(ref, referringModIndex);
 
-	ArrayVar* arr = Get(toRef);
-	if (arr)
+	if (ArrayVar* arr = Get(toRef))
 	{
 		arr->m_refs.push_back(referringModIndex);	// record reference, increment refcount
 		*ref = toRef;								// store ref'ed ArrayID in reference
@@ -618,7 +584,7 @@ void ArrayVarMap::RemoveReference(ArrayID* ref, UInt8 referringModIndex)
 	if (var)
 	{
 		// decrement refcount
-		for (std::vector<UInt8>::iterator iter = var->m_refs.begin(); iter != var->m_refs.end(); ++iter)
+		for (auto iter = var->m_refs.begin(); iter != var->m_refs.end(); ++iter)
 		{
 			if (*iter == referringModIndex)
 			{
@@ -629,7 +595,7 @@ void ArrayVarMap::RemoveReference(ArrayID* ref, UInt8 referringModIndex)
 	}
 
 	// if refcount is zero, queue for deletion
-	if (var && var->m_refs.size() == 0)
+	if (var && var->m_refs.empty())
 	{
 		MarkTemporary(var->ID(), true);
 	}
@@ -660,7 +626,7 @@ ArrayID ArrayVarMap::MakeSlice(ArrayID src, const Slice* slice, UInt8 modIndex)
 	if (!srcVar)
 		return 0;
 	
-	std::map<ArrayKey, ArrayElement>::iterator start, end;
+	std::map<ArrayKey, ArrayElement>::iterator start;
 	ArrayKey lo;
 	ArrayKey hi;
 
@@ -678,8 +644,8 @@ ArrayID ArrayVarMap::MakeSlice(ArrayID src, const Slice* slice, UInt8 modIndex)
 	else
 		return 0;
 
-	ArrayID newID = Create(srcVar->KeyType(), srcVar->IsPacked(), modIndex);
-	bool bPacked = srcVar->IsPacked();
+	const ArrayID newID = Create(srcVar->KeyType(), srcVar->IsPacked(), modIndex);
+	const bool bPacked = srcVar->IsPacked();
 
 	for (start = srcVar->m_elements.begin(); start != srcVar->m_elements.end(); ++start)
 	{
@@ -689,15 +655,15 @@ ArrayID ArrayVarMap::MakeSlice(ArrayID src, const Slice* slice, UInt8 modIndex)
 
 	UInt32 packedIndex = 0;
 
-	for (end = start; end != srcVar->m_elements.end(); ++end)
+	for (auto endIt = start; endIt != srcVar->m_elements.end(); ++endIt)
 	{
-		if (end->first > hi)
+		if (endIt->first > hi)
 			break;
 
 		if (bPacked)
-			SetElement(newID, packedIndex++, end->second);
+			SetElement(newID, packedIndex++, endIt->second);
 		else
-			SetElement(newID, end->first, end->second);
+			SetElement(newID, endIt->first, endIt->second);
 	}
 
 	return newID;
@@ -705,7 +671,7 @@ ArrayID ArrayVarMap::MakeSlice(ArrayID src, const Slice* slice, UInt8 modIndex)
 
 UInt32	ArrayVarMap::GetKeyType(ArrayID id)
 {
-	ArrayVar* var = Get(id);
+	const ArrayVar* var = Get(id);
 	return var ? var->KeyType() : kDataType_Invalid;
 }
 
@@ -717,7 +683,7 @@ bool ArrayVarMap::Exists(ArrayID id)
 
 UInt32 ArrayVarMap::SizeOf(ArrayID id)
 {
-	ArrayVar* var = Get(id);
+	const ArrayVar* var = Get(id);
 	return var ? var->Size() : -1;
 }
 
@@ -728,11 +694,11 @@ ArrayID ArrayVarMap::GetKeys(ArrayID id, UInt8 modIndex)
 	if (!src)
 		return 0;
 
-	ArrayID keyArrID = Create(kDataType_Numeric, true, modIndex);
-	UInt8 keysType = src->KeyType();
+	const ArrayID keyArrID = Create(kDataType_Numeric, true, modIndex);
+	const UInt8 keysType = src->KeyType();
 	UInt32 curIdx = 0;
 
-	for (ArrayIterator iter = src->m_elements.begin(); iter != src->m_elements.end(); ++iter)
+	for (auto iter = src->m_elements.begin(); iter != src->m_elements.end(); ++iter)
 	{
 		if (keysType == kDataType_Numeric)
 			SetElementNumber(keyArrID, curIdx, iter->first.Key().num);
@@ -746,11 +712,11 @@ ArrayID ArrayVarMap::GetKeys(ArrayID id, UInt8 modIndex)
 
 bool ArrayVarMap::HasKey(ArrayID id, const ArrayKey& key)
 {
-	ArrayVar* arr = Get(id);
+	const ArrayVar* arr = Get(id);
 	if (!arr || arr->KeyType() != key.KeyType())
 		return false;
 
-	return (arr->m_elements.find(key) != arr->m_elements.end());
+	return (arr->m_elements.contains(key));
 }
 
 bool ArrayVarMap::AsVector(ArrayID id, std::vector<const ArrayElement*> &vecOut)
@@ -769,7 +735,7 @@ bool ArrayVarMap::AsVector(ArrayID id, std::vector<const ArrayElement*> &vecOut)
 
 bool ArrayVarMap::SetSize(ArrayID id, UInt32 newSize, const ArrayElement& padWith)
 {
-	ArrayVar* arr = Get(id);
+	const ArrayVar* arr = Get(id);
 	if (!arr || !arr->IsPacked())
 		return false;
 
@@ -809,7 +775,7 @@ bool ArrayVarMap::Insert(ArrayID id, UInt32 atIndex, ArrayID rangeID)
 	if (!dest || !src || !dest->IsPacked() || !src->IsPacked() || atIndex > dest->Size())
 		return false;
 
-	UInt32 shiftDelta = src->Size();
+	const UInt32 shiftDelta = src->Size();
 
 	// resize, pad with empty elements
 	SetSize(id, dest->Size() + shiftDelta, ArrayElement());
@@ -831,60 +797,59 @@ bool ArrayVarMap::Insert(ArrayID id, UInt32 atIndex, ArrayID rangeID)
 class SortFunctionCaller : public FunctionCaller
 {
 	Script			* m_comparator;
-	ArrayID			m_lhs;
-	ArrayID			m_rhs;
+	ArrayID			m_lhs{};
+	ArrayID			m_rhs{};
 
 public:
-	SortFunctionCaller(Script* comparator) : m_comparator(comparator), m_lhs(0), m_rhs(0) { 
-		if (comparator) {
+	explicit SortFunctionCaller(Script* comparator) : m_comparator(comparator)
+	{ 
+		if (comparator) 
+		{
 			m_lhs = g_ArrayMap.Create(kDataType_Numeric, true, comparator->GetModIndex());
 			m_rhs = g_ArrayMap.Create(kDataType_Numeric, true, comparator->GetModIndex());
 		}
 	}
 
-	virtual ~SortFunctionCaller() { }
+	~SortFunctionCaller() override = default;
 
-	virtual UInt8 ReadCallerVersion() { return UserFunctionManager::kVersion; }
-	virtual Script * ReadScript() { return m_comparator; }
-	virtual bool PopulateArgs(ScriptEventList* eventList, FunctionInfo* info) {
+	UInt8 ReadCallerVersion() override { return UserFunctionManager::kVersion; }
+	auto ReadScript() -> Script* override { return m_comparator; }
+	bool PopulateArgs(ScriptEventList* eventList, FunctionInfo* info) override
+	{
 		DynamicParamInfo& dParams = info->ParamInfo();
-		if (dParams.NumParams() == 2) {
-			UserFunctionParam* lhs = info->GetParam(0);
-			UserFunctionParam* rhs = info->GetParam(1);
-			if (lhs && rhs && lhs->varType == Script::eVarType_Array && rhs->varType == Script::eVarType_Array) {
-				ScriptEventList::Var* var = eventList->GetVariable(lhs->varIdx);
-				if (!var) {
+		if (dParams.NumParams() == 2) 
+		{
+			const UserFunctionParam* lhs = info->GetParam(0);
+			const UserFunctionParam* rhs = info->GetParam(1);
+			const bool areBothPointersGood = lhs && rhs;
+			const bool areBothVarTypeArray = lhs->varType == Script::eVarType_Array && rhs->varType == Script::eVarType_Array;
+			if (areBothPointersGood && areBothVarTypeArray)
+			{
+				const auto leftVar = eventList->GetVariable(lhs->varIdx);
+				const auto rightVar = eventList->GetVariable(rhs->varIdx);
+				// TODO if one of these null, should it still add the other one?
+				if (!leftVar || !rightVar)
+				{
 					ShowRuntimeError(m_comparator, "Could not look up argument variable for function script");
 					return false;
 				}
-				else {
-					g_ArrayMap.AddReference(&var->data, m_lhs, m_comparator->GetModIndex());
-				}
-
-				var = eventList->GetVariable(rhs->varIdx);
-				if (!var) {
-					ShowRuntimeError(m_comparator, "Could not look up argument variable for function script");
-					return false;
-				}
-				else {
-					g_ArrayMap.AddReference(&var->data, m_rhs, m_comparator->GetModIndex());
-				}
-
+				g_ArrayMap.AddReference(&leftVar->data, m_lhs, m_comparator->GetModIndex());
+				g_ArrayMap.AddReference(&rightVar->data, m_rhs, m_comparator->GetModIndex());
 				return true;
 			}
 		}
 
 		return false;
 	}
+	auto ThisObj() -> TESObjectREFR* override { return nullptr; }
+	auto ContainingObj() -> TESObjectREFR* override { return nullptr; }
 
-	virtual TESObjectREFR* ThisObj() { return NULL; }
-	virtual TESObjectREFR* ContainingObj() { return NULL; }
-
-	bool operator()(const ArrayElement& lhs, const ArrayElement& rhs) {
+	bool operator()(const ArrayElement& lhs, const ArrayElement& rhs)
+	{
 		g_ArrayMap.SetElement(m_lhs, 0.0, lhs);
 		g_ArrayMap.SetElement(m_rhs, 0.0, rhs);
-		ScriptToken* result = UserFunctionManager::Call(std::move(*this));
-		bool bResult = result ? result->GetBool() : false;
+		const ScriptToken* result = UserFunctionManager::Call(std::move(*this));
+		const bool bResult = result ? result->GetBool() : false;
 		delete result;
 		return bResult;
 	}
@@ -895,15 +860,15 @@ ArrayID ArrayVarMap::Sort(ArrayID src, SortOrder order, SortType type, UInt8 mod
 	// result is a packed integer-based array of the elements in sorted order
 	// if array cannot be sorted we return empty array
 	ArrayVar* srcVar = Get(src);
-	ArrayID result = Create(kDataType_Numeric, true, modIndex);
+	const ArrayID result = Create(kDataType_Numeric, true, modIndex);
 	if (!srcVar || !srcVar->Size())
 		return result;
 
 	// restriction: all elements of src must be of the same type for default sort
 	// restriction not in effect for alpha sort (all values treated as strings) or custom sort (all values boxed as arrays)
 	std::vector<ArrayElement> vec;
-	ArrayIterator iter = srcVar->m_elements.begin();
-	UInt32 dataType = iter->second.DataType();
+	auto iter = srcVar->m_elements.begin();
+	const UInt32 dataType = iter->second.DataType();
 	if (dataType == kDataType_Invalid || dataType == kDataType_Array)	// nonsensical to sort array of arrays
 		return result;
 
@@ -920,8 +885,10 @@ ArrayID ArrayVarMap::Sort(ArrayID src, SortOrder order, SortType type, UInt8 mod
 		std::sort(vec.begin(), vec.end());
 	else if (type == kSortType_Alpha)
 		std::sort(vec.begin(), vec.end(), ArrayElement::CompareAsString);
-	else if (type == kSortType_UserFunction) {
-		if (!comparator) {
+	else if (type == kSortType_UserFunction) 
+	{
+		if (!comparator) 
+		{
 			return result;
 		}
 		SortFunctionCaller sorter(comparator);
@@ -944,7 +911,7 @@ UInt32 ArrayVarMap::EraseElements(ArrayID id, const ArrayKey& lo, const ArrayKey
 		return -1;
 
 	// find first elem to erase
-	std::map<ArrayKey, ArrayElement>::iterator iter = var->m_elements.begin();
+	auto iter = var->m_elements.begin();
 	while (iter != var->m_elements.end() && iter->first < lo)
 		++iter;
 
@@ -968,8 +935,8 @@ UInt32 ArrayVarMap::EraseElements(ArrayID id, const ArrayKey& lo, const ArrayKey
 UInt32 ArrayVarMap::EraseAllElements(ArrayID id)
 {
 	UInt32 numErased = -1;
-	ArrayVar* var = Get(id);	
-	if (var) {
+	if (ArrayVar* var = Get(id)) 
+	{
 		while (var->m_elements.begin() != var->m_elements.end())
 		{
 			var->m_elements.begin()->second.Unset();
@@ -1052,7 +1019,7 @@ bool ArrayVarMap::GetElementNumber(ArrayID id, const ArrayKey& key, double* out)
 	if (!arr)
 		return false;
 
-	ArrayElement* elem = arr->Get(key, false);
+	const ArrayElement* elem = arr->Get(key, false);
 	return (elem && elem->GetAsNumber(out));
 }
 
@@ -1062,17 +1029,15 @@ bool ArrayVarMap::GetElementString(ArrayID id, const ArrayKey& key, std::string&
 	if (!arr)
 		return false;
 
-	ArrayElement* elem = arr->Get(key, false);
+	const ArrayElement* elem = arr->Get(key, false);
 	return (elem && elem->GetAsString(out));
 }
 
 bool ArrayVarMap::GetElementCString(ArrayID id, const ArrayKey& key, const char** out)
 {
-	ArrayVar* arr = Get(id);
-	if (arr)
+	if (ArrayVar* arr = Get(id))
 	{
-		ArrayElement* elem = arr->Get(key, false);
-		if (elem && elem->DataType() == kDataType_String)
+		if (const ArrayElement* elem = arr->Get(key, false); elem && elem->DataType() == kDataType_String)
 		{
 			*out = elem->Data.str.c_str();
 			return true;
@@ -1088,7 +1053,7 @@ bool ArrayVarMap::GetElementFormID(ArrayID id, const ArrayKey& key, UInt32* out)
 	if (!arr)
 		return false;
 
-	ArrayElement* elem = arr->Get(key, false);
+	const ArrayElement* elem = arr->Get(key, false);
 	return (elem && elem->GetAsFormID(out));
 }
 
@@ -1098,7 +1063,7 @@ bool ArrayVarMap::GetElementForm(ArrayID id, const ArrayKey& key, TESForm** out)
 	if (!arr)
 		return false;
 
-	ArrayElement* elem = arr->Get(key, false);
+	const ArrayElement* elem = arr->Get(key, false);
 	UInt32 refID = 0;
 	if (elem && elem->GetAsFormID(&refID))
 	{
@@ -1111,11 +1076,9 @@ bool ArrayVarMap::GetElementForm(ArrayID id, const ArrayKey& key, TESForm** out)
 
 UInt8 ArrayVarMap::GetElementType(ArrayID id, const ArrayKey& key)
 {
-	ArrayVar* arr = Get(id);
-	if (arr)
+	if (ArrayVar* arr = Get(id))
 	{
-		ArrayElement* elem = arr->Get(key, false);
-		if (elem)
+		if (const ArrayElement* elem = arr->Get(key, false))
 			return elem->DataType();
 	}
 
@@ -1128,7 +1091,7 @@ bool ArrayVarMap::GetElementArray(ArrayID id, const ArrayKey& key, ArrayID* out)
 	if (!arr)
 		return false;
 
-	ArrayElement* elem = arr->Get(key, false);
+	const ArrayElement* elem = arr->Get(key, false);
 	return (elem && elem->GetAsArray(out));
 }
 
@@ -1138,7 +1101,7 @@ bool ArrayVarMap::GetElementAsBool(ArrayID id, const ArrayKey& key, bool* out)
 	if (!arr)
 		return false;
 
-	ArrayElement* elem = arr->Get(key, false);
+	const ArrayElement* elem = arr->Get(key, false);
 	if (!elem)
 		return false;
 
@@ -1154,9 +1117,8 @@ void ArrayVarMap::DumpArray(ArrayID toDump)
 {
 	Console_Print("** Dumping Array #%d **", toDump);
 	_MESSAGE("**\nDumping Array #%d **", toDump);
-	
-	ArrayVar* arr = Get(toDump);
-	if (arr)
+
+	if (ArrayVar* arr = Get(toDump))
 		arr->Dump();
 	else
 	{
@@ -1172,7 +1134,7 @@ void ArrayVarMap::Save(OBSESerializationInterface* intfc)
 	intfc->OpenRecord('ARVS', kVersion);
 
 	std::map<UInt32, ArrayVar*> & vars = m_state->vars;
-	for (std::map<UInt32, ArrayVar*>::iterator iter = vars.begin(); iter != vars.end(); ++iter)
+	for (auto iter = vars.begin(); iter != vars.end(); ++iter)
 	{
 		if (IsTemporary(iter->first))
 			continue;
@@ -1194,8 +1156,8 @@ void ArrayVarMap::Save(OBSESerializationInterface* intfc)
 		UInt32 numElements = iter->second->Size();
 		intfc->WriteRecordData(&numElements, sizeof(UInt32));
 
-		UInt8 keyType = iter->second->m_keyType;
-		for (std::map<ArrayKey, ArrayElement>::iterator elems = iter->second->m_elements.begin();
+		const UInt8 keyType = iter->second->m_keyType;
+		for (auto elems = iter->second->m_elements.begin();
 			elems != iter->second->m_elements.end(); ++elems)
 		{
 			ArrayType key = elems->first.Key();
@@ -1203,7 +1165,7 @@ void ArrayVarMap::Save(OBSESerializationInterface* intfc)
 				intfc->WriteRecordData(&key.num, sizeof(double));
 			else
 			{
-				UInt16 len = key.str.length();
+				auto len = static_cast<UInt16>(key.str.length());
 				intfc->WriteRecordData(&len, sizeof(len));
 				intfc->WriteRecordData(key.str.c_str(), key.str.length());
 			}
@@ -1211,27 +1173,33 @@ void ArrayVarMap::Save(OBSESerializationInterface* intfc)
 			intfc->WriteRecordData(&elems->second.m_dataType, sizeof(UInt8));
 			switch (elems->second.m_dataType)
 			{
-			case kDataType_Numeric:
-				intfc->WriteRecordData(&elems->second.Data.num, sizeof(double));
-				break;
-			case kDataType_String:
+				case kDataType_Numeric:
 				{
-					UInt16 len = elems->second.Data.str.length();
+					intfc->WriteRecordData(&elems->second.Data.num, sizeof(double));
+					break;
+				}
+				case kDataType_String:
+				{
+				auto len = static_cast<UInt16>(elems->second.Data.str.length());
 					intfc->WriteRecordData(&len, sizeof(len));
 					intfc->WriteRecordData(elems->second.Data.str.c_str(), elems->second.Data.str.length());
 					break;
 				}
-			case kDataType_Array:
+				case kDataType_Array:
 				{
 					ArrayID id = elems->second.Data.num;
 					intfc->WriteRecordData(&id, sizeof(id));
 					break;
 				}
-			case kDataType_Form:
-				intfc->WriteRecordData(&elems->second.Data.formID, sizeof(UInt32));
-				break;
+				case kDataType_Form:
+				{
+					intfc->WriteRecordData(&elems->second.Data.formID, sizeof(UInt32));
+					break;
+				}
 			default:
-				_MESSAGE("Error in ArrayVarMap::Save() - unhandled element type %d. Element not saved.", elems->second.m_dataType);
+				{
+					_MESSAGE("Error in ArrayVarMap::Save() - unhandled element type %d. Element not saved.", elems->second.m_dataType);
+				}
 			}
 		}
 	}
@@ -1244,15 +1212,17 @@ void ArrayVarMap::Load(OBSESerializationInterface* intfc)
 	_MESSAGE("Loading array variables");
 
 	Clean();		// clean up any vars queued for garbage collection
+	UInt32 	type,
+			length,
+			version,
+			arrayID,
+			numElements;
 
-	UInt32 type, length, version, arrayID, tempRefID, numElements;
-	UInt16 strLength;
-	UInt8 modIndex, keyType;
-	bool bPacked;
-	char buffer[kMaxMessageLength] = { 0 };
-
-	//Reset(intfc);
-	bool bContinue = true;
+	UInt16 strLength{};
+	UInt8 modIndex{}, keyType{};
+	bool bPacked{ false };
+	std::array<char, kMaxMessageLength> buffer{};
+	bool bContinue{ true };
 
 	UInt32 lastIndexRead = 0;
 
@@ -1260,14 +1230,17 @@ void ArrayVarMap::Load(OBSESerializationInterface* intfc)
 	{
 		switch (type)
 		{
-		case 'ARVE':			//end of block
-			bContinue = false;
-			break;
-		case 'ARVR':
+			case 'ARVE':			//end of block
 			{
-				bool isUnloaded = false;
+				bContinue = false;
+				break;
+			}
+			case 'ARVR':
+			{
+				bool isUnloaded{ false };
+				UInt32 tempRefIdVal{};
 				intfc->ReadRecordData(&modIndex, sizeof(modIndex));
-				if (!intfc->ResolveRefID(modIndex << 24, &tempRefID))
+				if (!intfc->ResolveRefID(modIndex << 24, &tempRefIdVal))
 				{
 					// owning mod was removed, but there may be references to it from other mods
 					// assign ownership to the first mod which refers to it and is still loaded
@@ -1278,7 +1251,7 @@ void ArrayVarMap::Load(OBSESerializationInterface* intfc)
 					isUnloaded = true;  
 				}
 				else
-					modIndex = (tempRefID >> 24);
+					modIndex = (tempRefIdVal >> 24);
 
 				intfc->ReadRecordData(&arrayID, sizeof(arrayID));
 				intfc->ReadRecordData(&keyType, sizeof(keyType));
@@ -1286,21 +1259,26 @@ void ArrayVarMap::Load(OBSESerializationInterface* intfc)
 
 				// read refs, fix up mod indexes, discard refs from unloaded mods
 				UInt32 numRefs = 0;		// # of references to this array
-				UInt8* refs = NULL;		// mod indexes of mods referring to this array
+				std::vector<UInt8> refs;
 
 				// reference-counting implemented in v1
-				if (version >= 1){
+				if (version >= 1)
+				{
 					intfc->ReadRecordData(&numRefs, sizeof(numRefs));
-					if (numRefs){
-						refs = new UInt8[numRefs];
+					if (numRefs)
+					{
+						refs.resize(numRefs);
 						UInt32 tempRefID = 0;
 						UInt8 curModIndex = 0;
 						UInt32 refIdx = 0;
-						for (UInt32 i = 0; i < numRefs; i++) {
+						for (UInt32 i = 0; i < numRefs; i++) 
+						{
 							intfc->ReadRecordData(&curModIndex, sizeof(curModIndex));
 
-							if (intfc->ResolveRefID(curModIndex << 24, &tempRefID)) {
-								if (isUnloaded) {
+							if (intfc->ResolveRefID(curModIndex << 24, &tempRefID)) 
+							{
+								if (isUnloaded) 
+								{
 									modIndex = tempRefID >> 24;
 									_MESSAGE("ArrayID %d was owned by an unloaded mod. Assigning ownership to mod #%d", arrayID, modIndex);
 									isUnloaded = false;
@@ -1317,7 +1295,7 @@ void ArrayVarMap::Load(OBSESerializationInterface* intfc)
 					if (!isUnloaded)		// owning mod is loaded
 					{
 						numRefs = 1;
-						refs = new UInt8[1];
+						refs.resize(1);
 						refs[0] = modIndex;
 					}
 				}
@@ -1325,7 +1303,7 @@ void ArrayVarMap::Load(OBSESerializationInterface* intfc)
 				if (isUnloaded && !modIndex )
 				{
 					_MESSAGE("Array ID %d is referred to by no loaded mods. Discarding", arrayID);
-					delete[] refs;
+					refs.clear();
 					continue;
 				}
 
@@ -1338,9 +1316,9 @@ void ArrayVarMap::Load(OBSESerializationInterface* intfc)
 				}
 				
 				// create array and add to map
-				ArrayVar* newArr = new ArrayVar(keyType, bPacked, modIndex);
-				Add(newArr, arrayID, numRefs, refs);
-				delete[] refs;
+				auto newArr = new ArrayVar(keyType, bPacked, modIndex);
+				Add(newArr, arrayID, numRefs, refs.data());
+				refs.clear();
 
 				// read the array elements			
 				intfc->ReadRecordData(&numElements, sizeof(numElements));
@@ -1356,9 +1334,9 @@ void ArrayVarMap::Load(OBSESerializationInterface* intfc)
 					else
 					{
 						intfc->ReadRecordData(&strLength, sizeof(strLength));
-						intfc->ReadRecordData(buffer, strLength);
+						intfc->ReadRecordData(buffer.data(), strLength);
 						buffer[strLength] = 0;
-						newKey = std::string(buffer);
+						newKey = std::string(buffer.data());
 					}
 
 					UInt8 elemType;
@@ -1370,22 +1348,22 @@ void ArrayVarMap::Load(OBSESerializationInterface* intfc)
 
 					switch (elemType)
 					{
-					case kDataType_Numeric:
+						case kDataType_Numeric:
 						{
 							double num;
 							intfc->ReadRecordData(&num, sizeof(num));
 							SetElementNumber(arrayID, newKey, num);
 							break;
 						}
-					case kDataType_String:
+						case kDataType_String:
 						{
 							intfc->ReadRecordData(&strLength, sizeof(strLength));
-							intfc->ReadRecordData(buffer, strLength);
+							intfc->ReadRecordData(buffer.data(), strLength);
 							buffer[strLength] = 0;
-							SetElementString(arrayID, newKey, std::string(buffer));
+							SetElementString(arrayID, newKey, std::string(buffer.cbegin(), buffer.cend()));
 							break;
 						}
-					case kDataType_Array:
+						case kDataType_Array:
 						{
 							ArrayID id;
 							intfc->ReadRecordData(&id, sizeof(id));
@@ -1402,7 +1380,7 @@ void ArrayVarMap::Load(OBSESerializationInterface* intfc)
 
 							break;
 						}
-					case kDataType_Form:
+						case kDataType_Form:
 						{
 							UInt32 formID;
 							intfc->ReadRecordData(&formID, sizeof(formID));
@@ -1412,17 +1390,21 @@ void ArrayVarMap::Load(OBSESerializationInterface* intfc)
 							SetElementFormID(arrayID, newKey, formID);
 							break;
 						}
-						break;
-					default:
-						_MESSAGE("Unknown element type %d encountered while loading array var, element discarded.", elemType);
-						break;
+						default:
+						{
+							_MESSAGE("Unknown element type %d encountered while loading array var, element discarded.", elemType);
+							break;
+						}
 					}
 				}
+
+				break;
 			}
-			break;
-		default:
-			_MESSAGE("Error loading array var map: unexpected chunk type %d", type);
-			break;
+			default:
+			{
+				_MESSAGE("Error loading array var map: unexpected chunk type %d", type);
+				break;
+			}
 		}
 	}
 }
@@ -1433,7 +1415,7 @@ bool ArrayVarMap::GetFirstElement(ArrayID id, ArrayElement* outElem, ArrayKey* o
 	if (!var || !var->Size() || !outElem || !outKey)
 		return false;
 
-	std::map<ArrayKey, ArrayElement>::iterator iter = var->m_elements.begin();
+	const auto iter = var->m_elements.begin();
 	*outKey = iter->first;
 	*outElem = iter->second;
 	return true;
@@ -1445,7 +1427,7 @@ bool ArrayVarMap::GetLastElement(ArrayID id, ArrayElement* outElem, ArrayKey* ou
 	if (!var || !var->Size() || !outElem || !outKey)
 		return false;
 
-	ArrayIterator iter = var->m_elements.end();
+	auto iter = var->m_elements.end();
 	if (var->Size() > 1)
 		--iter;
 	else		// only one element
@@ -1462,7 +1444,7 @@ bool ArrayVarMap::GetNextElement(ArrayID id, ArrayKey* prevKey, ArrayElement* ou
 	if (!var || !var->Size() || !outElem || !outKey || !prevKey)
 		return false;
 
-	std::map<ArrayKey, ArrayElement>::iterator iter = var->m_elements.find(*prevKey);
+	auto iter = var->m_elements.find(*prevKey);
 	if (iter != var->m_elements.end())
 	{
 		++iter;
@@ -1485,7 +1467,7 @@ bool ArrayVarMap::GetPrevElement(ArrayID id, ArrayKey* prevKey, ArrayElement* ou
 	if (!var || !var->Size() || !outElem || !outKey || !prevKey)
 		return false;
 
-	ArrayIterator iter = var->m_elements.find(*prevKey);
+	auto iter = var->m_elements.find(*prevKey);
 	if (iter != var->m_elements.end() && iter != var->m_elements.begin())
 	{
 		--iter;
@@ -1504,8 +1486,8 @@ ArrayKey ArrayVarMap::Find(ArrayID toSearch, const ArrayElement& toFind, const S
 	if (!var)
 		return foundIndex;
 
-	ArrayIterator start = var->m_elements.begin();
-	ArrayIterator end = var->m_elements.end();
+	auto start = var->m_elements.begin();
+	auto end = var->m_elements.end();
 	if (range)
 	{
 		if ((range->bIsString && var->KeyType() != kDataType_String) || (!range->bIsString && var->KeyType() != kDataType_Numeric))
@@ -1525,7 +1507,7 @@ ArrayKey ArrayVarMap::Find(ArrayID toSearch, const ArrayElement& toFind, const S
 	}
 
 	// do the search
-	for (ArrayIterator iter = start; iter != end; ++iter)
+	for (auto iter = start; iter != end; ++iter)
 	{
 		if (iter->second.Equals(toFind))
 		{
@@ -1540,8 +1522,7 @@ ArrayKey ArrayVarMap::Find(ArrayID toSearch, const ArrayElement& toFind, const S
 std::string ArrayVarMap::GetTypeString(ArrayID arr)
 {
 	std::string result = "<Bad Array>";
-	ArrayVar* a = Get(arr);
-	if (a)
+	if (const ArrayVar* a = Get(arr))
 	{
 		if (a->KeyType() == kDataType_Numeric)
 			result = a->IsPacked() ? "Array" : "Map";
@@ -1558,9 +1539,9 @@ void ArrayVarMap::Clean()		// garbage collection: delete unreferenced arrays
 	// so on each pass through the loop we delete the first ID in the queue until none remain
 
 	if (m_state) {
-		while (m_state->tempVars.size())
+		while (!m_state->tempVars.empty())
 		{
-			UInt32 idToDelete = *(m_state->tempVars.begin());
+			const UInt32 idToDelete = *(m_state->tempVars.begin());
 			Delete(idToDelete);
 		}
 	}
@@ -1593,7 +1574,7 @@ namespace PluginAPI
 			if (!SetElementFromAPI(id, ArrayKey(i), data[i]))
 			{
 				_MESSAGE("Error: An attempt by a plugin to set an array element failed.");
-				return NULL;
+				return nullptr;
 			}
 		}
 
@@ -1607,7 +1588,7 @@ namespace PluginAPI
 		for (UInt32 i = 0; i < size; i++) {
 			if (!SetElementFromAPI(id, ArrayKey(keys[i]), values[i])) {
 				_MESSAGE("Error: An attempt by a plugin to set an array element failed.");
-				return NULL;
+				return nullptr;
 			}
 		}
 
@@ -1621,7 +1602,7 @@ namespace PluginAPI
 		for (UInt32 i = 0; i < size; i++) {
 			if (!SetElementFromAPI(id, ArrayKey(keys[i]), values[i])) {
 				_MESSAGE("Error: An attempt by a plugin to set an array element failed.");
-				return NULL;
+				return nullptr;
 			}
 		}
 
@@ -1642,7 +1623,7 @@ namespace PluginAPI
 
 	void ArrayAPI::SetElement(OBSEArrayVarInterface::Array* arr, const OBSEArrayVarInterface::Element& key, const OBSEArrayVarInterface::Element& value)
 	{
-		ArrayID arrID = (ArrayID)arr;
+		auto arrID = (ArrayID)arr;
 
 		switch (key.type)
 		{
@@ -1659,7 +1640,7 @@ namespace PluginAPI
 
 	void ArrayAPI::AppendElement(OBSEArrayVarInterface::Array* arr, const OBSEArrayVarInterface::Element& value)
 	{
-		ArrayID arrID = (ArrayID)arr;
+		auto arrID = (ArrayID)arr;
 		ArrayVar* theArray = g_ArrayMap.Get(arrID);
 
 		// verify array is the packed, numeric kind
@@ -1678,13 +1659,13 @@ namespace PluginAPI
 		 if (g_ArrayMap.Exists(id))
 			 return (OBSEArrayVarInterface::Array*)id;
 		 else
-			 return 0;
+			 return nullptr;
 	 }
 
 	bool ArrayAPI::GetElement(OBSEArrayVarInterface::Array* arr, const OBSEArrayVarInterface::Element& key, OBSEArrayVarInterface::Element& out)
 	 {
 		 ArrayVar* var = g_ArrayMap.Get((ArrayID)arr);
-		 ArrayElement* data = NULL;
+		 ArrayElement* data = nullptr;
 		 if (var) {
 			 switch (key.type) {
 				 case key.kType_String:
@@ -1720,17 +1701,19 @@ namespace PluginAPI
 
 			if (size != -1) {
 				UInt32 i = 0;
-				for (ArrayIterator iter = var->m_elements.begin(); iter != var->m_elements.end(); ++iter) {
+				for (auto iter = var->m_elements.begin(); iter != var->m_elements.end(); ++iter) {
 					if (keys) {
 						switch (keyType) {
 							case kDataType_Numeric:
+							{
 								keys[i] = iter->first.Key().num;
 								break;
+							}
 							case kDataType_String:
-								{
-									keys[i] = OBSEArrayVarInterface::Element(iter->first.Key().str.c_str());
-									break;
-								}
+							{
+								keys[i] = OBSEArrayVarInterface::Element(iter->first.Key().str.c_str());
+								break;
+							}
 						}
 					}
 					
@@ -1748,35 +1731,36 @@ namespace PluginAPI
 	// helpers
 	bool ArrayAPI::InternalElemToPluginElem(ArrayElement& src, OBSEArrayVarInterface::Element& out)
 	{
-		switch (src.DataType()) {
+		switch (src.DataType()) 
+		{
 			case kDataType_Numeric:
-				{
-					double num;
-					src.GetAsNumber(&num);
-					out = num;
-				}
+			{
+				double num;
+				src.GetAsNumber(&num);
+				out = num;
 				break;
+			}
 			case kDataType_Form:
-				{
-					UInt32 formID;
-					src.GetAsFormID(&formID);
-					out = LookupFormByID(formID);
-				}
+			{
+				UInt32 formID;
+				src.GetAsFormID(&formID);
+				out = LookupFormByID(formID);
 				break;
+			}
 			case kDataType_Array:
-				{
-					ArrayID arrID;
-					src.GetAsArray(&arrID);
-					out = (OBSEArrayVarInterface::Array*)arrID;
-				}
+			{
+				ArrayID arrID;
+				src.GetAsArray(&arrID);
+				out = (OBSEArrayVarInterface::Array*)arrID;
 				break;
+			}
 			case kDataType_String:
-				{
-					std::string str;
-					src.GetAsString(str);
-					out = OBSEArrayVarInterface::Element(str.c_str());
-				}
+			{
+				std::string str;
+				src.GetAsString(str);
+				out = OBSEArrayVarInterface::Element(str.c_str());
 				break;
+			}
 		}
 
 		return true;
