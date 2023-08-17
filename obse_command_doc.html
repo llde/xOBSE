@@ -4502,10 +4502,10 @@ In the case of leveled lists containing nested leveled lists, the function recur
 
 <h2><a id="Ref_Walking_Functions">Ref Walking Functions</a></h2>
 
-<p><a id="GetFirstRef" class="f" href="http://cs.elderscrolls.com/index.php?title=GetFirstRef">GetFirstRef</a> - returns the first reference in the current cell. A type can optionally be supplied to return only references matching that type. Additionally, you can pass 69 for actors and 70 for inventory items. This function should be used only within a <code>Label...Goto</code> loop and <code>GetNextRef</code>. An optional cell depth can be supplied to specify the number of adjacent cells to scan in exteriors: a cell depth of 1 scans the player's current cell plus 8 adjacent cells, a depth of 2 scans the player's cell plus 25 adjacent cells. By default, inactive references to items which were previously picked up by an actor are ignored; passing 1 for the third parameter will force those references to be included.<br />
+<p><a id="GetFirstRef" class="f" href="http://cs.elderscrolls.com/index.php?title=GetFirstRef">GetFirstRef</a> - returns the first reference in the current cell. A type can optionally be supplied to return only references matching that type. Additionally, you can pass 69 for actors and 70 for inventory items. This function should only be used either within a <code>Label...Goto</code> loop or within <code>While</code> loop and use <code>GetNextRef</code> for getting next element. An optional cell depth can be supplied to specify the number of adjacent cells to scan in exteriors: a cell depth of 0 scans only the player's current cell, a cell depth of 1 scans the player's current cell plus 8 adjacent cells, a depth of 2 scans the player's cell plus 24 adjacent cells, etc... By default, inactive references to items which were previously picked up by an actor are ignored; passing 1 for the third parameter will force those references to be included (WARNING! Some people have reported that it's not working that way).<br />
 <code class="s">(reference:ref) GetFirstRef <span class="op"><a href="#Form_Type_IDs">type</a>:int cellDepth:int includeInactiveRefs:int</span></code></p>
 
-<p><a id="GetNextRef" class="f" href="http://cs.elderscrolls.com/index.php?title=GetNextRef">GetNextRef</a> - returns the next reference in the curent cell. <code>GetFirstRef</code> must be called first; this function uses the cell depth and type passed to <code>GetFirstRef</code> and returns the next reference matching that type, or zero after the last reference has been returned. This function should only be used within a <code>Label...Goto</code> loop.<br />
+<p><a id="GetNextRef" class="f" href="http://cs.elderscrolls.com/index.php?title=GetNextRef">GetNextRef</a> - returns the next reference in the curent cell. <code>GetFirstRef</code> must be called first; this function uses the cell depth and type passed to <code>GetFirstRef</code> and returns the next reference matching that type, or zero after the last reference has been returned. This function should only be used either within a <code>Label...Goto</code> loop or within <code>While</code> loop.<br />
 <code class="s">(reference:ref) GetNextRef</code></p>
 
 <p><a id="GetNumRefs" class="f" href="http://cs.elderscrolls.com/index.php?title=GetNumRefs">GetNumRefs</a> - returns the number of references in the current cell which match the optionally supplied type code. Use 69 for actors and 70 for inventory items. An optional cell depth can be specified for exteriors. By default, inactive references to items which were previously picked up by an actor are ignored; passing 1 for the third parameter will force those references to be included.<br />
@@ -4526,16 +4526,17 @@ In the case of leveled lists containing nested leveled lists, the function recur
 <p><a id="GetLowActors" class="f" href="http://cs.elderscrolls.com/index.php?title=GetLowActors">GetLowActors</a> - returns an Array containing all actors currently in low AI processing. This generally includes actors on unloaded cells. This command is more efficient than using GetFirst/NextRef.<br />
 <code class="s">(actors:Array) GetLowActors</code></p>
 
-<p>Example of ref looping (transfers all carriable items in the cell to the player's inventory):</p><pre>	ref nextItem
-	begin onActivate
-	set nextItem to GetFirstRef 70 ; get first carriable item
-	Label 10
-	if ( nextItem ) ; continue until all refs are processed
-	nextItem.activate player ; give the item to the player
-	set nextItem to getNextRef
-	Goto 10
-	endif
-	end</pre>
+<p>Example of ref looping (transfers all carriable items in the cell to the player's inventory):</p><pre>
+Ref nextItem
+
+begin OnActivate
+    let nextItem := GetFirstRef 70 ; get first carriable item
+
+    While nextItem ; continue until all refs are processed
+        nextItem.Activate PlayerREF ; give the item to the player
+        let nextItem := GetNextRef
+    Loop
+end</pre>
 
 <h2><a id="Console_Functions">Console Functions</a></h2>
 
