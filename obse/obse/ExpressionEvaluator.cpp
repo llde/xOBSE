@@ -39,16 +39,7 @@ void ExpressionEvaluator::Error(const char* fmt, ...)
 	UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + (*m_opcodeOffsetPtr - 4));
 	CommandInfo* cmd = g_scriptCommands.GetByOpcode(*opcodePtr);
 
-	// include mod filename, save having to ask users to figure it out themselves
-	const char* modName = "Savegame";
-	if (script->GetModIndex() != 0xFF)
-	{
-		modName = (*g_dataHandler)->GetNthModName(script->GetModIndex());
-		if (!modName || !modName[0])
-			modName = "Unknown";
-	}
-
-	ShowRuntimeError(script, "%s\n    File: %s Offset: 0x%04X Command: %s", errorMsg, modName, m_baseOffset , cmd ? cmd->longName : "<unknown>");
+	ShowRuntimeError(script, "%s\n    Offset: 0x%04X Command: %s", errorMsg, m_baseOffset , cmd ? cmd->longName : "<unknown>");
 	//	if (m_flags.IsSet(kFlag_StackTraceOnError))
 	PrintStackTrace();
 }
@@ -73,15 +64,8 @@ void ExpressionEvaluator::Error(const char* fmt, Operator* tok, ...)
 	else {
 		sprintf_s(errorMsgTok, 0x400, "<unknow>");
 	}
-	const char* modName = "Savegame";
-	if (script->GetModIndex() != 0xFF)
-	{
-		modName = (*g_dataHandler)->GetNthModName(script->GetModIndex());
-		if (!modName || !modName[0])
-			modName = "Unknown";
-	}
 
-	ShowRuntimeError(script, "%s\n    File: %s Offset: 0x%04X Operator: %s", errorMsg, modName, m_baseOffset, errorMsgTok);
+	ShowRuntimeError(script, "%s\n    Offset: 0x%04X Operator: %s", errorMsg, m_baseOffset, errorMsgTok);
 	//	if (m_flags.IsSet(kFlag_StackTraceOnError))
 //	PrintStackTrace();
 }
@@ -130,16 +114,8 @@ void ExpressionEvaluator::Error(const char* fmt, ScriptToken* tok, ...)
 //		UInt16* opcodePtr = (UInt16*)((UInt8*)script->data + (*m_opcodeOffsetPtr - 4));
 //		cmd = g_scriptCommands.GetByOpcode(*opcodePtr);
 //	}
-	// include mod filename, save having to ask users to figure it out themselves
-	const char* modName = "Savegame";
-	if (script->GetModIndex() != 0xFF)
-	{
-		modName = (*g_dataHandler)->GetNthModName(script->GetModIndex());
-		if (!modName || !modName[0])
-			modName = "Unknown";
-	}
 
-	ShowRuntimeError(script, "%s\n    File: %s Offset: 0x%04X Command: %s", errorMsg, modName, m_baseOffset, buf);
+	ShowRuntimeError(script, "%s\n    Offset: 0x%04X Command: %s", errorMsg, m_baseOffset, buf);
 	//	if (m_flags.IsSet(kFlag_StackTraceOnError))
 //	PrintStackTrace();
 }

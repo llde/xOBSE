@@ -2841,7 +2841,16 @@ std::string ExpressionParser::GetCurToken()
 void ShowRuntimeError(Script* script, const char* fmt, ...)
 {
 	char errorHeader[0x400];
-	sprintf_s(errorHeader, 0x400, "Error in script %08x", script ? script->refID : 0);
+	// include mod filename, save having to ask users to figure it out themselves
+	const char* modName = "Savegame";
+	if (script->GetModIndex() != 0xFF)
+	{
+		modName = (*g_dataHandler)->GetNthModName(script->GetModIndex());
+		if (!modName || !modName[0])
+			modName = "Unknown";
+	}
+
+	sprintf_s(errorHeader, 0x400, "Error in script %08x: %s in File: %s", script ? script->refID : 0, script ? script->GetEditorID2() : "<No EDID>", modName);
 
 	va_list args;
 	va_start(args, fmt);
