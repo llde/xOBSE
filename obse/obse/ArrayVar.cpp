@@ -869,7 +869,7 @@ ArrayID ArrayVarMap::Sort(ArrayID src, SortOrder order, SortType type, UInt8 mod
 	std::vector<ArrayElement> vec;
 	auto iter = srcVar->m_elements.begin();
 	const UInt32 dataType = iter->second.DataType();
-	if (dataType == kDataType_Invalid || dataType == kDataType_Array)	// nonsensical to sort array of arrays
+	if (dataType == kDataType_Invalid || (dataType == kDataType_Array && !comparator))	// nonsensical to sort array of arrays with default sorters, custom sorter can be used
 		return result;
 
 	// copy elems to vec, verify all are of same type
