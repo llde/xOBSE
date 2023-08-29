@@ -136,6 +136,7 @@
       </BaseAddress>
       <ImportLibrary>$(OutDir)obse.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>$(ProjectDir)..\Detours\detours.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Message>Installing DLL...</Message>
@@ -260,6 +261,7 @@
     <ClCompile Include="utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Detours\detours.h" />
     <ClInclude Include="..\StdAfx.h" />
     <ClInclude Include="containers.h" />
     <ClInclude Include="ExpressionEvaluator.h" />

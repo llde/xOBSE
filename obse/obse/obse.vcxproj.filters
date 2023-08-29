@@ -653,6 +653,7 @@
     <ClInclude Include="utility.h">
       <Filter>internals</Filter>
     </ClInclude>
+    <ClInclude Include="..\Detours\detours.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="GameRTTI_1_2_416.inl">

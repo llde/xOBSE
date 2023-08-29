@@ -25,6 +25,8 @@ public:
 	bool	m_waitForClose;
 	bool	m_oldInject;
 	bool	m_ignorecrc;
+	bool	m_skipLauncher; //Steam only
+	UInt32  m_appID; //SteamOnly
 
 	std::string	m_altEXE;
 	std::string	m_altDLL;

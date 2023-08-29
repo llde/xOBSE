@@ -3,6 +3,8 @@
 #include "loader_common/Options.h"
 #include "Inject.h"
 #include "Updates.h"
+#include <string>
+
 // requires recent platform sdk
 #ifndef ERROR_ELEVATION_REQUIRED
 #define ERROR_ELEVATION_REQUIRED 740
@@ -30,7 +32,6 @@ bool IsCheckForUpdateEnabled() {
 	_MESSAGE("config path = %s", s_configPath.c_str());
 	return GetPrivateProfileInt("Loader", "bCheckForUpdates", 0, s_configPath.c_str()) == 1 ? true : false;
 }
-
 
 int WINAPI WinMain(HINSTANCE instance, HINSTANCE prevInstnce, LPSTR arguments, int nShowCmd)
 {
@@ -108,6 +109,25 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE prevInstnce, LPSTR arguments, i
 	{
 		// ### maybe check for the loader DLL and just CreateProcess("oblivion.exe") if we can?
 		_MESSAGE("Launching Steam version of Oblivion. This method isn't tested and mayem with associated evocation of the saints of the months may occur.");
+		char appIDStr[128];
+		UInt32 appID = 22330;
+
+		if (g_options.m_appID)
+		{
+			_MESSAGE("using alternate appid %d", g_options.m_appID);
+			appID = g_options.m_appID;
+		}
+
+		sprintf_s(appIDStr, sizeof(appIDStr), "%d", appID);
+
+		// set this no matter what to work around launch issues
+		SetEnvironmentVariable("SteamGameId", appIDStr);
+//		SetEnvironmentVariable("SteamAppID", appIDStr);
+
+		if (g_options.m_skipLauncher)
+		{
+			SetEnvironmentVariable("SteamAppID", appIDStr);
+		}
 	}
 
 	if(g_options.m_crcOnly)
@@ -157,7 +177,7 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE prevInstnce, LPSTR arguments, i
 	}
 	
 	ASSERT_STR_CODE(result, "Launching Oblivion failed", GetLastError());
-
+	
 	if(g_options.m_setPriority)
 	{
 		if(!SetPriorityClass(procInfo.hProcess, g_options.m_priority))
@@ -239,8 +259,8 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE prevInstnce, LPSTR arguments, i
 	}
 
 	// clean up
-	CloseHandle(procInfo.hProcess);
 	CloseHandle(procInfo.hThread);
+	CloseHandle(procInfo.hProcess);
 
 	return 0;
 }

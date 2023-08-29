@@ -19,6 +19,8 @@ Options::Options()
 ,m_optionsOnly(false)
 ,m_waitForClose(false)
 ,m_oldInject(false)
+, m_skipLauncher(false)
+, m_appID(0)
 {
 	//
 }
