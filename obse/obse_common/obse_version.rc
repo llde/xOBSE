@@ -1,7 +1,6 @@
 // Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
-#include "windows.h"
 /////////////////////////////////////////////////////////////////////////////
 // Italiano (Italia) resources
 
@@ -15,8 +14,8 @@ LANGUAGE LANG_ITALIAN, SUBLANG_ITALIAN
 //
 
 1 VERSIONINFO
- FILEVERSION 0,22,8,0
- PRODUCTVERSION 0,22,8,0
+ FILEVERSION 0,22,10,0
+ PRODUCTVERSION 0,22,10,0
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -29,19 +28,19 @@ LANGUAGE LANG_ITALIAN, SUBLANG_ITALIAN
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
-        BLOCK "040904b0"
+        BLOCK "041004b0"
         BEGIN
             VALUE "FileDescription", "A component of the Oblivion Script Extender"
-            VALUE "FileVersion", "0.22.9.0"
+            VALUE "FileVersion", "0.22.10.0"
             VALUE "InternalName", "obse"
             VALUE "LegalCopyright", "Copyright (C) 2006-2023"
             VALUE "ProductName", "obse"
-            VALUE "ProductVersion", "0.22.9.0"
+            VALUE "ProductVersion", "0.22.10.0"
         END
     END
     BLOCK "VarFileInfo"
     BEGIN
-        VALUE "Translation", 0x409, 1200
+        VALUE "Translation", 0x410, 1200
     END
 END
 

@@ -100,6 +100,7 @@
       </BaseAddress>
       <ImportLibrary>$(OutDir)obse.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
+      <AdditionalDependencies>$(ProjectDir)..\Detours\detours.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Message>Installing DLL...</Message>

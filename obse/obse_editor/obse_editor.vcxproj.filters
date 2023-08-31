@@ -307,6 +307,7 @@
     <ClInclude Include="..\obse\Settings.h">
       <Filter>internals</Filter>
     </ClInclude>
+    <ClInclude Include="..\obse_common\resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\obse_common\obse_version.rc" />

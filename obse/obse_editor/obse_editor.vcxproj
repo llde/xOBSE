@@ -225,6 +225,7 @@
     <ClInclude Include="..\obse\Commands_Weather.h" />
     <ClInclude Include="..\obse\CommandTable.h" />
     <ClInclude Include="..\obse\Settings.h" />
+    <ClInclude Include="..\obse_common\resource.h" />
     <ClInclude Include="..\obse_common\SafeWrite.h" />
     <ClInclude Include="..\obse\ScriptTokens.h" />
     <ClInclude Include="..\obse\ScriptUtils.h" />
