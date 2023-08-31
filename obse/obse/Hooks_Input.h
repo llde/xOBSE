@@ -28,6 +28,14 @@ static UInt8* kObjaA070 = (UInt8*)0x0000A070;
 static UInt16* kObjaA100 = (UInt16*)0x0000A100;
 static UInt32 (__stdcall* kSub480F)(UInt16*) = (UInt32 (__stdcall*)(UInt16*)) 0x0000480F;
 
+
+static UInt32(__stdcall* kObcnFunc)(UInt8) = (UInt32(__stdcall*)(UInt8)) 0x00004F50;
+static UInt32* kObcnArrray = (UInt32*)0x0000B120;  // 3 sized array, this is setted at runtime, so cannot  be hardcoded
+static UInt32* kObcnB16C = (UInt32*)0x0000B16C;
+static UInt8* kObcnB130 = (UInt8*)0x0000B130;
+static UInt16* kObcnB1C0 = (UInt16*)0x0000B1C0;
+static UInt32(__stdcall* kSub4F00)(UInt16*) = (UInt32(__stdcall*)(UInt16*)) 0x00004F00;
+
 enum  KeyControlState : UInt8 {
 	kStateUnmodified = 0,
 	kStateDisabled   = 1 << 0,  //The button is disabled (the game will not react to presses)
@@ -134,6 +142,7 @@ public:
 	OSInputGlobalsEx* InitializeEx(IDirectInputDevice8* device);
 	void InputPollFakeHandle();
 	void ObjaReplace();
+	void ObcnReplace();
 	int GetBufferedKeyStateChangeHook(DIDEVICEOBJECTDATA* data);
 private:
 	inline void SendKeyEvent(UInt16 idx);

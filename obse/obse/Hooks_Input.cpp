@@ -414,6 +414,24 @@ void OSInputGlobalsEx::ObjaReplace(){
 		}
 	}
 }
+/*OBCN is the same as OBJA, they share almost certianly entire portion of the codebase*/
+void OSInputGlobalsEx::ObcnReplace() {
+	if (boh) {
+		if (!--boh) boh = 2 * (kObcnFunc(1) == 2);
+	}
+	else {
+		if (CurrentKeyState[kObcnArrray[0]] == 0x80) {
+			boh = 2 * (kObjaFunc(1) == 2);
+		}
+		if (CurrentKeyState[kObcnArrray[1]] == 0x80) {
+			this->CurrentKeyState[0x29] = 0x80;
+		}
+		if (CurrentKeyState[kObcnArrray[2]] == 0x80) {
+			*kObcnB16C = 0;
+			*kObcnB130 = (UInt8)kSub480F(kObcnB1C0) != 0;
+		}
+	}
+}
 
 __declspec(naked) void FakeBufferedKeyHook(){
 	__asm{
@@ -456,6 +474,24 @@ __declspec(naked) void PollInputHookObja() {
 
 }
 
+__declspec(naked) void PollInputHookObcn() {
+	__asm {
+		jle short loc_cont
+		pop edi
+		pop esi
+		pushad
+		push ecx
+		call OSInputGlobalsEx::ObcnReplace
+		pop ecx
+		call OSInputGlobalsEx::InputPollFakeHandle
+		popad
+		retn
+
+		loc_cont :
+		jmp[kLoc_403C40]
+	}
+
+}
 
 __declspec(naked) void PollInputNoMouseHook() {
 	__asm {
@@ -505,14 +541,14 @@ LABEL_23:
   }
   if ( (char)CurrentKeyState[dword_3DAA060[1]] < 0 )
     goto LABEL_23;
-  if ( (char)CurrentKeyState[dword_3DAA060[2]] < 0 )ObjaReplace
+  if ( (char)CurrentKeyState[dword_3DAA060[2]] < 0 )
   {
     this->CurrentKeyState[0x29] = 0x80;
   }
   else if ( (char)CurrentKeyState[dword_3DAA060[3]] < 0 )
   {
     dword_3DAA0AC = 0;
-    byte_3DAA070 = ((int (__cdecl *)(void *, InputGlobal *, int, int))unk_3DA480F)(&unk_3DAA100, this, v23, v9) != 0;
+    byte_3DAA070 = ((int (__cdecl *)(void *))unk_3DA480F)(&unk_3DAA100) != 0;
   }
 */
 
@@ -526,7 +562,7 @@ void Hook_Input_Init() {
 	WriteRelJump(kBufferedKeyHook, (UInt32)&FakeBufferedKeyHook);
 	if (PluginManager::GetPluginLoaded("OBJA")) {
 		UInt32 obja =  (UInt32)PluginManager::GetModuleAddressByName("OBJA");
-		_MESSAGE("OBJA detected, module relocated at %08X", obja);
+		_MESSAGE("OBJA detected, module relocated at %08X. Hook for compatibility with the new input system", obja);
 		kObjaArrray = (UInt32*) ( (UInt32)kObjaArrray +  obja);
 		kObjaA0AC = (UInt32*) ( (UInt32)kObjaA0AC +  obja);
 		kObjaA070 = (UInt8*) ( (UInt32)kObjaA070 +  obja);
@@ -535,10 +571,25 @@ void Hook_Input_Init() {
 		kObjaFunc = (UInt32 (__stdcall*)(UInt8)) ( (UInt32)kObjaFunc +  obja);
 		kSub480F =  (UInt32 (__stdcall*)(UInt16*)) ( (UInt32)kSub480F +  obja);
 
-		_MESSAGE("%08X", kObjaArrray);
 		WriteRelJump(kInputObjaHook1Loc, kInputOriginalObjaJumpLoc); 
 		WriteRelJump(kInputObjaHook2Loc, kInputOriginalObjaJumpLoc); 
 		WriteRelJump(kPollEndHook, (UInt32) &PollInputHookObja);
+
+	}
+	else if (PluginManager::GetPluginLoaded("OBCN")) {
+		UInt32 obcn = (UInt32)PluginManager::GetModuleAddressByName("OBCN"); //Assume incompatible with OBJA
+		_MESSAGE("OBCN detected, module relocated at %08X. Hook for compatibility with the new input system", obcn);
+		kObcnArrray = (UInt32*)((UInt32)kObcnArrray + obcn);
+		kObcnB16C = (UInt32*)((UInt32)kObcnB16C + obcn);
+		kObcnB130 = (UInt8*)((UInt32)kObcnB130 + obcn);
+		kObcnB1C0 = (UInt16*)((UInt32)kObcnB1C0 + obcn);
+
+		kObcnFunc = (UInt32(__stdcall*)(UInt8)) ((UInt32)kObcnFunc + obcn);
+		kSub4F00 = (UInt32(__stdcall*)(UInt16*)) ((UInt32)kSub4F00 + obcn);
+
+		WriteRelJump(kInputObjaHook1Loc, kInputOriginalObjaJumpLoc);
+		WriteRelJump(kInputObjaHook2Loc, kInputOriginalObjaJumpLoc);  //Same hook points of OBJA
+		WriteRelJump(kPollEndHook, (UInt32)&PollInputHookObja);
 
 	}
 	else{
