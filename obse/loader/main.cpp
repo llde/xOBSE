@@ -122,7 +122,7 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE prevInstnce, LPSTR arguments, i
 
 		// set this no matter what to work around launch issues
 		SetEnvironmentVariable("SteamGameId", appIDStr);
-//		SetEnvironmentVariable("SteamAppID", appIDStr);
+		SetEnvironmentVariable("SteamAppID", appIDStr);
 
 		if (g_options.m_skipLauncher)
 		{
