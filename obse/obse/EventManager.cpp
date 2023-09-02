@@ -1352,6 +1352,8 @@ UInt32 EventIDForMessage(UInt32 msgID)
 			return kEventID_ExitToMainMenu;
 		case OBSEMessagingInterface::kMessage_PostLoadGame:
 			return kEventID_PostLoadGame;
+		case OBSEMessagingInterface::kMessage_GameInitialized:
+			_MESSAGE("kMessage_GameInitialized Unhandled"); //FIXME
 		default:
 			return kEventID_INVALID;
 	}

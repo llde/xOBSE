@@ -30,14 +30,14 @@ void Task<void>::Run() noexcept {
 ///TODO put CS in place.
 template<IsIntOrVoid T>
 void TaskManager::Enqueue(Task<T>* task)  {
-    auto queue = TaskManager::getQueue(task);
+    auto& queue = TaskManager::getQueue(task);
     queue.push_back(task);
 }
 
 template<IsIntOrVoid T>
-Task<T>* TaskManager::Enqueue(TaskFuncT<T> task) {
+Task<T>* TaskManager::Enqueue(TaskFunc<T> task) {
     Task<T>* func = new Task(task);
-    auto queue = TaskManager::getQueue(func);
+    auto& queue = TaskManager::getQueue(func);
     queue.push_back(func);
     return func;
 }
@@ -94,11 +94,11 @@ void TaskManager::Run() {
 
 namespace PluginAPI {
     void ReEnqueueTask(Task<void>* task) { return TaskManager::Enqueue(task); }
-    Task<void>* EnqueueTask(TaskFuncT<void> task) { return TaskManager::Enqueue(task); }
+    Task<void>* EnqueueTask(TaskFunc<void> task) { return TaskManager::Enqueue(task); }
     bool IsTaskEnqueued(Task<void>* task) { return TaskManager::IsTaskEnqueued(task); }
     void Remove(Task<void>* toRemove) { return TaskManager::Remove(toRemove); }
     void ReEnqueueTask(Task<bool>* task) { return TaskManager::Enqueue(task); }
-    Task<bool>* EnqueueTask(TaskFuncT<bool> task) { return TaskManager::Enqueue(task); }
+    Task<bool>* EnqueueTask(TaskFunc<bool> task) { return TaskManager::Enqueue(task); }
     bool IsTaskEnqueued(Task<bool>* task) { return TaskManager::IsTaskEnqueued(task); }
     void Remove(Task<bool>* toRemove) { return TaskManager::Remove(toRemove); }
 

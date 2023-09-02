@@ -80,6 +80,13 @@ static OBSETasksInterface g_TasksInterface = {
 	PluginAPI::EnqueueTask,
 	PluginAPI::Remove,
 	PluginAPI::IsTaskEnqueued,
+};
+
+static OBSETasks2Interface g_Tasks2Interface = {
+	OBSETasks2Interface::kVersion,
+	PluginAPI::EnqueueTask,
+	PluginAPI::Remove,
+	PluginAPI::IsTaskEnqueued,
 	PluginAPI::ReEnqueueTask,
 	PluginAPI::EnqueueTask,
 	PluginAPI::Remove,
@@ -87,6 +94,7 @@ static OBSETasksInterface g_TasksInterface = {
 	PluginAPI::ReEnqueueTask,
 	PluginAPI::HasTasks
 };
+
 
 static OBSEInputInterface g_InputInterface = {
 	PluginAPI::DisableKey,
@@ -406,6 +414,9 @@ void * PluginManager::QueryInterface(UInt32 id)
 			break;
 		case kInterface_Tasks:
 			result = &g_TasksInterface;
+			break;
+		case kInterface_Tasks2:
+			result = &g_Tasks2Interface;
 			break;
 		case kInterface_Input:
 			result = &g_InputInterface;

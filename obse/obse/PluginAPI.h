@@ -46,6 +46,7 @@ enum
     kInterface_Tasks,
 	kInterface_Input,
     kInterface_EventManager,
+	kInterface_Tasks2,
 	kInterface_Max
 };
 
@@ -181,7 +182,7 @@ struct OBSEMessagingInterface
 		void		* data;
 	};
 
-	typedef void (* EventCallback)(Message* msg);
+	using EventCallback = void (*)(Message*);
 
 	enum {
 		kVersion = 1
@@ -593,11 +594,23 @@ struct OBSESerializationInterface
  */
 #if OBLIVION
 struct OBSETasksInterface {
-	Task<void>* (*EnqueueTask)(TaskFunc f);
+	Task<void>* (*EnqueueTask)(TaskFunc<void> f);
+	void (*RemoveTask)(Task<void>* f);
+	bool (*IsTaskPresent)(Task<void>* f);
+};
+
+struct OBSETasks2Interface {
+	enum {
+		kVersion = 1,
+	};
+
+
+	UInt32 version;
+	Task<void>* (*EnqueueTask)(TaskFunc<void> f);
 	void (*RemoveTask)(Task<void>* f);
 	bool (*IsTaskPresent)(Task<void>* f);
 	void (*ReEnqueueTask)(Task<void>* f);
-	Task<bool>* (*EnqueueTaskRemovable)(TaskFuncT<bool> f);
+	Task<bool>* (*EnqueueTaskRemovable)(TaskFunc<bool> f);
 	void (*RemoveTaskRemovable)(Task<bool>* f);
 	bool (*IsTaskPresentRemovable)(Task<bool>* f);
 	void (*ReEnqueueTaskRemovable)(Task<bool>* f);

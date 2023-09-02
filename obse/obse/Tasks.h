@@ -8,24 +8,23 @@ template<typename T>
 concept IsIntOrVoid = std::is_same<T, bool>::value || std::is_same<T, void>::value;
 
 
-template<IsIntOrVoid T> using TaskFuncT = T (*)();
+template<IsIntOrVoid T> using TaskFunc = T (*)();
 
-using TaskFunc = TaskFuncT<void>;
 
 template<IsIntOrVoid T>
 class Task {
-    TaskFuncT<T> task;
+    TaskFunc<T> task;
     
 public:
-    Task(TaskFuncT<T> task) noexcept: task(task) {}
+    Task(TaskFunc<T> task) noexcept: task(task) {}
 	T Run() noexcept;
 };
 
 class TaskManager {
 public:
-    static bool HasTasks() noexcept { return !s_taskQueue.empty(); }
+    static bool HasTasks() noexcept { return !s_taskQueue.empty() || !taskRemovableQueue.empty(); }
     template<IsIntOrVoid T> static void Enqueue(Task<T>* task);
-	template<IsIntOrVoid T> static Task<T>* Enqueue(TaskFuncT<T> task);
+	template<IsIntOrVoid T> static Task<T>* Enqueue(TaskFunc<T> task);
     template<IsIntOrVoid T> static bool IsTaskEnqueued(Task<T>* task);
     template<IsIntOrVoid T> static void Remove(Task<T>* task);
 	static void Run();
@@ -42,11 +41,11 @@ private:
 
 namespace PluginAPI{
     void ReEnqueueTask(Task<void>* task);
-    Task<void>* EnqueueTask(TaskFuncT<void> task);
+    Task<void>* EnqueueTask(TaskFunc<void> task);
     bool IsTaskEnqueued(Task<void>* task);
     void Remove(Task<void>* task);
     void ReEnqueueTask(Task<bool>* task);
-    Task<bool>* EnqueueTask(TaskFuncT<bool> task);
+    Task<bool>* EnqueueTask(TaskFunc<bool> task);
     bool IsTaskEnqueued(Task<bool>* task);
     void Remove(Task<bool>* task);
 
