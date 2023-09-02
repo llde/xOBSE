@@ -69,7 +69,7 @@ void __stdcall DoPreLoadGame(BSFile* file)
 }
 
 static BSFile* s_curLoadingFile = NULL;
-static __declspec(naked) void PreLoadGameHook(void)
+static __declspec(naked) void PreLoadGameHook(void) noexcept
 {
 	static IOManager* IOManager = *g_ioManager;
 

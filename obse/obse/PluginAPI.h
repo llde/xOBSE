@@ -224,8 +224,10 @@ struct OBSEMessagingInterface
 	// added v0020
 		kMessage_PostPostLoad,	// sent right after kMessage_PostLoad to facilitate the correct dispatching/registering of messages/listeners
 								// plugins may register as listeners during the first callback while deferring dispatches until the next
-		kMessage_RuntimeScriptError		// dispatched when an OBSE script error is encountered during runtime/
+		kMessage_RuntimeScriptError,		// dispatched when an OBSE script error is encountered during runtime/
 										// data: char* errorMessageText
+	// added xOBSE 22.10
+		kMessage_GameInitialized   // sent to plugins when the game is fully initialized (shows main menu)
 	};
 
 	UInt32	version;
@@ -587,14 +589,20 @@ struct OBSESerializationInterface
 /*
  * An Interface to submit and remove tasks, functions that operates in the OBSE mainloop.
  * USe this if you are in need to define an Hook into the OBlivion mainloop.
+ * v2: The removable functions add a way to add functions that are removed if return True.
  */
 #if OBLIVION
 struct OBSETasksInterface {
-	Task* (*EnqueueTask)(TaskFunc f);
-	void (*RemoveTask)(Task* f);
-	bool (*IsTaskPresent)(Task* f);
+	Task<void>* (*EnqueueTask)(TaskFunc f);
+	void (*RemoveTask)(Task<void>* f);
+	bool (*IsTaskPresent)(Task<void>* f);
+	void (*ReEnqueueTask)(Task<void>* f);
+	Task<bool>* (*EnqueueTaskRemovable)(TaskFuncT<bool> f);
+	void (*RemoveTaskRemovable)(Task<bool>* f);
+	bool (*IsTaskPresentRemovable)(Task<bool>* f);
+	void (*ReEnqueueTaskRemovable)(Task<bool>* f);
+	bool (*HasTasks)();
 };
-
 
 struct OBSEInputInterface {
 	void (*DisableInputKey)(UInt16 dxCode);

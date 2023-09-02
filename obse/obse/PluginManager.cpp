@@ -76,11 +76,16 @@ static OBSEScriptInterface g_OBSEScriptInterface =
 	PluginAPI::IsUserFunction
 };
 
-
 static OBSETasksInterface g_TasksInterface = {
 	PluginAPI::EnqueueTask,
 	PluginAPI::Remove,
 	PluginAPI::IsTaskEnqueued,
+	PluginAPI::ReEnqueueTask,
+	PluginAPI::EnqueueTask,
+	PluginAPI::Remove,
+	PluginAPI::IsTaskEnqueued,
+	PluginAPI::ReEnqueueTask,
+	PluginAPI::HasTasks
 };
 
 static OBSEInputInterface g_InputInterface = {
