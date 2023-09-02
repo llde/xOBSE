@@ -589,7 +589,7 @@ void Hook_Input_Init() {
 
 		WriteRelJump(kInputObjaHook1Loc, kInputOriginalObjaJumpLoc);
 		WriteRelJump(kInputObjaHook2Loc, kInputOriginalObjaJumpLoc);  //Same hook points of OBJA
-		WriteRelJump(kPollEndHook, (UInt32)&PollInputHookObja);
+		WriteRelJump(kPollEndHook, (UInt32)&PollInputHookObcn);
 
 	}
 	else{
