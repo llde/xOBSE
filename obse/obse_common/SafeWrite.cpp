@@ -1,3 +1,4 @@
+
 void SafeWrite8(UInt32 addr, UInt32 data)
 {
 	UInt32	oldProtect;
@@ -67,4 +68,11 @@ void WriteRelJle(UInt32 jumpSrc, UInt32 jumpTgt)
 	// jle rel32
 	SafeWrite16(jumpSrc, 0x8E0F);
 	SafeWrite32(jumpSrc + 2, jumpTgt - jumpSrc - 2 - 4);
+}
+
+
+void WriteNop(UInt32 nopAddr, UInt8 numOfByte) {
+	for (UInt8 i = 0; i < numOfByte; i++) {
+		SafeWrite8(nopAddr + i, 0x90);
+	}
 }

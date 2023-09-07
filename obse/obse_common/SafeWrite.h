@@ -13,3 +13,6 @@ void WriteRelCall(UInt32 jumpSrc, UInt32 jumpTgt);
 void WriteRelJz(UInt32 jumpSrc, UInt32 jumpTgt);
 void WriteRelJnz(UInt32 jumpSrc, UInt32 jumpTgt);
 void WriteRelJle(UInt32 jumpSrc, UInt32 jumpTgt);
+
+//Write arbitrary nop
+void WriteNop(UInt32 nopAddr, UInt8 numOfByte);

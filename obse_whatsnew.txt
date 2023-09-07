@@ -1,11 +1,19 @@
 xOBSE 22.10
 	Additions:
 		- Compiler: add error when using invalid filter strings identifier (the first element of a zz::yy pair) in SetEventHandler and related functions 
+		- Improved Diagnostic for script errors
+		- Task2 Interface for plugins to better handle Removable Tasks
+		- Add GameInitialized Message (for OBSE plugins interop)
+		- Added Compatibility for OBCN, similar of what was done for OBJA in 22.8 (EXPERIMENTAL)
 	Fix : 
 		- Compiler: fix SetEventHandler filters when the identifier was used unquoted and defined as a variable name
 		- Changes to Steam version handling, solving some of the instances of Application load error
 		- Allow sorting arrays of arrays when using ar_CustomSort
 		- Fix for Ref Walking documentation
+	Changes:
+		- Force C++20 Standard, modified some places for compliance
+		
+	
 xOBSE 22.9
 	Fix:
 		- Commit new ExtraData to container only if ExtraCount isn't the only data present. Fix duplicated items in inventory using MOO companions
