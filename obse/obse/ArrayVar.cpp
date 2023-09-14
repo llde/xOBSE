@@ -1360,7 +1360,7 @@ void ArrayVarMap::Load(OBSESerializationInterface* intfc)
 							intfc->ReadRecordData(&strLength, sizeof(strLength));
 							intfc->ReadRecordData(buffer.data(), strLength);
 							buffer[strLength] = 0;
-							SetElementString(arrayID, newKey, std::string(buffer.cbegin(), buffer.cend()));
+							SetElementString(arrayID, newKey, std::string(buffer.data()));
 							break;
 						}
 						case kDataType_Array:
