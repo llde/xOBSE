@@ -13,6 +13,7 @@ char s_ExpressionParserAltBuffer[0x500] = {0};
 #if OBLIVION
 
 #include "StringVar.h"
+#include <Detours/detours.h>
 
 const UInt32 ExtractStringPatchAddr = 0x004FB1EB;
 const UInt32 ExtractStringRetnAddr = 0x004FB1F4;
@@ -40,6 +41,8 @@ static const UInt32 kScriptRunner_RunRetnAddr = kScriptRunner_RunHookAddr + 5;
 static const UInt32 kScriptRunner_RunCallAddr = 0x005792E0;			// overwritten call
 static const UInt32 kScriptRunner_RunEndProcAddr = 0x00517637;		// retn 0x20
 static const UInt32 kScriptRunner_CommandResult = 0x0051757B;		
+static constexpr UInt32 kReturnCmdExecute = 0x005169B4;
+static constexpr UInt32 kReturnCmdHook = 0x005169AE;
 
 
 static void __stdcall DoExtractString(char* scriptData, UInt32 dataLen, char* dest, ScriptEventList* eventList)
@@ -127,42 +130,64 @@ static __declspec(naked) void ExpressionParserBufferOverflowHook_2(void)
 	}
 }
 
-std::string Message = "";
-
-static void  LogScriptError(Script* faultScript) {
-	size_t pos = Message.rfind("\r\n");
-	if (pos != std::string::npos) {
-		_MESSAGE("%u %s ", pos, Message.c_str());
-		Message = Message.substr(0, pos);
+Script* boh;
+static void  LogScriptError(const char* Format, va_list ArgList){
+	char DestBuf[13000];
+	if (boh) {
+		vsprintf_s(DestBuf, Format, ArgList);
+		ShowRuntimeError(boh, DestBuf);
+		boh = nullptr;
 	}
-	ShowRuntimeError(faultScript, Message.c_str());
-	Message = "";
 }
 
-void __declspec(naked) ScriptRunnerLineExecutionFailedHook(void)
+void __declspec(naked) Script_ExecuteCommandHook1() {
+	__asm {
+		sub esp, 0x73C
+		mov eax, [esp + 0x748 + 4]
+		mov boh, eax
+		jmp [kReturnCmdExecute]
+	}
+}
+
+//Take address dynamically to address for MessagELogger hooks//Take address dynamically to address for MessagELogger hooks
+int(__cdecl* MessageHandler_HandleMessage)(int, char*, va_list) = nullptr;
+
+int __declspec(naked) PrintScriptErrorJmp(char* Format, ...)
 {
-	__asm
-	{
-		cmp     [esp + 0x16], 0
-		jz      normal
-
-		mov		edi, [esp + 0x770]
-		pushad
-		call	LogScriptError
-		popad
-
-		
-		normal:
-		mov		ecx, 0x00517582
-		cmp     [esp + 0x780], bl
-		jmp		ecx
+	__asm {
+		mov     ecx, [esp + 0x4]
+		lea     eax, [esp + 0x8]
+		push    eax
+		push	ecx
+		call    LogScriptError
+		pop		ecx
+		pop		eax
+		push    eax; ArgList
+		push    ecx; Format
+		push    3;
+		jmp    MessageHandler_HandleMessage
+		add     esp, 0Ch
+		retn
 	}
 }
-
-static void  WINAPI DetourErrorMessage(const char* Messaged) {
-	Message = Messaged;
+int __declspec(naked) PrintScriptErrorCall(char* Format, ...)
+{
+	__asm {
+		mov     ecx, [esp + 0x4]
+		lea     eax, [esp + 0x8]
+		push    eax
+		push	ecx
+		call    LogScriptError
+		pop		ecx
+		pop		eax
+		push    eax; ArgList
+		push    ecx; Format
+		push    3;
+		call    MessageHandler_HandleMessage
+		add     esp, 0Ch
+		retn
+	}
 }
-
 
 void Hook_Script_Init()
 {
@@ -186,8 +211,15 @@ void Hook_Script_Init()
 	// hook ExtractArgs() to handle commands normally compiled with Cmd_Default_Parse which were instead compiled with Cmd_Expression_Parse
 	ExtractArgsOverride::Init_Hooks();
 
-	WriteRelJump(kScriptRunner_CommandResult, (UInt32)&ScriptRunnerLineExecutionFailedHook);
-	SafeWrite32(0x00A3DA0C, (UInt32) &DetourErrorMessage);
+	//PAtch PrintError in Command_Execute. Get dynamically address destination to address for MessageLogger
+	MessageHandler_HandleMessage = (int(__cdecl*)(int, char*, va_list)) (*(UInt32*)(0x004A7A6C + 1) + 0x004A7A6C + 1 + 4);
+	if (*(UInt8*)0x004A7A6C == 0xE9) {
+		PatchCallsInRange(0x005169A0, 0x0051722B, 0x004A7A60, (UInt32)&PrintScriptErrorJmp);
+	}
+	else {
+		PatchCallsInRange(0x005169A0, 0x0051722B, 0x004A7A60, (UInt32)&PrintScriptErrorCall);
+	}
+	WriteRelJump(kReturnCmdHook, (UInt32)& Script_ExecuteCommandHook1);
 }
 
 void ResetActivationRecurseDepth()
