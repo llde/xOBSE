@@ -76,3 +76,27 @@ void WriteNop(UInt32 nopAddr, UInt8 numOfByte) {
 		SafeWrite8(nopAddr + i, 0x90);
 	}
 }
+
+void PatchCallsInRange(UInt32 start, UInt32 end, UInt32 CallToPatch, UInt32 HookCall) {
+	UInt32	oldProtect;
+
+	VirtualProtect((void*)start , end - start, PAGE_EXECUTE_READWRITE, &oldProtect);
+	for (UInt32 current = start; current < end; current++) {
+		if (*(UInt8*)current == 0xE8) {
+			UInt32 callTarget = *(UInt32*)(current + 1) + current + 1 + 4;
+	//		_MESSAGE("%08X", callTarget);
+			if (callTarget == CallToPatch) {
+	//			_MESSAGE("Call found");
+				SafeWrite32(current + 1, HookCall - current - 1 - 4);
+			}
+		}
+	}
+	VirtualProtect((void*)start, end - start, oldProtect, &oldProtect);
+
+	/*
+	006020FB 054                 db  61h ; a
+.text:006020FC 054                 db  59h ; Y
+.text:006020FD 054                 db 0EAh ; ê
+.text:006020FE 054                 db 0FFh ; ÿ
+	*/
+}

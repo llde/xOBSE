@@ -16,3 +16,5 @@ void WriteRelJle(UInt32 jumpSrc, UInt32 jumpTgt);
 
 //Write arbitrary nop
 void WriteNop(UInt32 nopAddr, UInt8 numOfByte);
+//PAtch calls to address in a certain range
+void PatchCallsInRange(UInt32 start, UInt32 end, UInt32 CallToPatch, UInt32 HookCall);
