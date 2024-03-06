@@ -6,6 +6,8 @@
 #include "obse/GameTypes.h"
 #include "Utilities.h"
 #include <vector>
+#include "obse/NiObjects.h"
+#include "obse/NiProperties.h"
 
 /*** class hierarchy
  *
@@ -1091,6 +1093,91 @@ public:
 };
 
 extern PlayerCharacter ** g_thePlayer;
+
+class SkyObject {
+public:
+	virtual NiNode* GetObjectNode();
+	virtual void	Initialize(UInt32 u1);
+	virtual void	func_03(UInt32 u1, UInt32 u2);
+
+	NiNode* RootNode;						// 04	
+};
+STATIC_ASSERT(sizeof(SkyObject) == 0x008);
+
+class Sun : public SkyObject {
+public:
+	NiBillboardNode* SunBillboard;			// 08
+	NiBillboardNode* SunGlareBillboard;		// 0C
+	NiGeometry* SunGeometry;			// 10 NiTriShape*
+	NiGeometry* SunGlareGeometry;		// 14 NiTriShape*
+	NiTArray<NiPick*>* SunPickList;			// 18 NiPick::Record
+	NiDirectionalLight* SunDirLight;			// 1C
+	float				unk20;					// 20
+	UInt8				unk24;					// 24
+	UInt8				pad25[3];				// 25
+};
+STATIC_ASSERT(sizeof(Sun) == 0x028);
+
+class Atmosphere : public SkyObject {
+public:
+	NiAVObject*    Mesh;					// 08
+	BSFogProperty * fogProperty;			// 0C
+	UInt32			unk10;					// 10
+	NiNode* Quad;					// 14
+	UInt8			unk18;					// 18
+	UInt8			pad18[3];
+};
+STATIC_ASSERT(sizeof(Atmosphere) == 0x01C);
+
+class Stars : public SkyObject {
+public:
+	UInt32			unk08;					// 08
+	float			unk0C;					// 0C
+};
+STATIC_ASSERT(sizeof(Stars) == 0x010);
+
+class Clouds : public SkyObject {
+public:
+	UInt32			unk08;					// 08
+	UInt32			unk0C;					// 0C
+	UInt32			unk10;					// 10
+	UInt32			unk14;					// 14
+};
+STATIC_ASSERT(sizeof(Clouds) == 0x018);
+
+class Moon : public SkyObject {
+public:
+	NiNode* MoonNode;				// 08
+	NiNode* ShadowNode;				// 0C
+	NiTriShape* MoonMesh;				// 10
+	NiTriShape* ShadowMesh;				// 14
+	char* texture_full;			// 18
+	UInt32			unk1C;					// 1C
+	char* texture_three_wan;		// 20
+	UInt32			unk24;					// 24
+	char* texture_half_wan;		// 28
+	UInt32			unk2C;					// 2C
+	char* texture_one_wan;		// 30
+	UInt32			unk34;					// 34
+	UInt32			unk38;					// 38
+	UInt32			unk3C;					// 3C
+	char* texture_one_wax;		// 40
+	UInt32			unk44;					// 44
+	char* texture_half_wax;		// 48
+	UInt32			unk4C;					// 4C
+	char* texture_three_wax;		// 50
+	UInt32			unk54;					// 54
+	float			unk58;					// 58
+	float			unk5C;					// 5C
+	float			unk60;					// 60
+	float			unk64;					// 64
+	float			unk68;					// 68
+	UInt32			unk6C;					// 6C
+	UInt32			unk70;					// 70
+	float			unk74;					// 74
+	float			unk78;					// 78
+};
+STATIC_ASSERT(sizeof(Moon) == 0x07C);
 
 // 104
 class Sky

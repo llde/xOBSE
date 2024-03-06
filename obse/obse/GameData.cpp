@@ -46,10 +46,10 @@ UInt8 DataHandler::GetModIndex(const char* modName)
 	UInt8 modIndex = 0xFF;
 	const ModEntry** activeModList = GetActiveModList();
 
-	for (UInt8 idx = 0; idx < 0x100 && activeModList[idx] && modIndex == 0xFF; idx++)
+	for (UInt8 idx = 0; idx < 0x100 && activeModList[idx] && modIndex == 0xFF; idx++) {
 		if (!_stricmp(activeModList[idx]->data->name, modName))
 			modIndex = idx;
-
+	}
 	return modIndex;
 }
 
@@ -173,7 +173,7 @@ UInt16 TimeGlobals::GetNumDaysInMonth(UInt32 monthID)
 }
 
 // Water Shader stuff
-struct WaterShaderProperty	{
+struct WaterShaderPropertyData	{
 	const char*	name;
 	UInt32		addr;
 	bool		bIsPercentage;	// opacity and blend get multiplied by 100 for return value
@@ -181,7 +181,7 @@ struct WaterShaderProperty	{
 
 static const UInt32 kNumWaterShaderProperties = 18;
 
-WaterShaderProperty s_WaterShaderProperties[kNumWaterShaderProperties] =
+WaterShaderPropertyData s_WaterShaderProperties[kNumWaterShaderProperties] =
 {
 	{	"direction",			0x00B45FC0,  false  },
 	{	"velocity",				0x00B45FC4,  false  },

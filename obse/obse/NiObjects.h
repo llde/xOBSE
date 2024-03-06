@@ -56,6 +56,7 @@ class NiScreenTexture;
 class NiPSysModifier;
 class NiRenderer;
 class NiGeometryData;
+class NiPick;
 
 // 0AC
 class NiAVObject : public NiObjectNET
