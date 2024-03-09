@@ -143,6 +143,7 @@ bool TestChecksum(const char * procName, std::string * dllSuffix, ProcHookInfo *
 				case 0x2F9AC10C:	// 1.2.0.404 - third release, again almost binary-identical
 				case 0x6D1A8291:	// 1.2.0.404 - japanese unofficial translation
 				case 0x5BF7D114:	// 1.2.0.404 - modified to enable visual styles, bundled with CSE plugin
+				case 0x7FF50FF2:	// 1.2.0.404 - modified to enable visual styles + DPI awareness, bundled with CSE plugin
 				case 0xB2DED130:
 					*dllSuffix = "1_2";
 					hookInfo->hookCallAddr = 0x00892BDE;
