@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>strings</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">
+body {
+padding: 10%;
+}
+
+h1 {
+font-size: 150%;
+font-weight: normal;
+}
+h2 {
+font-size: 130%;
+font-weight: normal;
+margin-top: 40px;
+}
+h3 {
+font-size: 110%;
+font-weight: normal;
+margin-top: 30px;
+color: #000099;
+background-color: #ffffff;
+}
+h4 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+}
+h5 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+color: #000099;
+background-color: #ffffff;
+}
+
+table {
+border: 1px solid black;
+margin: 20px 0px 20px 0px;
+}
+caption {
+text-align: left;
+margin-bottom: 10px;
+}
+td, th {
+padding: 5px;
+}
+tr.alt {
+color: black;
+background-color: #dedede;
+}
+code.alt {
+color: 770000;
+background-color: #dedede;
+}
+table.functionIndex td{
+padding: 0px 30px 0px 5px;
+}
+
+ul {
+list-style-type: none;
+}
+
+.boxhl {
+border: 1px dotted black;
+padding: 8px;
+color: #000000;
+background-color: #eeeeff;
+}
+
+.code {
+border: 1px solid black;
+padding: 20px;
+font-family: monospace;
+color: #770000;
+background-color: #ffffff;
+}
+
+pre {
+color: #770000;
+background-color: #ffffff;
+}
+
+code.s {
+margin-left: 40px;
+font-weight: normal;
+color: #770000;
+background-color: #ffffff;
+}
+
+code {
+color: #000000;
+background-color: #ffffff;
+}
+
+span.op {
+font-style: italic;
+color: #666666;
+background-color: #ffffff;
+}
+
+pre.msgbox {
+color: #777700;
+background-color: #ffffff;
+font-family: serif;
+}
+
+.ind {
+margin-left: 40px;
+}
+.c {
+text-align: center;
+}
+.l {
+text-align: left;
+}
+
+.f {
+color: #3333cc;
+background-color: white;
+}
+a:link.f{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.f {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.f {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link.cf{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.cf {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.cf {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link img {
+border-style: none;
+}
+a:visited img {
+border-style: none;
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<p>Like a lot of languages, strings in <code>obl</code> are containers
+that contain characters. They are closest to the
+<code>std::string</code> type found in C++ in which standard string
+operations are allowed for normal use, but also allows easy access to
+the container operations available. They are overall a straightforward
+type.</p>
+<p>Strings in <code>obl</code> are not a vanilla type, and thus don’t
+interface so cleanly with other types. Many vanilla functions have a new
+“EX” (i.e. <code>MessageEX</code>) version that can take these
+strings.</p>
+<p>Additionally, like array variables, they are saved to the player’s
+save game unless deleted.</p>
+<h1 id="notation">Notation</h1>
+<p>Strings are enclosed in double-quotes, and can contain any valid
+ASCII.</p>
+<pre class="ebnf"><code>string = &#39;&quot;&#39;, ascii, &#39;&quot;&#39;;</code></pre>
+<p>There is no practical limit for the length of a string, but remember
+the line limit of <code>obl</code>.</p>
+<h2 id="declaration">Declaration</h2>
+<p>String variables are declared with <code>string_var</code>. Default
+initialization is 0.</p>
+<h1 id="differences-from-other-language-strings">Differences From Other
+Language Strings</h1>
+<p>While <code>obl</code> strings are powerful, being a data type that
+was introduced into the language through reverse-engineering efforts
+means there’s some notable limitations.</p>
+<h2 id="initialized-strings-are-always-truthy">Initialized Strings are
+Always Truthy</h2>
+<p>In <code>obl</code>, truthy/falsy is solely determinated by
+non-zero/zero values respectively. Strings default initialize to 0 to
+state that they are truly empty and not just filled with an empty
+string. Thus any string with any value will have a non-zero value, and
+be impossible to actually compare using the default conditional. <a href="#sv_compare"><code>sv_Compare</code></a> should be used
+instead.</p>
+<h2 id="no-byte-size">No Byte Size</h2>
+<p>Most languages allow you to access the byte size of strings, which
+can be useful when dealing with encoding. <code>obl</code> only supports
+standard ASCII for strings, and thus ASCII functions should be used
+instead.</p>
+<h1 id="constructing-strings">Constructing Strings</h1>
+<p>Strings can be directly defined via a let statement:</p>
+<pre class="obse"><code>scn StringDefinition
+string_var string
+begin gamemode
+let string := &quot;Adoring Fan&quot;
+end</code></pre>
+<p>However, format specified strings cannot be defined in this manner.
+<code>sv_Construct</code> must be used. Additionally, as
+<code>let</code> cannot be used in the console, if strings are needed
+for user INI settings the set statement should be used.</p>
+<pre class="obse"><code>scn SVConstruct
+string_var string
+begin gamemode
+set string to sv_Construct &quot;some string: %z&quot;, player.GetName
+end</code></pre>
+<h1 id="format-specified-strings">Format Specified Strings</h1>
+<p>Format specified strings are similar to JavaScript template literals
+and Lua’s <code>string.format</code>. They are escaping characters that
+insert some stringicized value or change the string property of the
+object calling said format specifier. There is no formal declaration for
+making a string of this type, simply include it wherever you need.</p>
+<pre class="ebnf"><code>formatSpecifier = &#39;&quot;&#39;, {(ascii | specifier)}, &#39;&quot;&#39;, {&#39;,&#39;, (expression)};</code></pre>
+<p>A format specified string can take up to 20 parameters.</p>
+<h2 id="format-piping">Format Piping</h2>
+<p>Some functions required “piped” strings, in which the left hand side
+of the pipe is the expression as a string that gets either: gets
+replaced by the formatted right string, or the right string is inserted.
+The exact functionality depends on the function that uses format
+piping.</p>
+<pre class="ebnf"><code>formatPiping = &#39;&quot;&#39;, {(ascii | specifier)}, &#39;|&#39;, {(ascii | specifier)}, &#39;&quot;&#39;, {&#39;,&#39;, (expression)}</code></pre>
+<pre class="obse"><code>scn FormatPipe
+string_var string
+begin gamemode
+let string := &quot;Adoring Fan&quot;
+sv_Replace &quot;Fan|God&quot;, string
+end</code></pre>
+<p>The “|” character is restricted from use with a format piped string
+as there are no escape characters. “@” can be used when calling a format
+piped string in the console (say for an INI file).</p>
+<h2 id="format-specifiers">Format Specifiers</h2>
+<p>The following are a list of format specifiers.</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><em>Specifier</em></th>
+<th><em>Parameters</em></th>
+<th><em>Function</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>%a</code></td>
+<td>int</td>
+<td>Inserts ASCII character from integer code</td>
+</tr>
+<tr class="even">
+<td><code>%c</code></td>
+<td>objectID, int</td>
+<td>Inserts name of component in other object, see <a href="#1">1</a></td>
+</tr>
+<tr class="odd">
+<td><code>%g</code></td>
+<td>int</td>
+<td>Inserts result of integer expression, does not numericize</td>
+</tr>
+<tr class="even">
+<td><code>%x.yf</code></td>
+<td>number</td>
+<td>Inserts floating representation of passed number. ‘x’ and ‘y’
+control number of digits and are optional <a href="#2">2</a></td>
+</tr>
+<tr class="odd">
+<td><code>%x.ye</code></td>
+<td>number</td>
+<td>Inserts scientific notation of number like <code>%.f</code></td>
+</tr>
+<tr class="even">
+<td><code>%i</code></td>
+<td>objectID</td>
+<td>Inserts formID of passed objectID</td>
+</tr>
+<tr class="odd">
+<td><code>%k</code></td>
+<td>int</td>
+<td>Inserts string of name of passed DirectX scan code</td>
+</tr>
+<tr class="even">
+<td><code>%n</code></td>
+<td>objectID</td>
+<td>Inserts name of passed objectID</td>
+</tr>
+<tr class="odd">
+<td><code>%v</code></td>
+<td>int</td>
+<td>Inserts name of passed actor value integer code</td>
+</tr>
+<tr class="even">
+<td><code>%x</code></td>
+<td>int, (int)</td>
+<td>Inserts string of the hexadecimal notation of passed integer.
+Optional int specifies length of notation</td>
+</tr>
+<tr class="odd">
+<td><code>%z</code></td>
+<td>string</td>
+<td>Inserts result of string expression, does not stringicize</td>
+</tr>
+<tr class="even">
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td><code>%ps</code></td>
+<td>objectID</td>
+<td>Inserts subjective pronoun of objectID</td>
+</tr>
+<tr class="even">
+<td><code>%pp</code></td>
+<td>objectID</td>
+<td>Inserts possessive pronoun of objectID</td>
+</tr>
+<tr class="odd">
+<td><code>%po</code></td>
+<td>objectID</td>
+<td>Inserts objective pronoun of objectID</td>
+</tr>
+<tr class="even">
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="odd">
+<td><code>%%</code></td>
+<td>n/a</td>
+<td>Inserts ‘%’ character</td>
+</tr>
+<tr class="even">
+<td><code>%e</code></td>
+<td>n/a</td>
+<td>Inserts empty string</td>
+</tr>
+<tr class="odd">
+<td><code>%q</code></td>
+<td>n/a</td>
+<td>Inserts double quote character</td>
+</tr>
+<tr class="even">
+<td><code>%r</code></td>
+<td>n/a</td>
+<td>Inserts newline character</td>
+</tr>
+<tr class="odd">
+<td>-</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr class="even">
+<td><code>%B</code></td>
+<td>n/a</td>
+<td>Sets console output to blue</td>
+</tr>
+<tr class="odd">
+<td><code>%b</code></td>
+<td>n/a</td>
+<td>Sets console output to default color</td>
+</tr>
+<tr class="even">
+<td><code>%{...%}</code></td>
+<td>multi</td>
+<td>Optionally inserts what is inside the brackets when this expresses
+to a truthy value</td>
+</tr>
+</tbody>
+</table>
+<h5 id="section">1</h5>
+<p>Only supports 2 object types: 1. Magic Item: Prints name of nth
+effect item 2. Faction: Prints male rank of nth rank</p>
+<h5 id="section-1">2</h5>
+<p>Four additional values can be used alongside integers for ‘x’ and
+‘y’: 1. <code>+</code>: Displays a ‘+’ in front of positive numbers 2.
+<code>&lt;Space&gt;</code>: Leaves leading space in front of positive
+numbers 3. <code>-</code>: Uses left aligned format instead of right 4.
+<code>0</code>: Use ‘0’ instead of spaces for leading zeroes</p>
+<p>Examples:</p>
+<p><code>&quot;% .0f&quot;, 12.34 -&gt; &quot; 12&quot;</code></p>
+<p><code>&quot;%+4.3f&quot;, 12.34 -&gt; &quot;+12.340&quot;</code></p>
+<h1 id="operators">Operators</h1>
+<p>There are a number of operators that can work on the string type:</p>
+<table>
+<thead>
+<tr class="header">
+<th><em>Operator</em></th>
+<th><em>Type</em></th>
+<th><em>Use</em></th>
+<th><em>Precedence</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>+</code></td>
+<td>Binary</td>
+<td>Concatenation</td>
+<td>9</td>
+</tr>
+<tr class="even">
+<td><code>$</code></td>
+<td>Unary</td>
+<td>Stringicize</td>
+<td>12</td>
+</tr>
+<tr class="odd">
+<td><code>[]</code></td>
+<td>Binary</td>
+<td>Subscript</td>
+<td>15</td>
+</tr>
+<tr class="even">
+<td><code>:</code></td>
+<td>Binary</td>
+<td>Slice/Range</td>
+<td>3</td>
+</tr>
+<tr class="odd">
+<td><code>#</code></td>
+<td>Unary</td>
+<td>Numericize</td>
+<td>12</td>
+</tr>
+</tbody>
+</table>
+<h2 id="concatenation">Concatenation</h2>
+<p>Concatenation is the combination of 2 strings literally. Thus the
+concatenation of “Adoring” and “Fan” is “AdoringFan”. Note the lack of
+whitespace in the new string. <code>obl</code> can’t always implicitly
+convert strings, only functions that explicitly return strings are
+allowed. The rest must be stringicized (see below).</p>
+<pre class="ebnf"><code>concatenation = string, &#39;+&#39;, string;</code></pre>
+<pre class="obse"><code>scn concatentation
+string_var string
+begin gamemode
+let string := &quot;Adoring&quot;
+Print string + &quot;Fan&quot;
+end</code></pre>
+<h2 id="stringicize">Stringicize</h2>
+<p>The stringicize operator is simply a shorthand for the function
+<code>ToString</code>. It attempts to convert the expression argument to
+a string. Numerical expressions convert to the string representation of
+the result. Object expressions convert to the object name if possible,
+else the formID. Strings are not converted, thus this operator does not
+run.</p>
+<pre class="ebnf"><code>stringicize = &#39;$&#39;, (expression);</code></pre>
+<pre class="obse"><code>scn stringicize
+begin gamemode
+print &quot;Player&#39;s name is: &quot; + $(PlayerREF)
+end</code></pre>
+<h2 id="subscript">Subscript</h2>
+<p>As strings are containers, they can be directly subscripted like
+arrays. The subscripted string returns a string containing the
+character.</p>
+<pre class="ebnf"><code>subscript = variable, &#39;[&#39;, [{(expression)}, literal], &#39;]&#39;;</code></pre>
+<pre class="obse"><code>scn subscript
+string_var string
+begin gamemode
+let string := &quot;Adoring Fan&quot;
+Print &quot;2nd character is: &quot; + string[1]
+end</code></pre>
+<h2 id="slicerange">Slice/Range</h2>
+<p>The slice/range operator allows a specific range of the string
+container. It can return the characters over the range, and also be used
+for iteration.</p>
+<pre class="ebnf"><code>sliceRange = {literal}, &#39;:&#39;, {literal};</code></pre>
+<pre class="obse"><code>scn stringSliceRange
+string_var string
+string_var iter
+begin gamemode
+let string := &quot;Adoring Fan&quot;
+Print &quot;First 4 characters are: &quot; + string[3:]
+; iterate over the last 4 characters
+foreach iter &lt;- string[:-4]
+; ...
+loop
+end</code></pre>
+<h2 id="numericize">Numericize</h2>
+<p>Numericize takes a string and attempts to convert it to a number. A
+shorthand for <code>ToNumber</code>. It is assumed that the string is in
+standard decimal notation. If the string starts with “0x”, it attempts
+to convert the string as a hexadecimal number. Returns 0 when it
+fails.</p>
+<pre class="ebnf"><code>numericize = &#39;#&#39;, (expression);</code></pre>
+<pre class="obse"><code>scn Numericize
+string_var string
+begin gamemode
+let string := &quot;1230&quot;
+PrintC &quot;%g&quot;, (4 + #string)
+end</code></pre>
+<h1 id="string-functions">String Functions</h1>
+<h2 id="sv_construct">sv_Construct</h2>
+<p>Returns a new regular or format specified string. Note that this
+function was used to create and return generic strings, it is mostly
+unneeded for this use as let statements can now directly define strings.
+It’s secondary use is to create strings in user INI files.</p>
+<p>Takes up to 20 parameters for format specifiers.</p>
+<p><code>(null) sv_Construct arg:string, arg1:multi, arg2:multi, ... arg20:multi</code></p>
+<h2 id="sv_destruct">sv_Destruct</h2>
+<p>Returns a destroyed string variable or a destroys a list of string
+variables. String variables are no longer saved to save game.</p>
+<p><code>(string_var) sv_Destruct</code></p>
+<p><code>(null) sv_Destruct arg1:string, ... arg20:string</code></p>
+<h2 id="sv_length">sv_Length</h2>
+<p>Returns the number of characters in a string. Note, not number of
+bytes like some languages.</p>
+<p><code>(length:int) sv_Length arg:string</code></p>
+<h2 id="sv_compare">sv_Compare</h2>
+<p>Returns the result of comparing 2 strings of any kind
+case-insensitively, including format specified strings. If a format
+specified string is to be used, it must be the first one. Optional
+boolean makes comparison case-sensitive. Returns 1 of 4 possible
+outcomes: 1. 0: Strings are equal 2. 1: String 2 occurs before string 1
+alphabetically 3. -1: String 2 occurs after string 1 alphabetically 4.
+-2: Comparison failed</p>
+<p><code>(result:int) sv_Compare string1:string string2:string sensitive:bool</code></p>
+<h2 id="sv_erase">sv_Erase</h2>
+<p>Erases specified number of characters from specified starting
+position of a string variable. If number of characters is omitted, all
+from starting position are erased. If starting position is also omitted,
+then starting position is 0 and thus the string is made empty. Note that
+nothing is returned, and thus requires a variable to mutate.</p>
+<p><code>(null) sv_Erase string_var:string start:int numChars:int</code></p>
+<h2 id="sv_tonumeric">sv_ToNumeric</h2>
+<p>Returns the numerical conversion of string. Acceptable non-numerals
+are: - <code>-</code>: Leading sign - <code>e</code>: Scientific
+notation - <code>.</code>: Decimal Conversion to a number halts at the
+first invalid character. This is not the long hand for the numericize
+operator.</p>
+<p><code>(number:float) sv_ToNumeric arg:string</code></p>
+<h2 id="sv_find">sv_Find</h2>
+<p>Returns the index of which the matched substring is case
+insensitively found in a specified string starting at a specified
+position. Searches are only included in the range of:
+<code>start, start + searchLength</code>. An optional boolean searches
+case sensitively. The substring can be format specified.</p>
+<p><code>(index:int) sv_Find subString:string mainString:string start:int searchLength:int sensitive:bool</code></p>
+<h2 id="sv_count">sv_Count</h2>
+<p>Returns the number of matched substrings found in the specified
+string. Functions like <code>sv_Find</code>.</p>
+<p><code>(count:int) sv_Count subString:string mainString:string start:int searchLength:int</code></p>
+<h2 id="sv_replace">sv_Replace</h2>
+<p>Replaces occurrences found with the left hand side of a format piped
+string with the right hand side. Returns the number of replaced
+instances. Functions like <code>sv_Find</code>, and can also specify the
+number of replacements.</p>
+<p><code>(replaced:int) sv_Replace subString:string mainString:string start:int searchLength:int sensitive:bool replacements:int</code></p>
+<h2 id="sv_insert">sv_Insert</h2>
+<p>Inserts the substring into the specified string at the specified
+position. The position must be less than the length of the string. The
+substring is prepended if no position is provided.</p>
+<p><code>(null) sv_Insert subString:string mainString:string start:int</code></p>
+<h2 id="sv_split">sv_Split</h2>
+<p>Returns an array of type array containing substrings of the specified
+string, in which each string element is delimited by a specified
+delimiter character(s). Delimitation happens on each side of the
+delimiter character(s). “#This#is#delimited#”, when using “#” as the
+delimiter, is split into [“This”, “is”, “delimited”]. Without the first
+and last “#” characters, this string would split into [“is”].</p>
+<p><code>(subStrings:array) sv_Split arg:string delimiters:string</code></p>
+<h2 id="sv_percentify">sv_Percentify</h2>
+<p>Returns the input string where each “%” is replaced with “%%”. This
+is meant to be used with format specified strings.</p>
+<p><code>(string:string) sv_Percentify arg:string</code></p>
+<h2 id="sv_tolower">sv_ToLower</h2>
+<p>Returns a string where are characters are in lowercase.</p>
+<p><code>(lower:string) sv_ToLower arg:string</code></p>
+<h2 id="sv_toupper">sv_ToUpper</h2>
+<p>Returns a string where are characters are in uppercase.</p>
+<p><code>(upper:string) sv_ToUpper arg:string</code></p>
+<h2 id="getkeyname">GetKeyName</h2>
+<p>Returns name of key scan given its DirectInput integer scan code.</p>
+<p><code>(scan:string) GetKeyName scan:int</code></p>
+<h2 id="numtohex">NumToHex</h2>
+<p>Returns the hexadecimal notation of an integer as a string. The
+minimum width from 0 to 8 can be provided. Unused digits are padded with
+zeroes. 8 is the default.</p>
+<p><code>(hex:string) NumToHex num:int width:int</code></p>
+<h2 id="tonumber">ToNumber</h2>
+<p>Long hand of numericize operator. Returns number associated with
+string. Optional flag attempts to convert from hexadecimal notation.
+Returns 0 if fails.</p>
+<p><code>(number:float) ToNumber arg:string hex:bool</code></p>
+<h1 id="character-functions">Character Functions</h1>
+<p>Characters are handled the ASCII integer of the character. There
+functions are meant to work on these constructs. Characters from strings
+can be found using subscripting. This replaces
+<code>sv_GetChar</code>.</p>
+<h2 id="asciitochar">AsciiToChar</h2>
+<p>Returns string character of the associated ASCII character code.</p>
+<p><code>(character:string) AsciiToChar character:int</code></p>
+<h2 id="chartoascii">CharToAscii</h2>
+<p>Returns ASCII code of character string. Only first character is
+read.</p>
+<p><code>(character:int) CharToAscii character:string</code></p>
+<h2 id="isdigit">IsDigit</h2>
+<p>Is character a digit?</p>
+<p><code>(isDigit:bool) IsDigit character:int</code></p>
+<h2 id="ispunctuation">IsPunctuation</h2>
+<p>Is character a punctuation?</p>
+<p><code>(isPunctuation:bool) IsPunctuation character:int</code></p>
+<h2 id="isuppercase">IsUppercase</h2>
+<p>Is character uppercase?</p>
+<p><code>(isPunction:bool) IsUppercase character:int</code></p>
+<h2 id="isprintable">IsPrintable</h2>
+<p>Is character printable?</p>
+<p><code>(isPrintable:bool) IsPrintable character:int</code></p>
+<h2 id="isletter">IsLetter</h2>
+<p>Is character a letter?</p>
+<p><code>(isLetter:bool) IsLetter character:int</code></p>
+<h2 id="toupper">ToUpper</h2>
+<p>Returns uppercase ASCII code of character.</p>
+<p><code>(upper:int) ToUpper character:int</code></p>
+<h2 id="tolower">ToLower</h2>
+<p>Returns lowercase ASCII code of character.</p>
+<p><code>(lower:int) ToLower character:int</code></p>
+</body>
+</html>

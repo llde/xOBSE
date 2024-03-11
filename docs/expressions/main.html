@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>main</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">
+body {
+padding: 10%;
+}
+
+h1 {
+font-size: 150%;
+font-weight: normal;
+}
+h2 {
+font-size: 130%;
+font-weight: normal;
+margin-top: 40px;
+}
+h3 {
+font-size: 110%;
+font-weight: normal;
+margin-top: 30px;
+color: #000099;
+background-color: #ffffff;
+}
+h4 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+}
+h5 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+color: #000099;
+background-color: #ffffff;
+}
+
+table {
+border: 1px solid black;
+margin: 20px 0px 20px 0px;
+}
+caption {
+text-align: left;
+margin-bottom: 10px;
+}
+td, th {
+padding: 5px;
+}
+tr.alt {
+color: black;
+background-color: #dedede;
+}
+code.alt {
+color: 770000;
+background-color: #dedede;
+}
+table.functionIndex td{
+padding: 0px 30px 0px 5px;
+}
+
+ul {
+list-style-type: none;
+}
+
+.boxhl {
+border: 1px dotted black;
+padding: 8px;
+color: #000000;
+background-color: #eeeeff;
+}
+
+.code {
+border: 1px solid black;
+padding: 20px;
+font-family: monospace;
+color: #770000;
+background-color: #ffffff;
+}
+
+pre {
+color: #770000;
+background-color: #ffffff;
+}
+
+code.s {
+margin-left: 40px;
+font-weight: normal;
+color: #770000;
+background-color: #ffffff;
+}
+
+code {
+color: #000000;
+background-color: #ffffff;
+}
+
+span.op {
+font-style: italic;
+color: #666666;
+background-color: #ffffff;
+}
+
+pre.msgbox {
+color: #777700;
+background-color: #ffffff;
+font-family: serif;
+}
+
+.ind {
+margin-left: 40px;
+}
+.c {
+text-align: center;
+}
+.l {
+text-align: left;
+}
+
+.f {
+color: #3333cc;
+background-color: white;
+}
+a:link.f{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.f {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.f {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link.cf{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.cf {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.cf {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link img {
+border-style: none;
+}
+a:visited img {
+border-style: none;
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<p>Expressions return a value of one of the possible <a href="../language/Types.md#types">types</a>. The general forms are as
+so:</p>
+<pre class="ebnf"><code>expression = literal
+           | variable  
+           | gameFunction
+           | userFunction
+           | (expression, binary, expression)
+           | (unary, expression);</code></pre>
+<p>Most objects being interacted with are considered expressions and can
+be used directly. All variable types, all literals, and function that
+returns any value but null are expressions.</p>
+<p>Literals can be found in <a href="../language/Types.md#literal-types">Literals</a> under Types.</p>
+<h1 id="associativity">Associativity</h1>
+<p>It can be assumed that all expressions in <code>obl</code> is left
+associative. Precedence controls order of operations for
+expressions.</p>
+<h1 id="variables-as-expressions">Variables as Expressions</h1>
+<p>Any variable type can be used in a place an expression is expected,
+when strict typing is not a concern. If dealing with a function found in
+the original release of the game, use <a href="../constructs.md#implicit-type-forcing-via-obse-expressions-oe">Oblivion
+expressions</a>. When used as expressions, variables cannot take any
+parameters and behave solely as placeholders for the literal types.</p>
+<p>See <a href="../language/variables.md#variables">Variables</a> for
+how variables are declared and <a href="../language/Types.md#variable-types">Variable Types</a> for the
+types available.</p>
+<h1 id="game-expressions">Game Expressions</h1>
+<p><code>obl</code> has a variety of built-in functions that return
+values based on states in the game itself. These can do a large variety
+of operations, but the general form of a game function is like so:</p>
+<pre class="ebnf"><code>gameFunction = function, [{expression}] | [{ &#39;(&#39;, {expression} &#39;)&#39; }];</code></pre>
+<p>For functions that can take a parameter, any expression is possible.
+However, parentheses must be used to distinguish groups of
+expressions.</p>
+<pre class="obse"><code>scn GameFunctionExpressions
+int x
+ref refVar
+begin gamemode
+let refVar := PlayerREF
+let x := GetActorMinLevel PlayerREF ; parameter is a literal
+let x := GetActorMinLevel refVar ; paramater is a variable
+let x := GetActorMinLevel GetSelf ; paramater is another function
+let x := GetActorMinLevel (Anusai.GetNthDetectedActor 0) ; parameter is a grouped expression
+end</code></pre>
+<h1 id="expression-types">Expression Types</h1>
+<p>There are 4 main types of named expressions in <code>obl</code>.</p>
+<h2 id="ishas-expressions">Is/Has Expressions</h2>
+<p>Is/Has expressions typically return the status of a value of an
+object. They are almost always booleans, returning 1 for truthy.</p>
+<h2 id="get-expressions">Get Expressions</h2>
+<p>Get expressions return the value specified of an object. They can
+return any type.</p>
+<h2 id="to-expressions">To Expressions</h2>
+<p>Converts between data types. Generally named as to what it converts
+to, not from.</p>
+<h2 id="unnamed-expressions">Unnamed Expressions</h2>
+<p>Unnamed expressions do not follow a consistent naming, but are
+generally self explanatory. There are unnamed game statements,
+specificity is defined in the documentation these functions.</p>
+<h1 id="available-expressions">Available Expressions</h1>
+<ul>
+<li><a href="math.md">Math Functions</a></li>
+<li><a href="arrays.md">Array Functions</a></li>
+</ul>
+</body>
+</html>
