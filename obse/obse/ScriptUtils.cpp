@@ -2843,7 +2843,7 @@ void ShowRuntimeError(Script* script, const char* fmt, ...)
 	char errorHeader[0x400];
 	// include mod filename, save having to ask users to figure it out themselves
 	const char* modName = "Savegame";
-	if (script->GetModIndex() != 0xFF)
+	if (script && script->GetModIndex() != 0xFF)
 	{
 		modName = (*g_dataHandler)->GetNthModName(script->GetModIndex());
 		if (!modName || !modName[0])
