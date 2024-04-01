@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>math</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">
+body {
+padding: 10%;
+}
+
+h1 {
+font-size: 150%;
+font-weight: normal;
+}
+h2 {
+font-size: 130%;
+font-weight: normal;
+margin-top: 40px;
+}
+h3 {
+font-size: 110%;
+font-weight: normal;
+margin-top: 30px;
+color: #000099;
+background-color: #ffffff;
+}
+h4 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+}
+h5 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+color: #000099;
+background-color: #ffffff;
+}
+
+table {
+border: 1px solid black;
+margin: 20px 0px 20px 0px;
+}
+caption {
+text-align: left;
+margin-bottom: 10px;
+}
+td, th {
+padding: 5px;
+}
+tr.alt {
+color: black;
+background-color: #dedede;
+}
+code.alt {
+color: 770000;
+background-color: #dedede;
+}
+table.functionIndex td{
+padding: 0px 30px 0px 5px;
+}
+
+ul {
+list-style-type: none;
+}
+
+.boxhl {
+border: 1px dotted black;
+padding: 8px;
+color: #000000;
+background-color: #eeeeff;
+}
+
+.code {
+border: 1px solid black;
+padding: 20px;
+font-family: monospace;
+color: #770000;
+background-color: #ffffff;
+}
+
+pre {
+color: #770000;
+background-color: #ffffff;
+}
+
+code.s {
+margin-left: 40px;
+font-weight: normal;
+color: #770000;
+background-color: #ffffff;
+}
+
+code {
+color: #000000;
+background-color: #ffffff;
+}
+
+span.op {
+font-style: italic;
+color: #666666;
+background-color: #ffffff;
+}
+
+pre.msgbox {
+color: #777700;
+background-color: #ffffff;
+font-family: serif;
+}
+
+.ind {
+margin-left: 40px;
+}
+.c {
+text-align: center;
+}
+.l {
+text-align: left;
+}
+
+.f {
+color: #3333cc;
+background-color: white;
+}
+a:link.f{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.f {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.f {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link.cf{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.cf {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.cf {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link img {
+border-style: none;
+}
+a:visited img {
+border-style: none;
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 id="arithmetic-operators">Arithmetic Operators</h1>
+<p><code>obl</code> supports a number of standard arithmetic operators.
+Operators are symbols, either unary or binary that combine 1 or more
+identifiers into an expression.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Operator</th>
+<th>Type</th>
+<th>Use</th>
+<th>Precedence</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>+</code></td>
+<td>Binary</td>
+<td>Addition</td>
+<td>9</td>
+</tr>
+<tr class="even">
+<td><code>-</code></td>
+<td>Binary</td>
+<td>Subtraction</td>
+<td>9</td>
+</tr>
+<tr class="odd">
+<td><code>*</code></td>
+<td>Binary</td>
+<td>Multiplication</td>
+<td>10</td>
+</tr>
+<tr class="even">
+<td><code>/</code></td>
+<td>Binary</td>
+<td>Division</td>
+<td>10</td>
+</tr>
+<tr class="odd">
+<td><code>^</code></td>
+<td>Binary</td>
+<td>Exponentiation</td>
+<td>11</td>
+</tr>
+<tr class="even">
+<td><code>%</code></td>
+<td>Binary</td>
+<td>Integer modulo</td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>Integer modulo takes the integer remainder of the division
+factor.</p>
+</blockquote>
+<h2 id="type-conversion">Type Conversion</h2>
+<p>Math can be performed between either number type at will, but the
+output variable will determine how it gets stored. When storing a
+floating point result as an integer, the decimal portion will be
+truncated without rounding.</p>
+<h1 id="math-functions">Math Functions</h1>
+<p>In addition to the base arithmetic operators, <code>obl</code> also
+supports additional math functions.</p>
+<h2 id="abs">Abs</h2>
+<p>Return the absolute value of the argument, truncates floats.</p>
+<p><code>(abs:float) abs arg:float</code></p>
+<h2 id="ceil">Ceil</h2>
+<p>Returns the nearest integer above the argument.</p>
+<p><code>(ceil:float) ceil arg:float</code></p>
+<h2 id="exp">Exp</h2>
+<p>Returns the result of e, the natural number, to the power of the
+argument.</p>
+<p><code>(exp:float) exp arg:float</code></p>
+<h2 id="floor">Floor</h2>
+<p>Returns the nearest integer below the argument.</p>
+<p><code>(floor:float) floor arg:float</code></p>
+<h2 id="fmod">Fmod</h2>
+<p>Returns the floating point modulo of the dividend in the base. The
+optional offset shifts the range of the result by adding that value to
+the base.</p>
+<p>This function can be generally defined in the following form:
+<code>modulus n base := n - base * (floor (n / base))</code>.</p>
+<p>This will produce a result that can be defined in the range of:</p>
+<p><code>0 &lt;= result &lt; base</code></p>
+<p><code>offset &lt;= result &lt; base + offset</code></p>
+<p>when the base is positive and</p>
+<p><code>0 &gt;= result &gt; base</code></p>
+<p><code>offset &gt;= result &gt; base + offset</code></p>
+<p>when the base is negative.</p>
+<p><code>(fmod:float) fmod dividend:float base:float offset:float</code></p>
+<h2 id="log">Log</h2>
+<p>Returns the natural log of the argument.</p>
+<p><code>(log:float) log arg:float</code></p>
+<h2 id="log10">Log10</h2>
+<p>Returns the log of base 10 of the argument.</p>
+<p><code>(log10:float) log10 arg:float</code></p>
+<h2 id="pow">Pow</h2>
+<p>Returns the result of the base raised to the exponent.</p>
+<p><code>(pow:float) pow base:float exponent:float</code></p>
+<h2 id="rand">Rand</h2>
+<p>Returns a random number between the two arguments, inclusive.</p>
+<p><code>(rand:float) rand min:float max:float</code></p>
+<h2 id="getrandompercent">GetRandomPercent</h2>
+<p>Returns a random number between 0 and 99 inclusive.</p>
+<p><code>(GetRandomPercent:int) GetRandomPercent</code></p>
+<p>Note that this function was originally the only available random
+function in <code>obl</code>. It should not be used when working with
+new code.</p>
+<h2 id="squareroot">SquareRoot</h2>
+<p>Returns the square root of the argument.</p>
+<p><code>(SquareRoot:float) SquareRoot arg:float</code></p>
+<p><code>(sqrt:float) sqrt arg:float</code></p>
+<h1 id="trigonometric-functions">Trigonometric Functions</h1>
+<p>Standard trig functions are available, the default functions use
+degrees instead of radians. Radian specific functions are designated
+with a ‘R’ as a prefix. All trig functions have an alias with a ‘D’ as a
+prefix, to better distinguish that the degrees form is used.</p>
+<h2 id="acos">ACos</h2>
+<p>Returns the arccosine of the argument.</p>
+<p><code>(acos:float) acos arg:float</code></p>
+<p><code>(acos:float) dacos arg:float</code></p>
+<p><code>(acos:float) racos arg:float</code></p>
+<h2 id="asin">ASin</h2>
+<p>Returns the arcsine of the argument.</p>
+<p><code>(asin:float) asin arg:float</code></p>
+<p><code>(asin:float) dasin arg:float</code></p>
+<p><code>(asin:float) rasin arg:float</code></p>
+<h2 id="atan">ATan</h2>
+<p>Returns the arctangent of the argument.</p>
+<p><code>(atan:float) atan arg:float</code></p>
+<p><code>(atan:float) datan arg:float</code></p>
+<p><code>(atan:float) ratan arg:float</code></p>
+<h2 id="atan2">ATan2</h2>
+<p>Returns the arctangent of the arguments, an expanded vector form.</p>
+<p><code>(atan:float) atan2 arg1:float arg2:float</code></p>
+<p><code>(atan:float) datan2 arg1:float arg2:float</code></p>
+<p><code>(atan:float) ratan2 arg1:float arg2:float</code></p>
+<p>See the section on <a href="#linear-algebra">Linear Algebra</a> for
+vectors forms.</p>
+<h2 id="cos">Cos</h2>
+<p>Returns the cosine of the argument.</p>
+<p><code>(cos:float) cos arg:float</code></p>
+<p><code>(cos:float) dcos arg:float</code></p>
+<p><code>(cos:float) rcos arg:float</code></p>
+<h2 id="cosh">CosH</h2>
+<p>Returns the hyperbolic cosine of the argument.</p>
+<p><code>(cosh:float) cosh arg:float</code></p>
+<p><code>(cosh:float) dcosh arg:float</code></p>
+<p><code>(cosh:float) rcosh arg:float</code></p>
+<h2 id="sin">Sin</h2>
+<p>Returns the sine of the argument.</p>
+<p><code>(sin:float) sin arg:float</code></p>
+<p><code>(sin:float) dsin arg:float</code></p>
+<p><code>(sin:float) rsin arg:float</code></p>
+<h2 id="sinh">SinH</h2>
+<p>Returns the hyperbolic sine of the argument.</p>
+<p><code>(sinh:float) sinh arg:float</code></p>
+<p><code>(sinh:float) dsinh arg:float</code></p>
+<p><code>(sinh:float) rsinh arg:float</code></p>
+<h2 id="tan">Tan</h2>
+<p>Returns the tangent of the argument.</p>
+<p><code>(tan:float) tan arg:float</code></p>
+<p><code>(tan:float) dtan arg:float</code></p>
+<p><code>(tan:float) rtan arg:float</code></p>
+<h2 id="tanh">TanH</h2>
+<p>Returns the hyperbolic tangent of the argument.</p>
+<p><code>(tanh:float) tanh arg:float</code></p>
+<p><code>(tanh:float) dtanh arg:float</code></p>
+<p><code>(tanh:float) rtanh arg:float</code></p>
+<h1 id="bitwise-operations">Bitwise Operations</h1>
+<p><code>obl</code> supports standard bitwise operations, with the
+caveat that no new type for binary numbers being added. Manual
+conversion between binary and decimal must be performed.</p>
+<p>There are a number of bitwise operators: |Operator | Type | Function
+| Precedence| |<code>&gt;&gt;</code> | Binary | Left Shift | 8|
+|<code>&lt;&lt;</code> | Binary | Right Shift | 8| |<code>&amp;</code> |
+Binary | Logical AND | 7| |<code>\|</code> | Binary | Logical OR |
+6|</p>
+<blockquote>
+<p>Note the lack of logical XOR and logical NOT binary operators</p>
+</blockquote>
+<p>As well there are a number of bitwise functions, mostly mirrors of
+these operators:</p>
+<h2 id="leftshift">LeftShift</h2>
+<p>Returns argument shifted left by number of bits. Returns zero if
+shift amount is greater than 32.</p>
+<p><code>(LeftShift:int) LeftShift arg:int bits:int</code></p>
+<h2 id="rightshift">RightShift</h2>
+<p>Returns argument shifted right by number of bits. Returns zero if
+shift amount is greater than 32.</p>
+<p><code>(RightShift:int) RightShift arg:int bits:int</code></p>
+<h2 id="logicaland">LogicalAND</h2>
+<p>Returns the logical AND of the two arguments.</p>
+<p><code>(LogicalAND:int) LogicalAND arg1:int arg2:int</code></p>
+<h2 id="logicalor">LogicalOR</h2>
+<p>Returns the logical OR of the two arguments.</p>
+<p><code>(LogicalOR:int) LogicalOR arg1:int arg2:int</code></p>
+<h2 id="logicalnot">LogicalNOT</h2>
+<p>Returns the logical NOT of the two arguments.</p>
+<p><code>(LogicalNOT:int) LogicalNOT arg1:int arg2:int</code></p>
+<h2 id="logicalxor">LogicalXOR</h2>
+<p>Returns the logical XOR of the two arguments.</p>
+<p><code>(LogicalXOR:int) LogicalXOR arg1:int arg2:int</code></p>
+<h1 id="linear-algebra">Linear Algebra</h1>
+<p><code>obl</code> supports linear algebra directly, using the array
+type of type array to create vectors and matrices. Matrices and vectors
+must always have numbers. Any other type is an error.</p>
+<h2 id="matrix">Matrix</h2>
+<p>Matrices are internally 2 dimensional, stored as nested arrays where
+the elements of the outer array are the rows of the matrix. Therefore,
+in <code>A[i][j]</code>, the ‘j_th’ element is the current index of the
+‘i_th’ row.</p>
+<p>Matrices must either be 1 or 2 dimensional. A 1 dimensional matrix is
+simply an unnested array. A 2 dimensional matrix can only have 1 row to
+function as a 1D matrix. All rows must have the same length to be a
+valid 2D matrix.</p>
+<p>Some functions expect a “square” matrix, that is a matrix where the
+number of columns and rows are equal. This can be described as the size
+of the first array being equal to the size of one of the second, nested,
+arrays. Since matrices must have equal rows regardless, additional
+processing is not needed unless one is constructing a matrix
+programmatically.</p>
+<pre class="obse"><code>scn SquareMatrix
+int columnSize
+int rowSize
+begin gamemode
+let columnSize := ar_Size matrix
+let rowSize := ar_Size matrix[i]
+if columnSize == rowSize
+  print &quot;mkkatrix is square&quot;
+endif
+end</code></pre>
+<h3 id="generatezeromatrix">GenerateZeroMatrix</h3>
+<p>Returns a matrix of the size specified by the arguments, with each
+element filled with zero.</p>
+<p><code>(zeroMatrix:array) GenerateZeroMatrix height:int width:int</code></p>
+<p><code>(zeroMatrix:array) zeromat height:int width:int</code></p>
+<h3 id="generateidentitymatrix">GenerateIdentityMatrix</h3>
+<p>Returns a square matrix with each element along the diagonal,
+top-left to bottom-right, filled with 1 and every other element filled
+with 0.</p>
+<p><code>(identityMatrix:array) GenerateIdentityMatrix size:int</code></p>
+<p><code>(identityMatrix:array) identitymat size:int</code></p>
+<h3 id="generaterotationmatrix">GenerateRotationMatrix</h3>
+<p>Returns a 3x3 square matrix that can serve as a rotation matrix about
+the specified axis. Rotation matrixes are always invertible, and their
+inverse is equal to their transpose.</p>
+<p><code>(rotationMatrix:array) GenerateRotationMatrix axis:axis angle:float</code></p>
+<p><code>(rotationMatrix:array) rotmat axis:axis angle:float</code></p>
+<h3 id="matrixtrace">MatrixTrace</h3>
+<p>Returns the trace of a square matrix, the sum of elements along the
+diagonal (top-left to bottom-right).</p>
+<p><code>(trace:float) MatrixTrace matrix:array</code></p>
+<p><code>(trace:float) tr matrix:array</code></p>
+<p>Note that this function returns 0 if it is passed a non-square
+matrix, not the null type. It is up to the user to make sure that a
+square matrix is passed.</p>
+<h3 id="matrixdeterminant">MatrixDeterminant</h3>
+<p>Returns the determinant of a square matrix.</p>
+<p><code>(determinant:float) MatrixDeterminant matrix:array</code></p>
+<p><code>(determinant:float) det matrix:array</code></p>
+<p>Note that this function returns 0 if it is passed a non-square
+matrix, not the null type. It is up to the user to make sure that a
+square matrix is passed.</p>
+<h3 id="matrixrref">MatrixRREF</h3>
+<p>Returns the reduce row echelon form (RREF) of a matrix.</p>
+<p><code>(rref:array) MatrixRREF matrix:array</code></p>
+<p><code>(rref:array) rref matrix:array</code></p>
+<h3 id="matrixinvert">MatrixInvert</h3>
+<p>Returns the inverse matrix of a matrix. Returns 0 if a matrix is not
+invertible.</p>
+<p><code>(inverseMatrix:array) MatrixInvert matrix:array</code></p>
+<p><code>(inverseMatrix:array) matinv matrix:array</code></p>
+<h3 id="matrixtranspose">MatrixTranspose</h3>
+<p>Returns the transpose of a matrix. The rows a matrix becomes the
+columns of its transpose.</p>
+<p><code>(transposeMatrix:array) MatrixTranspose matrix:array</code></p>
+<p><code>(transposeMatrix:array) transpose matrix:array</code></p>
+<h3 id="matrixscale">MatrixScale</h3>
+<p>Returns a matrix where each element is scaled by a number.</p>
+<p><code>(scaledMatrix:array) MatrixScale scalar:float matrix:array</code></p>
+<p><code>(scaledMatrix:array) matscale scalar:float matrix:array</code></p>
+<h3 id="matrixadd">MatrixAdd</h3>
+<p>Returns the sum of two matrices. Matrices are summed by adding each
+element at each position. The matrices must have the same
+dimensions.</p>
+<p><code>(matrixSum:array) MatrixAdd addend:array</code></p>
+<p><code>(matrixSum:array) matadd addend:array</code></p>
+<h3 id="matrixsubtract">MatrixSubtract</h3>
+<p>Returns the difference of two matrices. Matrices are subtracted by
+taking the difference of each element at each position. The matrices
+must have the same dimensions.</p>
+<p><code>(matrixDiff:array) MatrixSubtract minuend:array</code></p>
+<p><code>(matrixDiff:array) matsubtract minuend:array</code></p>
+<h3 id="matrixmultiply">MatrixMultiply</h3>
+<p>Returns the product of two matrices. Matrix multiplication is not
+commutative, order of multiplication matters. The product of matrix A
+and matrix B does not equal matrix B and A. The width of the first
+matrix must be equal to the height of the second matrix.</p>
+<p><code>(matrixProduct:array) MatrixMultiply matrix:array matrix:array</code></p>
+<p><code>(matrixProduct:array) matmult matrix:array matrix:array</code></p>
+<p>Two 1D arrays cannot be multiplied since a row vector multiplied by a
+column vector is different than a column vector multiplied by a row
+vector. This is an ambiguity that is solved by <a href="#forcerowvector"><code>ForceRowVector</code></a> and <a href="#forcecolumnvector"><code>ForceColumnVector</code></a>. Process
+one or both with these functions to remove the ambiguity.</p>
+<h2 id="vector">Vector</h2>
+<p>Vectors can be defined in 3 ways: 1. A 1D array <a href="#1d-vectors">1D Vectors</a> 2. A 2D array with 1 row <a href="#row-vector">Row Vector</a> 3. A 2D array where each row only has
+1 element <a href="#column-vector">Column Vector</a></p>
+<h6 id="d-vectors">1D Vectors</h6>
+<p>1D vectors can be ambiguous, use <a href="#forcerowvector"><code>ForceRowVector</code></a> or <a href="#forcecolumnvector"><code>ForceColumnVector</code></a> if no
+ambiguity is allowed</p>
+<h6 id="row-vector">Row Vector</h6>
+<p>Type 2 is a row vector</p>
+<h6 id="column-vector">Column Vector</h6>
+<p>Type 3 is a column vector</p>
+<h3 id="forcerowvector">ForceRowVector</h3>
+<p>Takes a 1D array and returns an equivalent 2D array where the outer
+array’s only element is the 1D array
+(<code>vector[0][j] == v[j]</code>). This is used where row vectors are
+needed.</p>
+<p><code>(rowVector:arrays) ForceRowVector vector:array</code></p>
+<p><code>(rowVector:arrays) rowvec vector:array</code></p>
+<p>Note that row vectors require only 2 array variables as opposed to
+the n+1 array variables needed for column vectors. Row vectors are
+therefore preferred if at all possible.</p>
+<h3 id="forcecolumnvector">ForceColumnVector</h3>
+<p>Takes a 1D array and returns an equivalent 2D array where the outer
+array’s elements are each arrays with only 1 element - each element in
+the 1D array (<code>vector[i][0] == v[i]</code>). This is used when
+column vectors are needed.</p>
+<p><code>(columnVector:arrays) ForceColumnVector vector:array</code></p>
+<p><code>(columnVector:arrays) colvec vector:array</code></p>
+<p>Note that row vectors require only 2 array variables as opposed to
+the n+1 array variables needed for column vectors. Row vectors are
+therefore preferred if at all possible.</p>
+<h3 id="vectormagnitude">VectorMagnitude</h3>
+<p>Returns the magnitude of a vector, the square-root of the sum of the
+squares of its elements.</p>
+<p><code>(magnitude:float) VectorMagnitude vector:array</code></p>
+<p><code>(magnitude:float) vecmag vector:array</code></p>
+<h3 id="vectornormalize">VectorNormalize</h3>
+<p>Returns the normalized version of a vector, where each entry of the
+vector is divided by the magnitude. A normalized vector has a magnitude
+of 1.</p>
+<p><code>(normVector:array) VectorNormalize vector:array</code></p>
+<p><code>(normVector:array) vecnorm vector:array</code></p>
+<h3 id="vectordot">VectorDot</h3>
+<p>Returns the dot/scalar product of two vectors. The vectors must have
+the same length.</p>
+<p><code>(dotProduct:float) VectorDot vector:array vector:array</code></p>
+<p><code>(dotProduct:float) dot vector:array vector:array</code></p>
+<p>Note that this function will return 0 upon failure not the null type,
+which is usually the result of taking the dot product of vectors of
+different sizes. The user should make sure that the vectors are of the
+same size when using this function.</p>
+<h3 id="vectorcross">VectorCross</h3>
+<p>Returns the cross/vector product of two vectors. The vectors must
+have the same length.</p>
+<p><code>(crossProduct) VectorCross vector:array vector:array</code></p>
+<p><code>(crossProduct) cross vector:array vector:array</code></p>
+</body>
+</html>
