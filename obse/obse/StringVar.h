@@ -19,8 +19,10 @@
 
 class StringVar
 {
-	std::string data;
+	std::wstring data;
 	UInt8		owningModIndex;
+	std::unique_ptr<const char[]> multibyte_ptr;
+	bool modified;
 public:
 	StringVar(const char* in_data, UInt32 in_refID);
 
@@ -36,7 +38,7 @@ public:
 	char		At(UInt32 charPos);
 	static UInt32	GetCharType(char ch);
 
-	std::string String()					{	return data;	}
+	std::string String();
 	const char*	GetCString();
 	UInt32		GetLength();
 	UInt8		GetOwningModIndex();	

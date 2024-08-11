@@ -7,28 +7,59 @@
 #include "ScriptUtils.h"
 #include "GameData.h"
 
+
+wchar_t* ConvertToWideString(const char* string) {
+	int sizeMultibyteBuffer = MultiByteToWideChar(CP_ACP, 0, string, -1, nullptr, 0);
+	wchar_t* widestring = new wchar_t[sizeMultibyteBuffer];
+	MultiByteToWideChar(CP_ACP, 0, string, -1, widestring, sizeMultibyteBuffer);
+	return widestring;
+}
+
+
+char* ConvertToMultibyteString(const wchar_t* widestring) {
+	int sizeMultibyteBuffer = WideCharToMultiByte(CP_ACP, 0, widestring, -1, nullptr, 0, nullptr,nullptr);
+	char* string = new char[sizeMultibyteBuffer];
+	WideCharToMultiByte(CP_ACP, 0, widestring, -1, string, sizeMultibyteBuffer,nullptr,nullptr);
+	return string;
+}
+
 StringVar::StringVar(const char* in_data, UInt32 in_refID)
 {
-	data = std::string(in_data);
+	wchar_t* widestring = ConvertToWideString(in_data);
+	data = std::wstring(widestring);
+	delete[] widestring;
 	owningModIndex = in_refID >> 24;
+}
+
+std::string StringVar::String() {
+	char* string = ConvertToMultibyteString(data.c_str());
+	return std::string(string);
 }
 
 const char* StringVar::GetCString()
 {
-	return data.c_str();
+	if (modified == true || multibyte_ptr.get() == nullptr) {
+		multibyte_ptr = std::unique_ptr<const char[]>(ConvertToMultibyteString(data.c_str()));
+	}
+	return multibyte_ptr.get();
 }
 
 void StringVar::Set(const char* newString)
 {
-	data = std::string(newString);
+	wchar_t* widestring = ConvertToWideString(newString);
+	data = std::wstring(widestring);
+	delete[] widestring;
+	modified = true;
 }
 
 SInt32 StringVar::Compare(char* rhs, bool caseSensitive)
 {
 	SInt32 cmp = 0;
+	wchar_t* widecmp = ConvertToWideString(rhs);
 	if (!caseSensitive)
 	{
-		cmp = _stricmp(data.c_str(), rhs);
+		cmp = _wcsicmp(data.c_str(), widecmp);
+		delete[] widecmp;
 		if (cmp > 0)
 			return -1;
 		else if (cmp < 0)
@@ -38,22 +69,35 @@ SInt32 StringVar::Compare(char* rhs, bool caseSensitive)
 	}
 	else
 	{
-		std::string str2(rhs);
-		if (data == str2)
-			return 0;
-		else if (data > str2)
+		cmp = wcscmp(data.c_str(), widecmp);
+		delete[] widecmp;
+
+		if (cmp > 0)
 			return -1;
-		else
+		else if (cmp < 0)
 			return 1;
+		else
+			return 0;
+
+		if (cmp > 0)
+			return -1;
+		else if (cmp < 0)
+			return 1;
+		else
+			return 0;
 	}
 }
 
 void StringVar::Insert(const char* subString, UInt32 insertionPos)
 {
+	wchar_t* wide = ConvertToWideString(subString);
 	if (insertionPos < GetLength())
-		data.insert(insertionPos, subString);
+		data.insert(insertionPos, wide);
 	else if (insertionPos == GetLength())
-		data.append(subString);
+		data.append(wide);
+	delete[] wide; 
+	modified = true;
+
 }
 
 #pragma warning(disable : 4996)	// disable checked iterator warning for std::transform with char*
@@ -66,17 +110,19 @@ UInt32 StringVar::Find(char* subString, UInt32 startPos, UInt32 numChars, bool b
 
 	if (startPos < GetLength())
 	{
-		std::string source = data.substr(startPos, numChars);
+		std::wstring source = data.substr(startPos, numChars);
+		wchar_t* wide = ConvertToWideString(subString);
 		if (!bCaseSensitive)
 		{
-			std::transform(source.begin(), source.end(), source.begin(), tolower);
-			std::transform(subString, subString + strlen(subString), subString, tolower);
+			std::transform(source.begin(), source.end(), source.begin(), towlower);
+			std::transform(wide, wide + wcslen(wide), wide, towlower);
 		}
 
 		 //pos = data.substr(startPos, numChars).find(subString);	//returns -1 if not found
-		pos = source.find(subString);
+		pos = source.find(wide);
 		if (pos != -1)
 			pos += startPos;
+		delete[] wide;
 	}
 
 	return pos;
@@ -90,25 +136,28 @@ UInt32 StringVar::Count(char* subString, UInt32 startPos, UInt32 numChars, bool 
 	if (startPos >= GetLength())
 		return 0;
 
-	std::string source = data.substr(startPos, numChars);	//only count occurences beginning before endPos
+	std::wstring source = data.substr(startPos, numChars);	//only count occurences beginning before endPos
+
 	UInt32 subStringLen = strlen(subString);
 	if (!subStringLen)
 		return 0;
 
+	wchar_t* wide = ConvertToWideString(subString);
+	subStringLen = wcslen(wide);
 	if (!bCaseSensitive)
 	{
-		std::transform(source.begin(), source.end(), source.begin(), tolower);
-		std::transform(subString, subString + strlen(subString), subString, tolower);
+		std::transform(source.begin(), source.end(), source.begin(), towlower);
+		std::transform(wide, wide + subStringLen, wide, towlower);
 	}
 
 	UInt32 strIdx = 0;
 	UInt32 count = 0;
-	while (strIdx < GetLength() && ((strIdx = source.find(subString, strIdx)) != -1))
+	while (strIdx < GetLength() && ((strIdx = source.find(wide, strIdx)) != -1))
 	{
 		count++;
 		strIdx += subStringLen;
 	}
-
+	delete[] wide;
 	return count;
 }
 #pragma warning(default : 4996)
@@ -127,11 +176,14 @@ UInt32 StringVar::Replace(char* toReplace, const char* replaceWith, UInt32 start
 		numChars = GetLength() - startPos;
 
 	UInt32 numReplaced = 0;
-	UInt32 replacementLen = strlen(replaceWith);
-	UInt32 toReplaceLen = strlen(toReplace);
+	wchar_t* toReplaceWide = ConvertToWideString(toReplace);
+	wchar_t* replaceWithWide = ConvertToWideString(replaceWith);
+
+	UInt32 replacementLen = wcslen(replaceWithWide);
+	UInt32 toReplaceLen = wcslen(toReplaceWide);
 
 	// create substring
-	std::string srcStr = data.substr(startPos, numChars);
+	std::wstring srcStr = data.substr(startPos, numChars);
 
 	// remove substring from original string
 	data.erase(startPos, numChars);
@@ -141,14 +193,14 @@ UInt32 StringVar::Replace(char* toReplace, const char* replaceWith, UInt32 start
 	{
 		if (bCaseSensitive)
 		{
-			strIdx = srcStr.find(toReplace, strIdx);
+			strIdx = srcStr.find(toReplaceWide, strIdx);
 			if (strIdx == -1)
 				break;
 		}
 		else
 		{
-			std::string strToReplace = toReplace;
-			std::string::iterator iter = std::search(srcStr.begin() + strIdx, srcStr.end(), strToReplace.begin(), strToReplace.end(), ci_equal);
+			std::wstring strToReplace = toReplaceWide;
+			std::wstring::iterator iter = std::search(srcStr.begin() + strIdx, srcStr.end(), strToReplace.begin(), strToReplace.end(), ci_equal);
 			if (iter != srcStr.end())
 				strIdx = iter - srcStr.begin();
 			else
@@ -159,12 +211,12 @@ UInt32 StringVar::Replace(char* toReplace, const char* replaceWith, UInt32 start
 		srcStr.erase(strIdx, toReplaceLen);
 		if (strIdx == srcStr.length())
 		{
-			srcStr.append(replaceWith);
+			srcStr.append(replaceWithWide);
 			break;						// reached end of string so all done
 		}
 		else
 		{
-			srcStr.insert(strIdx, replaceWith);
+			srcStr.insert(strIdx, replaceWithWide);
 			strIdx += replacementLen;
 		}
 	}
@@ -175,7 +227,12 @@ UInt32 StringVar::Replace(char* toReplace, const char* replaceWith, UInt32 start
 	else
 		data.insert(startPos, srcStr);
 
+	delete[] replaceWithWide;
+	delete[] toReplaceWide;
+	modified = true;
+
 	return numReplaced;
+
 }
 
 void StringVar::Erase(UInt32 startPos, UInt32 numChars)
@@ -185,6 +242,8 @@ void StringVar::Erase(UInt32 startPos, UInt32 numChars)
 
 	if (startPos < GetLength())
 		data.erase(startPos, numChars);
+	modified = true;
+
 }
 
 std::string StringVar::SubString(UInt32 startPos, UInt32 numChars)
@@ -192,8 +251,11 @@ std::string StringVar::SubString(UInt32 startPos, UInt32 numChars)
 	if (numChars + startPos >= GetLength())
 		numChars = GetLength() - startPos;
 
-	if (startPos < GetLength())
-		return data.substr(startPos, numChars);
+	if (startPos < GetLength()) {
+		std::wstring sub = data.substr(startPos, numChars);
+		char* string = ConvertToMultibyteString(sub.data());
+		return std::string(string);
+	}
 	else
 		return "";
 }

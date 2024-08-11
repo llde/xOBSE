@@ -194,6 +194,7 @@ static bool StringVar_Find_Execute(COMMAND_ARGS, UInt32 mode, CommandInfo* comma
 		{
 		case eMode_svFind:
 			intResult = strVar->Find(toFind, startPos, numChars, bCaseSensitive ? true : false);
+
 			break;
 		case eMode_svCount:
 			intResult = strVar->Count(toFind, startPos, numChars, bCaseSensitive ? true : false);
@@ -215,7 +216,6 @@ static bool StringVar_Find_Execute(COMMAND_ARGS, UInt32 mode, CommandInfo* comma
 
 	if (intResult != -1)
 		*result = intResult;
-
 	return true;
 }
 
@@ -898,6 +898,29 @@ static bool Cmd_sv_ToLower_Execute (COMMAND_ARGS)
 	return ChangeCase_Execute (PASS_COMMAND_ARGS, false);
 }
 
+static bool Cmd_sv_PrintBytes_Execute(COMMAND_ARGS) {
+	UInt32 rhStrID = 0;
+
+	if (ExtractArgs(PASS_EXTRACT_ARGS, &rhStrID))
+	{
+		StringVar* rhVar = g_StringMap.Get(rhStrID);
+		Console_Print("Get stringVar key");
+		if (!rhVar)
+			return true;
+		const  char* str = rhVar->GetCString();
+		Console_Print("%s", str);
+		char buf[3] = {0};
+		std::string final = "";
+		for (int i = 0; i < strlen(str); i++) {
+			snprintf(buf, 3, "%hhX", (unsigned char)str[i]);
+			final.append(buf);
+			final.append(" ");
+			memset(buf, 0, 3);
+		}
+		Console_Print_Long(final);
+	}
+	return true;
+}
 #endif
 
 static ParamInfo kParams_sv_Destruct[10] =
@@ -1403,4 +1426,24 @@ CommandInfo kCommandInfo_sv_ToUpper =
 	HANDLER(Cmd_sv_ToUpper_Execute),
 	Cmd_Expression_Parse,
 	NULL, 0
+};
+static ParamInfo kParams_OneOBSEStringVar[] =
+{
+	{	"stringVar", kParamType_StringVar,	0	},
+};
+
+
+CommandInfo kCommandInfo_sv_PrintBytes =
+{
+	"sv_PrintBytes",
+	"",
+	0,
+	"Print an hex representation of the bytes in the string_var",
+	0,
+	1,
+	kParams_OneOBSEStringVar,
+	HANDLER(Cmd_sv_PrintBytes_Execute),
+	Cmd_Default_Parse,
+	NULL,
+	0
 };

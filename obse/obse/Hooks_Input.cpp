@@ -552,6 +552,13 @@ LABEL_23:
   }
 */
 
+IDirect3DSwapChain9* __stdcall HookSwapChain(IDirect3DDevice9* device) {
+	IDirect3DSwapChain9* swapchain = nullptr;
+	device->GetSwapChain(0, &swapchain);
+	return swapchain;
+}
+
+
 void Hook_Input_Init() {
 	SafeWrite32(kInputGlobalAllocSize, sizeof(OSInputGlobalsEx));
 	OSInputGlobalsEx* (__thiscall OSInputGlobalsEx::* InitializeExCall)(IDirectInputDevice8*) = &OSInputGlobalsEx::InitializeEx;
@@ -575,6 +582,9 @@ void Hook_Input_Init() {
 		WriteRelJump(kInputObjaHook2Loc, kInputOriginalObjaJumpLoc); 
 		WriteRelJump(kPollEndHook, (UInt32) &PollInputHookObja);
 
+		UInt32 lastHook = 0x4780 + obja;
+		WriteRelJump(lastHook, (UInt32) &HookSwapChain);
+
 	}
 	else if (PluginManager::GetPluginLoaded("OBCN")) {
 		UInt32 obcn = (UInt32)PluginManager::GetModuleAddressByName("OBCN"); //Assume incompatible with OBJA
@@ -590,7 +600,7 @@ void Hook_Input_Init() {
 		WriteRelJump(kInputObjaHook1Loc, kInputOriginalObjaJumpLoc);
 		WriteRelJump(kInputObjaHook2Loc, kInputOriginalObjaJumpLoc);  //Same hook points of OBJA
 		WriteRelJump(kPollEndHook, (UInt32)&PollInputHookObcn);
-
+		WriteRelJump(0x000024A3 + obcn, 0x00024A8 + obcn);
 	}
 	else{
 		WriteRelJump(kPollEndHook, (UInt32) &PollInputHook);

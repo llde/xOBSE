@@ -2998,6 +2998,7 @@ void CommandTable::Init(void)
 	ADD_CMD(GetBaseAV3);
 	ADD_CMD(GetBaseAV3C);
     ADD_CMD(IsNaked);
+	g_scriptCommands.RecordReleaseVersion();
 	//OBSE 22.4
 	ADD_CMD(SetAltControl2);
     //OBSE 22.5
@@ -3020,7 +3021,7 @@ void CommandTable::Init(void)
 	newgetDisease.shortName = "GetDisease";
 	newgetDisease.longName = "GetDisease";
 	g_scriptCommands.Replace(opcodeGetDisease, &newgetDisease);   //Ready for the mapping
-
+	ADD_CMD(sv_PrintBytes);
 	/* to add later if problems can be solved
 	g_scriptCommands.Add(&kCommandInfo_SetCurrentClimate); // too many problems
 	g_scriptCommands.Add(&kCommandInfo_SetWorldspaceClimate);

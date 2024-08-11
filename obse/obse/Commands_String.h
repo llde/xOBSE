@@ -66,3 +66,4 @@ extern CommandInfo kCommandInfo_GetRawFormIDString;
 
 extern CommandInfo kCommandInfo_sv_ToUpper;
 extern CommandInfo kCommandInfo_sv_ToLower;
+extern CommandInfo kCommandInfo_sv_PrintBytes;

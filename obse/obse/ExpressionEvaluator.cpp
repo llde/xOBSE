@@ -753,7 +753,13 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 			case kRetnType_String:
 			{
 				StringVar* strVar = g_StringMap.Get(cmdResult);
-				curToken = ScriptToken::Create(strVar ? strVar->GetCString() : "");
+				if (strVar) {
+
+					curToken = ScriptToken::Create(strVar->GetCString());
+				}
+				else {
+					curToken = ScriptToken::Create("");
+				}
 				break;
 			}
 			case kRetnType_Array:
