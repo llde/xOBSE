@@ -5,13 +5,22 @@ xOBSE 22.10
 		- Task2 Interface for plugins to better handle Removable Tasks
 		- Add GameInitialized Message (for OBSE plugins interop)
 		- Added Compatibility for OBCN, similar of what was done for OBJA in 22.8 (EXPERIMENTAL)
+		- Added a workaround for OBCN/OBJA to simulate know OBJA crash workaround (initialization codepath trying to access a D3DSwapchain memebers directly)
 	Fix : 
-		- Compiler: fix SetEventHandler filters when the identifier was used unquoted and defined as a variable name
+		- Compiler: fix SetEventHandler/RemoveEventHandler/EventHandlerExist filters when the identifier was used unquoted and defined as a variable name
 		- Changes to Steam version handling, solving some of the instances of Application load error
 		- Allow sorting arrays of arrays when using ar_CustomSort
 		- Fix for Ref Walking documentation
+		- More precise handling of replace/count/find matching part of a multibyte character (stringVar are now internally  wide string, proper handling require the proper locale and codepage setted in the system)
+		- Fix RemoveEventHandler for OnKeyEvent/OnControlEvent to remove all events with partial filter definition
+		- Avoid rare null pointer access in ShowRuntimeError (thanks @Fox2Code)
 	Changes:
 		- Force C++20 Standard, modified some places for compliance
+    API:
+        - Add PatchCallsInRange
+    Loader:
+        -   Added CS Editor checksum for visual style + DPI awareness executable
+
 		
 	
 xOBSE 22.9

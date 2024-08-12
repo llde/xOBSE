@@ -1638,19 +1638,29 @@ bool RemoveHandler(const char* id, EventCallback& handler)
 		for (CallbackList::iterator iter = callbacks->begin(); iter != callbacks->end(); ) {
 			if (iter->script == handler.script) {
 				bool bMatches = true;
-				if (eventType == kEventID_OnHealthDamage) { 
-					if (handler.callingObj && handler.callingObj != iter->object) {	// OnHealthDamage special-casing
+				if (eventType == kEventID_EventControl || eventType == kEventID_EventKey) {
+					if (handler.object != (TESObjectREFR*)-1 && handler.object != iter->object) {
+						bMatches = false;
+					}
+
+					if (handler.source != (TESObjectREFR*)-1 && handler.source != iter->source) {
 						bMatches = false;
 					}
 				}
-				else if (handler.object && handler.object != iter->object) {
-					bMatches = false;
-				}
-				
-				if (handler.source && handler.source != iter->source) {
-					bMatches = false;
-				}
+				else {
+					if (eventType == kEventID_OnHealthDamage) {
+						if (handler.callingObj && handler.callingObj != iter->object) {	// OnHealthDamage special-casing
+							bMatches = false;
+						}
+					}
+					else if (handler.object && handler.object != iter->object) {
+						bMatches = false;
+					}
 
+					if (handler.source && handler.source != iter->source) {
+						bMatches = false;
+					}
+				}
 				if (bMatches) {
 					if (iter->IsInUse()) {
 						// this handler is currently active, flag it for later removal
