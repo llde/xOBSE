@@ -275,16 +275,14 @@ UInt16 OSInputGlobalsEx::GetMouseControlKey(UInt16 ctrl)
 	return key;
 }
 
-int OSInputGlobalsEx::GetBufferedKeyStateChangeHook(DIDEVICEOBJECTDATA* data) {
+int OSInputGlobalsEx::GetBufferedKeyStateChangeHook(DIDEVICEOBJECTDATA* data /*Appears to be a smaller struct or with the last members overlapping aother memory zone. Fullinitialization cause strange crashes*/) {
 	DIDEVICEOBJECTDATA temp = {};
 	if(!this->keyboardInterface) return 0;
  	IDirectInputDevice8* keyInterface = this->keyboardInterface;
 	UInt32 number = 1;
 	if(fakeBuffered.HasElement()) temp = fakeBuffered.RemoveFirst();
-	if(keyInterface->GetDeviceData(0x14, &temp, &number, 0) != DI_OK || number == 0) return 0;
+	else if(keyInterface->GetDeviceData(0x14, &temp, &number, 0) != DI_OK || number == 0) return 0;
 	data->dwOfs = temp.dwOfs;
-	data->dwData = temp.dwData;
-	data->dwTimeStamp = temp.dwTimeStamp;
 	return 2 - ((temp.dwData & 0x80) == 0x80);
 }
 /*

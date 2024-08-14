@@ -14,6 +14,7 @@ xOBSE 22.10
 		- More precise handling of replace/count/find matching part of a multibyte character (stringVar are now internally  wide string, proper handling require the proper locale and codepage setted in the system)
 		- Fix RemoveEventHandler for OnKeyEvent/OnControlEvent to remove all events with partial filter definition
 		- Avoid rare null pointer access in ShowRuntimeError (thanks @Fox2Code)
+		- Fix Menu{Tap/Hold/Release}Key commands not properly registering the button event for the UI.
 	Changes:
 		- Force C++20 Standard, modified some places for compliance
     API:
