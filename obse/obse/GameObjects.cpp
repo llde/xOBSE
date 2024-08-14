@@ -37,10 +37,33 @@ void Actor::EquipItem(TESForm * objType, UInt32 unk1, ExtraDataList* itemExtraLi
 	ThisStdCall(s_Actor_EquipItem, this, objType, unk1, itemExtraList, unk3, lockEquip);
 }
 
+static void OverrideGameSounds()
+{
+	static const UInt32 s_patchAddr = 0x005E96E7l;			// in fn char* GetItemUpDownSound(TESForm* item, bool bUpSound, arg2)
+
+	// nop out a jnz rel8 at beginning of fn to make it always return NULL (indicating no sound for specified item)
+	SafeWrite16(s_patchAddr, 0x9090);
+}
+
+static void RestoreGameSounds() {
+	static const UInt16 s_overwrittenInstructions = 0x0675;	// jnz [rel8]
+	static const UInt32 s_patchAddr = 0x005E96E7l;			// in fn char* GetItemUpDownSound(TESForm* item, bool bUpSound, arg2)
+
+	// restore overwritten instructions
+	SafeWrite16(s_patchAddr, s_overwrittenInstructions);
+
+}
 void Actor::UnequipItem(TESForm* objType, UInt32 unk1, ExtraDataList* itemExtraList, UInt32 unk3, bool lockUnequip, UInt32 unk5)
 {
 	ThisStdCall(0x005F2E70, this, objType, unk1, itemExtraList, unk3, lockUnequip, unk5);
 
+}
+
+void Actor::UnequipItemSilent(TESForm* objType, UInt32 unk1, ExtraDataList* itemExtraList, UInt32 unk3, bool lockUnequip, UInt32 unk5)
+{
+	OverrideGameSounds();
+	ThisStdCall(0x005F2E70, this, objType, unk1, itemExtraList, unk3, lockUnequip, unk5);
+	RestoreGameSounds();
 }
 
 UInt32 Actor::GetBaseActorValue(UInt32 value)
@@ -65,13 +88,22 @@ EquippedItemsList Actor::GetEquippedItems()
 
 void Actor::UnequipAllItems()
 {
+	std::list<std::pair<TESForm*, ExtraDataList* >>  itemList;
+
 	ExtraContainerChanges* xChanges = static_cast <ExtraContainerChanges*> (baseExtraList.GetByType (kExtraData_ContainerChanges));
-	if (xChanges && xChanges->data && xChanges->data->objList)
-		for (tList<ExtraContainerChanges::EntryData>::Iterator entry = xChanges->data->objList->Begin(); !entry.End(); ++entry)
-			if (*entry && entry->extendData && entry->type && entry->type->IsQuestItem())
-				for (tList<ExtraDataList>::Iterator extend = entry->extendData->Begin(); !extend.End(); ++extend)
+	if (xChanges && xChanges->data && xChanges->data->objList) {
+		for (tList<ExtraContainerChanges::EntryData>::Iterator entry = xChanges->data->objList->Begin(); !entry.End(); ++entry) {
+			if (*entry && entry->extendData && entry->type && entry->type->IsQuestItem()) {
+				for (tList<ExtraDataList>::Iterator extend = entry->extendData->Begin(); !extend.End(); ++extend) {
 					if (*extend && extend->IsWorn())
-						UnequipItem (entry->type, 1, extend.Get(), 0, false, 0);
+						itemList.push_back(std::pair(entry->type, extend.Get()));
+				}
+			}
+		}
+	}
+	for (std::pair<TESForm*,ExtraDataList*> item : itemList) {
+		UnequipItemSilent(item.first, 1, item.second, 0, false, 0);
+	}
 }
 
 ExtraContainerDataList	Actor::GetEquippedEntryDataList()

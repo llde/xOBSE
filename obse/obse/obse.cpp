@@ -39,7 +39,7 @@ void __stdcall Hooked_RtlDosPathNameToNtPathName_U(const WCHAR* DosName, UNICODE
 /*Allow a proper creation of the steam process*/
 HINSTANCE (__cdecl* Real_ShellExecuteA)(HWND, char*, const char*, char*, char*, int);
 HINSTANCE Hooked_ShellExecuteA(HWND   hwnd, char* lpOperation, const char* lpFile, char* lpParameters, char* lpDirectory, int nShowCmd) {
-	if (stricmp(lpFile, BadSteamExePath.c_str()) == 0) {
+	if (_stricmp(lpFile, BadSteamExePath.c_str()) == 0) {
 		return Real_ShellExecuteA(hwnd, lpOperation, SteamExePath.c_str(), lpParameters, lpDirectory, nShowCmd);
 	}
 	return Real_ShellExecuteA(hwnd, lpOperation, lpFile, lpParameters, lpDirectory, nShowCmd);

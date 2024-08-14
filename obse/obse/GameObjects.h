@@ -808,6 +808,7 @@ public:
 	// itemExtraList is NULL as the container changes entry is not resolved before the call
 	void				EquipItem(TESForm * objType, UInt32 unk1, ExtraDataList* itemExtraList, UInt32 unk3, bool lockEquip);
 	void				UnequipItem(TESForm* objType, UInt32 unk1, ExtraDataList* itemExtraList, UInt32 unk3, bool lockUnequip, UInt32 unk5);
+	void				UnequipItemSilent(TESForm* objType, UInt32 unk1, ExtraDataList* itemExtraList, UInt32 unk3, bool lockUnequip, UInt32 unk5);
 
 	UInt32				GetBaseActorValue(UInt32 value);
 	EquippedItemsList	GetEquippedItems();
