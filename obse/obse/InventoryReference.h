@@ -39,7 +39,7 @@ public:
 		DeferredAction(DeferredActionType action, const Data& data, TESObjectREFR* dest, SInt32 count) : type(action), data(data), dest(dest), count(count){}
 		bool Execute(InventoryReference* iref);
 	};
-
+	ExtraDataList*				 m_backupList; //A way to signal if the reference is actually edited or not. Could potentially be deprecated with Per Script IR
     Data						m_data;
 	TESObjectREFR*				m_containerRef;
 	TESObjectREFR*				m_tempRef;
@@ -65,7 +65,7 @@ public:
 	bool Validate();
 	void DoDeferredActions();
 	SInt32 GetCount();
-    
+	void UpdateRefDataFromContainer();
 	static InventoryReference* GetForRefID(UInt32 refID);
 
 	static InventoryReference* CreateInventoryRef(TESObjectREFR* container, InventoryReference::Data data, bool bValidate);

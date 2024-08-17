@@ -240,7 +240,7 @@ public:
 	BSExtraData*	RemoveByType(UInt32 type);
 	bool			Add(BSExtraData* toAdd);
 	void			RemoveAll();
-
+	bool			Compare(ExtraDataList* oth);
 	bool			MarkScriptEvent(UInt32 eventMask, TESForm* eventTarget);
 
 	void			Copy(ExtraDataList* from);

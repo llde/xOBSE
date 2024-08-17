@@ -1,5 +1,6 @@
 #include "GameBSExtraData.h"
 #include "obse/GameAPI.h"
+#include <obse/GameExtraData.h>
 
 static LPCRITICAL_SECTION BSExtraDataSection = (LPCRITICAL_SECTION) 0x00B33800;
 
@@ -107,6 +108,10 @@ bool ExtraDataList::Add(BSExtraData* toAdd)
 	return true;
 }
 
+bool ExtraDataList::Compare(ExtraDataList* oth) {
+	return ThisStdCall(0x0041E550, this, oth);
+}
+
 void ExtraDataList::Copy(ExtraDataList* from)
 {
 	ThisStdCall(0x00428920, this, from);
@@ -136,8 +141,9 @@ void ExtraDataList::DebugDump()
 
 	if (m_data)
 	{
-		for(BSExtraData * traverse = m_data; traverse; traverse = traverse->next)
+		for (BSExtraData* traverse = m_data; traverse; traverse = traverse->next) {
 			_MESSAGE("%s", GetObjectClassName(traverse));
+		}
 	}
 	else
 		_MESSAGE("No data in list");
