@@ -126,11 +126,6 @@ bool InventoryReference::WriteRefDataToContainer(){  //IR operates directly on c
 	if (m_bRemoved) return true;
 	if (!m_containerRef || !m_data.type || !Validate()) return false;
 	if (m_data.xData) {
-		if (strcmp(GetFullName(m_data.type), "Claymore Dwemeri") == 0){
-			_MESSAGE("LOG");
-			m_data.xData->DebugDump();
-			m_tempRef->baseExtraList.DebugDump();
-		}
 		if (m_backupList->Compare(&m_tempRef->baseExtraList)) {
 			DEBUG_PRINT("ExtraData changed. Mirror changes %s", GetFullName(m_data.type));
 			m_data.xData->RemoveAll();

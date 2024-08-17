@@ -15,6 +15,7 @@ xOBSE 22.10
 		- Fix RemoveEventHandler for OnKeyEvent/OnControlEvent to remove all events with partial filter definition
 		- Avoid rare null pointer access in ShowRuntimeError (thanks @Fox2Code)
 		- Fix Menu{Tap/Hold/Release}Key commands not properly registering the button event for the UI.
+		- Fix xOBSE 22.7 regression for Useful House, now unmodified IR won't reset the stack extraDataList, possible if it was modified by another IR or directly by the engine.
 	Changes:
 		- Force C++20 Standard, modified some places for compliance
     API:
