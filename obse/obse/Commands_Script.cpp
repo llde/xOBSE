@@ -573,18 +573,22 @@ static bool Cmd_DispatchEvent_Execute (COMMAND_ARGS)
 static bool Cmd_SetEventHandler_Parse(UInt32 numParams, ParamInfo* paramInfo, ScriptLineBuffer* lineBuf, ScriptBuffer* scriptBuf) {
 	bool res = true;
 	char* context;
-	std::string sanitized = strtok_s(lineBuf->paramText, " ", &context);
+	std::string sanitized = strtok_s(lineBuf->paramText, " \t", &context);
 	sanitized += ' ';
-	sanitized += strtok_s(NULL, " ", &context); //Script already validated;
+	sanitized += strtok_s(NULL, " \t", &context); //Script already validated;
 	sanitized += ' ';
 	/*
 	This take care of unquoted string warnings for thefirst element of filter pair as well the token mismatch when the token name is defined as a variable when unquoted
 	TODO take a chance to create a more optimized code path for runtime
 	*/
-	while (char* tok = strtok_s(NULL, " ", &context)) {
+	while (char* tok = strtok_s(NULL, " \t", &context)) {
 		std::string  inner = tok;
+
 		std::string internal_inner = inner.substr(0, inner.find(':'));
-		if (internal_inner.find("\"") != std::string::npos) internal_inner = internal_inner.substr(1, internal_inner.size() - 1);
+		size_t pos = internal_inner.find("\"");
+		size_t pos_end = internal_inner.rfind("\"");
+		if (pos != std::string::npos && pos_end != std::string::npos) internal_inner = internal_inner.substr(pos + 1, pos_end - 1);
+
 		bool valid = internal_inner._Equal("first") || internal_inner._Equal("ref") || internal_inner._Equal("second") || internal_inner._Equal("object");
 		if (!valid) {
 			CompilerMessages::Show(CompilerMessages::kError_InvalidEventFilter, scriptBuf, internal_inner.data());
