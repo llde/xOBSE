@@ -940,7 +940,10 @@ static const TESObjectCELL::ObjectListEntry* GetCellRefEntry(CellListVisitor vis
 
 	return entry;
 }
-
+/*
+TODO document and rework cell scans when it make sense. 
+Add additional protections for bad callers.
+*/
 static TESObjectREFR* CellScan(Script* scriptObj, TESObjectCELL* cellToScan = NULL, UInt32 formType = 0, UInt32 cellDepth = 0, bool getFirst = false, bool includeTaken = false, bool includeDeleted = false ,ProjectileFinder* projFinder = NULL)
 {
 	static std::map<UInt32, CellScanInfo> scanScripts;
@@ -948,11 +951,15 @@ static TESObjectREFR* CellScan(Script* scriptObj, TESObjectCELL* cellToScan = NU
 
 	if (getFirst)
 		scanScripts.erase(idx);
-
-	if (scanScripts.find(idx) == scanScripts.end())
+	bool isScriptUnRegistered = scanScripts.find(idx) == scanScripts.end();
+	if (isScriptUnRegistered  && cellToScan)
 	{
 		scanScripts[idx] = CellScanInfo(cellDepth, formType, includeTaken, includeDeleted , cellToScan);
 		scanScripts[idx].FirstCell();
+	}
+	else if (isScriptUnRegistered && cellToScan == nullptr) {
+		Console_Print("[ERROR], attempted to call GetNextRef after a Null reference, without reinit the cell scan with GetFirstRef. In Script %08X", scriptObj->refID);
+		return nullptr;
 	}
 
 	CellScanInfo* info = &(scanScripts[idx]);
