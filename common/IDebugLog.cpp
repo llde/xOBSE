@@ -134,6 +134,18 @@ void IDebugLog::Log(LogLevel level, const char * fmt, va_list args)
 		printf("%s\n", formatBuf);
 }
 
+void IDebugLog::Log(LogLevel level, const char* fmt)
+{
+	bool	log = (level <= logLevel);
+	bool	print = (level <= printLevel);
+
+	if (log)
+		Message(formatBuf);
+
+	if (print)
+		printf("%s\n", formatBuf);
+}
+
 /**
  *	Set the current message source
  */

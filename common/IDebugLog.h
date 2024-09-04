@@ -33,6 +33,7 @@ class IDebugLog
 		};
 
 		static void			Log(LogLevel level, const char * fmt, va_list args);
+		static void			Log(LogLevel level, const char* fmt);
 
 		static void			SetSource(const char * source);
 		static void			ClearSource(void);
@@ -111,6 +112,11 @@ inline void _MESSAGE(const char * fmt, ...)
 	va_start(args, fmt);
 	gLog.Log(IDebugLog::kLevel_Message, fmt, args);
 	va_end(args);
+}
+
+inline void _MESSAGE_D(const char* fmt)
+{
+	gLog.Log(IDebugLog::kLevel_Message, fmt);
 }
 
 inline void _VMESSAGE(const char * fmt, ...)
