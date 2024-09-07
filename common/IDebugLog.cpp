@@ -140,10 +140,10 @@ void IDebugLog::Log(LogLevel level, const char* fmt)
 	bool	print = (level <= printLevel);
 
 	if (log)
-		Message(formatBuf);
+		Message(fmt);
 
 	if (print)
-		printf("%s\n", formatBuf);
+		printf("%s\n", fmt);
 }
 
 /**
