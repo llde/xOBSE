@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>script-types</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">
+body {
+padding: 10%;
+}
+
+h1 {
+font-size: 150%;
+font-weight: normal;
+}
+h2 {
+font-size: 130%;
+font-weight: normal;
+margin-top: 40px;
+}
+h3 {
+font-size: 110%;
+font-weight: normal;
+margin-top: 30px;
+color: #000099;
+background-color: #ffffff;
+}
+h4 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+}
+h5 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+color: #000099;
+background-color: #ffffff;
+}
+
+table {
+border: 1px solid black;
+margin: 20px 0px 20px 0px;
+}
+caption {
+text-align: left;
+margin-bottom: 10px;
+}
+td, th {
+padding: 5px;
+}
+tr.alt {
+color: black;
+background-color: #dedede;
+}
+code.alt {
+color: 770000;
+background-color: #dedede;
+}
+table.functionIndex td{
+padding: 0px 30px 0px 5px;
+}
+
+ul {
+list-style-type: none;
+}
+
+.boxhl {
+border: 1px dotted black;
+padding: 8px;
+color: #000000;
+background-color: #eeeeff;
+}
+
+.code {
+border: 1px solid black;
+padding: 20px;
+font-family: monospace;
+color: #770000;
+background-color: #ffffff;
+}
+
+pre {
+color: #770000;
+background-color: #ffffff;
+}
+
+code.s {
+margin-left: 40px;
+font-weight: normal;
+color: #770000;
+background-color: #ffffff;
+}
+
+code {
+color: #000000;
+background-color: #ffffff;
+}
+
+span.op {
+font-style: italic;
+color: #666666;
+background-color: #ffffff;
+}
+
+pre.msgbox {
+color: #777700;
+background-color: #ffffff;
+font-family: serif;
+}
+
+.ind {
+margin-left: 40px;
+}
+.c {
+text-align: center;
+}
+.l {
+text-align: left;
+}
+
+.f {
+color: #3333cc;
+background-color: white;
+}
+a:link.f{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.f {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.f {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link.cf{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.cf {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.cf {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link img {
+border-style: none;
+}
+a:visited img {
+border-style: none;
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<p>Any script can be 1 of 3 types: Quest, Object, and Magic Effect
+alongside user-defined functions.</p>
+<h1 id="quest-scripts">Quest Scripts</h1>
+<p>Quest scripts can run at any point in time, as long as the quest the
+script is attached to is running. Quest scripts should be considered
+global functions. They are defined in the same manner but have some
+unique constructs.</p>
+<h2 id="fquestdelaytime">fQuestDelayTime</h2>
+<p>Quest scripts run on an interval in order to improve performance.
+This is handled by the float variable <code>fQuestDelayTime</code>. It
+can be set to any floating point value, but scripts cannot be processed
+faster than the game updates. This means a value of 0.01 is updating at
+around 60 frames per second (16ms frametime). As well, this value
+<strong>does not</strong> mean that each line updates at the value of
+<code>fQuestDelayTime</code>. It means the script
+<strong>starts</strong> processing at this value. One should be aware as
+they make larger scripts, and use profiling tools to make sure script
+processing time isn’t more than 16ms, the 60fps frametime.</p>
+<p>This value defaults to 5 seconds.</p>
+<h2 id="quest-namespace">Quest Namespace</h2>
+<p>All variables declared in a quest script are added to a namespace
+identified with the name of the quest the quest is attached to. These
+variables are thus accessible anywhere, and unlike the script itself,
+can be updated anywhere at anytime regardless of if the quest itself is
+running. The format is as so:</p>
+<pre class="ebnf"><code>questVariable = namespace, &#39;.&#39;, variable;
+namespace = questName;
+questName = identifier;
+variable = identifier;</code></pre>
+<pre class="obse"><code>scn QuestScript
+int questVar
+; quest name is &quot;QuestName&quot;
+scn OtherScript
+begin GameMode
+let QuestName.questVar := 1
+end</code></pre>
+<p>All variable limitations apply.</p>
+<p>Since quest scripts aren’t attached to objects, most block types have
+no use. Thus the majority of the use is via <code>MenuMode</code> and
+<code>GameMode</code> block types alongside user-defined functions.</p>
+<h1 id="object-scripts">Object Scripts</h1>
+<p>Object scripts attach to objects. They use the majority of begin
+block types. They also serve as the source type for user-defined
+functions. See the section on User-Defined Functions for more
+details.</p>
+<h1 id="magic-effect-scripts">Magic Effect Scripts</h1>
+<p>Magic effect scripts are used to create magic effects. They are
+unique in that they only fire during when ‘GameMode’ blocks are active
+but only use the 3 unique <a href="statements.md#magic-effect-block-types">Magic Effect Block
+Types</a>. Some other block types work, but this behavior is
+unpredictable. ‘MenuMode’ is the only one that behaves exactly. These
+scripts are mostly designed to run on actors (NPCs and creatures), but
+will run on actor corpses, doors, and furniture. When run on these
+objects, the script will run once.</p>
+</body>
+</html>
