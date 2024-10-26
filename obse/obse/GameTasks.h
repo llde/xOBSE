@@ -161,6 +161,7 @@ public:
 
 class Model
 {
+public:
 	const char	* path;
 	UInt32		unk04;
 	NiNode		* ninode;
@@ -168,6 +169,7 @@ class Model
 
 class kfModel
 {
+public:
 	const char				* path;
 	NiControllerSequence	* controllerSequence;
 	TESAnimGroup			* animGroup;
