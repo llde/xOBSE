@@ -210,6 +210,10 @@ const _Oblivion_DynamicCast Oblivion_DynamicCast = (_Oblivion_DynamicCast)0x0098
 CRITICAL_SECTION * g_extraListMutex = (CRITICAL_SECTION *)0x00B33800;
 CRITICAL_SECTION * g_pathingMutex = (CRITICAL_SECTION *)0x00B3BE80;
 
+MemoryPool **	g_memoryHeap_poolsBySize = (MemoryPool **)0x00B33080;		// size = 0x81
+MemoryPool **	g_memoryHeap_poolsByAddress = (MemoryPool **)0x00B32C80;	// size = 0x100
+
+
 
 const char * GetFullName(TESForm * baseForm)
 {

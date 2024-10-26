@@ -26,8 +26,6 @@
 static const UInt32 kMemOverflowMarkerStart = 0xDEADBEEF;
 static const UInt32 kMemOverflowMarkerEnd = 0xEAC15A55;
 
-MemoryPool **	g_memoryHeap_poolsBySize = (MemoryPool **)0x00B33080;		// size = 0x81
-MemoryPool **	g_memoryHeap_poolsByAddress = (MemoryPool **)0x00B32C80;	// size = 0x100
 
 static const UInt32 kMemoryHeap_Allocate_Addr = 0x00401AA7;
 static const UInt32 kMemoryHeap_Free_Addr = 0x00401D46;

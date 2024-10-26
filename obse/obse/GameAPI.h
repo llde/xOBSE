@@ -329,6 +329,9 @@ public:
 
 STATIC_ASSERT(offsetof(MemoryPool, field_118) == 0x118);
 
+extern MemoryPool **	g_memoryHeap_poolsBySize;
+extern MemoryPool **	g_memoryHeap_poolsByAddress;
+
 
 // 1C8 (different between 1.1, 1.2)
 class TESSaveLoadGame
