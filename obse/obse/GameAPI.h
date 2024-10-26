@@ -220,6 +220,116 @@ class NiFormArray;
 // BSTCaseInsensitiveStringMap<IDLE_ANIM_ROOT *> / NiTPointerMap<const char*, IDLE_ANIM_ROOT *>
 extern const NiTMapBase<const char*, NiFormArray*>**  g_IdleAnimationMap;
 
+class MemoryHeap
+{
+public:
+	MemoryHeap(UInt32 mainSize, UInt32 unk1);
+
+	void* Allocate(UInt32 size, UInt32 unk);
+	void  Free(void* ptr);
+
+	void	CreatePool(UInt32 entrySize, UInt32 totalSize);
+
+	bool	IsMainHeapAllocation(void* ptr) {
+		UInt8* mainHeap = (UInt8*)g_formHeap->field_018;
+		UInt8* mainHeapEnd = mainHeap + g_formHeap->field_00C;
+		UInt8* result8 = (UInt8*)ptr;
+
+		return mainHeap && ((result8 >= mainHeap) && (result8 < mainHeapEnd));
+	}
+
+	virtual void	Unk_0(UInt32 unk0);
+	virtual void* AllocatePage(UInt32 size);
+	virtual void* RawAlloc(UInt32 unk0);
+	virtual void* RawAlloc2(UInt32 unk0);
+	virtual void	FreeMemory(void* buf);
+	virtual void	RawFree(void* buf);
+	virtual void	RawFree2(void* buf);
+	virtual UInt32	RawSize(void* buf);
+
+	// memory panic callback
+	typedef void (*Unk164Callback)(UInt32 unk0, UInt32 unk1, UInt32 unk2);
+
+	//	void	** _vtbl;	// 000
+	UInt32	field_004;	// 004 - alignment
+	UInt32	field_008;	// 008
+	UInt32	field_00C;	// 00C - size of main memory block
+	UInt32	field_010;	// 010
+	UInt32	field_014;	//g_memoryHeap_poolsBySize 014
+	void* field_018;	// 018 - main memory block
+	UInt32	field_01C;	// 01C
+	UInt32	field_020;	// 020
+	UInt32	field_024;	// 024
+	UInt32	field_028;	// 028
+	UInt32	field_02C;	// 02C
+	UInt32	field_030;	// 030 - size of field_034 / 8
+	void* field_034;	// 034 - 0x2000 byte buffer
+	void* field_038;	// 038 - end of field_034
+	UInt32	field_03C;	// 03C
+	UInt32	field_040;	// 040
+	void* field_044;	// 044
+	UInt32	field_048;	// 048
+	UInt32	field_04C;	// 04C
+	UInt32	field_050;	// 050
+	UInt32	field_054;	// 054 - available memory at startup
+	UInt32	field_058;	// 058
+	UInt32	field_05C;	// 05C
+	UInt32	field_060;	// 060
+	UInt32	field_064;	// 064
+	UInt32	unk_068[(0x164 - 0x068) >> 2];	// 068
+	Unk164Callback	field_164;	// 164
+	UInt32	field_168;	// 168 - used memory at startup
+	UInt8	field_16C;	// 16C
+	UInt8	field_16D;	// 16D
+	// 16E
+};
+STATIC_ASSERT(offsetof(MemoryHeap, field_16D) == 0x16D);
+
+class MemoryPool
+{
+public:
+	MemoryPool(UInt32 entrySize, UInt32 totalSize, const char* name);
+	~MemoryPool();
+
+	void* Allocate(void);
+	bool	IsMember(void* buf)
+	{
+		if (!field_040) return false;
+		if (buf < field_040) return false;
+		if (buf >= ((UInt8*)field_040) + field_110) return false;
+
+		return true;
+	}
+
+	struct FreeEntry
+	{
+		FreeEntry* prev;
+		FreeEntry* next;
+	};
+
+	char	m_name[0x40];	// 000
+	void* field_040;	// 040 - base buffer
+	FreeEntry* freeList;	// 044
+
+	UInt32	unk_048[(0x080 - 0x048) >> 2];	// 048
+
+	CRITICAL_SECTION	critSection;	// 080
+
+	UInt32	unk_098[(0x100 - 0x098) >> 2];	// 098
+
+	UInt32	field_100;	// 100 - entry size
+	UInt32	field_104;	// 104
+	UInt16* field_108;	// 108 - page allocation count (FFFF - unallocated)
+	UInt32	field_10C;	// 10C - size of field_108 (in UInt16s)
+	UInt32	field_110;	// 110 - total size
+	UInt32	field_114;	// 114
+	UInt32	field_118;	// 118
+	// 11C
+};
+
+STATIC_ASSERT(offsetof(MemoryPool, field_118) == 0x118);
+
+
 // 1C8 (different between 1.1, 1.2)
 class TESSaveLoadGame
 {
