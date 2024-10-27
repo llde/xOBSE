@@ -22,6 +22,7 @@ class StringVar
 	std::wstring data;
 	UInt8		owningModIndex;
 	std::unique_ptr<const char[]> multibyte_ptr;
+	size_t	multibyte_len;
 	bool modified;
 public:
 	StringVar(const char* in_data, UInt32 in_refID);
@@ -39,7 +40,7 @@ public:
 	static UInt32	GetCharType(char ch);
 
 	std::string String();
-	const char*	GetCString();
+	const std::tuple<const char*, const UInt16>	GetCString();
 	UInt32		GetLength();
 	UInt8		GetOwningModIndex();	
 };
@@ -69,6 +70,7 @@ bool AssignToStringVar(ParamInfo * paramInfo, void * arg1, TESObjectREFR * thisO
 namespace PluginAPI
 {
 	const char* GetString(UInt32 stringID);
+	const char* GetStringWithSize(UInt32 stringID, UInt32* len);
 	void SetString(UInt32 stringID, const char* newVal);
 	UInt32 CreateString(const char* strVal, void* owningScript);
 }

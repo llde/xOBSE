@@ -249,7 +249,7 @@ static bool Cmd_sv_ToNumeric_Execute(COMMAND_ARGS)
 	StringVar* strVar = g_StringMap.Get(strID);
 	if (strVar)
 	{
-		const char* cStr = strVar->GetCString();
+		const auto [ cStr, _] = strVar->GetCString();
 		*result = strtod(cStr + startPos, NULL);
 	}
 
@@ -907,7 +907,7 @@ static bool Cmd_sv_PrintBytes_Execute(COMMAND_ARGS) {
 		Console_Print("Get stringVar key");
 		if (!rhVar)
 			return true;
-		const  char* str = rhVar->GetCString();
+		const  char* str = std::get<0>(rhVar->GetCString());
 		Console_Print("%s", str);
 		char buf[3] = {0};
 		std::string final = "";

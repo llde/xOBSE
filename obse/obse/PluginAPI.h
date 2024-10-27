@@ -121,7 +121,7 @@ struct OBSEConsoleInterface
 struct OBSEStringVarInterface
 {
 	enum {
-		kVersion = 1
+		kVersion = 2
 	};
 
 	UInt32		version;
@@ -130,6 +130,7 @@ struct OBSEStringVarInterface
 	UInt32		(* CreateString)(const char* value, void* owningScript);
 	void		(* Register)(OBSEStringVarInterface* intfc);			// DEPRECATED: use RegisterStringVarInterface() in GameAPI.h
 	bool		(* Assign)(ParamInfo * paramInfo, void * arg1, TESObjectREFR * thisObj, TESObjectREFR* contObj, Script * scriptObj, ScriptEventList * eventList, double * result, UInt32 * opcodeOffsetPtr, const char* newValue);
+	const char* (*GetStringWithSize)(UInt32 stringID, UInt32* len);
 };
 
 // Added in v0016, Deprecated in xOBSE 22.2 use OBSEInputInterface

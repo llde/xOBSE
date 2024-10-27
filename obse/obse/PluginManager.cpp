@@ -42,7 +42,8 @@ static OBSEStringVarInterface g_OBSEStringVarInterface =
 	PluginAPI::SetString,
 	PluginAPI::CreateString,
 	RegisterStringVarInterface,
-	AssignToStringVar
+	AssignToStringVar,
+	PluginAPI::GetStringWithSize
 };
 
 bool IsKeyPressedOld(UInt32 key) { return PluginAPI::IsKeyPressedSimulated(key); }

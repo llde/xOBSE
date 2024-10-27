@@ -330,7 +330,12 @@ const char* ScriptToken::GetString() const
 	else if (type == kTokenType_StringVar && value.var)
 	{
 		StringVar* strVar = g_StringMap.Get(value.var->data);
-		result = strVar ? strVar->GetCString() : NULL;
+		if (strVar) {
+			auto [string, _] = strVar->GetCString();
+			result = string;
+		}
+		else 
+			result = NULL;
 	}
 #endif
 	return result ? result : empty;

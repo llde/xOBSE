@@ -75,9 +75,11 @@ static void __stdcall DoExtractString(char* scriptData, UInt32 dataLen, char* de
 			{
 				StringVar* strVar;
 				strVar = g_StringMap.Get(var->data);
-				if (strVar)
-					if (strVar->GetLength() < 0x100)		// replace string with contents of string var
-						strcpy_s(dest, strVar->GetLength() + 1, strVar->GetCString());
+				if (strVar) {
+					auto [string, len] = strVar->GetCString(); //len should aready be null terminated 
+					if(len < 0x100) // replace string with contents of string var  TODO complain if too big
+						strcpy_s(dest, len, string);
+				}
 			}
 		}
 	}			// "%e" becomes an empty string

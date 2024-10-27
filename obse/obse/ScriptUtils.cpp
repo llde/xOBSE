@@ -575,7 +575,7 @@ ScriptToken* Eval_TimesEquals_String(OperatorType op, ScriptToken* lh, ScriptTok
 	}
 
 	strVar->Set(result.c_str());
-	return ScriptToken::Create(strVar->GetCString());
+	return ScriptToken::Create(std::get<0>(strVar->GetCString()));
 }
 
 ScriptToken* Eval_Multiply_String_Number(OperatorType op, ScriptToken* lh, ScriptToken* rh, ExpressionEvaluator* context)

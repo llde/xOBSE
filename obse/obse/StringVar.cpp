@@ -16,11 +16,11 @@ wchar_t* ConvertToWideString(const char* string) {
 }
 
 
-char* ConvertToMultibyteString(const wchar_t* widestring) {
+std::tuple<char*, UInt32> ConvertToMultibyteString(const wchar_t* widestring) {
 	int sizeMultibyteBuffer = WideCharToMultiByte(CP_ACP, 0, widestring, -1, nullptr, 0, nullptr,nullptr);
 	char* string = new char[sizeMultibyteBuffer];
 	WideCharToMultiByte(CP_ACP, 0, widestring, -1, string, sizeMultibyteBuffer,nullptr,nullptr);
-	return string;
+	return { string, sizeMultibyteBuffer };
 }
 
 StringVar::StringVar(const char* in_data, UInt32 in_refID)
@@ -32,16 +32,18 @@ StringVar::StringVar(const char* in_data, UInt32 in_refID)
 }
 
 std::string StringVar::String() {
-	char* string = ConvertToMultibyteString(data.c_str());
+	auto [string, size] = ConvertToMultibyteString(data.c_str());
 	return std::string(string);
 }
 
-const char* StringVar::GetCString()
+const std::tuple<const char*, const UInt16> StringVar::GetCString()
 {
 	if (modified == true || multibyte_ptr.get() == nullptr) {
-		multibyte_ptr = std::unique_ptr<const char[]>(ConvertToMultibyteString(data.c_str()));
+		auto [string, size] = ConvertToMultibyteString(data.c_str());
+		multibyte_ptr = std::unique_ptr<const char[]>(string);
+		multibyte_len =  size;
 	}
-	return multibyte_ptr.get();
+	return { multibyte_ptr.get(), (UInt16)multibyte_len };
 }
 
 void StringVar::Set(const char* newString)
@@ -253,7 +255,7 @@ std::string StringVar::SubString(UInt32 startPos, UInt32 numChars)
 
 	if (startPos < GetLength()) {
 		std::wstring sub = data.substr(startPos, numChars);
-		char* string = ConvertToMultibyteString(sub.data());
+		auto [string, _] = ConvertToMultibyteString(sub.data());
 		return std::string(string);
 	}
 	else
@@ -308,9 +310,9 @@ void StringVarMap::Save(OBSESerializationInterface* intfc)
 
 		intfc->WriteRecordData(&modIndex, sizeof(UInt8));
 		intfc->WriteRecordData(&iter->first, sizeof(UInt32));
-		UInt16 len = iter->second->GetLength();
+		auto [string, len] = iter->second->GetCString();
 		intfc->WriteRecordData(&len, sizeof(len));
-		intfc->WriteRecordData(iter->second->GetCString(), len);
+		intfc->WriteRecordData(string, len);
 	}
 
 	intfc->OpenRecord('STVE', 0);
@@ -320,7 +322,6 @@ void StringVarMap::Load(OBSESerializationInterface* intfc)
 {
 	_MESSAGE("Loading strings");
 	UInt32 type, length, version, stringID, tempRefID;
-	UInt16 strLength;
 	UInt8 modIndex;
 	char buffer[kMaxMessageLength] = { 0 };
 
@@ -334,8 +335,11 @@ void StringVarMap::Load(OBSESerializationInterface* intfc)
 	std::set<UInt8> exceededMods;
 
 	bool bContinue = true;
+
 	while (bContinue && intfc->GetNextRecordInfo(&type, &version, &length))
 	{
+		UInt16 strLen = 0;
+
 		switch (type)
 		{
 		case 'STVE':			//end of block
@@ -358,12 +362,17 @@ void StringVarMap::Load(OBSESerializationInterface* intfc)
 			}
 			else
 				modIndex = tempRefID >> 24;
-
 			intfc->ReadRecordData(&stringID, sizeof(stringID));
-			intfc->ReadRecordData(&strLength, sizeof(strLength));
-			
-			intfc->ReadRecordData(buffer, strLength);
-			buffer[strLength] = 0;
+
+			if (version == 0) {
+				intfc->ReadRecordData(&strLen, sizeof(strLen));
+			}
+			else {
+				_MESSAGE("Unrecognized version for STVR record. Version %u, expected max version 1", version);
+				break;
+			}
+			intfc->ReadRecordData(buffer, strLen);
+			buffer[strLen] = 0;
 
 			Insert(stringID, new StringVar(buffer, tempRefID));
 			modVarCounts[modIndex] += 1;
@@ -454,7 +463,18 @@ namespace PluginAPI
 	{
 		StringVar* var = g_StringMap.Get(stringID);
 		if (var)
-			return var->GetCString();
+			return std::get<0>(var->GetCString());
+		else
+			return NULL;
+	}
+	const char* GetStringWithSize(UInt32 stringID, UInt32* size)
+	{
+		StringVar* var = g_StringMap.Get(stringID);
+		if (var) {
+			auto [string, len] = var->GetCString();
+			if (size) *size = len;
+			return string;
+		}
 		else
 			return NULL;
 	}

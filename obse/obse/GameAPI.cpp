@@ -373,7 +373,7 @@ static const char* StringFromStringVar(UInt32 strID)
 {
 #if OBSE_CORE
 	StringVar* strVar = g_StringMap.Get(strID);
-	return strVar ? strVar->GetCString() : "";
+	return strVar ? std::get<0>(strVar->GetCString()) : "";
 #else
 	if (s_StringVarInterface)
 		return s_StringVarInterface->GetString(strID);

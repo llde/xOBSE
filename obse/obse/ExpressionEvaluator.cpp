@@ -755,7 +755,7 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 				StringVar* strVar = g_StringMap.Get(cmdResult);
 				if (strVar) {
 
-					curToken = ScriptToken::Create(strVar->GetCString());
+					curToken = ScriptToken::Create(std::get<0>(strVar->GetCString()));
 				}
 				else {
 					curToken = ScriptToken::Create("");
