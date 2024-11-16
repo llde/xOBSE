@@ -1,4 +1,13 @@
-xOBSE 22.10
+xOBSE 22.11
+	Fix/Changes:
+		- Use correct length for stringVar serialization and ToString($) operator for multibyte strings
+		- Compiler:  Climate forms are now an allowed type for StandardCompiler
+		- ExtractArgEx now support extracting TESClimate forms in commands. Commands using kFormType_Climate should only use ExtractArgsEx (or the expression evaluator with OBSE compiler)
+		- GetClimate*, SetClimate*, SetCurrentClimate now use kFormType_Climate arguments instead of kFormType_WeatherID
+	Docs:
+		- Moved links to cs.uesp.net
+
+ xOBSE 22.10
 	Additions:
 		- Compiler: add error when using invalid filter strings identifier (the first element of a zz::yy pair) in SetEventHandler and related functions 
 		- Improved Diagnostic for script errors
