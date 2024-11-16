@@ -652,6 +652,8 @@ bool ExpressionEvaluator::ConvertDefaultArg(ScriptToken* arg, ParamInfo* info, b
 						typeToMatch = kFormType_NPC; break;
 					case kParamType_EffectShader:
 						typeToMatch = kFormType_EffectShader; break;
+					case kParamType_Climate:
+						typeToMatch = kFormType_Climate; break;
 					}
 
 					if (form->typeID == typeToMatch) {

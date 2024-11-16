@@ -41,9 +41,10 @@ enum ParamType
 	kParamType_Owner =				0x24,	// IsOwner					TESForm *, kFormType_NPC or kFormType_Faction
 	kParamType_EffectShader =		0x25,	// haven't seen used		TESForm *, kFormType_EffectShader
 
-	// custom OBSE types
+	// custom OBSE types or extensions for vanilla compiler
 	kParamType_StringVar =			0x01,
 	kParamType_Array =				0x26,	// only usable with compiler override; StandardCompile() will report unrecognized param type
+	kParamType_Climate =			0x27
 };
 
 /*** IsInventoryObjectType types

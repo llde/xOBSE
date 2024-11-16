@@ -219,7 +219,7 @@ static bool SetClimateValue_Execute(COMMAND_ARGS, UInt32 whichVal)
 	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &intVal, &form);
 	TESClimate* climate = (TESClimate*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_TESClimate, 0);
 	if (!climate) return true;
-
+	Console_Print("CLimate %08X   %s", climate->refID, climate->GetEditorName());
 	UInt8 nuVal = (UInt8)intVal;
 
 	switch (whichVal) {
@@ -792,6 +792,12 @@ CommandInfo kCommandInfo_GetWeatherInfo =
 	0
 };
 
+static ParamInfo kParams_OneClimateType[] =
+{
+	{	"climate",	kParamType_Climate,	0 },
+};
+
+
 CommandInfo kCommandInfo_GetClimateSunriseBegin =
 {
 	"GetClimateSunriseBegin",
@@ -800,7 +806,7 @@ CommandInfo kCommandInfo_GetClimateSunriseBegin =
 	"returns the sunrise begin time for the specified climate",
 	0,
 	1,
-	kParams_OneWeatherType,
+	kParams_OneClimateType,
 	HANDLER(Cmd_GetClimateSunriseBegin_Execute),
 	Cmd_Default_Parse,
 	NULL,
@@ -815,7 +821,7 @@ CommandInfo kCommandInfo_GetClimateSunriseEnd =
 	"returns the sunrise end time for the specified climate",
 	0,
 	1,
-	kParams_OneWeatherType,
+	kParams_OneClimateType,
 	HANDLER(Cmd_GetClimateSunriseEnd_Execute),
 	Cmd_Default_Parse,
 	NULL,
@@ -830,7 +836,7 @@ CommandInfo kCommandInfo_GetClimateSunsetBegin =
 	"returns the sunset begin time for the specified climate",
 	0,
 	1,
-	kParams_OneWeatherType,
+	kParams_OneClimateType,
 	HANDLER(Cmd_GetClimateSunsetBegin_Execute),
 	Cmd_Default_Parse,
 	NULL,
@@ -845,7 +851,7 @@ CommandInfo kCommandInfo_GetClimateSunsetEnd =
 	"returns the sunset end time for the specified climate",
 	0,
 	1,
-	kParams_OneWeatherType,
+	kParams_OneClimateType,
 	HANDLER(Cmd_GetClimateSunsetEnd_Execute),
 	Cmd_Default_Parse,
 	NULL,
@@ -860,7 +866,7 @@ CommandInfo kCommandInfo_GetClimateMoonPhaseLength =
 	"returns the length of the moon phase",
 	0,
 	1,
-	kParams_OneWeatherType,
+	kParams_OneClimateType,
 	HANDLER(Cmd_GetClimateMoonPhaseLength_Execute),
 	Cmd_Default_Parse,
 	NULL,
@@ -875,7 +881,7 @@ CommandInfo kCommandInfo_GetClimateHasMasser =
 	"returns 1 if the specified climate shows Masser",
 	0,
 	1,
-	kParams_OneWeatherType,
+	kParams_OneClimateType,
 	HANDLER(Cmd_GetClimateHasMasser_Execute),
 	Cmd_Default_Parse,
 	NULL,
@@ -890,17 +896,17 @@ CommandInfo kCommandInfo_GetClimateHasSecunda =
 	"returns 1 if the specified climate shows Secunda",
 	0,
 	1,
-	kParams_OneWeatherType,
+	kParams_OneClimateType,
 	HANDLER(Cmd_GetClimateHasSecunda_Execute),
 	Cmd_Default_Parse,
 	NULL,
 	0
 };
 
-static ParamInfo kParams_SetClimateInteger[2] =
+static ParamInfo kParams_SetClimateInteger[] =
 {
 	{	"value",	kParamType_Integer,		0 },
-	{	"weather",	kParamType_WeatherID,	0 },
+	{	"climate",	kParamType_Climate,	0 },
 };
 
 CommandInfo kCommandInfo_SetClimateSunriseBegin =
@@ -1016,7 +1022,7 @@ CommandInfo kCommandInfo_GetClimateVolatility =
 	"returns the climate's volatility",
 	0,
 	2,
-	kParams_OneWeatherType,
+	kParams_OneClimateType,
 	HANDLER(Cmd_GetClimateVolatility_Execute),
 	Cmd_Default_Parse,
 	NULL,
@@ -1498,7 +1504,7 @@ CommandInfo kCommandInfo_SetCurrentClimate =
 	"sets the current climate to the passed value",
 	0,
 	1,
-	kParams_OneWeatherType,
+	kParams_OneClimateType,
 	HANDLER(Cmd_SetCurrentClimate_Execute),
 	Cmd_Default_Parse,
 	NULL,

@@ -538,6 +538,7 @@ static bool v_ExtractArgsEx(SInt16 numArgs, ParamInfo * paramInfo, UInt8* &scrip
 			case kParamType_NPC:
 			case kParamType_Owner:
 			case kParamType_EffectShader:
+			case kParamType_Climate:
 			{
 				TESForm	** out = va_arg(args, TESForm **);
 				TESForm* form = ResolveForm(scriptData, scriptObj, eventList);

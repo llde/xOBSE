@@ -248,6 +248,8 @@ static const UInt32 kExpressionParserBufferOverflowRetnAddr_2 = 0x004F986A;
 static const UInt32 kWarnForDeprecatedCommandsHook = 0x00503119;
 static const UInt32 kWarnForDeprecatedCommandsReturn = 0x0050311E;
 
+static const UInt32 kDefaultCompilerHook = 0x00501F4E;
+static const UInt32 kDefaultCompilerRetn = 0x00501F5C;
 
 static __declspec(naked) void ExpressionParserBufferOverflowHook_1(void)
 {
@@ -746,6 +748,55 @@ static __declspec(naked) void __cdecl WarnForDeprecatedCommands(void){
 	}
 }
 
+static const UInt32 kReportScriptError = 0x004FFF40;
+static const UInt32 kDefaultCompilerCompileFormsArg = 0x00501A1A;
+static char kErrorCLimate[] = "Invalid Climate '%s' for parameter %s.\r\nCompiled script not saved!";
+static __declspec(naked) void __cdecl HandleCustomTypes(void) {
+	__asm {
+		cmp ecx, 0x27
+		jne error
+
+		push eax
+		mov     eax, [esp + 244h - 8h]
+		test eax,eax
+		jz error1
+		cmp     byte ptr[eax + 4], 2Eh;  //TESCLimate
+		jnz error1
+		pop eax
+		jmp [kDefaultCompilerCompileFormsArg]
+	error:
+		push ebx
+		mov ebx, [esp + 244h - 228h]
+		push ecx
+		push 94A1B0h //offset aParamTypeDRefe
+		push ebx
+		call kReportScriptError
+		add esp, 0xC
+		pop ebx
+		jmp[kDefaultCompilerRetn]
+	error1:
+		pop eax
+		push ebx
+		movsx   ebx,  word ptr[esp + 244h - 230h]
+		push edx
+		mov  edx, [esp + 248h - 22Ch]
+		lea ebx, [ebx + ebx * 2]
+		mov ebx, [edx + ebx * 4]
+		pop edx
+		push ebx
+		lea ebx, [esp + 248h - 218h]
+		push ebx
+		lea ebx, kErrorCLimate
+		push ebx
+		mov ebx, [esp + 250h - 228h]
+		push ebx
+		call kReportScriptError
+		add esp, 0x10
+		pop ebx
+		jmp[kDefaultCompilerRetn]
+
+	}
+}
 
 void Hook_Compiler_Init()
 {
@@ -760,6 +811,7 @@ void Hook_Compiler_Init()
 	// hook code in the vanilla expression parser's subroutine to fix the buffer overflow
 	WriteRelJump(kExpressionParserBufferOverflowHookAddr_1, (UInt32)&ExpressionParserBufferOverflowHook_1);
 	WriteRelJump(kExpressionParserBufferOverflowHookAddr_2, (UInt32)&ExpressionParserBufferOverflowHook_2);
+	WriteRelJump(kDefaultCompilerHook, (UInt32)&HandleCustomTypes);
 
 	CompilerOverride::InitHooks();
 }

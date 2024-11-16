@@ -3014,6 +3014,7 @@ void CommandTable::Init(void)
 	g_scriptCommands.Add(&kCommandInfo_SetOwningFactionRequiredRank);
 	g_scriptCommands.Add(&kCommandInfo_SetParentCellOwningFactionRequiredRank);
 	ADD_CMD_RET(GetLoadedTypeArray, kRetnType_Array);
+	//OBSE 22.9
 	g_scriptCommands.Add(&kCommandInfo_GetEditorID2, kRetnType_String);
 
    	UInt32 opcodeGetDisease =  g_scriptCommands.GetByName("GetDisease")->opcode;
@@ -3021,6 +3022,7 @@ void CommandTable::Init(void)
 	newgetDisease.shortName = "GetDisease";
 	newgetDisease.longName = "GetDisease";
 	g_scriptCommands.Replace(opcodeGetDisease, &newgetDisease);   //Ready for the mapping
+	//OBSE 22.10
 	ADD_CMD(sv_PrintBytes);
 	/* to add later if problems can be solved
 	g_scriptCommands.Add(&kCommandInfo_SetCurrentClimate); // too many problems
@@ -3337,6 +3339,7 @@ const char* SimpleStringForParamType(UInt32 paramType)
 		case kParamType_Owner: return "ref";
 		case kParamType_EffectShader: return "ref";
 		case kParamType_Birthsign: return "ref";
+		case kParamType_Climate: return "ref";
 		default: return "<unknown>";
 	}
 }
@@ -3382,6 +3385,7 @@ const char* StringForParamType(UInt32 paramType)
 		case kParamType_Owner: return "Owner";
 		case kParamType_EffectShader: return "EffectShader";
 		case kParamType_Birthsign: return "Birthsign";
+		case kParamType_Climate: return "Climate";
 		default: return "<unknown>";
 	}
 }

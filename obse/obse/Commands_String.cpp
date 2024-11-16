@@ -1011,7 +1011,7 @@ DEFINE_COMMAND(sv_SubString,
 
 static ParamInfo kParams_sv_ToNumeric[2] =
 {
-	{	"stringVar",	kParamType_Integer,	0	},
+	{	"stringVar",	kParamType_StringVar,	0	},
 	{	"startPos",		kParamType_Integer,	1	},
 };
 
