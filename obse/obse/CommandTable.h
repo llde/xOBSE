@@ -1,5 +1,5 @@
 #pragma once
-
+#include <vector>
 enum ParamType
 {
 	kParamType_String =				0x00,

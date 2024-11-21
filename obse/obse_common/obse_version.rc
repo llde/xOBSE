@@ -14,8 +14,8 @@ LANGUAGE LANG_ITALIAN, SUBLANG_ITALIAN
 //
 
 1 VERSIONINFO
- FILEVERSION 0,22,10,0
- PRODUCTVERSION 0,22,10,0
+ FILEVERSION 0,22,11,0
+ PRODUCTVERSION 0,22,11,0
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -31,11 +31,11 @@ BEGIN
         BLOCK "041004b0"
         BEGIN
             VALUE "FileDescription", "A component of the Oblivion Script Extender"
-            VALUE "FileVersion", "0.22.10.0"
+            VALUE "FileVersion", "0.22.11.0"
             VALUE "InternalName", "obse"
             VALUE "LegalCopyright", "Copyright (C) 2006-2023"
             VALUE "ProductName", "obse"
-            VALUE "ProductVersion", "0.22.10.0"
+            VALUE "ProductVersion", "0.22.11.0"
         END
     END
     BLOCK "VarFileInfo"

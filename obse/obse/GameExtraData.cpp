@@ -2,7 +2,6 @@
 #include "obse/GameAPI.h"
 #include "obse/GameObjects.h"
 #include "obse/Script.h"
-#include "obse/Hooks_Gameplay.h"
 #include <obse\Settings.h>
 
 typedef ExtraContainerChanges* (* _GetOrCreateExtraContainerChanges)(TESObjectREFR* refr);
