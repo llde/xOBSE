@@ -1,3 +1,7 @@
+xOBSE 22.12
+	Fix/Changes:
+		- Fix crashes for IsIconPathValid  and IsModelPathValid in case of record without the respective record (records without icon subrecords are valid at least)
+
 xOBSE 22.11
 	Fix/Changes:
 		- Use correct length for stringVar serialization and ToString($) operator for multibyte strings

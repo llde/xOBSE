@@ -2626,6 +2626,10 @@ static bool PathFunc_Execute(COMMAND_ARGS, UInt32 whichValue, EMode mode)
 			case kGet:
 				{
 					std::string sFilePath;
+					if(theString->m_data == nullptr) {
+						*result = 0;
+						break;
+					}
 					if (whichValue == kVal_Icon)
 						sFilePath = std::string("data\\textures\\menus\\icons\\") + std::string(theString->m_data);
 					else
