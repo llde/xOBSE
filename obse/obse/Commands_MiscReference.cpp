@@ -1463,8 +1463,10 @@ static bool Cmd_SetPlayerProjectile_Execute(COMMAND_ARGS)
 	if (mag)
 	{
 		MagicCaster* caster = (MagicCaster*)Oblivion_DynamicCast(*g_thePlayer, 0, RTTI_Actor, RTTI_MagicCaster, 0);
-		if (caster)
+		if (caster  && mag->caster != caster) {
+		//	mag->RemoveCaster(mag->caster);
 			mag->caster = caster;
+		}
 	}
 	else
 	{

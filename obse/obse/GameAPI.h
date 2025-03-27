@@ -489,7 +489,8 @@ public:
 
 	SceneGraph*		unk000;							// 000
 	SceneGraph*		unk004;							// 004
-	UInt32			unk008[(0x018 - 0x008) >> 2];	// 008
+	UInt32			currentMode;					// 008
+	UInt32			unk00C[(0x018 - 0x00C) >> 2];	// 00C
 	void*			unk018;							// 018 NiDirectionalLight *
 	Tile			* cursor;						// 01C
 	UInt32			unk020[(0x050 - 0x020) >> 2];	// 020
@@ -526,7 +527,7 @@ public:
 	float GetDepth();
 	bool MenuModeHasFocus(UInt32 menuType);		// returns true if menuType is on top (has focus)
 	bool IsGameMode();
-
+	UInt32 GetTopVisibleMenuID();
 	static void ToggleDebugText();
 
 };

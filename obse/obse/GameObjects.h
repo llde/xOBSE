@@ -1224,6 +1224,30 @@ enum
 class MagicProjectile : public MobileObject
 {
 public:
+	/*
+	.rdata:00A76488                     dd offset nullsub_returnvVoid_1arg
+.rdata:00A7648C                     dd offset nullsub_26
+.rdata:00A76490                     dd offset nullsub_returnVoid_2arg
+.rdata:00A76494                     dd offset MagicProjectile_NotDeleted
+.rdata:00A76498                     dd offset ?ClearComponentReferences@TESTexture@@UAEXXZ?
+.rdata:00A7649C                     dd offset MagicProjectile_RemoveCaster
+.rdata:00A764A0                     dd offset sub_738500
+.rdata:00A764A4                     dd offset nullsub_returnTrue_0arg
+	*/
+
+
+	MagicProjectile();
+	~MagicProjectile();
+	virtual void __stdcall	       Unk81(int a1) = 0;
+	virtual void __stdcall		   Unk82(int a1, int a2, int a3, int a4, int a5, int a6) = 0;
+	virtual void  __stdcall		   Unk83(int a1, int a2) = 0;
+	virtual void		   NotDeleted(void);  //in Jroush IDB
+	virtual void		   Unk85(void) = 0;
+	virtual void		   RemoveCaster(MagicCaster* caster);
+	virtual void __stdcall		   Unk87(int a1, int a2) = 0;
+	virtual bool		   Unk88(void) = 0;
+
+
 	float			speed;				// 5C base speed * GMST fMagicProjectileBaseSpeed
 	float			distanceTraveled;	// 60 speed * elapsedTime while in flight
 	float			elapsedTime;		// 64 length of time projectile has existed
@@ -1232,6 +1256,9 @@ public:
 	MagicItem		* magicItem;		// 6C can always cast to SpellItem? NO - can be EnchantmentItem for staves
 	UInt32			effectCode;			// 70 i.e. 'SEFF'
 	EffectSetting	* effectSetting;	// 74
+
+
+
 };
 
 //90

@@ -1427,6 +1427,11 @@ bool InterfaceManager::MenuModeHasFocus(UInt32 menuType)
 	return bMenuMode ? true : false;
 }
 
+UInt32 InterfaceManager::GetTopVisibleMenuID()
+{
+	return ThisStdCall(0x0057CF60, this);
+}
+
 bool InterfaceManager::IsGameMode()
 {
 	return !IsMenuMode();

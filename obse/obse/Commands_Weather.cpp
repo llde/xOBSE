@@ -219,7 +219,6 @@ static bool SetClimateValue_Execute(COMMAND_ARGS, UInt32 whichVal)
 	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &intVal, &form);
 	TESClimate* climate = (TESClimate*)Oblivion_DynamicCast(form, 0, RTTI_TESForm, RTTI_TESClimate, 0);
 	if (!climate) return true;
-	Console_Print("CLimate %08X   %s", climate->refID, climate->GetEditorName());
 	UInt8 nuVal = (UInt8)intVal;
 
 	switch (whichVal) {
