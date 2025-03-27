@@ -751,11 +751,14 @@ static __declspec(naked) void __cdecl WarnForDeprecatedCommands(void){
 static const UInt32 kReportScriptError = 0x004FFF40;
 static const UInt32 kDefaultCompilerCompileFormsArg = 0x00501A1A;
 static char kErrorCLimate[] = "Invalid Climate '%s' for parameter %s.\r\nCompiled script not saved!";
+
+
 static __declspec(naked) void __cdecl HandleCustomTypes(void) {
 	__asm {
 		cmp ecx, 0x27
 		jne error
-
+		cmp [esp + 240h - 0Ch], 0
+		jnz varSuccess
 		push eax
 		mov     eax, [esp + 244h - 8h]
 		test eax,eax
@@ -794,9 +797,60 @@ static __declspec(naked) void __cdecl HandleCustomTypes(void) {
 		add esp, 0x10
 		pop ebx
 		jmp[kDefaultCompilerRetn]
+    varSuccess : 
+		jmp[kDefaultCompilerCompileFormsArg]
 
 	}
 }
+
+struct Unk {
+	char unk00;
+	char unk01;
+	char unk02;
+	char unk03;
+	char unk04;
+	char unk05;
+	char unk06;
+	char unk07;
+};
+static_assert(sizeof(Unk) == 8);
+
+static Unk*   typeArray = (Unk*)0x009F128C;
+static Unk* newTypeArray = new Unk[0x30];
+
+static UInt32  kRetnTypeOverrideC = 0x00501077;
+static void __declspec(naked) TypeArrayOVerride(void) {
+	_asm{
+		mov bl, byte ptr newTypeArray[eax * 8]
+		jmp  [kRetnTypeOverrideC]
+	}
+}
+
+static UInt32  kRetnTypeOverride1 = 0x0050110F;
+static UInt32  kRetnTypeOverride2 = 0x0050114E;
+
+static void __declspec(naked) TypeArrayOverride1(void) {
+	__asm {
+		cmp byte ptr newTypeArray[eax*8 + 1],0 
+		jmp [kRetnTypeOverride1]
+	}
+}
+
+static void __declspec(naked) TypeArrayOverride2(void) {
+	__asm {
+		cmp byte ptr newTypeArray[eax * 8 + 1], 0
+		jmp[kRetnTypeOverride2]
+	}
+}
+
+static UInt32  kRetnTypeOverride3 = 0x00458D48;
+static void __declspec(naked) TypeArrayOverride3(void) {
+	__asm {
+		mov al, byte ptr newTypeArray[eax * 8 + 1]
+		jmp[kRetnTypeOverride3]
+	}
+}
+
 
 void Hook_Compiler_Init()
 {
@@ -812,8 +866,19 @@ void Hook_Compiler_Init()
 	WriteRelJump(kExpressionParserBufferOverflowHookAddr_1, (UInt32)&ExpressionParserBufferOverflowHook_1);
 	WriteRelJump(kExpressionParserBufferOverflowHookAddr_2, (UInt32)&ExpressionParserBufferOverflowHook_2);
 	WriteRelJump(kDefaultCompilerHook, (UInt32)&HandleCustomTypes);
-
+	_MESSAGE("%u   %u   %u", typeArray[0x23].unk00, typeArray[0x25].unk00, typeArray[0x21].unk00);
+	_MESSAGE("%u   %u   %u", typeArray[0x23].unk01, typeArray[0x25].unk01, typeArray[0x21].unk01);
 	CompilerOverride::InitHooks();
+	memset(newTypeArray, 0, 0x30 * 8);
+	memcpy(newTypeArray, typeArray, 0x26 * 8);
+//	newTypeArray[0x27].unk01 = 0;
+	_MESSAGE("%u   %u   %u  %u", newTypeArray[0x23].unk00, newTypeArray[0x25].unk00, newTypeArray[0x27].unk00, newTypeArray[0x26].unk00);
+	_MESSAGE("%u   %u   %u  %u", newTypeArray[0x23].unk01, newTypeArray[0x25].unk01, newTypeArray[0x27].unk01, newTypeArray[0x26].unk01);
+	WriteRelJump(0x00501070, (UInt32)&TypeArrayOVerride);
+	WriteRelJump(0x00501107, (UInt32)&TypeArrayOverride1);
+	WriteRelJump(0x00501146, (UInt32)&TypeArrayOverride2);
+	WriteRelJump(0x00458D41, (UInt32)&TypeArrayOverride3);
+
 }
 
 #else			// run-time
