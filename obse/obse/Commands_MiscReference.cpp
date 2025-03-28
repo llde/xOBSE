@@ -1437,6 +1437,29 @@ static bool Cmd_GetProjectileSource_Execute(COMMAND_ARGS)
 	return true;
 }
 
+
+static float* fWeightedNumberOfMagicProjectiles = (float*)0x00B3C0D0;
+static float* fMagicTrackingMultBall = (float*)0x00B38108;
+static float* fMagicTrackingMultBolt = (float*)0x00B3810C;
+static float* fMagicTrackingMultFog = (float*)0x00B38110;
+
+static void ReduceMagicProjectileCounterFor(MagicProjectile* proj) {
+	_MESSAGE("%f   %f   %f   %f ", *fWeightedNumberOfMagicProjectiles, *fMagicTrackingMultBall, *fMagicTrackingMultBolt, *fMagicTrackingMultFog);
+	if (Oblivion_DynamicCast(proj, 0, RTTI_MagicProjectile, RTTI_MagicBallProjectile, 0)) {
+		*fWeightedNumberOfMagicProjectiles -= *fMagicTrackingMultBall;
+	}
+	else if (Oblivion_DynamicCast(proj, 0, RTTI_MagicProjectile, RTTI_MagicBoltProjectile, 0)) {
+		*fWeightedNumberOfMagicProjectiles -= *fMagicTrackingMultBolt;
+	}
+	else if (Oblivion_DynamicCast(proj, 0, RTTI_MagicProjectile, RTTI_MagicFogProjectile, 0)) {
+		*fWeightedNumberOfMagicProjectiles -= *fMagicTrackingMultFog;
+
+	}
+	else {
+		_MESSAGE("[ERROR] Unknow pojectile type");
+	}
+}
+
 static bool Cmd_SetMagicProjectileSpell_Execute(COMMAND_ARGS)
 {
 	if (!thisObj)
@@ -1466,6 +1489,7 @@ static bool Cmd_SetPlayerProjectile_Execute(COMMAND_ARGS)
 		if (caster  && mag->caster != caster) {
 		//	mag->RemoveCaster(mag->caster);
 			mag->caster = caster;
+			ReduceMagicProjectileCounterFor(mag);
 		}
 	}
 	else
@@ -1924,8 +1948,13 @@ static bool SetProjectileValue(COMMAND_ARGS, UInt32 whichValue)
 		{
 			if (projType == kProjectileType_Arrow)
 				arrow->shooter = actor;
-			else
-				data->caster = (MagicCaster*)Oblivion_DynamicCast(actor, 0, RTTI_Actor, RTTI_MagicCaster, 0);
+			else {
+				MagicCaster* newCaster = (MagicCaster*)Oblivion_DynamicCast(actor, 0, RTTI_Actor, RTTI_MagicCaster, 0);
+				if (data->caster != newCaster) {
+					data->caster = newCaster;
+					if (newCaster == &(*g_thePlayer)->magicCaster) ReduceMagicProjectileCounterFor(data);
+				}
+			}
 		}
 		break;
 	}
