@@ -1440,11 +1440,11 @@ static bool Cmd_GetProjectileSource_Execute(COMMAND_ARGS)
 
 static float* fWeightedNumberOfMagicProjectiles = (float*)0x00B3C0D0;
 static float* fMagicTrackingMultBall = (float*)0x00B38108;
-static float* fMagicTrackingMultBolt = (float*)0x00B3810C;
-static float* fMagicTrackingMultFog = (float*)0x00B38110;
+static float* fMagicTrackingMultBolt = (float*)0x00B38110;
+static float* fMagicTrackingMultFog = (float*)0x00B38118;
 
 static void ReduceMagicProjectileCounterFor(MagicProjectile* proj) {
-	_MESSAGE("%f   %f   %f   %f ", *fWeightedNumberOfMagicProjectiles, *fMagicTrackingMultBall, *fMagicTrackingMultBolt, *fMagicTrackingMultFog);
+//	_MESSAGE("%f   %f   %f   %f ", *fWeightedNumberOfMagicProjectiles, *fMagicTrackingMultBall, *fMagicTrackingMultBolt, *fMagicTrackingMultFog);
 	if (Oblivion_DynamicCast(proj, 0, RTTI_MagicProjectile, RTTI_MagicBallProjectile, 0)) {
 		*fWeightedNumberOfMagicProjectiles -= *fMagicTrackingMultBall;
 	}
@@ -1456,7 +1456,7 @@ static void ReduceMagicProjectileCounterFor(MagicProjectile* proj) {
 
 	}
 	else {
-		_MESSAGE("[ERROR] Unknow pojectile type");
+		_MESSAGE("[ERROR] Unknow projectile type");
 	}
 }
 
