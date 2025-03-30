@@ -814,7 +814,7 @@ struct Unk {
 	char unk07;
 };
 static_assert(sizeof(Unk) == 8);
-
+/*
 static Unk*   typeArray = (Unk*)0x009F128C;
 static Unk* newTypeArray = new Unk[0x30];
 
@@ -851,7 +851,7 @@ static void __declspec(naked) TypeArrayOverride3(void) {
 	}
 }
 
-
+*/
 void Hook_Compiler_Init()
 {
 	// hook beginning of compilation process
@@ -866,18 +866,18 @@ void Hook_Compiler_Init()
 	WriteRelJump(kExpressionParserBufferOverflowHookAddr_1, (UInt32)&ExpressionParserBufferOverflowHook_1);
 	WriteRelJump(kExpressionParserBufferOverflowHookAddr_2, (UInt32)&ExpressionParserBufferOverflowHook_2);
 	WriteRelJump(kDefaultCompilerHook, (UInt32)&HandleCustomTypes);
-	_MESSAGE("%u   %u   %u", typeArray[0x23].unk00, typeArray[0x25].unk00, typeArray[0x21].unk00);
-	_MESSAGE("%u   %u   %u", typeArray[0x23].unk01, typeArray[0x25].unk01, typeArray[0x21].unk01);
+//	_MESSAGE("%u   %u   %u", typeArray[0x23].unk00, typeArray[0x25].unk00, typeArray[0x21].unk00);
+//	_MESSAGE("%u   %u   %u", typeArray[0x23].unk01, typeArray[0x25].unk01, typeArray[0x21].unk01);
 	CompilerOverride::InitHooks();
-	memset(newTypeArray, 0, 0x30 * 8);
-	memcpy(newTypeArray, typeArray, 0x26 * 8);
+//	memset(newTypeArray, 0, 0x30 * 8);
+//	memcpy(newTypeArray, typeArray, 0x26 * 8);
 //	newTypeArray[0x27].unk01 = 0;
-	_MESSAGE("%u   %u   %u  %u", newTypeArray[0x23].unk00, newTypeArray[0x25].unk00, newTypeArray[0x27].unk00, newTypeArray[0x26].unk00);
-	_MESSAGE("%u   %u   %u  %u", newTypeArray[0x23].unk01, newTypeArray[0x25].unk01, newTypeArray[0x27].unk01, newTypeArray[0x26].unk01);
-	WriteRelJump(0x00501070, (UInt32)&TypeArrayOVerride);
-	WriteRelJump(0x00501107, (UInt32)&TypeArrayOverride1);
-	WriteRelJump(0x00501146, (UInt32)&TypeArrayOverride2);
-	WriteRelJump(0x00458D41, (UInt32)&TypeArrayOverride3);
+//	_MESSAGE("%u   %u   %u  %u", newTypeArray[0x23].unk00, newTypeArray[0x25].unk00, newTypeArray[0x27].unk00, newTypeArray[0x26].unk00);
+//	_MESSAGE("%u   %u   %u  %u", newTypeArray[0x23].unk01, newTypeArray[0x25].unk01, newTypeArray[0x27].unk01, newTypeArray[0x26].unk01);
+//	WriteRelJump(0x00501070, (UInt32)&TypeArrayOVerride);
+//	WriteRelJump(0x00501107, (UInt32)&TypeArrayOverride1);
+//	WriteRelJump(0x00501146, (UInt32)&TypeArrayOverride2);
+//	WriteRelJump(0x00458D41, (UInt32)&TypeArrayOverride3);
 
 }
 
