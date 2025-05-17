@@ -501,6 +501,7 @@ static bool Cmd_GetMagicItemEffectCount_Execute(COMMAND_ARGS)
 	ExtractArgsEx(paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, &form);
 	if (!form) return true;
 	EffectItemList* list = GetEffectList(form);
+	if (!list) return true;
 	return GetMagicItemEffectCount(&list->effectList, result);
 }
 
