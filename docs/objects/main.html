@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>main</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">
+body {
+padding: 10%;
+}
+
+h1 {
+font-size: 150%;
+font-weight: normal;
+}
+h2 {
+font-size: 130%;
+font-weight: normal;
+margin-top: 40px;
+}
+h3 {
+font-size: 110%;
+font-weight: normal;
+margin-top: 30px;
+color: #000099;
+background-color: #ffffff;
+}
+h4 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+}
+h5 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+color: #000099;
+background-color: #ffffff;
+}
+
+table {
+border: 1px solid black;
+margin: 20px 0px 20px 0px;
+}
+caption {
+text-align: left;
+margin-bottom: 10px;
+}
+td, th {
+padding: 5px;
+}
+tr.alt {
+color: black;
+background-color: #dedede;
+}
+code.alt {
+color: 770000;
+background-color: #dedede;
+}
+table.functionIndex td{
+padding: 0px 30px 0px 5px;
+}
+
+ul {
+list-style-type: none;
+}
+
+.boxhl {
+border: 1px dotted black;
+padding: 8px;
+color: #000000;
+background-color: #eeeeff;
+}
+
+.code {
+border: 1px solid black;
+padding: 20px;
+font-family: monospace;
+color: #770000;
+background-color: #ffffff;
+}
+
+pre {
+color: #770000;
+background-color: #ffffff;
+}
+
+code.s {
+margin-left: 40px;
+font-weight: normal;
+color: #770000;
+background-color: #ffffff;
+}
+
+code {
+color: #000000;
+background-color: #ffffff;
+}
+
+span.op {
+font-style: italic;
+color: #666666;
+background-color: #ffffff;
+}
+
+pre.msgbox {
+color: #777700;
+background-color: #ffffff;
+font-family: serif;
+}
+
+.ind {
+margin-left: 40px;
+}
+.c {
+text-align: center;
+}
+.l {
+text-align: left;
+}
+
+.f {
+color: #3333cc;
+background-color: white;
+}
+a:link.f{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.f {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.f {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link.cf{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.cf {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.cf {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link img {
+border-style: none;
+}
+a:visited img {
+border-style: none;
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<p>Most interactions within Oblivion is with constructs known as
+“objects”. These objects should not be thought of in the same thought as
+typical programming objects, they are bits of data that are stored by
+the game itself. One can’t create new objects at will, and for the most
+part cannot create new objects of a specified type at will via
+<code>obl</code>. However, that is not to say that you cannot take
+similar ideas from traditional programming objects.</p>
+<h1 id="object-features">Object Features</h1>
+<p>Features of an object vary from object type to type.</p>
+<h1 id="base-objects">Base Objects</h1>
+<p>Base objects are the actual, 6+2 hexadecimal notated, data that store
+the information about the base attributes of the object specified. For
+instance, for armor this will store it’s base armor rating and weight
+among other attributes. These generally must be created in the plugin
+you are designing, rather than through <code>obl</code>.</p>
+<p>Two main groups of attributes are defined by the type of base object
+created:</p>
+<h1 id="quality">Quality</h1>
+<p>In <code>obl</code>, a quality is generalized feature that an object
+can have. Qualities are generally shared by by multiple object types.
+For instance, a container and a door both have the “Audible” quality.
+They will make sounds when activated with this quality.</p>
+<h1 id="type">Type</h1>
+<p>In <code>obl</code>, a type is what features the object provides to
+the game. Generally, these are headered by a 4 letter character string
+within the tree of the plugin (‘ACTI’ for activators). Features of these
+types are predetermined by the engine, and unless expanded upon by an
+OBSE plugin, cannot be added to.</p>
+<h1 id="references">References</h1>
+<p>References are references to base objects. They contain all of the
+features from said base objects, as well as some additional features.
+All objects physically placed within the game world are references, even
+if they go unnamed.</p>
+<p>References that need to be referred to must be given a unique name.
+Since all names share the same scope, reference names must be the same
+themselves. A recommended method is to simply append ‘REF’ to the end of
+the base object’s name. If multiple references are needed from said base
+object, add a double digit number to the end. For example, if you need 3
+references to the base object “Apple”, make your 3 references:
+“AppleREF01”, “AppleREF02”, and “AppleREF03”. This simply a recommended
+standard, one found in the base game and in many other plugins found
+online.</p>
+<h2 id="persistence">Persistence</h2>
+<p>As Oblivion is a video game, there must be a way to handle how
+objects are accessed and stored in memory.</p>
+<p>Objects that are referenced at all, even if the object referring to
+it is in the same loaded area (and thus share the same pool of memory),
+must always be loaded into memory. Scripts included. This is known as a
+“persistent reference”. Persistent references don’t load the full 3D
+model, but all other object data that can be regularly addressed is
+loaded into memory. Care should be taken to not make a reference
+persistent when unneeded.</p>
+<p>Objects that are not referenced by others are simply “non-persistent
+references”. This value can be set within the data tab of the object in
+question.</p>
+</body>
+</html>
