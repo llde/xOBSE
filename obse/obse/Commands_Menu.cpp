@@ -535,7 +535,10 @@ static bool GetSetMenuValue_Execute(COMMAND_ARGS, UInt32 mode)
 	UInt32 menuType = 0;
 	float newFloatVal = 0;
 	char* newStringVal = NULL;
+	char* listIndexVal;
+	SInt32 listIndex = -1;
 
+	char* context = NULL;
 	char* componentPath = stringArg;
 
 	bool bExtracted = false;
@@ -545,17 +548,41 @@ static bool GetSetMenuValue_Execute(COMMAND_ARGS, UInt32 mode)
 	case kGetString:
 	case kExists:
 		bExtracted = ExtractFormatStringArgs(0, stringArg, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_GetMenuFloatValue.numParams, &menuType);
+
+		componentPath = (char*)(_mbstok_s((unsigned char*)stringArg, (const unsigned char*)separatorChar, (unsigned char**)&context));
+		listIndexVal = (char*)(_mbstok_s(NULL, (const unsigned char*)separatorChar, (unsigned char**)&context));
+		if (listIndexVal != NULL)
+		{
+			listIndex = atoi(listIndexVal);
+		}
 		break;
 	case kSetFloat:
 		bExtracted = ExtractFormatStringArgs(0, stringArg, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_SetMenuFloatValue.numParams, &menuType, &newFloatVal);
+
+		componentPath = (char*)(_mbstok_s((unsigned char*)stringArg, (const unsigned char*)separatorChar, (unsigned char**)&context));
+		listIndexVal = (char*)(_mbstok_s(NULL, (const unsigned char*)separatorChar, (unsigned char**)&context));
+		if (listIndexVal != NULL)
+		{
+			listIndex = atoi(listIndexVal);
+		}
 		break;
 	case kSetString:
 		{
 			bExtracted = ExtractFormatStringArgs(0, stringArg, paramInfo, arg1, opcodeOffsetPtr, scriptObj, eventList, kCommandInfo_GetMenuFloatValue.numParams, &menuType);
+			
 			// extract new value from format string
-			char* context = NULL;
 			componentPath = (char*)(_mbstok_s((unsigned char*)stringArg, (const unsigned char*)separatorChar, (unsigned char**)&context));
+			listIndexVal = (char*)(_mbstok_s(NULL, (const unsigned char*)separatorChar, (unsigned char**)&context));
 			newStringVal = (char*)(_mbstok_s(NULL, (const unsigned char*)separatorChar, (unsigned char**)&context));
+
+			if (newStringVal == NULL)
+			{
+				newStringVal = listIndexVal;
+			}
+			else
+			{
+				listIndex = atoi(listIndexVal);
+			}
 
 			bExtracted = (bExtracted && componentPath && newStringVal);
 		}
@@ -569,7 +596,17 @@ static bool GetSetMenuValue_Execute(COMMAND_ARGS, UInt32 mode)
 		Menu* menu = GetMenuByType(menuType);
 		if (menu && menu->tile)
 		{
-			Tile::Value* val = menu->tile->GetValueByName(componentPath);
+			Tile::Value* val = NULL;
+
+			if (listIndex >= 0)
+			{
+				val = menu->tile->GetValueByNameAndListIndex(componentPath, listIndex);
+			}
+			else
+			{
+				val = menu->tile->GetValueByName(componentPath);
+			}
+
 			if (val)
 			{
 #if _DEBUG && 0
