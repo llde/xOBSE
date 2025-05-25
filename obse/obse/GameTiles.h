@@ -400,9 +400,9 @@ public:
 
 	Value * GetValueByType(UInt32 valueType);
 	Value * GetValueByName(char * name);
+	Value * GetValueByNameAndListIndex(char * name, UInt32 indexToMatch);
 //	bool	SetValueByName(char* name, const char* strVal, float floatVal);
 	Tile  * GetChildByName(const char * name);
-	Value * GetValueByNameAndListIndex(char * name, UInt32 indexToMatch);
 	Tile  * GetChildByIDTrait(UInt32 idToMatch);	// find child with <id> trait matching idToMatch
 	Tile  * GetChildByListIndexTrait(UInt32 indexToMatch); // find child with <listindex> trait matching indexToMatch
 	bool GetFloatValue(UInt32 valueType, float* out);
