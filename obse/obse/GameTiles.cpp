@@ -528,16 +528,23 @@ Tile  * Tile::GetChildByIDTrait(UInt32 idToMatch)
 // should only be used on tiles that have children with listindex trait
 Tile  * Tile::GetChildByListIndexTrait(UInt32 indexToMatch)
 {
-	// search children non-recursively
+	// search children recursively
 	for (RefList::Node* node = childList.start; node; node = node->next)
 	{
 		if (node->data)
 		{
-			Tile::Value* idVal = GetValueByType(kTileValue_listindex);
-			if (idVal && idVal->num == indexToMatch)
-				return this;
+			Tile* match = node->data->GetChildByListIndexTrait(indexToMatch);
+			if (match)
+				return match;
 		}
 	}
+
+	// check this tile
+	Tile::Value* idVal = GetValueByType(kTileValue_listindex);
+	if (idVal && idVal->num == indexToMatch)
+		return this;
+	else
+		return NULL;
 }
 
 std::string Tile::GetQualifiedName()
