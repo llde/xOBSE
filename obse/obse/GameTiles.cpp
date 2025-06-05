@@ -458,7 +458,7 @@ Tile * Tile::GetChildByPath(char * path)
 	char* strtokContext = NULL;
 	char* childName = strtok_s(path, "\\/", &strtokContext);
 	char* nextName = NULL;
-	Tile * parentTile = this;
+	Tile* parentTile = this;
 
 	while (childName && parentTile)
 	{
@@ -479,9 +479,9 @@ Tile * Tile::GetChildByPath(char * path)
 Tile::Value * Tile::GetValueByName(char* name)
 {
 	char* strtokContext = NULL;
-	char * childName = strtok_s(name, "\\/", &strtokContext);
+	char* childName = strtok_s(name, "\\/", &strtokContext);
 	char* nextName = NULL;
-	Tile * parentTile = this;
+	Tile* parentTile = this;
 
 	while (childName && parentTile)
 	{
@@ -502,9 +502,9 @@ Tile::Value * Tile::GetValueByName(char* name)
 Tile::Value * Tile::GetValueByNameAndListIndex(char* name, UInt32 listIndex)
 {
 	char* strtokContext = NULL;
-	char * childName = strtok_s(name, "\\/", &strtokContext);
+	char* childName = strtok_s(name, "\\/", &strtokContext);
 	char* nextName = NULL;
-	Tile * parentTile = this;
+	Tile* parentTile = this;
 
 	while (childName && parentTile)
 	{
