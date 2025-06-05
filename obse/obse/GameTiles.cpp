@@ -453,6 +453,29 @@ Tile * Tile::GetChildByName(const char * name)
 	return requestedTile;
 }
 
+Tile * Tile::GetChildByPath(char * path)
+{
+	char* strtokContext = NULL;
+	char* childName = strtok_s(path, "\\/", &strtokContext);
+	char* nextName = NULL;
+	Tile * parentTile = this;
+
+	while (childName && parentTile)
+	{
+		nextName = strtok_s(NULL, "\\/", &strtokContext);
+		if (!nextName)
+			break;
+	
+		parentTile = parentTile->GetChildByName(childName);
+		childName = nextName;
+	}
+
+	if (childName && !nextName && parentTile)	// childName is now name of a child to retrieve
+		return parentTile->GetChildByName(childName);
+
+	return NULL;
+}
+
 Tile::Value * Tile::GetValueByName(char* name)
 {
 	char* strtokContext = NULL;

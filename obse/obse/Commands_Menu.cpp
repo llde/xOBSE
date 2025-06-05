@@ -26,6 +26,8 @@ const _ShowMessageBox_Callback OverwriteSaveGameCallback = (_ShowMessageBox_Call
 const _ShowMessageBox_Callback LoadGameCallback =		(_ShowMessageBox_Callback)0x005AE190;
 const _ShowMessageBox_Callback MissingContentCallback = (_ShowMessageBox_Callback)0x00578DC0;
 
+const char* _TileIdPath = "id";
+
 static bool Cmd_GetActiveMenuMode_Execute(COMMAND_ARGS)
 {
 	*result = 0;
@@ -752,13 +754,25 @@ static bool Cmd_ClickMenuButton_Execute(COMMAND_ARGS)
 			}
 			else		// roundabout way of getting a button tile - look up the <id> trait then take the parent tile
 			{
-				UInt32 nameLen = strlen(name);
-				name[nameLen] = '\\';
-				name[nameLen+1] = 'i';
-				name[nameLen+2] = 'd';
-				name[nameLen+3] = '\0';
+				char* context = NULL;
+				char* componentPath = name;
+				char* listIndexVal;
 
-				Tile::Value* val = menu->tile->GetValueByName(name);
+				const char* separatorChar = GetSeparatorChars(scriptObj);
+				componentPath = (char*)(_mbstok_s((unsigned char*)name, (const unsigned char*)separatorChar, (unsigned char**)&context));
+				listIndexVal = (char*)(_mbstok_s(NULL, (const unsigned char*)separatorChar, (unsigned char**)&context));
+				Tile* targetTile = menu->tile->GetChildByPath(componentPath);
+
+				if (targetTile && listIndexVal != NULL)
+				{
+					SInt32 listIndex = atoi(listIndexVal);
+					targetTile = targetTile->GetChildByListIndexTrait(listIndex);
+				}
+
+				if (targetTile == NULL) return true;
+
+				Tile::Value* val = targetTile->GetValueByName((char*)_TileIdPath);
+
 				if (val)
 				{
 					buttonID = val->num;

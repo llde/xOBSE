@@ -403,6 +403,7 @@ public:
 	Value * GetValueByNameAndListIndex(char * name, UInt32 indexToMatch);
 //	bool	SetValueByName(char* name, const char* strVal, float floatVal);
 	Tile  * GetChildByName(const char * name);
+	Tile  * GetChildByPath(char * path);
 	Tile  * GetChildByIDTrait(UInt32 idToMatch);	// find child with <id> trait matching idToMatch
 	Tile  * GetChildByListIndexTrait(UInt32 indexToMatch); // find child with <listindex> trait matching indexToMatch
 	bool GetFloatValue(UInt32 valueType, float* out);

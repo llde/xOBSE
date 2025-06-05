@@ -5327,6 +5327,9 @@ Message: The formID of the reference whose attached script generated the message
 
 <p><a id="ClickMenuButton" class="f" href="https://cs.uesp.net/wiki/ClickMenuButton">ClickMenuButton</a> - simulates the user clicking on the specified UI component. Pass the fully qualified component name as described above, or pass the &lt;id&gt; trait of the desired component as specified in the XML, preceded by a '#'; i.e. "<code>#32</code>" to click the button with ID 32. Note that specifying the name results in much better performance than specifying an ID.<br />
 <code class="s">(nothing) ClickMenuButton componentName:<a href="#Format_Specifiers">formatString</a> <a href="#Menu_Code">menuType</a>:int</code></p>
+<p>
+	To click a children of a list, use the following syntax:<br><code class="s">ClickMenuButton "path\to\list|listindex" menuType</code>.
+</p>
 
 <p><a id="GetMenuHasTrait" class="f" href="https://cs.uesp.net/wiki/GetMenuHasTrait">GetMenuHasTrait</a> - returns 1 if the menu has the trait specified. The trait name may be qualified with component names to access traits of subcomponents.<br />
 <code class="s">(hasTrait:bool) GetMenuHasTrait traitName:<a href="#Format_Specifiers">formatString</a> <a href="#Menu_Code">menuType</a>:int</code></p>
