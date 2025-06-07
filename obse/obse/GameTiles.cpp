@@ -455,7 +455,7 @@ Tile * Tile::GetChildByName(const char * name)
 	return requestedTile;
 }
 
-Tile * Tile::GetChildByPath(char * path, bool isTrait, char** outTraitName)
+Tile * Tile::GetChildByPath(char* path, bool isTrait, char** outTraitName)
 {
 	char* strtokContext = NULL;
 	char* childName = strtok_s(path, "\\/", &strtokContext);
