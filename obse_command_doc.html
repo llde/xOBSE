@@ -136,6 +136,9 @@
 
 	background-color: #ffffff;
 	}
+	.no-margin-left {
+		margin-left: 0px!important;
+	}
 	/* code syntax in descriptive text */
 	code {
 
@@ -5270,17 +5273,47 @@ Message: The formID of the reference whose attached script generated the message
 	; clicks the icon for the player's active spell, switching from item view to spell view if inventory is open
 	ClickMenuButton "hudmain_background\hudmain_magic_cover" 1009</pre>
 
+<p>There is an exception for working with children of a list, though. To access a child of a list by its listindex a one should use the following syntax:</p>
+<p><code class="s">GetMenuFloatValue "path\to\list\:listindex\trait" menuCode</code></p>
+<p>
+	For example, to access <code class="s no-margin-left">user5</code> trait of children of a repair menu from 1 to 3:
+	<pre>
+		let itemHealth1 := GetMenuFloatValue "rep_contents\rep_list_pane\:0\user5" 1035
+		let itemHealth2 := GetMenuFloatValue "rep_contents\rep_list_pane\:1\user5" 1035
+		let itemHealth3 := GetMenuFloatValue "rep_contents\rep_list_pane\:2\user5" 1035
+	</pre>
+</p>
+<p>Additonal notes for working with children of a list:
+	<ol>
+		<li>This syntax should only be used to access chidren of a list, for other tiles it may behave unexpectedly</li>
+		<li>This syntax also allows to acces children of a list children, i.e.: <code class="s no-margin-left">GetMenuFloatValue "path\to\list\:listindex\child\trait" menuCode</code></li>
+		<li>The same is applicable to all functions that allow to access/set traits of a menu tile</li>
+	</ol>
+</p>
+
 <p><a id="GetMenuFloatValue" class="f" href="https://cs.uesp.net/wiki/GetMenuFloatValue">GetMenuFloatValue</a> - returns the value of a float or boolean trait of the specified menu<br />
 <code class="s">(value:float) GetMenuFloatValue trait:<a href="#Format_Specifiers">formatString</a> <a href="#Menu_Code">menuType</a>:int</code></p>
+<p>
+	To get a value for a children of a list, use the following syntax:<br><code class="s">GetMenuFloatValue "path\to\list\:listindex\trait" menuType</code>
+</p>
 
 <p><a id="GetMenuStringValue" class="f" href="https://cs.uesp.net/wiki/GetMenuStringValue">GetMenuStringValue</a> - returns the value of a string trait of the specified menu<br />
 <code class="s">(value:string_var) GetMenuStringValue trait:<a href="#Format_Specifiers">formatString</a> <a href="#Menu_Code">menuType</a>:int</code></p>
+<p>
+	To get a value for a children of a list, use the following syntax:<br><code class="s">GetMenuStringValue "path\to\list\:listindex\trait" menuType</code>
+</p>
 
 <p><a id="SetMenuFloatValue" class="f" href="https://cs.uesp.net/wiki/SetMenuFloatValue">SetMenuFloatValue</a> - sets the value of a float or boolean trait of the specified menu<br />
 <code class="s">(nothing) SetMenuFloatValue trait:<a href="#Format_Specifiers">formatString</a> <a href="#Menu_Code">menuType</a>:intnewValue:float</code></p>
+<p>
+	To set a value for a children of a list, use the following syntax:<br><code class="s">SetMenuFloatValue "path\to\list\:listindex\trait" menuType</code>
+</p>
 
 <p><a id="SetMenuStringValue" class="f" href="https://cs.uesp.net/wiki/SetMenuStringValue">SetMenuStringValue</a> - sets the value of a string trait of the specified menu. The new value follows the trait name, separated from it by a pipe character. i.e. "elementName\traitName|newValue". (If calling from the console, replace the pipe character with the '@' character).<br />
 <code class="s">(nothing) SetMenuStringValue traitAndNewValue:<a href="#Format_Specifiers">formatString</a> <a href="#Menu_Code">menuType</a>:int</code></p>
+<p>
+	To set a value for a children of a list, use the following syntax:<br><code class="s">SetMenuStringValue "path\to\list\:listindex\trait|newValue" menuType</code>
+</p>
 
 <p><a id="GetActiveUIComponentID" class="f" href="https://cs.uesp.net/wiki/GetActiveUIComponentID">GetActiveUIComponentID</a> - returns the integer ID of the menu elemented currently highlighted by the mouse cursor as defined by that element's &lt;id&gt; trait in the menu XML file.<br />
 <code class="s">(id:int) GetActiveMenuComponentID</code></p>
@@ -5293,9 +5326,15 @@ Message: The formID of the reference whose attached script generated the message
 
 <p><a id="ClickMenuButton" class="f" href="https://cs.uesp.net/wiki/ClickMenuButton">ClickMenuButton</a> - simulates the user clicking on the specified UI component. Pass the fully qualified component name as described above, or pass the &lt;id&gt; trait of the desired component as specified in the XML, preceded by a '#'; i.e. "<code>#32</code>" to click the button with ID 32. Note that specifying the name results in much better performance than specifying an ID.<br />
 <code class="s">(nothing) ClickMenuButton componentName:<a href="#Format_Specifiers">formatString</a> <a href="#Menu_Code">menuType</a>:int</code></p>
+<p>
+	To click a children of a list, use the following syntax:<br><code class="s">ClickMenuButton "path\to\list\:listindex" menuType</code>
+</p>
 
 <p><a id="GetMenuHasTrait" class="f" href="https://cs.uesp.net/wiki/GetMenuHasTrait">GetMenuHasTrait</a> - returns 1 if the menu has the trait specified. The trait name may be qualified with component names to access traits of subcomponents.<br />
 <code class="s">(hasTrait:bool) GetMenuHasTrait traitName:<a href="#Format_Specifiers">formatString</a> <a href="#Menu_Code">menuType</a>:int</code></p>
+<p>
+	To check if a children of a list has the trait, use the following syntax:<br><code class="s">GetMenuHasTrait "path\to\list\:listindex\trait" menuType</code>
+</p>
 
 <p><a id="GetTileChildren" class="f" href="https://cs.uesp.net/wiki/GetTileChildren">GetTileChildren</a> - given a UI component (referred to by the game as a "Tile"), returns an Array containing the names of all of the direct subcomponents of that component. Using this command is more efficient than accessing children individually if you need to inspect more than one subcomponent.<br />
 <code class="s">(children:Array) GetTileChildren parentTile:string menuType:int</code></p>
