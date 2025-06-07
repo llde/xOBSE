@@ -541,19 +541,13 @@ Tile  * Tile::GetChildByIDTrait(UInt32 idToMatch)
 // should only be used on tiles that have children with listindex trait
 Tile  * Tile::GetChildByListIndexTrait(UInt32 indexToMatch)
 {
-	// check this tile
-	Tile::Value* idVal = GetValueByType(kTileValue_listindex);
-	if (idVal && idVal->num == indexToMatch)
-		return this;
-
-	// search children recursively
 	for (RefList::Node* node = childList.start; node; node = node->next)
 	{
 		if (node->data)
 		{
-			Tile* match = node->data->GetChildByListIndexTrait(indexToMatch);
-			if (match)
-				return match;
+			Tile::Value* idVal = node->data->GetValueByType(kTileValue_listindex);
+			if (idVal && idVal->num == indexToMatch)
+				return node->data;
 		}
 	}
 
