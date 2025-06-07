@@ -402,7 +402,9 @@ public:
 	Value * GetValueByName(char * name);
 //	bool	SetValueByName(char* name, const char* strVal, float floatVal);
 	Tile  * GetChildByName(const char * name);
+	Tile  * GetChildByPath(char* path, bool isTrait = false, char** outTraitName = NULL);
 	Tile  * GetChildByIDTrait(UInt32 idToMatch);	// find child with <id> trait matching idToMatch
+	Tile  * GetChildByListIndexTrait(UInt32 indexToMatch); // find child with <listindex> trait matching indexToMatch
 	bool GetFloatValue(UInt32 valueType, float* out);
 	bool SetFloatValue(UInt32 valueType, float newValue);
 	bool GetStringValue(UInt32 valueType, const char** out);

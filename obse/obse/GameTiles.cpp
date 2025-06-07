@@ -1,5 +1,6 @@
 #include "GameTiles.h"
 #include "GameAPI.h"
+#include <limits.h>
 #include <string>
 
 #if 0
@@ -224,6 +225,7 @@ typedef const char * (* _TileStrIDToStr)(UInt32 ID);
 
 const _TileStrToStrID TileStrToStrID = (_TileStrToStrID)0x00588EF0;
 const _TileStrIDToStr TileStrIDToStr = (_TileStrIDToStr)0x00589080;
+const char* _ListIndexSeparator = ":";
 
 
 UInt32 Tile::StrToStrID(const char * str)
@@ -453,12 +455,13 @@ Tile * Tile::GetChildByName(const char * name)
 	return requestedTile;
 }
 
-Tile::Value * Tile::GetValueByName(char* name)
+Tile * Tile::GetChildByPath(char * path, bool isTrait, char** outTraitName)
 {
 	char* strtokContext = NULL;
-	char * childName = strtok_s(name, "\\/", &strtokContext);
+	char* childName = strtok_s(path, "\\/", &strtokContext);
 	char* nextName = NULL;
-	Tile * parentTile = this;
+	Tile* parentTile = this;
+	int listIndex = INT_MIN;
 
 	while (childName && parentTile)
 	{
@@ -466,12 +469,48 @@ Tile::Value * Tile::GetValueByName(char* name)
 		if (!nextName)
 			break;
 	
-		parentTile = parentTile->GetChildByName(childName);
+		if (listIndex > INT_MIN)
+		{
+			parentTile = parentTile->GetChildByListIndexTrait(listIndex);
+			listIndex = INT_MIN;
+		}
+		else
+		{
+			parentTile = parentTile->GetChildByName(childName);
+		}
+
+		if (nextName[0] == _ListIndexSeparator[0])
+		{
+			nextName = nextName + 1;
+			listIndex = atoi(nextName);
+		}
+
 		childName = nextName;
 	}
 
-	if (childName && !nextName && parentTile)	// childName is now name of value to retrieve
-		return parentTile->GetValueByType(StrToStrID(childName));
+	if (childName && !nextName && parentTile)	// childName is now name of a child to retrieve
+	{
+		if (isTrait)
+		{
+			*outTraitName = childName;
+			return parentTile;
+		}
+
+		return listIndex == INT_MIN
+			? parentTile->GetChildByName(childName)
+			: parentTile->GetChildByListIndexTrait(listIndex);
+	}
+
+	return NULL;
+}
+
+Tile::Value * Tile::GetValueByName(char* name)
+{
+	char* traitName = NULL;
+	Tile* parentTile = this->GetChildByPath(name, true, &traitName);
+
+	if (traitName && parentTile)
+		return parentTile->GetValueByType(StrToStrID(traitName));
 
 	return NULL;
 }
@@ -497,6 +536,28 @@ Tile  * Tile::GetChildByIDTrait(UInt32 idToMatch)
 		return this;
 	else
 		return NULL;
+}
+
+// should only be used on tiles that have children with listindex trait
+Tile  * Tile::GetChildByListIndexTrait(UInt32 indexToMatch)
+{
+	// check this tile
+	Tile::Value* idVal = GetValueByType(kTileValue_listindex);
+	if (idVal && idVal->num == indexToMatch)
+		return this;
+
+	// search children recursively
+	for (RefList::Node* node = childList.start; node; node = node->next)
+	{
+		if (node->data)
+		{
+			Tile* match = node->data->GetChildByListIndexTrait(indexToMatch);
+			if (match)
+				return match;
+		}
+	}
+
+	return NULL;
 }
 
 std::string Tile::GetQualifiedName()
