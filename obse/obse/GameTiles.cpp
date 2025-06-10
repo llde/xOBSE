@@ -1,6 +1,5 @@
 #include "GameTiles.h"
 #include "GameAPI.h"
-#include <limits.h>
 #include <string>
 
 #if 0
@@ -461,7 +460,7 @@ Tile * Tile::GetChildByPath(char* path, bool isTrait, char** outTraitName)
 	char* childName = strtok_s(path, "\\/", &strtokContext);
 	char* nextName = NULL;
 	Tile* parentTile = this;
-	int listIndex = INT_MIN;
+	int listIndex = -1;
 
 	while (childName && parentTile)
 	{
@@ -469,10 +468,10 @@ Tile * Tile::GetChildByPath(char* path, bool isTrait, char** outTraitName)
 		if (!nextName)
 			break;
 	
-		if (listIndex > INT_MIN)
+		if (listIndex >= 0)
 		{
 			parentTile = parentTile->GetChildByListIndexTrait(listIndex);
-			listIndex = INT_MIN;
+			listIndex = -1;
 		}
 		else
 		{
@@ -496,7 +495,7 @@ Tile * Tile::GetChildByPath(char* path, bool isTrait, char** outTraitName)
 			return parentTile;
 		}
 
-		return listIndex == INT_MIN
+		return listIndex < 0
 			? parentTile->GetChildByName(childName)
 			: parentTile->GetChildByListIndexTrait(listIndex);
 	}
