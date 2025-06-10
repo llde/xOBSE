@@ -225,7 +225,7 @@ typedef const char * (* _TileStrIDToStr)(UInt32 ID);
 
 const _TileStrToStrID TileStrToStrID = (_TileStrToStrID)0x00588EF0;
 const _TileStrIDToStr TileStrIDToStr = (_TileStrIDToStr)0x00589080;
-const char* _ListIndexSeparator = ":";
+const char* ListIndexSeparator = ":";
 
 
 UInt32 Tile::StrToStrID(const char * str)
@@ -479,7 +479,7 @@ Tile * Tile::GetChildByPath(char* path, bool isTrait, char** outTraitName)
 			parentTile = parentTile->GetChildByName(childName);
 		}
 
-		if (nextName[0] == _ListIndexSeparator[0])
+		if (nextName[0] == ListIndexSeparator[0])
 		{
 			nextName = nextName + 1;
 			listIndex = atoi(nextName);
