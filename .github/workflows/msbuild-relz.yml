@@ -40,6 +40,7 @@ jobs:
         Copy-Item -Path ".\obse\Release\steam_loader.dll" -Destination ".\build\obse_steam_loader.dll"
         Copy-Item -Path ".\obse.ini" -Destination ".\build\Data\OBSE\obse.ini"
         Copy-Item -Path ".\obse_whatsnew.txt" -Destination ".\build\obse_whatsnew.txt"
+        Copy-Item -Path ".\obse_command_doc.html" -Destination ".\build\obse_command_doc.html"
             
     - name: Zipping         
       uses: thedoctor0/zip-release@main
