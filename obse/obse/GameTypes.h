@@ -21,14 +21,26 @@ public:
 	virtual TESObjectCELL *	GetChildCell(void);
 };
 
+template <class Type>
 class BSSimpleList
 {
 public:
 	BSSimpleList();
 	~BSSimpleList();
 
-	virtual void	Destructor(void);
+	class Node
+	{
+	public:
+		// Node members
+		Type      data;
+		Node* next;
+	};
+
+	// members
+	Node            firstNode;      // 00
+
 };
+static_assert(sizeof(BSSimpleList<UInt32>) == 0x8);
 
 // 8
 class BSStringT

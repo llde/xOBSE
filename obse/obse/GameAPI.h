@@ -340,7 +340,13 @@ public:
 	TESSaveLoadGame();
 	~TESSaveLoadGame();
 
-	UInt32	unk000[0x28 >> 2];	// 000 (1.2)
+	enum SaveFlags {
+		kLoadCreatedObject = 0x20000
+	};
+
+	UInt32 unk00[6]; // 000
+	UInt32 flags;  // Seeen 0x20000u for LoadCreatedObjectFlag
+	UInt32	unk01C[3];	// 01C (1.2)
 
 	struct CreatedObject
 	{

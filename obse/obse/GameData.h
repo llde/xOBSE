@@ -73,12 +73,17 @@ struct ModEntry
 			UInt32	length;
 		};
 
-		struct	FormInfo
+		struct	RecordInfo
 		{
 			ChunkInfo		chunkInfo;
 			UInt32			flags;
-			UInt32			formID;
+			UInt32			recordID;
 			TrackingData	trackingData;
+		};
+		class GroupInfo : public RecordInfo
+		{// size 18/18
+			//     /*00*/ RecordInfo    // for group records, the size includes the 14 bytes of the header
+			UInt32        recordOffset;   // used internally to track header offsets of all open groups
 		};
 
 		struct  SizeInfo
@@ -88,11 +93,12 @@ struct ModEntry
 		};
 
 		// static members: B33C1C, B33C20
+		typedef BSSimpleList<GroupInfo*> GroupList;
 
-		UInt32	unk000;							// 000 appears to indicate status of file (open, closed, etc) 2, 9, 0C do stuff
-		UInt32	unk004;							// 004
-		UInt32	unk008;							// 008
-		UInt32	unk00C;							// 00C
+		UInt32	errorState;							// 000 appears to indicate status of file (open, closed, etc) 2, 9, 0C do stuff
+		UInt32	ghostFileParent;							// 004
+		UInt32	childThreadGhostFiles;							// 008
+		BSFile*	unkFile00C;							// 00C
 		BSFile	* bsFile;						// 010
 		UInt32	unk014;							// 014
 		UInt32	unk018;							// 018
@@ -101,9 +107,17 @@ struct ModEntry
 		UInt32	unk224;							// 224
 		UInt32	unk228;							// 228 init to *(0xB055CC), seen 0x2800
 		UInt32	unk22C[(0x23C - 0x22C) >> 2];	// 22C
-		FormInfo	formInfo;					// 23C
-		UInt32	chunkType250;					// 250
-		UInt32	unk254[(0x290 - 0x254) >> 2];	// 254
+		RecordInfo	currentRecordInfo;					// 23C
+		ChunkInfo	currentChunk;					// 250
+		UInt32               fileSize; // same as FileSizeLow in find data
+		UInt32               currentRecordOffset; // offset of current record in file
+		UInt32               currentChunkOffset; // offset of current chunk in record
+		UInt32               fetchedChunkDataSize; // number of bytes read in last GetChunkData() call
+		GroupInfo            unkFile268; // used when saving empty form records, e.g. for deleted forms
+		UInt32               unkFile280; // used when saving empty form records, e.g. for deleted forms  //280
+		GroupList            openGroups; // stack of open group records, from lowest level to highest //284
+		bool                 headerRead; // set after header has been successfully parsed //28C
+		UInt8                padFile28D[3];
 		WIN32_FIND_DATA	findData;				// 290
 		UInt32	version;						// 3D0 plugin version (0.8/1.0)
 		UInt32	formCount;						// 3D4 record/form count
@@ -119,8 +133,10 @@ struct ModEntry
 		UInt8	pad401[3];
 		BSStringT	authorName;						// 404
 		BSStringT	modDescription;					// 40C
-		UInt32	unk414;							// 414
-		UInt32	unk418;							// 418
+	
+		void* currentRecordDCBuffer;		 // buffer for decompressed record data //414
+		UInt32 currentRecordDCLength; // length of decompressed record data //418
+		//TESFile*             unkFile41C; // file this object was cloned from. used for local copies of network files?  COEF also report this member increasing the max size
 	};
 
 	Data		* data;
@@ -130,6 +146,9 @@ struct ModEntry
 	Data * Info() const		{	return data;	}
 	bool IsLoaded()	const	{	return (data && (data->flags & Data::kFlag_Loaded)) ? true : false;	}
 };
+STATIC_ASSERT(offsetof(ModEntry::Data, currentChunk) == 0x250);
+STATIC_ASSERT(offsetof(ModEntry::Data, unkFile268) == 0x268);
+STATIC_ASSERT(offsetof(ModEntry::Data, headerRead) == 0x28C);
 
 STATIC_ASSERT(sizeof(ModEntry::Data) == 0x41C);
 
