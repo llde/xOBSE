@@ -502,12 +502,13 @@ static bool GetTotalActiveEffectMagnitudeC_Execute(COMMAND_ARGS, AEMagnitudeCoun
 
 	UInt32 effectCode = 0;
 	UInt32 actorVal = kActorVal_OblivionMax;
-	if (!ExtractArgs(PASS_EXTRACT_ARGS, &effectCode, &actorVal))
+	UInt32 bIgnoreUnapplied = 0;
+	if (!ExtractArgs(PASS_EXTRACT_ARGS, &effectCode, &actorVal, &bIgnoreUnapplied))
 		return true;
 
 	if (effectCode == 0)
 		return true;
-	
+	counter.SetIgnoreUnappliedEffects(bIgnoreUnapplied);
 	MagicTarget * magicTarget = thisObj->GetMagicTarget();
 	if (!magicTarget) return true;
 

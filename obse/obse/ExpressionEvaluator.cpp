@@ -731,25 +731,29 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 			UInt16 argsLen = Read16();
 			UInt32 numBytesRead = 0;
 			ExpectReturnType(kRetnType_Default);	// expect default return type unless called command specifies otherwise
-			bool bExecuted = cmdInfo->execute(cmdInfo->params, m_data, callingObj, contObj, script, eventList, &cmdResult, &numBytesRead);
 
-			if (!bExecuted)
+			//__asm {push ebp}
+			if (!cmdInfo->execute(cmdInfo->params, m_data, callingObj, contObj, script, eventList, &cmdResult, &numBytesRead))
 			{
+				//__asm {pop ebp}
 				Error("Command %s failed to execute", curToken, cmdInfo->longName);
 				delete curToken;
 				curToken = NULL;
 				break;
 			}
+			//__asm {pop ebp}
 
 			m_data += argsLen - 2;
 
 			// create a new ScriptToken* based on result type, delete command token when done
-			delete curToken;
+
 			// adjust token type if we know command return type
 			CommandReturnType retnType = g_scriptCommands.GetReturnType(cmdInfo);
 			if (retnType == kRetnType_Ambiguous || retnType == kRetnType_ArrayIndex)	// return type ambiguous, cmd will inform us of type to expect
 				retnType = GetExpectedReturnType();
 
+			ScriptToken* oldToken = curToken;
+			curToken = NULL;
 			switch (retnType)
 			{
 			case kRetnType_String:
@@ -774,7 +778,7 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 				}
 				else
 				{
-					Error("A command returned an invalid array", curToken);
+					Error("A command returned an invalid array", oldToken);
 					break;
 				}
 			}
@@ -787,8 +791,9 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 				curToken = ScriptToken::Create(cmdResult);
 				break;
 			default:
-				Error("Unknown command return type %d while executing command in ExpressionEvaluator::Evaluate()", curToken, retnType);
+				Error("Unknown command return type %d while executing command in ExpressionEvaluator::Evaluate()", oldToken, retnType);
 			}
+			delete oldToken;
 		}
 
 		if (!(curToken->Type() == kTokenType_Operator))
@@ -820,6 +825,8 @@ ScriptToken* ExpressionEvaluator::Evaluate()
 			ScriptToken* opResult = op->Evaluate(lhOperand, rhOperand, this);
 			delete lhOperand;
 			delete rhOperand;
+			lhOperand = NULL;
+			rhOperand = NULL;
 
 			if (!opResult)
 			{
