@@ -1,3 +1,8 @@
+xOBSE 22.13
+	Fix:
+		- Fix some GetTotalAE ... C family commands, that could cause a crash (in particualr with OBSE compiler and expressions)
+		- Check for EffectList presence in GetMagicItemEffectCount, fixing a possible CTD when using wrong types forms
+
 xOBSE 22.12.1
 	Fix:
 		- Fix a serious regression in CS preventing some TESForm initialization for TESConditionItem forms
