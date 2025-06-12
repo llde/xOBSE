@@ -563,7 +563,7 @@ public:
 	virtual void	Unk_47(void) = 0;
 	virtual MagicCaster*	GetMagicCaster(void) = 0;
 	virtual MagicTarget*	GetMagicTarget(void) = 0;
-	virtual TESForm*	GetTemplateForm(void) = 0;  //Reported inlined
+	virtual TESForm*	GetTemplateForm(void) = 0;  //Reported inlined. No relvant function except for Actor and derived VTBLs
 	virtual void	SetTemplateForm(TESForm* form) = 0; //Reported inlined
 	virtual BSFaceGenNiNode*	GetFacegenNiNodeBiped(NiNode arg0) = 0;   //arg seem ignored for all 4 methods
 	virtual BSFaceGenNiNode* GetFacegenNiNodeSkinned(NiNode arg0) = 0;
@@ -658,7 +658,7 @@ public:
 	virtual void	Move(float arg0, float* pos, UInt32 arg2) = 0;  //TODO check. This function is a mess
 //	virtual void	Jump(void) = 0;	// jump?
 	virtual void  	FallImpact(float a2, float a3, Actor* a4, int a5) = 0; //At least seems relevant to fall and/or pain sounds
-	virtual void	Unk_6F(void) = 0;
+	virtual void	Unk_6F(void) = 0;  //SOmething for bhkCharacterProxy
 	virtual void	Unk_70(void) = 0;	// 70
 	virtual void	Unk_71(void) = 0;
 	virtual void	Unk_72(void) = 0;
@@ -692,7 +692,7 @@ public:
 
 	virtual SInt32	GetFame(void) = 0; // 81
 	virtual SInt32	GetInfamy(void) = 0;	// 82
-	virtual void	Resurrect(UInt8 unk1, UInt8 unk2, UInt8 unk3) = 0; //If unk3 is 1, it try to use the bhkProxyController. MAybe relative to animations? unk3 == 0, recreate the processes
+	virtual void	Resurrect(UInt32 unk1, UInt8 unk2, bool unk3) = 0; //If unk3 is 1, it try to use the bhkProxyController. MAybe relative to animations? unk3 == 0, recreate the processes
 	virtual void	Unk_84(void) = 0;
 	virtual void	Unk_85(void) = 0;
 	virtual void	Unk_86(void) = 0;
@@ -869,6 +869,7 @@ public:
 	float GetAVModifier(eAVModifier mod, UInt32 avCode);
 	float GetCalculatedBaseAV(UInt32 avCode);
 	bool IsAlerted();
+
 	void SetAlerted(bool bAlerted);
 	void EvaluatePackage();
 //	bool IsTalking();
@@ -878,13 +879,22 @@ public:
 STATIC_ASSERT(sizeof(Actor) == 0x104);
 #endif
 
-// 104+
-class Character : public Actor
-{
+class Creature : public Actor {
 public:
-	Character();
-	~Character();
+	UInt32		unk104;				// 104  should be similar to ActorSkinInfo
 };
+#if OBLIVION
+STATIC_ASSERT(sizeof(Creature) == 0x108);
+#endif
+
+class Character : public Actor {
+public:
+	ActorSkinInfo*	ActorSkinInfo;						// 104
+	UInt32		unk108;								// 108
+};
+#if OBLIVION
+STATIC_ASSERT(sizeof(Character) == 0x10C);
+#endif
 
 // 800
 class PlayerCharacter : public Character
@@ -972,7 +982,7 @@ public:
 	// +658	UInt32, misc stat array
 	// +70C	'initial state' buffer
 
-	UInt32		unk104[(0x118 - 0x104) >> 2];				// 104
+	UInt32		unk10C[(0x118 - 0x10C) >> 2];				// 10C
 	DialoguePackage	* dialoguePackage;						// 118
 	UInt32		unk11C[(0x130 - 0x11C) >> 2];				// 11C
 	float		skillExp[21];								// 130	current experience for each skill
@@ -1085,13 +1095,6 @@ public:
 #if OBLIVION
 STATIC_ASSERT(sizeof(PlayerCharacter) == 0x800);
 #endif
-
-class Creature : public Character
-{
-public:
-	Creature();
-	~Creature();
-};
 
 extern PlayerCharacter ** g_thePlayer;
 

@@ -405,7 +405,6 @@ class ActiveEffect;
 class NiObject;
 class BSBound;
 class PathingData;
-
 // size?
 // This is used all over the game code to manage actors and occassionally other objects.
 class ActorProcessManager
@@ -647,6 +646,35 @@ public:
 		kMovementFlag_Swimming =	0x00000800
 	};
 
+	enum SitSleep {
+		kSitSleep_None = 0,
+		kSitSleep_SittingIn = 3,
+		kSitSleep_Sitting = 4,
+		kSitSleep_SittingOut = 5,
+		kSitSleep_SleepingIn = 8,
+		kSitSleep_Sleeping = 9,
+		kSitSleep_SleepingOut = 10,
+	};
+
+	// C
+	struct Unk20C
+	{
+		UInt32	unk0;
+		UInt32	unk4;
+		UInt32	unk8;
+	};
+
+	// 10
+	struct Unk128
+	{
+		UInt32	unk0;	// 0
+		UInt32	unk4;	// 4
+		UInt32	unk8;	// 8
+		UInt16	unkC;	// C
+		UInt8	unkE;	// E
+		UInt8	padF;	// F
+	};
+
 	BaseProcess();
 	~BaseProcess();
 
@@ -699,31 +727,31 @@ public:
 	virtual bool	Unk_2B(void) = 0;
 	virtual void	Unk_2C(UInt32 arg0) = 0;
 
-	virtual void	Unk_2C_1_2(void) = 0;	// added in 1.2 patch
+	virtual void	Unk_2C_1_2(void) = 0;	// added in 1.2 patch //Remove arg0 from this->unk0A8 BSSimpleList
 
 	virtual void	Unk_2D(UInt32 arg0) = 0;
-	virtual void	Unk_2E(UInt32 arg0) = 0;
-	virtual bool	Unk_2F(void) = 0;
+	virtual void	SetUnk01D(UInt32 arg0) = 0;
+	virtual bool	GetUnk01D(void) = 0;
 	virtual void	Unk_30(UInt32 arg0) = 0;
 	virtual bool	Unk_31(void) = 0;
-	virtual TESObjectREFR *	GetUnk02C(void) = 0;
-	virtual void	SetUnk02C(TESObjectREFR * obj) = 0;
+	virtual TESObjectREFR *	GetFollow(void) = 0;
+	virtual void	SetFollow(TESObjectREFR * obj) = 0;   //Not a simple Setter
 	virtual UInt32	Unk_34(void) = 0;
 	virtual void	Unk_35(UInt32 arg0) = 0;
 	virtual void	Unk_36(UInt32 arg0) = 0;
 	virtual UInt32	Unk_37(void) = 0;
 	virtual void	Unk_38(UInt32 arg0) = 0;
-	virtual UInt32	Unk_39(UInt32 arg0) = 0;
-	virtual UInt32	Unk_3A(UInt32 arg0) = 0;
-	virtual UInt32	Unk_3B(UInt32 arg0) = 0;
+	virtual UInt32	Unk_39(UInt32 arg0) = 0;//Facegen something
 	virtual ExtraContainerChanges::EntryData* GetEquippedWeaponData(bool arg0) = 0;
-	virtual ExtraContainerChanges::EntryData* GetEquippedLightData(UInt32 arg0) = 0;
+	virtual ExtraContainerChanges::EntryData* GetEquippedLightData(bool arg0) = 0;
 	virtual ExtraContainerChanges::EntryData* GetEquippedAmmoData(bool arg0) = 0;
-	virtual void	Unk_3F(UInt32 arg0) = 0;
+	virtual ExtraContainerChanges::EntryData* GetEquippedShieldData(bool arg0) = 0;
 	virtual bool	GetAV(UInt32 arg0, UInt32 arg1) = 0;
 	virtual bool	SetAV(UInt32 arg0) = 0;
-	virtual bool	SetEquippedWeaponData(UInt32 arg0) = 0;
-	virtual bool	Unk_43(UInt32 arg0) = 0;
+	virtual bool	SetEquippedWeaponData(ExtraContainerChanges::EntryData* arg0) = 0;
+	virtual UInt32	SetEquippedLightData(ExtraContainerChanges::EntryData* arg0) = 0;
+	virtual UInt32	setEquippedAmmoData(ExtraContainerChanges::EntryData* arg0) = 0;
+	virtual bool	SetEquippedShieldData(ExtraContainerChanges::EntryData* arg0) = 0;
 	virtual bool	Unk_44(UInt32 arg0) = 0;
 	virtual UInt32	Unk_45(UInt32 arg0) = 0;
 	virtual UInt32	Unk_46(UInt32 arg0) = 0;
@@ -835,17 +863,13 @@ public:
 	virtual void	Unk_B0(void) = 0;
 	virtual void	Unk_B1(void) = 0;
 	virtual void	Unk_B2(void) = 0;
-	virtual void	Unk_B3(void) = 0;
-	virtual void	Unk_B4(void) = 0;
-	virtual void	Unk_B5(void) = 0;
-
+	virtual SInt16	GetCurrentAction() = 0;
+	virtual BSAnimGroupSequence*	GetCurrentActionAnimSequence() = 0;
 	// action is one of kAction_XXX. Returns action, return value probably unused.
-	virtual UInt16	SetCurrentAction(UInt16 action, BSAnimGroupSequence* sequence) = 0;
+	virtual UInt16	SetCurrentAction(SInt16 action, BSAnimGroupSequence* sequence) = 0;
+	virtual void	Unk_B6(void) = 0;
 	virtual void	Unk_B7(void) = 0;
-/*	virtual void	Unk_B8(void) = 0;   //OR set this as GetKnockedState
-	virtual UInt8	GetKnockedState(void) = 0; //And this as SetKnockedState(UInt8 knockedState) TODO investigate
-	*/
-	virtual void	GetKnockedState(void) = 0;  //JROush DB report this as HasFatigue/SetHasFatigue
+	virtual void	GetKnockedState(void) = 0;
 	virtual UInt8	SetKnockedState(UInt8 knockedState)  = 0;
     
 	virtual void	Unk_BA(void) = 0;
@@ -855,62 +879,63 @@ public:
 	virtual void	KnockbackActor(Actor* target, float arg1, float arg2, float arg3, float arg4) = 0;
 While OBSE and TESR define this order, VTBL analysis suggest that Unk_BB is actually KnockbackActor
 TODO test and control. Seems correct for MiddleHighProcess
+UnkBC seems also related to knockout
 	*/
 	virtual void	KnockbackActor(Actor* target, float arg1, float arg2, float arg3, float arg4) = 0;
-	virtual void	Unk_BC(void) = 0;   //Seems to be actually be some stuff about skeleton nodes and animations. At least for MiddleHighProcess
+	virtual void	Unk_BC(Actor* boh) = 0;   //Seems to be actually be some stuff about skeleton nodes and animations. At least for MiddleHighProcess
 	virtual void	Unk_BD(void) = 0;
 	virtual UInt8	GetCombatMode(void) = 0;
 	virtual UInt8	SetCombatMode(UInt8 mode) = 0;
 	virtual UInt8	GetWeaponOut(void) = 0;
 	virtual UInt8	SetWeaponOut(UInt8 out) = 0;
-	virtual void	Unk_C2(void) = 0;
-	virtual void *	Unk_C3(void) = 0;	// returns some pointer
-	virtual void	Unk_C4(void) = 0;
-	virtual void	Unk_C5(void) = 0;
-	virtual void	Unk_C6(void) = 0;
-	virtual void	Unk_C7(void) = 0;
-	virtual void	Unk_C8(void) = 0;
-	virtual void	Unk_C9(void) = 0;
-	virtual void	Unk_CA(void) = 0;
-	virtual void	Unk_CB(void) = 0;
-	virtual void	Unk_CC(void) = 0;
-	virtual void	Unk_CD(void) = 0;
-	virtual void	Unk_CE(void) = 0;
-	virtual void	Unk_CF(void) = 0;
-	virtual void	Unk_D0(void) = 0;
-	virtual void	Unk_D1(void) = 0;
-	virtual void	Unk_D2(void) = 0;
-	virtual void	Unk_D3(void) = 0;
-	virtual void	Unk_D4(void) = 0;
-	virtual void	Unk_D5(void) = 0;
-	virtual void	Unk_D6(void) = 0;
-	virtual void	Unk_D7(void) = 0;
-	virtual void	Unk_D8(void) = 0;
-	virtual void	Unk_D9(void) = 0;
-	virtual void	Unk_DA(void) = 0;
-	virtual UInt8	GetSitSleepState(void) = 0;
-	virtual void	Unk_DC(void) = 0;
+	virtual void	SetUnk20CInner( UInt32 a2, UInt32 a3, UInt32 a4) = 0;
+	virtual Unk20C*	GetUnk20C(void) = 0; //Posible it's different on non HighProcess, or it may return always NULL'
+	virtual void	InitUnk1A8Val(void) = 0; // Set unk1A8 at 0.0
+	virtual void	Unk_C5(void) = 0;  // Seems something related to refractions, shadownode and vampirism
+	virtual void	SetUnk16C(void) = 0;
+	virtual void	GetUnk16C(void) = 0;
+	virtual float	GetUnk0F8(void) = 0;
+	virtual void	SetUnk0F8(float unk) = 0;
+	virtual void	Unk_CA(TESObjectREFR*) = 0; //Cycle into some sort of List removing , elemnts
+	virtual void	Unk_CB(TESObjectREFR* unk) = 0; // As above, seems 2 similar functions
+	virtual void	GetUnk218(void) = 0;\
+	virtual void	SetUnk218(UInt32 unk) = 0;
+	virtual void	GetUnk220Element(UInt32 idx) = 0;
+	virtual void	SetUnk220Element(UInt32 idx, UInt32 value) = 0;
+	virtual void	StopSoundITMTorchHeldLP(void) = 0;  //TODO it use Unk220, possible it contains Sound* ?
+	virtual void	PlaySoundITMTorchHeldLP(void) = 0;
+	virtual void	GetUnk278(void) = 0;
+	virtual void	SetUnk278To0(void) = 0;
+	virtual void	SetUnk2ACCallD5(float a2) = 0; //Call InitUnk2B0() and set unk2AC
+	virtual void	InitUnk2B0(void) = 0; // set unk2B0 value to  flt_B36CB0
+	virtual void	GetNearDetectionBonus(void) = 0;  //Get unk2AC, DB call it GetNearDetectionBonus
+	virtual void	GetUnk22C(void) = 0;
+	virtual void	SetUnk22C(float unk) = 0;
+	virtual void	Unk_D9(void* unk) = 0;  //Check CurrentPackage if a2. TESPackage may not be complete
+	virtual BaseProcess::SitSleep	GetSitSleepState(void) = 0;
+	virtual void SetSleepState(Actor *actor, SitSleep sleepState , TESObjectREFR *fornititure, UInt8 furnitureMarkerIndex) = 0;  //Do something for animData and assign various internal state.
+	virtual SInt16	GetFurnitureMarkerHeading(void) = 0;  //furnitureMarkerIndex checked for differenct to 0x7F. Access markers array using unk124 as index. Then access the heading field
 	virtual TESFurniture*	GetFurniture(void) = 0;
-	virtual void	Unk_DE(void) = 0;
-	virtual void	Unk_DF(void) = 0;
-	virtual UInt32	GetUnk0D4(void) = 0;
-	virtual void	Unk_E1(void) = 0;
-	virtual void	Unk_E2(void) = 0;
+	virtual UInt8	GetFurnitureMarkerIndex(void) = 0;
+	virtual Unk128*	GetUnk128(void) = 0;
+	virtual void	Unk_E0(void) = 0; //Anim related
+	virtual UInt8	GetUnk25C(void) = 0;
+	virtual void	SetUnk25C(UInt8 arg) = 0;
 	virtual UInt8	GetUnk01C(void) = 0;
 	virtual void	SetUnk01C(UInt8 arg) = 0;
-	virtual void	Unk_E5(void) = 0;
-	virtual void	Unk_E6(void) = 0;
-	virtual void	Unk_E7(void) = 0;
-	virtual void	Unk_E8(void) = 0;
-	virtual void	Unk_E9(void) = 0;
+	virtual UInt8	GetUnk180(void) = 0;
+	virtual void	SetUnk180(UInt8 val) = 0;
+	virtual void	Unk_E7(void) = 0;  //SOmething to do with pathing, positions, package flags,
+	virtual NiObject*	GetUnk184(void) = 0;
+	virtual void	SetUnk184(NiObject* a2) = 0;
 	virtual float	GetLightAmount(Actor * actor, UInt32 unk1) = 0;
-	virtual void	Unk_EB(void) = 0;
-	virtual void	* GetDetectionState(Actor* target) = 0;	// returns HighProcess::DetectionList::Data *
-	virtual void	Unk_ED(void) = 0;
-	virtual void	Unk_EE(void) = 0;
-	virtual void	Unk_EF(void) = 0;
-	virtual void	Unk_F0(void) = 0;
-	virtual void	Unk_F1(void) = 0;
+	virtual void	* GetDetectionState(Actor* target) = 0;	// returns HighProcess::DetectionList::Data * //VTBL put GetLightAmount and GetDetectionState near
+	virtual UInt32	Unk_EC() = 0; //Return 0 in HighProcess
+	virtual TESObjectREFR*	 GetUnk030() = 0; //What reference is this?
+	virtual void	SetUnk030(TESObjectREFR* unk) = 0;
+	virtual int 	RemoveFornitureInteraction(Actor*) = 0;  //It Send AddPAckageWakeUp when sitting or sleeping (and not mounted)
+	virtual UInt32	GetAndCacheSoulLevel(Actor* act) = 0;
+	virtual void	SetUnk138(UInt16 arg0) = 0;
 	virtual void	Unk_F2(void) = 0;
 	virtual void	Unk_F3(void) = 0;
 	virtual void	Unk_F4(void) = 0;
@@ -997,6 +1022,10 @@ TODO test and control. Seems correct for MiddleHighProcess
 	TESPackage::eProcedure	editorPackProcedure;	// 004
 	TESPackage				* editorPackage;		// 008
 };
+
+#if OBLIVION
+STATIC_ASSERT(sizeof(BaseProcess) == 0xC);
+#endif
 
 // 90
 class LowProcess : public BaseProcess
@@ -1138,18 +1167,7 @@ public:
 	virtual void	RemoveWornItems(Actor* act, UInt8 arg2, UInt32 arg3) = 0;
 	virtual void	Travel(Actor* act, UInt8 arg2, float arg3, int arg4) = 0;
 	virtual void	Unk_163(void) = 0;
-	virtual void	Unk_164(void) = 0;
-
-	// 10
-	struct Unk128
-	{
-		UInt32	unk0;	// 0
-		UInt32	unk4;	// 4
-		UInt32	unk8;	// 8
-		UInt16	unkC;	// C
-		UInt8	unkE;	// E
-		UInt8	padF;	// F
-	};
+	virtual void	Unk_164(Actor* boh) = 0;
 
 	// 8
 	struct EffectListNode
@@ -1170,7 +1188,9 @@ public:
 	UInt8				pad0C9[3];	// 0C9
 	TESPackage::eProcedure	currentPackProcedure;		// 0CC
 	UInt8				unk0D0;		// 0D0
-	UInt8				pad0D0[15];	// 0D1 - never initialized
+	UInt8				pad0D1[3];	// 0D1 - never initialized
+	float				positionOfFollowedActor[3];// 0D4
+
 	UInt32				unk0E0;		// 0E0
 	ExtraContainerChanges::EntryData* equippedWeaponData;		// 0E4
 	ExtraContainerChanges::EntryData* equippedLightData;		// 0E8
@@ -1195,7 +1215,7 @@ public:
 	UInt8				pad11E;		// 11E
 	UInt8				pad11F;		// 11F
 	TESObjectREFR		* furniture;	// 120 Furniture ref NPC is sitting on (may be used for other things)
-	UInt8				unk124;		// 124 - init'd to 0x7F
+	UInt8				furnitureMarkerIndex;		// 124 - init'd to 0x7F  Forniture Marker Index used? (seen used with as BSFornitureMarker->markers.data idx)
 	Unk128				unk128;		// 128
 	UInt16				unk138;		// 138
 	UInt8				pad13A[2];	// 13A
@@ -1298,14 +1318,6 @@ public:
 		UInt32	unk4;
 		UInt32	unk8;
 		UInt32	unkC;
-	};
-
-	// C
-	struct Unk20C
-	{
-		UInt32	unk0;
-		UInt32	unk4;
-		UInt32	unk8;
 	};
 
 	// C

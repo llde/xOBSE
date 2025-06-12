@@ -79,7 +79,7 @@ public:
 	// void** vtbl
 	BSTask	* unk04;		// 004 
 	UInt32  unk08;			// 008 looks like a counter
-	UInt32	unk0C;			// 00C 
+	UInt32	unk0C;			// 00C // Check if != 6 inside sub_43B000
 	UInt32	unk10;			// 010 
 	UInt32	unk14;			// 014 
 };
@@ -127,11 +127,16 @@ public:
 	QueuedReference();
 	~QueuedReference();
 
+	struct Unk28{
+		UInt32 unk00;
+		UInt32 unk04;
+		NiObjectNET* model;
+	};
 	UInt32			unk18;			// 018 
 	QueuedChildren	* queuedChildren;	// 01C
 	TESObjectREFR	* refr;			// 020 
 	UInt32			unk24;			// 024 
-	UInt32			unk28;			// 028 
+	Unk28*			unk28;			// 028 Seems a 3 element struct?
 	UInt32			unk2C;			// 02C 
 	UInt32			unk30;			// 030 
 };

@@ -42,15 +42,18 @@ public:
 	bool		bTerminated;		// 11 set to 1 when effect is to be removed
 	UInt8		bRemoved;			// 12
 	UInt8		pad13;				// 13
-	UInt32		aeFlags;			// 14
+	UInt32		aeFlags;			// 14 use unk, but frequently appears as 0xE when no HitEffects are present, 0 otherwise (OBME)
 	float		magnitude;			// 18 - adjusted based on target?
 	float		duration;			// 1C - adjusted based on target?
 	MagicTarget	* target;			// 20
 	MagicCaster	* caster;			// 24
 	UInt32		spellType;			// 28 e.g. SpellItem::kType_Ability
 	UInt32		unk2C;				// 2C
-	TESForm		* enchantObject;	// 30 enchanted obj responsible for effect
+	TESForm		* enchantObject;	// 30 enchanted obj responsible for effect .  on Enchantment on Armor this is TESARMO
 	TESForm		* data;				// 34 - in ScriptEffect this is a Script *
+	//TODO OBME
+	//		simple linked list of active magic hit effects
+	//		non-null for light, detectlife, shield, and possibly others
 
 	void Remove(bool bRemoveImmediately);
 	bool IsApplied() const { return bApplied; }

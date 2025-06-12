@@ -10,6 +10,7 @@
 #include "obse/GameActorValues.h"
 #include "obse/GameTypes.h"
 #include "obse/GameBSExtraData.h"
+
 #include "obse/NiNodes.h"
 #include "Utilities.h"
 
@@ -367,15 +368,15 @@ public:
 	virtual void	Unk_17(void);
 	virtual void	Unk_18(void);
 	virtual void	Unk_19(void);
-	virtual void	Unk_1A(void);
+	virtual bool	SeekRecordType(void* file); //Saw SeekWorldInFileFast (formerly FindCellInFileFast) in TESWorldSpace (only if master). MAybe SeekRecordType (todo check if only for master and for records that have offsets)
 	virtual void	DoPostFixup(void);	// initialize form after other forms loaded
 	virtual FormType	GetFormType(void);
 	virtual void	GetDescription(BSStringT * dst);
 	virtual bool	IsQuestItem(void);
 	virtual bool	IsBorderRegion(void);
-	virtual bool	Unk_20(void);	// 20 //flags 1<<16
+	virtual bool	IsFromMaster(void);	// 20 //flags 1<<16
 	virtual bool	IsOffLimits(void);
-	virtual bool	IsDangerous(void);  //same flag TODO check
+	virtual bool	IsDangerous(void);  //same flag TODO check. TESFurniture, TESWorldSpace have the same function in this spot
 	virtual void	SetDeleted(bool bSet);
 	virtual void	SetFromActiveFile(bool fromActiveFile);
 	virtual void	SetQuestItem(bool isQuestItem);
@@ -392,7 +393,7 @@ public:
 	virtual void	CreateGroupRecord(void);	// 30
 	virtual void	Unk_31(void);
 	virtual void	Unk_32(void);
-	virtual bool	Unk_33(TESObjectREFR* refr0, TESObjectREFR* refr1, UInt32 unk2); // related to activate, refr1 is activating refr, refr0 is a reference to this TESForm being activated, seen unk2 == 0
+	virtual bool	ActivateActionForReference(TESObjectREFR* refr0, TESObjectREFR* refr1, UInt32 unk2); // related to activate, refr1 is activating refr, refr0 is a reference to this TESForm being activated, seen unk2 == 0.  In TESFurniture case, the function seems to check Player and the TESfurnitre This object isn't  used at all.
 	virtual const char *	GetName(void);	// not sure which objects this works on, doesn't seem to work on player or random objects
 	virtual const char *	GetEditorName(void);	// returns nothing at run-time
 	virtual void	SetName(const char * name);
@@ -2119,6 +2120,22 @@ public:
 	SpellItem();
 	~SpellItem();
 
+
+	//TODO OBME have a different enum here
+	/*
+	 *	     enum MagicItemType      // This does NOT match the OBSE standard enum, which appears
+	 *    {                       // to have been invented entirely by them for internal purposes
+	 *		kMagItm_Spell = 0,
+	 *		kMagItm_Disease,
+	 *		kMagItm_Power,
+	 *		kMagItm_LesserPower,
+	 *		kMagItm_Ability,
+	 *        kMagItm_Poison,         // Generally not used, actual poisons are alchemy items w/ all hostile effects
+	 *        kMagItm_Enchantment = 6,
+	 *        kMagItm_AlchemyItem,
+	 *        kMagItm_Ingredient,
+};
+	 */
 	enum {
 		kType_Spell = 0,
 		kType_Disease,
@@ -2832,6 +2849,7 @@ public:
 	TESActorBase*		templateForm;	//044
 };
 
+//74
 class TESSoulGem : public TESBoundObject
 {
 public:
@@ -2845,8 +2863,8 @@ public:
 	TESModel			model;						// 030
 	TESIcon				icon;						// 048
 	TESScriptableForm	scriptable;		// 054
-	TESValueForm		value;						// 064
-	TESWeightForm		weight;						// 072
+	TESValueForm		value;						// 060
+	TESWeightForm		weight;						// 068
 
 	enum {
 		kSoul_None = 0,
@@ -2857,11 +2875,13 @@ public:
 		kSoul_Grand,
 	};
 
-	UInt8				soul;
-	UInt8				capacity;
+	UInt8				soul; // 070
+	UInt8				capacity; // 071
 	UInt8				padding[2];
 };
-
+#if OBLIVION
+STATIC_ASSERT(sizeof(TESSoulGem) == 0x74);
+#endif
 // 70
 class TESKey : public TESObjectMISC
 {
@@ -3251,6 +3271,7 @@ public:
 		UInt32		rotZ;
 		float		directionalFade;
 		float		fogClipDistance;
+		void* unk028;  //Offset
 	};
 
 	// members
@@ -3415,7 +3436,12 @@ public:
 	Character		* character;		// 074
 	void			* ptr078;			// 078
 	TESWorldSpace	* parentWorldspace;	// 07C
-	UInt32			unk080[(0xC0 - 0x80) >> 2];	// 080
+	TESWaterForm *WaterForm;
+	UInt32 unk084[5];
+	float unk9C[4];
+	UInt32 *cellOffsetsArray; //Repurposed inside OffsetGenerator with different type, DO NOT Access without care
+	float unk0AC[4];
+	UInt32 recordOffsetFromFileBeginning;   //Repurposed inside OffsetGenerator with different type, DO NOT Access without care
 	BSStringT			editorID;			// 0C0
 	NiTPointerMap <void> map0C8;		// 0C8 - ?$NiTPointerMap@I_N@@
 	UInt32			unk0D8[(0xE0 - 0xD8) >> 2];	// 0D8
@@ -3425,7 +3451,11 @@ public:
 	bool CanFastTravel() const { return (worldFlags & kFlag_NoFastTravel) ? false : true; }
 	void SetCanFastTravel(bool bCan) { if (bCan) worldFlags &= ~kFlag_NoFastTravel; else worldFlags |= kFlag_NoFastTravel; }
 };
-
+#if OBLIVION
+STATIC_ASSERT(sizeof(TESWorldSpace) == 0xE0);
+STATIC_ASSERT(offsetof(TESWorldSpace, cellOffsetsArray) ==  0xA8);
+STATIC_ASSERT(offsetof(TESWorldSpace, map0C8) ==  0xC8);
+#endif
 // 28
 class TESObjectLAND : public TESForm
 {
@@ -4361,3 +4391,94 @@ public:
 	TESIdleForm*	parent;			// 40
 	TESIdleForm*	previous;		// 44
 };
+
+class ActorSkinInfo {
+public:
+	NiNode*			Bip01Node;				// 000
+	UInt32			unk004;
+	NiNode*			HeadNode;				// 008
+	UInt32			unk00C;
+	NiNode*			Finger1Node;			// 010
+	UInt32			unk014;
+	NiNode*			LFinger1Node;			// 018
+	UInt32			unk01C;
+	NiNode*			WeaponNode;				// 020
+	UInt32			unk024;
+	NiNode*			BackWeaponNode;			// 028
+	UInt32			unk02C;
+	NiNode*			SideWeaponNode;			// 030
+	UInt32			unk034;
+	NiNode*			QuiverNode;				// 038
+	UInt32			unk03C;
+	NiNode*			LForearmTwistNode;		// 040
+	UInt32			unk044;
+	NiNode*			TorchNode;				// 048
+	UInt32			unk04C;
+	UInt32			unk050;
+	Actor*			Actor054;				// 054
+	UInt32			unk058;
+	TESForm*		unk05C;
+	TESModel*		unk060;
+	NiNode*			unk064;
+	UInt32			unk068;
+	TESForm*		UpperBodyForm;			// 06C
+	TESModel*		UpperBodyModel;			// 070
+	NiNode*			UpperBodyObject;		// 074
+	UInt32			unk078;
+	TESForm*		LowerBodyForm;			// 07C
+	TESModel*		LowerBodyModel;			// 080
+	NiNode*			LowerBodyObject;		// 084
+	UInt32			unk088;
+	TESForm*		HandForm;				// 08C
+	TESModel*		HandModel;				// 090
+	NiNode*			HandObject;				// 094
+	UInt32			unk098;
+	TESForm*		FootForm;				// 09C
+	TESModel*		FootModel;				// 0A0
+	NiNode*			FootObject;				// 0A4
+	UInt32			unk0A8;
+	UInt32			unk0AC;
+	UInt32			unk0B0;
+	NiNode*			unk0B4;
+	UInt32			unk0B8;
+	UInt32			unk0BC;
+	UInt32			unk0C0;
+	NiNode*			unk0C4;
+	UInt32			unk0C8;
+	UInt32			unk0CC;
+	UInt32			unk0D0;
+	NiNode*			unk0D4;
+	UInt32			unk0D8;
+	TESObjectWEAP*	WeaponForm;				// 0DC
+	TESModel*		WeaponModel;			// 0E0
+	NiNode*			WeaponObject;			// 0E4
+	UInt32			unk0E8;
+	TESForm*		unk0EC;
+	TESModel*		unk0F0;
+	NiNode*			unk0F4;
+	UInt32			unk0F8;
+	TESForm*		unk0FC;
+	TESModel*		unk100;
+	NiNode*			unk104;
+	UInt32			unk108;
+	TESForm*		AmmoForm;				// 10C
+	TESModel*		AmmoModel;				// 110
+	NiNode*			AmmoObject;				// 114
+	UInt32			unk118;
+	TESObjectARMO*	ShieldForm;				// 11C
+	TESModel*		ShieldModel;			// 120
+	NiNode*			ShieldObject;			// 124
+	UInt32			unk128;
+	TESObjectLIGH*	LightForm;				// 12C
+	TESModel*		LightModel;				// 130
+	NiNode*			LightObject;			// 134
+	UInt32			unk138;
+	UInt32			unk13C;
+	UInt32			unk140;
+	UInt32			unk144;
+	UInt32			unk148;
+	UInt32			unk14C;
+	Actor*			Actor150;				// 150
+};
+STATIC_ASSERT(sizeof(ActorSkinInfo) == 0x154);
+
