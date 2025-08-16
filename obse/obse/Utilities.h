@@ -411,113 +411,22 @@ inline float Vector2_Dot(Vector2& lhs, Vector2& rhs)
 // ConsolePrint() limited to 512 chars; use this to print longer strings to console
 void Console_Print_Long(const std::string& str);
 
-// thread-safe template versions of ThisStdCall()
-
-__forceinline UInt32 ThisStdCall(UInt32 _f,void* _t)
-{
-	class T {}; union { UInt32 x; UInt32 (T::*m)(); } u = { _f };
-	return ((T*)_t->*u.m)();
-}
-
-template <typename T1>
-__forceinline UInt32 ThisStdCall(UInt32 _f,void* _t,T1 a1)
-{
-	class T {}; union { UInt32 x; UInt32 (T::*m)(T1); } u = { _f };
-	return ((T*)_t->*u.m)(a1);
-}
-
-template <typename T1,typename T2>
-__forceinline UInt32 ThisStdCall(UInt32 _f,void* _t,T1 a1,T2 a2)
-{
-	class T {}; union { UInt32 x; UInt32 (T::*m)(T1,T2); } u = { _f };
-	return ((T*)_t->*u.m)(a1,a2);
-}
-
-template <typename T1,typename T2,typename T3>
-__forceinline UInt32 ThisStdCall(UInt32 _f,void* _t,T1 a1,T2 a2,T3 a3)
-{
-	class T {}; union { UInt32 x; UInt32 (T::*m)(T1,T2,T3); } u = { _f };
-	return ((T*)_t->*u.m)(a1,a2,a3);
-}
-
-template <typename T1,typename T2,typename T3,typename T4>
-__forceinline UInt32 ThisStdCall(UInt32 _f,void* _t,T1 a1,T2 a2,T3 a3,T4 a4)
-{
-	class T {}; union { UInt32 x; UInt32 (T::*m)(T1,T2,T3,T4); } u = { _f };
-	return ((T*)_t->*u.m)(a1,a2,a3,a4);
-}
-
-template <typename T1,typename T2,typename T3,typename T4,typename T5>
-__forceinline UInt32 ThisStdCall(UInt32 _f,void* _t,T1 a1,T2 a2,T3 a3,T4 a4,T5 a5)
-{
-	class T {}; union { UInt32 x; UInt32 (T::*m)(T1,T2,T3,T4,T5); } u = { _f };
-	return ((T*)_t->*u.m)(a1,a2,a3,a4,a5);
-}
-
-template <typename T1,typename T2,typename T3,typename T4,typename T5,typename T6>
-__forceinline UInt32 ThisStdCall(UInt32 _f,void* _t,T1 a1,T2 a2,T3 a3,T4 a4,T5 a5, T6 a6)
-{
-	class T {}; union { UInt32 x; UInt32 (T::*m)(T1,T2,T3,T4,T5,T6); } u = { _f };
-	return ((T*)_t->*u.m)(a1,a2,a3,a4,a5,a6);
-}
-
-template <typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9>
-__forceinline UInt32 ThisStdCall(UInt32 _f, void* _t, T1 a1, T2 a2, T3 a3, T4 a4, T5 a5, T6 a6, T7 a7, T8 a8, T9 a9)
-{
-	class T {}; union { UInt32 x; UInt32(T::* m)(T1, T2, T3, T4, T5, T6, T7, T8, T9); } u = { _f };
-	return ((T*)_t->*u.m)(a1, a2, a3, a4, a5, a6, a7, a8, a9);
-}
-
-template <typename T1,typename T2,typename T3,typename T4,typename T5,typename T6, typename T7, typename T8, typename T9, typename T10>
-__forceinline UInt32 ThisStdCall(UInt32 _f,void* _t,T1 a1,T2 a2,T3 a3,T4 a4,T5 a5, T6 a6, T7 a7, T8 a8, T9 a9, T10 a10)
-{
-	class T {}; union { UInt32 x; UInt32 (T::*m)(T1,T2,T3,T4,T5,T6,T7,T8,T9,T10); } u = { _f };
-	return ((T*)_t->*u.m)(a1,a2,a3,a4,a5,a6,a7,a8,a9,a10);
+// thread-safe template version of ThisStdCall()
+template <typename ThisType, typename... Ts>
+UInt32 ThisStdCall(UInt32 addr, ThisType* This, Ts...  args){
+	class T {}; union { UInt32 x; UInt32 (T::*m)(Ts...); } u = { addr };
+	return ((T*)This->*u.m)(args...);
 }
 // thread safe version of virtual ThisStdCall()
 
-template <typename Tthis>
-__forceinline UInt32 ThisVirtualStdCall(UInt32 vtbl, UInt32 offset, Tthis _this)
+template <typename Tthis, typename... Ts>
+__forceinline UInt32 ThisVirtualStdCall(UInt32 vtbl, UInt32 offset, Tthis _this, Ts... args)
 {
 	if (!vtbl) return 0;
-	class T {}; union { UInt32 x; UInt32 (T::*m)(); } u = {*(UInt32*)(vtbl + offset)};
-	return ((T*)_this->*u.m)();
+	class T {}; union { UInt32 x; UInt32 (T::*m)(Ts...); } u = {*(UInt32*)(vtbl + offset)};
+	return ((T*)_this->*u.m)(args...);
 }
-template <typename Tthis, typename T1>
-__forceinline UInt32 ThisVirtualStdCall(UInt32 vtbl, UInt32 offset, Tthis _this, T1 arg1)
-{
-	if (!vtbl) return 0;
-	class T {}; union { UInt32 x; UInt32 (T::*m)(T1); } u = {*(UInt32*)(vtbl + offset)};
-	return ((T*)_this->*u.m)(arg1);
-}
-template <typename Tthis, typename T1, typename T2>
-__forceinline UInt32 ThisVirtualStdCall(UInt32 vtbl, UInt32 offset, Tthis _this, T1 arg1, T2 arg2)
-{
-	if (!vtbl) return 0;
-	class T {}; union { UInt32 x; UInt32 (T::*m)(T1, T2); } u = {*(UInt32*)(vtbl + offset)};
-	return ((T*)_this->*u.m)(arg1, arg2);
-}
-template <typename Tthis, typename T1, typename T2, typename T3>
-__forceinline UInt32 ThisVirtualStdCall(UInt32 vtbl, UInt32 offset, Tthis _this, T1 arg1, T2 arg2, T3 arg3)
-{
-	if (!vtbl) return 0;
-	class T {}; union { UInt32 x; UInt32 (T::*m)(T1, T2, T3); } u = {*(UInt32*)(vtbl + offset)};
-	return ((T*)_this->*u.m)(arg1, arg2, arg3);
-}
-template <typename Tthis, typename T1, typename T2, typename T3, typename T4>
-__forceinline UInt32 ThisVirtualStdCall(UInt32 vtbl, UInt32 offset, Tthis _this, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
-{
-	if (!vtbl) return 0;
-	class T {}; union { UInt32 x; UInt32 (T::*m)(T1, T2, T3, T4); } u = {*(UInt32*)(vtbl + offset)};
-	return ((T*)_this->*u.m)(arg1, arg2, arg3, arg4);
-}
-template <typename Tthis, typename T1, typename T2, typename T3, typename T4, typename T5>
-__forceinline UInt32 ThisVirtualStdCall(UInt32 vtbl, UInt32 offset, Tthis _this, T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5)
-{
-	if (!vtbl) return 0;
-	class T {}; union { UInt32 x; UInt32 (T::*m)(T1, T2, T3, T4, T5); } u = {*(UInt32*)(vtbl + offset)};
-	return ((T*)_this->*u.m)(arg1, arg2, arg3, arg4, arg5);
-}
+
 
 // conversions between game units and metric units
 // havok uses metric, game uses 7 game units per centimeter. (see 0x00A39088)

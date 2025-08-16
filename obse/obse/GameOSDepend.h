@@ -217,13 +217,13 @@ public:
     //  - if we wanna add gamepad support, we'd need to patch this to poll XInput
 
 
-	bool QueryMouseKeyState(UInt8 keycode, KeyQuery query) { return ThisStdCall<UInt32, KeyQuery>(0x004031E0, this, keycode, query); }
-	bool QueryKeyboardKeyState(UInt16 keycode, KeyQuery query) { return ThisStdCall<UInt32, KeyQuery>(0x004032D0, this, keycode, query); }
+	bool QueryMouseKeyState(UInt8 keycode, KeyQuery query) { return ThisStdCall<OSInputGlobals,UInt32, KeyQuery>(0x004031E0, this, keycode, query); }
+	bool QueryKeyboardKeyState(UInt16 keycode, KeyQuery query) { return ThisStdCall<OSInputGlobals,UInt32, KeyQuery>(0x004032D0, this, keycode, query); }
 
 /**  - loops over each scheme and calls QueryInputState for the key the control is mapped to
 *    - for special keycodes (1D, 1E, 1F), skips that and uses special fields 
 */
-	UInt32 QueryControlState(MappableControl control, KeyQuery query) {return ThisStdCall<UInt32, KeyQuery>(0x00403520, this, control, query);}
+	UInt32 QueryControlState(MappableControl control, KeyQuery query) {return ThisStdCall<OSInputGlobals,UInt32, KeyQuery>(0x00403520, this, control, query);}
 
 	static bool IsKeycodeValid(UInt32 id) { return id < kMaxButtons; } //I don't know why there was a -2 causing the wheels motion to not be picked up.
 
