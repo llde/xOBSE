@@ -1435,6 +1435,10 @@ public:
 	UInt32 Cost() const { return m_cost; }
 };
 
+bool EffectItemList::HasAllEffectHostile() const {
+	return (ThisStdCall(0x00414EB0, this) & 0x000000FF /*Function return only al (LOBYTE(eax) in ida) so clean the rest*/ ) ? true : false;
+}
+
 UInt32 EffectItemList::GetMagickaCost(TESForm* form) const
 {
 	EffectItemVisitor visitor(&effectList);
@@ -1481,7 +1485,7 @@ const char* EffectItemList::GetNthEIName(UInt32 whichEffect) const
 
 bool AlchemyItem::IsPoison() const
 {
-	return (ThisStdCall(0x00414EB0, (void*)(&this->magicItem.list)) & 0x000000FF) ? true : false;
+	return this->magicItem.list.HasAllEffectHostile();
 }
 
 float AlchemyItem::GetGoldValue()

@@ -415,7 +415,7 @@ public:
         kFormFlags_TurnOffFire          = 0x00000080,   // ?? (from TES4Edit)
         kFormFlags_CastShadows          = 0x00000200,   // ?? (from TES4Edit), Unused, Don't cast shadows from TESR.
 		kFormFlags_QuestItem            = 0x00000400,   // aka Quest Item, Persistent Reference, Essenstial Actor
-		kFromFlags_Essential            = kFormFlags_QuestItem, 
+		kFromFlags_Essential            = kFormFlags_QuestItem,
         kFormFlags_InitiallyDisabled    = 0x00000800,   // ?? (from TES4Edit)
         kFormFlags_Ignored              = 0x00001000,   // record is not loaded by CS, perhaps game as well
         kFormFlags_Temporary            = 0x00004000,   // not saved in CS, probably game as well
@@ -1647,11 +1647,14 @@ public:
 	float CalcGoldValue();
 	UInt32 GetSchoolSkillAV();
 	UInt32 GetSchoolCode();		// returns one of EffectSetting::kEffect_XXX (values 0 thru 5)
+	bool HasAllEffectHostile() const;   //Invoked by Poison checks
 };
 
 typedef Visitor<EffectItemList::Entry, EffectItem> EffectItemVisitor;
 EffectItemList* GetEffectList(TESForm* form);
 
+
+//TODO document precise scope of MagicItem** Classes
 // 1C
 class MagicItem : public TESFullName
 {
@@ -1670,7 +1673,34 @@ public:
 	};
 	EType Type() const;
 
-	//TODO MAgicItem vtbl.
+	enum MagicTypes
+	{
+		kMagicType_Spell = 0x0,
+		kMagicType_Disease = 0x1,
+		kMagicType_Power = 0x2,
+		kMagicType_LesserPower = 0x3,
+		kMagicType_Ability = 0x4,
+		kMagicType_Poison = 0x5,
+		kMagicType_Enchantment = 0x6,
+		kMagicType_AlchemyItem = 0x7,
+		kMagicType_Ingredient = 0x8,
+		kMagicType__MAX = 0x9,
+	};
+
+
+	virtual  bool IsMagicItemAutoCalc();
+	virtual void SetMagicItemAutoCalc(bool autoCalc);
+	virtual MagicTypes GetMagicType();
+	virtual bool ScriptAlwaysApplies();
+	virtual bool NoAbsorbReflect();
+	virtual UInt32 ExtraDataChunkType();
+	virtual void ExtraDataPtr();
+	virtual UInt32 ExtraDataSize();
+	virtual bool CompareExtraData(MagicItem *oth);
+	virtual void CopyExtraData(MagicItem *oth);
+	virtual void SaveBases();
+	virtual void LoadBases(void *file, UInt32 chunkType);
+
 };
 
 // 040
@@ -3166,7 +3196,7 @@ public:
 		UInt8 unk8;   //Always 1
 		UInt8 pad9[3];  // Zero most of the times, 13-3-0 once
 	};
-    
+
 	struct Unk01C
 	{
 		UInt32	unk0;
@@ -3177,7 +3207,7 @@ public:
 	Unk01C	* areaList;				// 01C
 	TESWorldSpace	* worldSpace;	// 020
 	TESWeather		* weather;		// 024
-	float	unk028;		
+	float	unk028;
 };
 
 // 58

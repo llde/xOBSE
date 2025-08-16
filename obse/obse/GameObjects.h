@@ -1,5 +1,6 @@
 #pragma once
 
+#include "GameTypes.h"
 #include "obse/GameForms.h"
 #include "obse/GameExtraData.h"
 #include "obse/GameProcess.h"
@@ -991,7 +992,14 @@ public:
 	UInt8		bCanLevelUp;								// 1DC
 	UInt8		unk1DD[3];									// 1DD
 	Creature	* lastRiddenHorse;							// 1E0
-	UInt32		unk1E4[(0x204 - 0x1E4) >> 2];				// 1E4
+	UInt32 unk1E4;
+	UInt32 unk1E8;
+	UInt32 unk1EC;
+	UInt32 unk1F0;
+	UInt32 unk1F4;
+	BSSimpleList<AlchemyItem*>* alchemyItemList;  //Updated in Player_EquipPotion, Queried in Player_GetNumberActivePotions (somewhere else too?)
+	UInt32 unk1FC;
+	UInt32 unk200;
 	float		maxAVModifiers[kActorVal_OblivionMax];		// 204
 	float		scriptAVModifiers[kActorVal_OblivionMax];	// 324
     float       health;                                    // 444
@@ -1048,7 +1056,7 @@ public:
 	float		requiredSkillExp[21];			// 7A4 total amt of exp needed to increase each skill
 	UInt32		unk7F8;							// 7F8
 	UInt32		unk7FC;							// 7FC
-
+	//  float unk800;  //Defined into ida pro definition. Probably saw this used somewhere, structure is probably 804 size not 800 (but it's the leaf of the hyerarchy so it doesn't matter)
 	// 800
 
 	bool	SetActiveSpell(MagicItem * item);
