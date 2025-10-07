@@ -3,6 +3,232 @@
 #include "obse/GameForms.h"
 #include "obse/GameObjects.h"
 
+
+// derived from NiFile, which derives from NiBinaryStream
+// 154
+class BSFile
+{
+public:
+	BSFile();
+	~BSFile();
+
+	virtual void	Destructor(bool freeMemory);				// 00
+	virtual void	Unk_01(void);								// 04
+	virtual void	Unk_02(void);								// 08
+	virtual void	Seek(SInt32 offset, UInt32 origin); //(void);								// 0C
+	virtual void	Unk_04(void);								// 10
+	virtual void	DumpAttributes(NiTArray <char *> * dst);	// 14
+	virtual UInt32	GetSize(void);								// 18
+	virtual void	Unk_07(void);								// 1C  //Check SkyBSA def.
+	virtual void	Unk_08(void);								// 20
+	virtual void	Unk_09(void);								// 24
+	virtual void	Unk_0A(void);								// 28
+	virtual void	Unk_0B(void);								// 2C
+	virtual void	Unk_0C(void);								// 30
+	virtual void	Unk_Read(void* destination, UInt32 sizeToRead);								// 34
+	virtual void	Unk_Write(void);							// 38
+
+	//	void	** m_vtbl;		// 000
+	void	* m_readProc;	// 004 - function pointer
+	void	* m_writeProc;	// 008 - function pointer
+	UInt32	m_bufSize;		// 00C
+    UInt32 lastReadSize; // 010 // return value of fread, fread_s, and friends, when we're reading into our own buffer
+    UInt32	m_unk014;		// 014
+	void	* m_buf;		// 018
+	FILE	* m_file;		// 01C
+	UInt32	m_writeAccess;	// 020
+	UInt8	m_good;			// 024
+	UInt8	m_pad025[3];	// 025
+	UInt8	m_unk028;		// 028
+	UInt8	m_pad029[3];	// 029
+	UInt32	m_unk02C;		// 02C
+	UInt32	m_pos;			// 030
+	UInt32	m_unk034;		// 034
+	UInt32	m_unk038;		// 038
+	char	m_path[0x104];	// 03C
+	UInt32	m_unk140;		// 140
+	UInt32	m_unk144;		// 144
+	UInt32	m_pos2;			// 148 - used if m_pos is 0xFFFFFFFF
+	UInt32	m_unk14C;		// 14C
+	UInt32	m_fileSize;		// 150
+};
+static_assert(sizeof(BSFile) == 0x154, "Size Not Matching" );
+
+enum BSAFlags : UInt32 {
+	kBSAFlag_HasFolderNames  = 0x0001,
+	kBSAFlag_HasFileNames    = 0x0002,
+	kBSAFlag_Compressed      = 0x0004,
+	kBSAFlag_Unk0008         = 0x0008, // related to retaining directory strings/offsets
+	kBSAFlag_RetainFilenameStrings = 0x0010,
+	kBSAFlag_RetainFilenameOffsets = 0x0020,
+	kBSAFlag_IsXbox360Archive      = 0x0040,
+	kBSAFlag_Unk0080         = 0x0080, // related to retaining directory strings/offsets
+	kBSAFlag_Unk0100         = 0x0100,
+	kBSAFlag_Unk0200         = 0x0200,
+	kBSAFlag_Unk0400         = 0x0400,
+};
+enum BSAFiletype : UInt32 {
+	kBSAFiletype_Meshes   = 0,
+	kBSAFiletype_Textures = 1,
+	kBSAFiletype_Menus    = 2,
+	kBSAFiletype_Sounds   = 3,
+	kBSAFiletype_Voices   = 4,
+	kBSAFiletype_Shaders  = 5,
+	kBSAFiletype_Trees    = 6,
+	kBSAFiletype_Fonts    = 7,
+	kBSAFiletype_Misc     = 8,
+	//
+	kBSAFiletype_COUNT    = 9,
+};
+enum BSAFiletypeFlags : UInt32 {
+	kBSAFiletypeFlag_Meshes   = 0x0001,
+	kBSAFiletypeFlag_Textures = 0x0002,
+	kBSAFiletypeFlag_Menus    = 0x0004,
+	kBSAFiletypeFlag_Sounds   = 0x0008,
+	kBSAFiletypeFlag_Voices   = 0x0010,
+	kBSAFiletypeFlag_Shaders  = 0x0020,
+	kBSAFiletypeFlag_Trees    = 0x0040,
+	kBSAFiletypeFlag_Fonts    = 0x0080,
+	kBSAFiletypeFlag_Misc     = 0x0100,
+};
+enum BSAFileFlags : UInt32 { // consumes bits from the BSAEntry::size field
+	kBSAFileFlags_NonDefaultCompression = 0x40000000,
+	kBSAFileFlags_Unk80000000 = 0x80000000, // possibly "is invalid" // wait, is this in BSAEntry::size or BSAEntry::offset? 0042E4B3 has it in the latter
+};
+
+struct BSHash {
+	UInt64 data;
+	MEMBER_FN_PREFIX(BSHash);
+	DEFINE_MEMBER_FN(Constructor,        BSHash&, 0x006FA2D0, const char* str, UInt32 type);
+	DEFINE_MEMBER_FN(Subroutine0042BC10, UInt32,  0x0042BC10, const BSHash& other);
+};
+struct BSAEntry { // "File Record" or "Folder Record" in UESP docs
+	BSHash hash; // 00 // hash of the file/folder path
+	union {
+		UInt32 count = 0; // number of files
+		UInt32 size;      // size of the file in bytes
+	}; // 08
+	union {
+		UInt32    offset = 0; // data offset within the file (where it's an offset FROM differs between folders and files)
+		BSAEntry* files;      // array of file entries for this folder, once the folder is loaded (happens in Archive constructor)
+	}; // 0C
+
+	MEMBER_FN_PREFIX(BSAEntry);
+	DEFINE_MEMBER_FN(Constructor, BSAEntry&, 0x0042BD20);
+
+	UInt32 getOffset() const { // files only
+		return this->offset & 0x7FFFFFFF;
+	}
+	UInt32 getSize() const { // files only
+		return this->size & 0x3FFFFFFF;
+	}
+	bool isNonDefaultCompression() const { // files only
+		return (this->size & 0x40000000);
+	}
+	bool isKnownNotToBeOverridden() const { // files only
+		return (this->size & 0x80000000); // set by Archive::CheckFileIsOverridden once we know the file isn't overridden by a loose file
+	}
+	bool isInvalidated() const { // files only
+		return (this->offset & 0x80000000) == 0;
+	}
+	void invalidate() { // files only
+		this->offset &= 0x80000000;
+	}
+};
+constexpr UInt32 ce_bsaSignatureBSwapped = '\0ASB';
+struct BSAHeader {
+	UInt32 unk00 = ce_bsaSignatureBSwapped; // 00
+	UInt32 version = 0x67; // 04
+	UInt32 offset  = 0x24; // 08
+	UInt32 flags   = 0; // 0C // offset 0x160 in Archive
+	UInt32 directoryCount = 0; // 10 // offset 0x164 in Archive
+	UInt32 fileCount      = 0; // 14 // offset 0x168 in Archive
+	UInt32 totalFolderNameLength = 0; // 18 // offset 0x16C in Archive
+	UInt32 totalFileNameLength = 0; // 1C // offset 0x170 in Archive
+	UInt16 fileFlags = 0; // 20 // offset 0x174 in Archive // BSAFiletypeFlags
+	UInt16 pad22; // 22
+
+	MEMBER_FN_PREFIX(BSAHeader);
+	DEFINE_MEMBER_FN(Constructor, BSAHeader&, 0x006FA180);
+};
+class Archive;
+class ArchiveFile : public BSFile { // sizeof == 0x15C
+public:
+	Archive* owner;  // 154
+	UInt32   offset; // 158 // offset within the BSA file
+
+	MEMBER_FN_PREFIX(ArchiveFile);
+	DEFINE_MEMBER_FN(Constructor, ArchiveFile&, 0x0042D540, const char* path, Archive* owner, UInt32 offset, UInt32 filesize, SInt32);
+};
+class CompressedArchiveFile : public ArchiveFile { // sizeof == 0x174
+public:
+	enum { kVTBL = 0x00A35E64 };
+
+	// TODO
+
+	MEMBER_FN_PREFIX(CompressedArchiveFile);
+	DEFINE_MEMBER_FN(Constructor, CompressedArchiveFile&, 0x0042D6D0, UInt32, UInt32, UInt32, UInt32, UInt32);
+};
+
+class Archive : public  BSFile {
+public:
+	enum Flags194 {
+		kFlag194_Unk08 = 0x08,  //This seems to signal Archive Invalidation. Initialized to 8 if a4 of Archive constructior is != 0
+	};
+
+	BSAHeader header; // 154
+	BSAEntry* folders = nullptr; // 178 // array
+	UInt32 unk17C;
+	__time64_t myDateModified; // 180 // same type as the Date Modified in stat()
+	UInt32 unk188 = 0; // same type as unk148
+	UInt32 unk18C = -1;
+	UInt32 unk190 = -1;
+	UInt8  unk194 = 0; // initialized to 0 or 8
+	UInt8  unk195;
+	UInt8  unk196;
+	UInt8  unk197;
+	char*   folderNames       = nullptr; // 198 // a bunch of consecutive zero-terminated strings
+	UInt32* folderNameOffsets = nullptr; // 19C // possibly an array of offsets, in 198, for each folder name
+	char*   fileNames   = nullptr; // 1A0 // "File Name Block" in UESP docs: a bunch of consecutive zero-terminated strings
+	UInt32** fileNameOffsetsByFolder = nullptr; // 1A4
+	UInt32 refCount = 0; // 1A8
+	bool   queuedForDeletion = 0; // 1AC
+	UInt8  unk1AD;
+	UInt8  unk1AE;
+	UInt8  unk1AF;
+	UInt32 unk1B0;
+	UInt32 unk1B4[(0x200 - 0x1B4) / 4];
+	CRITICAL_SECTION unk200; // 200 // wrapped in a struct that allows for automatic initialization/destruction
+	UInt32 unk218[(0x280 - 0x218) / 4];
+
+	MEMBER_FN_PREFIX(Archive);
+	DEFINE_MEMBER_FN(Constructor, Archive&, 0x0042EE80, const char* filePath, UInt32, bool, UInt32);
+	DEFINE_MEMBER_FN(CheckFileIsOverridden, bool, 0x0042C1D0, BSAEntry& file, const char* looseFilePath); // called by FolderContainsFile; invalidates the file if it's older than a matching loose file
+	DEFINE_MEMBER_FN(ContainsFile,   bool, 0x0042E020, const BSHash& file, const BSHash& folder, UInt32& outFolderIndex, UInt32& outFileIndexInFolder, const char* normalizedFilepath); // just calls ContainsFolder and FolderContainsFile
+	DEFINE_MEMBER_FN(ContainsFolder, bool, 0x0042CE40, const BSHash& folder, UInt32& outFolderIndex, const char* normalizedFilepath);
+	DEFINE_MEMBER_FN(DiscardRetainedFilenames,   void, 0x0042C0D0, UInt32); // conditional on unk194 flag 0x04
+	DEFINE_MEMBER_FN(FolderContainsFile, bool, 0x0042D000, UInt32 folderIndex, const BSHash& file, UInt32& outFileIndexInFolder, const char* normalizedFilepath, UInt32 zero); // file path is used for CheckFileIsOverridden
+	DEFINE_MEMBER_FN(GetFileByEntry,   ArchiveFile*, 0x0042E1A0, const BSAEntry& file, SInt32, const char* normalizedFilepath); // only used for lazy lookups
+	DEFINE_MEMBER_FN(GetFileByIndices, ArchiveFile*, 0x0042E070, UInt32 folderIndex, UInt32 fileIndex, SInt32, const char* normalizedFilepath);
+	DEFINE_MEMBER_FN(GetFileEntry, BSAEntry*,    0x0042D240, const BSHash& folder, const BSHash& file, const char* normalizedFilepath); // only used by LazyFileLookup
+	DEFINE_MEMBER_FN(RetainsFilenameStringTable, bool, 0x0042BD30);
+	DEFINE_MEMBER_FN(RetainsFilenameOffsetTable, bool, 0x0042BD50);
+	DEFINE_MEMBER_FN(Subroutine0042BD70, bool, 0x0042BD70);
+	DEFINE_MEMBER_FN(CheckDelete, void, 0x0042C910); //
+	DEFINE_MEMBER_FN(DecRef,  void, 0x0042C910); // Bethesda calls this "CheckDelete;" define it with both names
+	//
+	// The below are all called during the constructor, so don't use them:
+	//
+	DEFINE_MEMBER_FN(InvalidateOlderFiles, UInt32, 0x0042E2D0); // returns number of files invalidated
+	DEFINE_MEMBER_FN(InvalidateAgainstLooseFiles, UInt32, 0x0042D2A0, const char* pathRoot, const char* pathDeep, FILETIME& myLastModDate); // called by InvalidateOlderFiles
+	DEFINE_MEMBER_FN(LoadFolderNames,      const char*, 0x0042CAE0, UInt32 stopAt); // returns loaded folder names
+	DEFINE_MEMBER_FN(SetReadWriteFuncs,    void,   0x004307F0, bool);
+};
+static_assert(sizeof(Archive) == 0x280, "Archive wrong size!");
+
+extern Archive** const g_firstLoadedArchivesByType;  // g_firstLoadedArchivesByType[type] == first loaded Archive flagged with that filetype
+extern Archive** const g_secondaryArchiveByTypeList; // offset from the first list by sizeof(void*) * 9
+extern Archive** const g_ArchiveByTypeList ; //USed in the Lazy lookup after the first list
 // 10
 struct BoundObjectListHead
 {
@@ -125,7 +351,7 @@ struct ModEntry
 		UInt32	flags;							// 3DC
 		tList<char>		masterList;				// 3E0 linked list of .esm dependencies
 		tList<SizeInfo>	masterSizeInfo;			// 3E8 linked list of file size info for above list
-		UInt32	idx;							// 3F0
+		UInt32	idx;							// 3F0 //This seems to represent the index of the current file (equals to the size of the master counts )
 		void	* unk3F4;						// 3F4
 		UInt32	unk3F8;							// 3F8
 		UInt32	unk3FC;							// 3FC
@@ -263,10 +489,19 @@ public:
 	FileFinder();
 	~FileFinder();
 
-	virtual void Unk_00(void) = 0;
-	virtual UInt32 FindFile(const char* filePath, UInt32 arg1, UInt32 arg2, UInt32 arg3) = 0;	//seen (char*, 0, 0, -1)
-	virtual void Unk_02(void) = 0;
-	virtual UInt32 Unk_03(const char* filePath, UInt8 arg1, UInt32 arg2) = 0; //seen (char*,0xC1, 0xFFFF)
+	enum Flags{
+		FindFile_ArchiveAndLooseFile = 0x0, //The default search, both checking loose files and bsas
+		FindFile_LooseFileOnly = 0x1,
+		FindFile_NoCheckAbsolutePath= 0x2, // If this is setted with FindFile_NoSearchPathUsage it's basically BSA only search'
+		FindFile_NoSearchPathUsage = 0x4, // If setted exit before all checks using the FileFinder searchPaths . Setted in FindFile if path starts with '.\'
+		FindFile_AbsoluteLooseFileOnly = FindFile_LooseFileOnly | FindFile_NoSearchPathUsage, //0x5 This is setted in FindFile if the path have ':' at position 1
+		FindFile_ArchiveOnly = FindFile_NoSearchPathUsage | FindFile_NoCheckAbsolutePath // 0x6
+	};
+	virtual void Unk_00(void) = 0; //Seems to grow some storage
+	// arg2 seems a bitflag is passed  to Unk_03 after some mangling
+	virtual UInt32 FindFile(const char* filePath, UInt32 arg1, Flags arg2, UInt32 arg3) = 0;	//seen (char*, 0, 0, -1)  or (char*, 0,6,-1)
+	virtual void InitalizeDataByFolder(const char* folder); // Saw arg "Data\\" called by initialization. Seems to only register the folder but don't load content'
+ 	virtual UInt32 SearchForFile(const char* filePath, Flags arg1, UInt32 arg2) = 0; //seen (char*,0xC1, 0xFFFF). This actually do the file search, invoked by FindFile after some path sanitization, argt1 is passed from FindFile arg2 . Not sure where arg1 0xC1 was seen considering this is depending on the Flags PArameter (and the function only check for 1,2 and 4 (5 and 6 are OR combinations of the bitflags variant))
 	virtual void Unk_04(void) = 0;
 
 	enum {

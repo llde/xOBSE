@@ -6,6 +6,13 @@
 #include "obse_editor\EditorAPI.h"
 #endif
 
+Archive** const g_archiveWhichProvidedLastFile = (Archive**) 0x00B338E4;
+Archive** const g_firstLoadedArchivesByType    = (Archive**)0x00B338E8;
+Archive** const g_ArchiveByTypeList    = (Archive**)0x00B3390C;
+
+NiTArray<BSHash>* const g_archiveInvalidatedFilenames = (NiTArray<BSHash>*) 0x00B33930;
+NiTArray<BSHash>* const g_archiveInvalidatedDirectoryPaths = (NiTArray<BSHash>*) 0x00B33934;
+
 class LoadedModFinder
 {
 	const char * m_stringToFind;
