@@ -988,55 +988,6 @@ public:
 	static UInt32 AnimGroupForString(const char* groupName);
 };
 
-// derived from NiFile, which derives from NiBinaryStream
-// 154
-class BSFile
-{
-public:
-	BSFile();
-	~BSFile();
-
-	virtual void	Destructor(bool freeMemory);				// 00
-	virtual void	Unk_01(void);								// 04
-	virtual void	Unk_02(void);								// 08
-	virtual void	Unk_03(void);								// 0C
-	virtual void	Unk_04(void);								// 10
-	virtual void	DumpAttributes(NiTArray <char *> * dst);	// 14
-	virtual UInt32	GetSize(void);								// 18
-	virtual void	Unk_07(void);								// 1C
-	virtual void	Unk_08(void);								// 20
-	virtual void	Unk_09(void);								// 24
-	virtual void	Unk_0A(void);								// 28
-	virtual void	Unk_0B(void);								// 2C
-	virtual void	Unk_0C(void);								// 30
-	virtual void	Unk_Read(void);								// 34
-	virtual void	Unk_Write(void);							// 38
-
-//	void	** m_vtbl;		// 000
-	void	* m_readProc;	// 004 - function pointer
-	void	* m_writeProc;	// 008 - function pointer
-	UInt32	m_bufSize;		// 00C
-	UInt32	m_unk010;		// 010 - init'd to m_bufSize
-	UInt32	m_unk014;		// 014
-	void	* m_buf;		// 018
-	FILE	* m_file;		// 01C
-	UInt32	m_writeAccess;	// 020
-	UInt8	m_good;			// 024
-	UInt8	m_pad025[3];	// 025
-	UInt8	m_unk028;		// 028
-	UInt8	m_pad029[3];	// 029
-	UInt32	m_unk02C;		// 02C
-	UInt32	m_pos;			// 030
-	UInt32	m_unk034;		// 034
-	UInt32	m_unk038;		// 038
-	char	m_path[0x104];	// 03C
-	UInt32	m_unk140;		// 140
-	UInt32	m_unk144;		// 144
-	UInt32	m_pos2;			// 148 - used if m_pos is 0xFFFFFFFF
-	UInt32	m_unk14C;		// 14C
-	UInt32	m_fileSize;		// 150
-};
-
 /**** misc non-NiObjects ****/
 
 // 30

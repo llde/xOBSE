@@ -258,6 +258,8 @@ public:
 		Iterator() : m_cur(NULL) {}
 		Iterator(_Node* node) : m_cur(node) { }
 		Iterator operator++()	{ if (!End()) m_cur = m_cur->Next(); return *this;}
+		Iterator operator++(int) = delete;
+
 		bool End()	{	return m_cur == NULL;	}
 		Item* operator->() { return (m_cur) ? m_cur->Item() : NULL; }
 		const Item* operator*() { return (m_cur) ? m_cur->Item() : NULL; }

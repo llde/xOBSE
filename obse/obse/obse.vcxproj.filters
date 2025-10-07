@@ -326,6 +326,9 @@
     <ClCompile Include="utility.cpp">
       <Filter>internals</Filter>
     </ClCompile>
+    <ClCompile Include="CommandElements.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GameActorValues.h">

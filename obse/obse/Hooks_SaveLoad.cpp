@@ -10,6 +10,7 @@
 #include "Tasks.h"
 #include "GameObjects.h"
 #include "Script.h"
+#include <obse/GameData.h>
 
 UInt32 g_gameLoaded = 0;
 
