@@ -2635,7 +2635,7 @@ static bool PathFunc_Execute(COMMAND_ARGS, UInt32 whichValue, EMode mode)
 					else
 						sFilePath = std::string("data\\meshes\\") + std::string(theString->m_data);
 
-					*result = (*g_FileFinder)->FindFile(sFilePath.c_str(), 0, 0, -1) ? 1 : 0;
+					*result = (*g_FileFinder)->FindFile(sFilePath.c_str(), 0, FileFinder::FindFile_ArchiveAndLooseFile, -1) ? 1 : 0;
 
 					break;
 				}
@@ -3678,7 +3678,7 @@ static bool IsBipedPathValid_Execute(COMMAND_ARGS, bool checkIcon)
 			else
 				sFilePath = std::string("data\\meshes\\") + std::string(filePath->m_data);
 
-			*result = (*g_FileFinder)->FindFile(sFilePath.c_str(), 0, 0, -1) ? 1 : 0;
+			*result = (*g_FileFinder)->FindFile(sFilePath.c_str(), 0, FileFinder::FindFile_ArchiveAndLooseFile, -1) ? 1 : 0;
 		}
 	}
 
@@ -3701,7 +3701,7 @@ static bool Cmd_FileExists_Execute(COMMAND_ARGS)
 	*result = 0;
 
 	if (ExtractArgs(PASS_EXTRACT_ARGS, &filePath))
-		*result = (*g_FileFinder)->FindFile(filePath, 0, 0, -1) ? 1 : 0;
+		*result = (*g_FileFinder)->FindFile(filePath, 0, FileFinder::FindFile_ArchiveAndLooseFile , -1) ? 1 : 0;
 
 	return true;
 }
