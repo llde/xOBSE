@@ -161,6 +161,9 @@
     <ClCompile Include="..\obse\Settings.cpp">
       <Filter>internals</Filter>
     </ClCompile>
+    <ClCompile Include="..\obse\CommandElements.cpp">
+      <Filter>internals</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\obse\Commands_ActiveEffect.h">

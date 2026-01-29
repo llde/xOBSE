@@ -138,6 +138,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\obse\CommandElements.cpp" />
     <ClCompile Include="..\obse\Commands_ActiveEffect.cpp" />
     <ClCompile Include="..\obse\Commands_Actor.cpp" />
     <ClCompile Include="..\obse\Commands_ActorValue.cpp" />
