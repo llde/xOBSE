@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>arrays</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">
+body {
+padding: 10%;
+}
+
+h1 {
+font-size: 150%;
+font-weight: normal;
+}
+h2 {
+font-size: 130%;
+font-weight: normal;
+margin-top: 40px;
+}
+h3 {
+font-size: 110%;
+font-weight: normal;
+margin-top: 30px;
+color: #000099;
+background-color: #ffffff;
+}
+h4 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+}
+h5 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+color: #000099;
+background-color: #ffffff;
+}
+
+table {
+border: 1px solid black;
+margin: 20px 0px 20px 0px;
+}
+caption {
+text-align: left;
+margin-bottom: 10px;
+}
+td, th {
+padding: 5px;
+}
+tr.alt {
+color: black;
+background-color: #dedede;
+}
+code.alt {
+color: 770000;
+background-color: #dedede;
+}
+table.functionIndex td{
+padding: 0px 30px 0px 5px;
+}
+
+ul {
+list-style-type: none;
+}
+
+.boxhl {
+border: 1px dotted black;
+padding: 8px;
+color: #000000;
+background-color: #eeeeff;
+}
+
+.code {
+border: 1px solid black;
+padding: 20px;
+font-family: monospace;
+color: #770000;
+background-color: #ffffff;
+}
+
+pre {
+color: #770000;
+background-color: #ffffff;
+}
+
+code.s {
+margin-left: 40px;
+font-weight: normal;
+color: #770000;
+background-color: #ffffff;
+}
+
+code {
+color: #000000;
+background-color: #ffffff;
+}
+
+span.op {
+font-style: italic;
+color: #666666;
+background-color: #ffffff;
+}
+
+pre.msgbox {
+color: #777700;
+background-color: #ffffff;
+font-family: serif;
+}
+
+.ind {
+margin-left: 40px;
+}
+.c {
+text-align: center;
+}
+.l {
+text-align: left;
+}
+
+.f {
+color: #3333cc;
+background-color: white;
+}
+a:link.f{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.f {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.f {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link.cf{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.cf {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.cf {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link img {
+border-style: none;
+}
+a:visited img {
+border-style: none;
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<p>Arrays are containers. They can store any of the <a href="../language/Types.md#literal-types">literal</a> types, plus
+another array. They are very similar to most language containers, like
+Lua tables and C++ vectors. There are 3 types of arrays. Conversion
+between these types is not possible. Additionally, arrays in
+<code>obl</code> are always ordered.</p>
+<h1 id="notation">Notation</h1>
+<p>Arrays are generally only stored into variables. Performing array
+operations on expressions will generally lead to runtime errors.</p>
+<pre class="ebnf"><code>array = variable, {subscript};</code></pre>
+<h2 id="declaration">Declaration</h2>
+<p>Array variables are declared with ‘array_var’. Default initialization
+is 0.</p>
+<h1 id="scope">Scope</h1>
+<p>Arrays must be explicitly defined within their scope if not passing
+the return value of a function. This determines the type of array
+container.</p>
+<pre class="obse"><code>scn ArrayDeclare
+array_var arrayVar
+begin gamemode
+let arrayVar := ar_Construct Array
+; arrayVar is now an array
+let arrayVar := ar_Construct Map
+; arrayVar is now a map
+let arrayVar := ar_Construct StringMap
+; arrayVar is now a string map
+end
+begin menumode
+ar_Dump arrayVar
+; error, not defined until gamemode runs
+end</code></pre>
+<h1 id="array-types">Array Types</h1>
+<p>There are 3 types of arrays 1. Array: 0-indexed sequential array.
+Standard array operations. 2. Map: Unordered array where the key is any
+numeral expression. 3. StringMap: Unordered array where the key is any
+string expression.</p>
+<h1 id="iteration-of-arrays">Iteration of Arrays</h1>
+<p>Generally arrays can be processed in 2 manners: <a href="../statements/statements.md#while-statement">while statement</a>
+and <a href="../statements/statements.md#foreach-statement">foreach
+statement</a>. Both have upsides and should be considered.</p>
+<h2 id="using-while-loops-to-iterate-arrays">Using While Loops to
+Iterate Arrays</h2>
+<p>A while statement is a very simple construct. It loops until an
+expression is false. Because of this, it is very fast. A simple loop
+over an array can be significantly faster than a foreach loop. However,
+it can only successfully iterate over the array type “array”
+(i.e. 0-indexed arrays). It is impossible to iterate over “StringMaps”,
+and while regular “Map” style can be iterated on it is only possible on
+the valid numerical keys of the map array.</p>
+<pre class="obse"><code>scn WhileIteration
+array_var arrayType
+array_var mapType
+int iter
+begin gamemode
+; assume that var arrayType is filled with the values of 0-19 inclusive
+; 0, 1, 2, ... 18, 19
+let iter := 0
+while iter &lt; (ar_Size arrayType)
+  printc &quot;current value is: %g&quot;, arrayType[iter]
+  let iter += 1
+loop
+; assume that mapType is filled with keys of even values between 0 and 20 inclusive
+; 0, 2, 4, ... 16, 18, 20
+let iter := 0
+while iter &lt;= (ar_Size mapType)
+  printc &quot;current value is: %g&quot;, mapType[iter]
+  let iter += 2
+loop
+end</code></pre>
+<h2 id="using-foreach-loops-to-iterate-arrays">Using ForEach Loops to
+Iterate Arrays</h2>
+<p>ForEach loops can be used to directly iterate over each value of any
+array type. Like most languages with the foreach statement, a
+destination variable is used that contains the information needed. In
+<code>obl</code> that destination variable is itself an array. See the
+section on destination containers in <a href="../language/statements.md#foreach-statement">foreach statement</a>
+for all 3 types that can use the foreach loop. This destination variable
+is only valid for the current iteration.</p>
+<p>For arrays themselves, it does not matter what type the source array
+can be. The destination container will always contain 2 indices: 1.
+“key”: the current index in the loop 2. “value”: the current value of
+index “key”</p>
+<pre class="obse"><code>scn ForEachIteration
+array_var arrayType
+array_var mapType
+array_var stringMapType
+array_var iter
+int tempInt
+string_var tempString
+begin gamemode
+; assume that var arrayType is filled with the values of 0-19 inclusive
+; 0, 1, 2, ... 18, 19
+foreach iter &lt;- arrayType
+  let tempInt := iter[&quot;key&quot;]
+  printc &quot;key is: %g&quot;, tempInt
+  let tempInt := iter[&quot;value&quot;]
+  printc &quot;value is: %g&quot;, tempInt
+loop
+; assume that mapType is filled with keys of even values between 0 and 20 inclusive
+; 0, 2, 4, ... 16, 18, 20
+foreach iter &lt;- mapType
+  let tempInt := iter[&quot;key&quot;]
+  printc &quot;key is: %g&quot;, tempInt
+  let tempInt := iter[&quot;value&quot;]
+  printc &quot;value is: %g&quot;, tempInt
+loop
+; assume that stringMapType is filled with keys of the letters a through z
+; a, b, c, ... y, z
+foreach iter &lt;- stringMapType
+  let tempString := iter[&quot;key&quot;]
+  printc &quot;key is: %z&quot;, tempInt
+  let tempInt := iter[&quot;value&quot;]
+  printc &quot;value is: %g&quot;, tempInt
+loop
+end</code></pre>
+<p>Note that we need to pass off the subscripted destination array. This
+is related to typing, and is a case where it can fail even with OEs.</p>
+<h1 id="array-operations">Array Operations</h1>
+<p>Arrays only have 2 main operators:</p>
+<table>
+<thead>
+<tr class="header">
+<th><em>Operator</em></th>
+<th><em>Type</em></th>
+<th><em>Use</em></th>
+<th><em>Precedence</em></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>[]</code></td>
+<td>n/a</td>
+<td>Subscript</td>
+<td>15</td>
+</tr>
+<tr class="even">
+<td><code>:</code></td>
+<td>Binary</td>
+<td>Slice/Range</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<h2 id="subscripting-arrays">SubScripting Arrays</h2>
+<p>The subscripted array returns the value associated with the
+index.</p>
+<pre class="ebnf"><code>subscript = &#39;[&#39;, [{(expression)}, literal], &#39;]&#39;;</code></pre>
+<p>Variables can be subscripted many times, for nested arrays.</p>
+<pre class="obse"><code>scn ArraySubscript
+array_var arrayVar
+begin gamemode
+; array is type array with [&quot;a&quot;, &quot;b&quot;, [&quot;i&quot;, &quot;ii&quot;], &quot;d&quot;]
+Print arrayVar[1] ; -&gt; &quot;b&quot;
+Print arrayVar[2] ; -&gt; error, is array
+Print arrayVar[2][0] ; -&gt; &quot;i&quot;
+let arrayVar[4] := &quot;e&quot; ; add new elements
+let arrayVar[5] := ar_Construct StringMap ; create new array at position 5
+let arrayVar[5][0] := &quot;1.&quot;
+end</code></pre>
+<h2 id="slicerange-notation">Slice/Range Notation</h2>
+<p>Arrays can be addressed over a range of valid index values:</p>
+<pre class="ebnf"><code>sliceRange = {literal}, &#39;:&#39;, {literal};</code></pre>
+<pre class="obse"><code>scn SliceRange
+array_var arrayVar
+array_var iter
+begin gamemode
+; if array is of size 9
+foreach iter &lt;- arrayVar[2:7]
+; indices  2-7 are iterated
+loop
+foreach iter &lt;- arrayVar[:8]
+; indices up to and including 8 are iterated
+loop
+foreach iter &lt;- arrayVar[3:-2]
+; indices from 3 to the second from last are iterated
+loop
+; if array is a map that contains the even values between 0-10
+foreach iter &lt;- arrayVar[3:7]
+; indices 4 and 6 are iterated
+loop
+; if array is a stringmap that has the keys &quot;begin&quot;, middle, and &quot;end&quot;
+foreach iter &lt;- arrayVar[&quot;begin&quot;:&quot;end&quot;]
+; indices &gt;= &quot;begin&quot; and &lt;= &quot;end&quot; are iterated
+loop
+end</code></pre>
+<p>A number of things are of note here: 1. Array type doesn’t matter 2.
+Only one range needs to be used 3. Negative values work from the reverse
+for array type 4. Numerical value of strings is used</p>
+<h1 id="array-functions">Array Functions</h1>
+<h2 id="ar_construct">ar_Construct</h2>
+<p>Creates and returns a new empty array of the specified type: 1. Array
+2. Map 3. StringMap</p>
+<p><code>(array_var) ar_Construct arrayType:type</code></p>
+<h2 id="ar_size">ar_Size</h2>
+<p>Returns the number of elements in an array, or -1 for uninitialized
+arrays.</p>
+<p><code>(array_var) ar_Size array:array_var</code></p>
+<h2 id="ar_dump">ar_Dump</h2>
+<p>Prints the contents of the array, key and value, to the console.</p>
+<p><code>(null) ar_Dump array:array_var</code></p>
+<h2 id="ar_dumpid">ar_DumpID</h2>
+<p>Like ar_Dump but accepts an array ID instead.</p>
+<p><code>(null) ar_DumpID arrayID:int</code></p>
+<h2 id="ar_erase">ar_Erase</h2>
+<p>Erases all elements in an array, a single element, or a range using
+<a href="#slicerange-notation">Slice/Range Notation</a>. Returns the
+number of elements removed.</p>
+<p><code>(removed:int) ar_Erase target:array_var</code></p>
+<p><code>(removed:int) ar_Erase target:array_var[index:arrayIndex]</code></p>
+<p><code>(removed:int) ar_Erase target:array_var[sliceRange]</code></p>
+<h2 id="ar_find">ar_Find</h2>
+<p>Locates the first value in an array of the specified value, and
+returns the key associated with it. Accepts a range. Returns an empty
+string for StringMaps or -99999.0 for numerical arrays when no value is
+found.</p>
+<p><code>(index:arrayIndex) ar_Find value:Literal sourceArray:array_var</code></p>
+<p><code>(index:arrayIndex) ar_Find value:Literal sourceArray:array_var[sliceRange]</code></p>
+<h2 id="ar_sort">ar_Sort</h2>
+<p>Sorts in ascending order and returns the specified array of type
+array. Keys associated with these values are lost. All elements must be
+the same type. If not, then an empty array is returned. An optional
+truthy value uses descending order. 1. Strings are sorted alphabetically
+and case-insensitively 2. Numbers are sorted numerically 3. Objects are
+sorted by FormID</p>
+<p><code>(sorted:array_var) ar_Sort source:array_var descend:bool</code></p>
+<h2 id="ar_sortalpha">ar_SortAlpha</h2>
+<p>Sorts in ascending order and returns the specified array of type
+array. Keys associated with these values are lost. Converts all values
+to strings temporarily, then sorts alphabetically and
+case-insensitively. An optional truthy value uses descending order.</p>
+<p><code>(sorted:array_var) ar_SortAlpha source:array_var descend:bool</code></p>
+<h2 id="ar_copy">ar_Copy</h2>
+<p>Creates and returns a copy of the source array, making references to
+any nested arrays.</p>
+<p><code>(copy:array_var) ar_Copy source:array_var</code></p>
+<h2 id="ar_deepcopy">ar_DeepCopy</h2>
+<p>Like <code>ar_Copy</code> but nested arrays are also copied.</p>
+<p><code>(copy:array_var) ar_Copy source:array_var</code></p>
+<h2 id="ar_first">ar_First</h2>
+<p>Returns the key of the first element of an array.</p>
+<p><code>(index:arrayIndex) ar_First source:array_var</code></p>
+<h2 id="ar_last">ar_Last</h2>
+<p>Returns the key of the last element of an array.</p>
+<p><code>(index:arrayIndex) ar_Last source:array_var</code></p>
+<h2 id="ar_badnumericindex">ar_BadNumericIndex</h2>
+<p>Returns a constant representing the invalid numerical index. Used for
+comparing to the return value of array functions.</p>
+<p><code>(badIndex:int) ar_BadNumericIndex</code></p>
+<h2 id="ar_badstringindex">ar_BadStringIndex</h2>
+<p>Like <code>ar_BadNumericIndex</code> but for StringMaps.</p>
+<p><code>(badIndex:int) ar_BadStringIndex</code></p>
+<h2 id="ar_next">ar_Next</h2>
+<p>Returns the key of the element immediately following the specified
+key. Returns the bad index constant if no key follows.</p>
+<p><code>(nextIndex:arrayIndex) ar_Next source:array_var index:arrayIndex</code></p>
+<h2 id="ar_prev">ar_Prev</h2>
+<p>Returns the key of the element immediately preceding the specified
+key. Returns the bad index constant if no key follows.</p>
+<p><code>(prevIndex:arrayIndex) ar_Prev source:array_var index:arrayIndex</code></p>
+<h2 id="ar_keys">ar_Keys</h2>
+<p>Returns an array of type array containing all of the keys of the
+source array.</p>
+<p><code>(array:array_var) ar_Keys source:array_var</code></p>
+<h2 id="ar_haskeys">ar_HasKeys</h2>
+<p>Returns true if array has an element with the specified key.</p>
+<p><code>(hasKey:bool) ar_HasKey source:array_var index:arrayIndex</code></p>
+<h2 id="ar_list">ar_List</h2>
+<p>Taking up to 20 arguments of any type, returns an array of type array
+containing those elements in the order in which they were passed.
+Separation of arguments is optionally comma separated (and
+encouraged).</p>
+<p><code>(list:array_var) ar_List arg1:literal arg2:literal ... arg20:literal</code></p>
+<h2 id="ar_map">ar_Map</h2>
+<p>Returns a Map or StringMap given up to 20 key-value pairs. Keys must
+be either numbers or strings, values can be any value.</p>
+<p><code>(Map/StringMap) ar_Map keyValue1 keyValue2 ... keyValue20</code></p>
+<blockquote>
+<p>Note that the rest of these functions only apply to arrays of type
+array</p>
+</blockquote>
+<h2 id="ar_resize">ar_Resize</h2>
+<p>Resizes an array that is resized to the specified size. If the new
+array is smaller, values outside of that array are lost. If the new
+array is bigger, new values are used. 0 is the default, but the padding
+values can be specified. Returns true if successful, false
+otherwise.</p>
+<p><code>(resized:bool) ar_Resize source:array_var size:int paddingValue:multi</code></p>
+<h2 id="ar_insert">ar_Insert</h2>
+<p>Inserts a single element into an array at the index. Index must be
+inside the array. Elements above the index are shifted up by 1 index.
+Returns true on success, false otherwise.</p>
+<p><code>(inserted:bool) ar_Insert source:array_var index:arrayIndex value:multi</code></p>
+<h2 id="ar_insertrange">ar_InsertRange</h2>
+<p>Inserts a range of elements into an array at the index. Index must be
+inside the array. Elements above the index are shifted up by the number
+of elements inserted. Returns true on success, false otherwise.</p>
+<p><code>(inserted:bool) ar_Insert source:array_var index:arrayIndex range:array_var</code></p>
+<h2 id="ar_range">ar_Range</h2>
+<p>Returns an array of 0 or more numbers within the inclusive start and
+end ranges, on the optional interval specified, otherwise 1. This allows
+one to mimic traditional for loops using the foreach loop.</p>
+<p><code>(range:array_var) ar_Range start:int end:int step:int</code></p>
+<h2 id="ar_append">ar_Append</h2>
+<p>Appends value to array.</p>
+<p><code>(null) ar_Append source:array_var value:value</code></p>
+<h2 id="ar_customsort">ar_CustomSort</h2>
+<p>Returns an array sorted by the called sorting function. The function
+takes 2 array_var arguments. When called, the arguments contain 1
+element each - the values being compared. The function returns false if
+the first argument is less than the second argument and true if the
+first is greater than or equal to the second.</p>
+<p>These terms are general, and are only there to provide sorting. Care
+must be taken to provide a definitive ordering of your array. Otherwise
+this function will never terminate.</p>
+<p>The optional bool can set sorting to reverse.</p>
+<p><code>(sorted:array_var) ar_CustomSort source:array_var comparisonFunction:ref descend:bool</code></p>
+</body>
+</html>
