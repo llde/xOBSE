@@ -871,7 +871,7 @@ public:
 				return false;
 			else
 			{
-				curLifetime = arrow->elapsedTime;
+				curLifetime = arrow->age;
 				return true;
 			}
 
@@ -893,7 +893,7 @@ public:
 
 			if (arrow && arrow->shooter == m_owningActor)
 			{
-				curLifetime = arrow->elapsedTime;
+				curLifetime = arrow->age;
 				return true;
 			}
 
@@ -1366,8 +1366,8 @@ static bool Cmd_GetArrowProjectileEnchantment_Execute(COMMAND_ARGS)
 	if (thisObj)
 	{
 		ArrowProjectile* arrow = (ArrowProjectile*)Oblivion_DynamicCast(thisObj, 0, RTTI_TESObjectREFR, RTTI_ArrowProjectile, 0);
-		if (arrow && arrow->arrowEnch)
-			*refResult = arrow->arrowEnch->refID;
+		if (arrow && arrow->enchantment)
+			*refResult = arrow->enchantment->refID;
 	}
 
 	return true;
@@ -1381,8 +1381,8 @@ static bool Cmd_GetArrowProjectileBowEnchantment_Execute(COMMAND_ARGS)
 	if (thisObj)
 	{
 		ArrowProjectile* arrow = (ArrowProjectile*)Oblivion_DynamicCast(thisObj, 0, RTTI_TESObjectREFR, RTTI_ArrowProjectile, 0);
-		if (arrow && arrow->bowEnch)
-			*refResult = arrow->bowEnch->refID;
+		if (arrow && arrow->bowEnchantment)
+			*refResult = arrow->bowEnchantment->refID;
 	}
 
 	return true;
@@ -1812,7 +1812,7 @@ static bool GetProjectileValue_Execute(COMMAND_ARGS, UInt32 whichValue)
 				*result = arrow->speed;
 				return true;
 			case kProjectile_Time:
-				*result = arrow->elapsedTime;
+				*result = arrow->age;
 				return true;
 			case kProjectile_Distance:
 				// TODO: decode ArrowProjectile class to expose this
@@ -1880,10 +1880,10 @@ static bool SetArrowProjectileValue(COMMAND_ARGS, UInt32 whichValue)
 				arrow->poison = alchItem;
 				break;
 			case kArrow_Enchantment:
-				arrow->arrowEnch = enchItem;
+				arrow->enchantment = enchItem;
 				break;
 			case kArrow_BowEnchantment:
-				arrow->bowEnch = enchItem;
+				arrow->bowEnchantment = enchItem;
 				break;
 			}
 		}
