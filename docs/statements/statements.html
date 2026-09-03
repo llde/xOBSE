@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>statements</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">
+body {
+padding: 10%;
+}
+
+h1 {
+font-size: 150%;
+font-weight: normal;
+}
+h2 {
+font-size: 130%;
+font-weight: normal;
+margin-top: 40px;
+}
+h3 {
+font-size: 110%;
+font-weight: normal;
+margin-top: 30px;
+color: #000099;
+background-color: #ffffff;
+}
+h4 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+}
+h5 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+color: #000099;
+background-color: #ffffff;
+}
+
+table {
+border: 1px solid black;
+margin: 20px 0px 20px 0px;
+}
+caption {
+text-align: left;
+margin-bottom: 10px;
+}
+td, th {
+padding: 5px;
+}
+tr.alt {
+color: black;
+background-color: #dedede;
+}
+code.alt {
+color: 770000;
+background-color: #dedede;
+}
+table.functionIndex td{
+padding: 0px 30px 0px 5px;
+}
+
+ul {
+list-style-type: none;
+}
+
+.boxhl {
+border: 1px dotted black;
+padding: 8px;
+color: #000000;
+background-color: #eeeeff;
+}
+
+.code {
+border: 1px solid black;
+padding: 20px;
+font-family: monospace;
+color: #770000;
+background-color: #ffffff;
+}
+
+pre {
+color: #770000;
+background-color: #ffffff;
+}
+
+code.s {
+margin-left: 40px;
+font-weight: normal;
+color: #770000;
+background-color: #ffffff;
+}
+
+code {
+color: #000000;
+background-color: #ffffff;
+}
+
+span.op {
+font-style: italic;
+color: #666666;
+background-color: #ffffff;
+}
+
+pre.msgbox {
+color: #777700;
+background-color: #ffffff;
+font-family: serif;
+}
+
+.ind {
+margin-left: 40px;
+}
+.c {
+text-align: center;
+}
+.l {
+text-align: left;
+}
+
+.f {
+color: #3333cc;
+background-color: white;
+}
+a:link.f{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.f {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.f {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link.cf{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.cf {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.cf {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link img {
+border-style: none;
+}
+a:visited img {
+border-style: none;
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<p>Statements are constructs that simply declare an action in the game.
+They do not return anything as a result. There are 12 main statements in
+<code>obl</code>:</p>
+<h1 id="begin-blocks">“Begin” Blocks</h1>
+<p><code>obl</code> does not have traditional function blocks. Being a
+game specific language, the language instead has constructs that wrap
+around internal game features. All execution happens within these
+blocks, and are colloquially known as “begin blocks”. For clarity, this
+documentation will use this definition to distinguish these constructs
+from others. A begin block is defined as 2 top-level lines of code,
+inside of which all programming is achieved. The first line starts the
+begin block and defines which game feature this block runs for, the
+second line terminates the block:</p>
+<pre class="ebnf"><code>beginBlock = startBlock, innerBlock, endBlock;
+startBlock = &quot;begin&quot;, (gameFeature | function), eol;
+function = &quot;function&quot;, &quot;{&quot;, {paramter}, &quot;}&quot;;
+endBlock = &quot;end&quot;, eol;</code></pre>
+<pre class="obse"><code>scn beginBlock
+begin gamemode
+end
+begin function {}
+end</code></pre>
+<p>A script file can contain any number of “gameFeature” blocks in any
+order, but a script can only contain one “function” block with no
+others.</p>
+<h2 id="begin-block-game-features">Begin Block Game Features</h2>
+<p>Begin blocks must be attached to specific game features, or be a
+function. Some take arguments, optionally or no, and multiple. The
+syntax is like so:</p>
+<pre class="ebnf"><code>beginBlock = startBlock, innerBlock, endBlock;
+startBlock = &quot;begin&quot;, (gameFeature 
+                    | function 
+                    | coeeGameFeature 
+                    | coeeFunction)
+                    , eol;
+gameFeature = featureName, {parameter};
+parameter = identifier | identifier, &quot;,&quot;;</code></pre>
+<pre class="obse"><code>scn ExampleBeginBlocks
+begin GameMode
+end
+begin MenuMode 1011
+end
+begin OnAlarm 0, PlayerREF
+end</code></pre>
+<p>The following is a description of each, parenthesized means it is
+optional:</p>
+<h2 id="general-block-types">General Block Types</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Game Feature</th>
+<th>(Number of Arguments)</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>‘GameMode’</td>
+<td>0</td>
+<td>n/a</td>
+<td>Runs continuously during normal gameplay</td>
+</tr>
+<tr class="even">
+<td>‘MenuMode’</td>
+<td>(menuType)</td>
+<td>int</td>
+<td>Runs continuously during any menu, optionally within a specific menu
+type. See <a href="#Menu-Types">Menu Types</a></td>
+</tr>
+<tr class="odd">
+<td>‘OnActivate’</td>
+<td>0</td>
+<td>n/a</td>
+<td>Runs once when scripted object is activated by an actor, blocks
+normal activation use of scripted object. Must be scripted back in</td>
+</tr>
+<tr class="even">
+<td>‘OnActorEquip’</td>
+<td>objectID</td>
+<td>ref</td>
+<td>Runs once when scripted actor equips objectID</td>
+</tr>
+<tr class="odd">
+<td>‘OnActorUnequip’</td>
+<td>objectID</td>
+<td>ref</td>
+<td>Runs once when scripted actor unequips objectID</td>
+</tr>
+<tr class="even">
+<td>‘OnAdd’</td>
+<td>(objectID)</td>
+<td>ref</td>
+<td>Runs once whenever script object is added to an inventory or
+objectID’s inventory. See <a href="#OnAdd">OnAdd</a></td>
+</tr>
+<tr class="odd">
+<td>‘OnAlarm’</td>
+<td>crimeType, (actorID)</td>
+<td>int, ref</td>
+<td>Runs once whenever scripted actor receives alarm of crimeType,
+optionally caused by the actorID</td>
+</tr>
+<tr class="even">
+<td>‘OnAlarmVictim’</td>
+<td>crimeType, (actorID)</td>
+<td>int, ref</td>
+<td>Runs once whenever scripted actor receives alarm of crimeType,
+optionally on the actorID</td>
+</tr>
+<tr class="odd">
+<td>‘OnDeath’</td>
+<td>(actorID)</td>
+<td>ref</td>
+<td>Runs once whenever the scripted actor dies, optionally if the
+actorID kills said actor. See <a href="#OnDeath">OnDeath</a></td>
+</tr>
+<tr class="even">
+<td>‘OnDrop’</td>
+<td>(actorID)</td>
+<td>ref</td>
+<td>Runs once whenever the scripted object is removed from an inventory,
+optionally from the actorID’s inventory. See <a href="#OnDrop">OnDrop</a></td>
+</tr>
+<tr class="odd">
+<td>‘OnEquip’</td>
+<td>(actorID)</td>
+<td>ref</td>
+<td>Runs once whenever the scripted object is equipped, optionally by
+the actorID. See <a href="#OnEquip">OnEquip</a></td>
+</tr>
+<tr class="even">
+<td>‘OnHit’</td>
+<td>(actorID)</td>
+<td>ref</td>
+<td>Runs once whenever the scripted actor is hit, optionally hit by the
+actorID. See <a href="#OnHit">OnHit</a></td>
+</tr>
+<tr class="odd">
+<td>‘OnHitWith’</td>
+<td>(objectID)</td>
+<td>ref</td>
+<td>Runs once whenever the scripted actor/object is hit by any weapon,
+optionally hit by the objectID. See <a href="#OnHitWith">OnHitWith</a></td>
+</tr>
+<tr class="even">
+<td>‘OnKnockout’</td>
+<td>0</td>
+<td>n/a</td>
+<td>Runs once whenever the scripted actor enters the “knocked out”
+state</td>
+</tr>
+<tr class="odd">
+<td>‘OnLoad’</td>
+<td>0</td>
+<td>n/a</td>
+<td>Runs once whenever the scripted object’s 3D model loads. See <a href="#OnLoad">OnLoad</a></td>
+</tr>
+<tr class="even">
+<td>‘OnMagicEffectHit’</td>
+<td>(effectID)</td>
+<td>chars</td>
+<td>Runs once whenever the scripted actor/object is hit by any magic
+effect, optionally hit by the effectID. See <a href="#OnMagicEffectHit">OnMagicEffectHit</a></td>
+</tr>
+<tr class="odd">
+<td>‘OnMurder’</td>
+<td>(actorID)</td>
+<td>ref</td>
+<td>Non-functional block type. See <a href="#OnMurder">OnMurder</a></td>
+</tr>
+<tr class="even">
+<td>‘OnPackageChange’</td>
+<td>packageID</td>
+<td>ref</td>
+<td>Runs once whenever the scripted actor changes from the packageID to
+some other packageID. See <a href="#OnPackageChange">OnPackageChange</a></td>
+</tr>
+<tr class="odd">
+<td>‘OnPackageDone’</td>
+<td>packageID</td>
+<td>ref</td>
+<td>Runs once whenever the scripted actor finishes packageID. See <a href="#OnPackageDone">OnPackageDone</a></td>
+</tr>
+<tr class="even">
+<td>‘OnPackageEnd’</td>
+<td>packageID</td>
+<td>ref</td>
+<td>Alias for OnPackageDone. See <a href="#OnPackageDone">OnPackageDone</a></td>
+</tr>
+<tr class="odd">
+<td>‘OnPackageStart’</td>
+<td>packageID</td>
+<td>ref</td>
+<td>Runs once whenever the scripted actor starts packageID</td>
+</tr>
+<tr class="even">
+<td>‘OnReset’</td>
+<td>0</td>
+<td>n/a</td>
+<td>Runs once when the scripted object’s cell is reset due to time
+expiration</td>
+</tr>
+<tr class="odd">
+<td>‘OnSell’</td>
+<td>(actorID)</td>
+<td>ref</td>
+<td>Runs once when the scripted object is sold, optionally when sold by
+actorID</td>
+</tr>
+<tr class="even">
+<td>‘OnStartCombat’</td>
+<td>(actorID)</td>
+<td>ref</td>
+<td>Runs once when the scripted actor enters combat, optionally when
+starting combat with actorID</td>
+</tr>
+<tr class="odd">
+<td>‘OnTrigger’</td>
+<td>(objectID)</td>
+<td>ref</td>
+<td>Runs continuously whenever anything is colliding with the scripted
+object, optionally by objectID</td>
+</tr>
+<tr class="even">
+<td>‘OnTriggerActor’</td>
+<td>(actorID)</td>
+<td>ref</td>
+<td>Runs continuously whenever an actor is colliding with the scripted
+object, optionally by actorID</td>
+</tr>
+<tr class="odd">
+<td>‘OnTriggerMob’</td>
+<td>(actorID)</td>
+<td>ref</td>
+<td>Runs continuously whenever a mobile object is colliding with the
+scripted object, optionally by actorID. See <a href="#OnTriggerMob">OnTriggerMob</a></td>
+</tr>
+<tr class="even">
+<td>‘OnUnequip’</td>
+<td>(actorID)</td>
+<td>ref</td>
+<td>Runs once whenever the scripted object is unequipped, optionally by
+the actorID. See <a href="#OnUnequip">OnUnequip</a></td>
+</tr>
+</tbody>
+</table>
+<h2 id="magic-effect-block-types">Magic Effect Block Types</h2>
+<p>The following are only available for magic effect scripts:</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Game Feature</th>
+<th>(Number of Arguments)</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>‘ScriptEffectFinish’</td>
+<td>0</td>
+<td>n/a</td>
+<td>Runs once whenever the scripted spell effect finishes. See <a href="#ScriptEffectFinish">ScriptEffectFinish</a></td>
+</tr>
+<tr class="even">
+<td>‘ScriptEffectStart’</td>
+<td>0</td>
+<td>n/a</td>
+<td>Runs on the first iteration of a scripted spell effect. See <a href="#ScriptEffectStart">ScriptEffectStart</a></td>
+</tr>
+<tr class="odd">
+<td>‘ScriptEffectUpdate’</td>
+<td>0</td>
+<td>n/a</td>
+<td>Runs on the first iteration of a scripted spell effect and each time
+it runs. See <a href="#ScriptEffectUpdate">ScriptEffectUpdate</a></td>
+</tr>
+</tbody>
+</table>
+<p>Notes: - objectID is the ID of some object of any kind that can be
+interacted with, such as an actor or item - actorID is the ID of an
+actor, i.e. a humanoid - effectID is an unenclosed 4 letter chars of a
+magic effect - packageID is the ID of an AI package</p>
+<h2 id="menu-types">Menu Types</h2>
+<table>
+<thead>
+<tr class="header">
+<th>General Type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Number</td>
+</tr>
+<tr class="even">
+<td>-</td>
+</tr>
+<tr class="odd">
+<td>1</td>
+</tr>
+<tr class="even">
+<td>2</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr class="header">
+<th>Specific Type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Number</td>
+</tr>
+<tr class="even">
+<td>-</td>
+</tr>
+<tr class="odd">
+<td>1001</td>
+</tr>
+<tr class="even">
+<td>1002</td>
+</tr>
+<tr class="odd">
+<td>1003</td>
+</tr>
+<tr class="even">
+<td>1004</td>
+</tr>
+<tr class="odd">
+<td>1005</td>
+</tr>
+<tr class="even">
+<td>1006</td>
+</tr>
+<tr class="odd">
+<td>1007</td>
+</tr>
+<tr class="even">
+<td>1008</td>
+</tr>
+<tr class="odd">
+<td>1009</td>
+</tr>
+<tr class="even">
+<td>1010</td>
+</tr>
+<tr class="odd">
+<td>1011</td>
+</tr>
+<tr class="even">
+<td>1012</td>
+</tr>
+<tr class="odd">
+<td>1013</td>
+</tr>
+<tr class="even">
+<td>1014</td>
+</tr>
+<tr class="odd">
+<td>1015</td>
+</tr>
+<tr class="even">
+<td>1016</td>
+</tr>
+<tr class="odd">
+<td>1017</td>
+</tr>
+<tr class="even">
+<td>1018</td>
+</tr>
+<tr class="odd">
+<td>1019</td>
+</tr>
+<tr class="even">
+<td>1020</td>
+</tr>
+<tr class="odd">
+<td>1021</td>
+</tr>
+<tr class="even">
+<td>1022</td>
+</tr>
+<tr class="odd">
+<td>1023</td>
+</tr>
+<tr class="even">
+<td>1024</td>
+</tr>
+<tr class="odd">
+<td>1025</td>
+</tr>
+<tr class="even">
+<td>1026</td>
+</tr>
+<tr class="odd">
+<td>1027</td>
+</tr>
+<tr class="even">
+<td>1028</td>
+</tr>
+<tr class="odd">
+<td>1029</td>
+</tr>
+<tr class="even">
+<td>1030</td>
+</tr>
+<tr class="odd">
+<td>1031</td>
+</tr>
+<tr class="even">
+<td>1032</td>
+</tr>
+<tr class="odd">
+<td>1033</td>
+</tr>
+<tr class="even">
+<td>1034</td>
+</tr>
+<tr class="odd">
+<td>1035</td>
+</tr>
+<tr class="even">
+<td>1036</td>
+</tr>
+<tr class="odd">
+<td>1037</td>
+</tr>
+<tr class="even">
+<td>1038</td>
+</tr>
+<tr class="odd">
+<td>1039</td>
+</tr>
+<tr class="even">
+<td>1040</td>
+</tr>
+<tr class="odd">
+<td>1041</td>
+</tr>
+<tr class="even">
+<td>1042</td>
+</tr>
+<tr class="odd">
+<td>1043</td>
+</tr>
+<tr class="even">
+<td>1044</td>
+</tr>
+<tr class="odd">
+<td>1045</td>
+</tr>
+<tr class="even">
+<td>1046</td>
+</tr>
+<tr class="odd">
+<td>1047</td>
+</tr>
+<tr class="even">
+<td>1048</td>
+</tr>
+<tr class="odd">
+<td>1049</td>
+</tr>
+<tr class="even">
+<td>1051</td>
+</tr>
+</tbody>
+</table>
+<h5 id="onadd">OnAdd</h5>
+<p>This only behaves as expected with persistent references (see the
+section on References). An item added to a container with this block and
+removed within the same call of this block will simply do nothing. An
+additional call is needed.</p>
+<h5 id="ondeath">OnDeath</h5>
+<p>If the scripted actor gets called with <code>SayTo</code> while this
+block activates (i.e. dies while talking), this block will trigger after
+<code>SayTo</code>. Additionally, this block type does not fire
+immediately, do not rely on this for time sensitive functionality.</p>
+<h5 id="ondrop">OnDrop</h5>
+<p>OnDrop only runs when the object is <em>removed</em>, not when it no
+longer exists. It also, confusingly, doesn’t run when the object is
+dropped (i.e. placed on the ground). Thus this is not a test for seeing
+if an object is on the ground.</p>
+<h5 id="onequip">OnEquip</h5>
+<p>OnEquip does not behave as expected. It’ll only run on items that an
+actor can physically equip, regardless of status. - Broken items and
+non-equippable items will fire this block - Potions, poisons, and
+ingredients do not fire this block - Books do not fire this block during
+combat if this feature is disallowed - Unlike OnActivate, this will not
+stop the player from reading a book - Enchanted scrolls will not fire
+this block - The game function <code>EquipItem</code> <strong>does
+not</strong> fire this block, use
+<code>EquipItem2</code>/<code>EquipItem2NS</code> instead - The game
+function <code>UnequipItem</code> <strong>does</strong> fire OnUnequip
+howeve</p>
+<h5 id="onhit">OnHit</h5>
+<p>The game function <code>GetDetected</code> behaves weirdly inside
+this block. This block fires <em>after</em> the hit occurs, not as it
+occurs, thus the actor will be in an aware state no matter what. Thus
+<code>GetDetected</code> will not provide the true value expected when
+used in this manner.</p>
+<h5 id="onhitwith">OnHitWith</h5>
+<p>This can work with objectIDs that are ‘Activators’, but only when the
+objectID hitting the scripted object is of the type Ammo. Other weapon
+types do not work.</p>
+<h5 id="onload">OnLoad</h5>
+<p>This block does not work with quest scripts. A 3D object loads
+whenever you enter the 5x5 cell grid in an exterior cell, or in any
+interior cell.</p>
+<h5 id="onmagiceffecthit">OnMagicEffectHit</h5>
+<p>This works on actors, activators, containers, doors, and furniture.
+It does not work on lights or regular inventory items. In addition, the
+object being hit must have collision meshes.</p>
+<h5 id="onmurder">OnMurder</h5>
+<p>As this is broken, build murder detection with ‘OnDeath’ instead.</p>
+<h5 id="onpackagechange">OnPackageChange</h5>
+<p>Interrupt packages, such as combat or conversation packages, do not
+count towards a package change. A change only occurs when a new package
+is chosen by the scripted actor, it must be different from the specified
+packageID</p>
+<h5 id="onpackagedone">OnPackageDone</h5>
+<p>Packages can be completed through a failure state, unless the ‘Must
+Reach Location’ or ‘Must Complete’ flags of the package are checked.
+Some packages also have no complete state, and thus will never trigger
+this block.</p>
+<h5 id="ontriggermob">OnTriggerMob</h5>
+<p>Mobile objects are considered: actors (NPCs and creatures), arrows,
+non-bolt magic projectiles, and activators with collision.</p>
+<h5 id="onunequip">OnUnequip</h5>
+<p>Broken items do not fire this block, even if they can be
+equipped/unequipped. To fire this block, the broken item must be
+repaired.</p>
+<h5 id="scripteffectfinish">ScriptEffectFinish</h5>
+<p>‘ScriptEffectUpdate’ block with a <code>return</code> statement
+placed before this block will prevent this block from running. See the
+section on the <a href="#return-statement">Return Statement</a> in <a href="#statements">Statements</a> for more info. This block won’t fire
+for scripted apparel enchantments or abilities.</p>
+<h5 id="scripteffectstart">ScriptEffectStart</h5>
+<p>This block won’t fire for scripted apparel enchantments or
+abilities.</p>
+<h5 id="scripteffectupdate">ScriptEffectUpdate</h5>
+<p>‘ScriptEffectUpdate’ block with a <code>return</code> statement
+placed before this block will prevent this block from running. See the
+section on the <a href="#return-statement">Return Statement</a> in
+[Statements] for more info. This block won’t fire for scripted apparel
+enchantments or abilities.</p>
+<h1 id="variable-declarators">Variable Declarators</h1>
+<pre class="ebnf"><code>variableDeclaration = varType, variable, eol;
+varType = &quot;float&quot;
+          |&quot;int&quot;
+          |&quot;short&quot;
+          |&quot;long&quot;
+          |&quot;ref&quot;
+          |&quot;array_var&quot;
+          |&quot;string_var&quot;</code></pre>
+<pre class="obse"><code>scn VariableDeclarators
+float floating
+int integer
+ref reference
+array_var array
+string_var string
+begin gamemode
+end</code></pre>
+<p>Variable declaration happens outside of “begin blocks”. Declaration
+is different from definition. A declaration only describes the type that
+a variable has, it does not initialize a value. All types will default
+initialize to 0 for comparative needs.</p>
+<h1 id="set-statement">Set Statement</h1>
+<pre class="ebnf"><code>setStatement = &quot;set&quot;, variable, &quot;to&quot;, (expression | literal), eol;</code></pre>
+<pre class="obse"><code>scn SetStatement
+int statement
+begin gamemode
+set statement to 1
+end</code></pre>
+<p>The set statement is the statement found in the original release of
+<code>obl</code>. It it thus the most simple of the 2 variable
+statements. The set statement does not work with most OBSE constructs,
+however unlike the let statement this statement works with the game’s
+console. This means it can be used for INI files, see the section on
+User Interaction for more information on this. It is also capable of
+constructing string expressions, unlike the let statement. See the
+section on Strings in Expressions for more.</p>
+<h1 id="let-statement">Let Statement</h1>
+<pre class="ebnf"><code>letStatement = &quot;let&quot;, variable, (assignment | compoundAssignment), (expression | literal), eol;
+assignment = &quot;:=&quot;;
+compoundAssignment = &quot;+=&quot;
+                    |&quot;-=&quot;
+                    |&quot;*=&quot;
+                    |&quot;/=&quot;
+                    |&quot;^=&quot;;</code></pre>
+<pre class="obse"><code>scn LetStatement
+int statement
+begin gamemode
+let statement := 1
+let statement += 1
+end</code></pre>
+<p>The let statement is the statement introduced with OBSE. It is much
+more capable, allowing the full features of OBSE alongside compound
+assignment. Compound assignment allows you to replace basic arithmetic
+on the same variable compared to assigning a variable to the value of
+the variable and the basic arithmetic. The example is as shown:</p>
+<pre class="obse"><code>scn CompoundAssignment
+int assignment
+begin gamemode
+; basic arithmetic without compound assignment
+let assignment := assignment + 1
+; with compound assignment
+let assignment += 1
+end</code></pre>
+<h1 id="return-statement">Return Statement</h1>
+<pre class="ebnf"><code>returnStatement = &quot;return&quot;, eol;</code></pre>
+<pre class="obse"><code>scn ReturnStatement
+int x
+begin gamemode
+set x to 1
+return
+; anything below here is not processed
+set x to 2
+end</code></pre>
+<p>The return statement is not like other languages. It does not return
+any values, but instead stops the script from processing. It can be
+called at any point in time.</p>
+<h1 id="conditionals">Conditionals</h1>
+<pre class="ebnf"><code>conditional = if, [{elseIf}], [else], &quot;endif&quot;;
+if = &quot;if&quot;, (expression | literal), eol, [{statement}];
+elseIf = &quot;elseif&quot;, (expression | literal), eol, [{statement}];
+else = &quot;else&quot;, [{statement}];</code></pre>
+<pre class="obse"><code>scn Conditional
+int x
+begin gamemode
+set x to y
+if 1
+  set x to 1
+elseif 0
+  set x to 0
+else
+  set x to -1
+endif
+print
+set x to y
+end</code></pre>
+<p>Conditionals in <code>obl</code> are standard to most languages for
+the most part. <code>obl</code> accepts the standard C-style comparator
+binary operators:</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Symbol</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>==</code></td>
+<td>Left equal to right</td>
+</tr>
+<tr class="even">
+<td><code>!=</code></td>
+<td>Left not equal to right</td>
+</tr>
+<tr class="odd">
+<td><code>&gt;</code></td>
+<td>Left greater than right</td>
+</tr>
+<tr class="even">
+<td><code>&lt;</code></td>
+<td>Left less than right</td>
+</tr>
+<tr class="odd">
+<td><code>&gt;=</code></td>
+<td>Left greater than or equal to right</td>
+</tr>
+<tr class="even">
+<td><code>&lt;=</code></td>
+<td>Left less than or equal to right</td>
+</tr>
+<tr class="odd">
+<td><code>!</code></td>
+<td>Unary operation, returns opposite truthy/falsy value for an
+expression</td>
+</tr>
+<tr class="even">
+<td><code>&amp;&amp;</code></td>
+<td>Left and right are both truthy, AND operation</td>
+</tr>
+<tr class="odd">
+<td><code>\|\|</code></td>
+<td>Left or right is truthy, OR operation</td>
+</tr>
+</tbody>
+</table>
+<h2 id="conditions-always-evaluate">Conditions always evaluate</h2>
+<p>Processing of conditionals is not exactly standard. While most
+languages will only ever process a condition until it finds a true
+value, <code>obl</code> will process <em>every</em> condition until it
+finds a way to exit the condition, whether this is the end of the
+condition or a return statement. This means that scripts will produce
+runtime errors and even crash the game if you develop a condition with
+features that might return null values:</p>
+<pre class="obse"><code>scn ConditionalProblem
+begin gamemode
+if RefVar != 0 &amp;&amp; RefVar.GetAV Health &lt; 30
+  ; game will crash processing right hand condition when RefVar is empty
+endif
+end</code></pre>
+<p>Thus the best way to manage this behavior is to nest a condition,
+where the possible crash is contained in its own condition. The first
+condition uses a return statement to end the script processing:</p>
+<pre class="obse"><code>scn FixedConditonalProblem
+begin gamemode
+if RefVar == 0
+  return
+elseif RefVar.GetAV Health &lt; 30
+  ; do something
+endif
+end</code></pre>
+<h2 id="conditions-are-slow-to-process">Conditions are slow to
+process</h2>
+<p>As conditions always process, large conditions are very slow overall.
+Nesting large conditions is always suggested:</p>
+<pre class="obse"><code>scn LargeCondition
+int x
+begin gamemode
+set x to GetFPS
+; first condition is the negation of what we want for our first large condition
+if x != 60
+  return
+elseif
+  ; large condition
+endif
+end</code></pre>
+<p>Remember that return statements stops all script processing. Physical
+structuring of the conditional within the script should be kept in mind
+when constructing large conditions. For most ideal use, it is best to
+use other constructs like while statements or User-Defined
+Functions.</p>
+<h2 id="truthyfalsy-values">Truthy/Falsy Values</h2>
+<p>Values that return true are any non-zero values. Values that return
+false are any 0 values. Any empty variable is defaulted to 0 regardless
+of type, any filled variable is a truthy value. Thus you can simply use
+a variable as a condition without comparing it to any truthy/falsy value
+depending on what you want.</p>
+<h1 id="while-statement">While Statement</h1>
+<pre class="ebnf"><code>whileStatement = while, [{loopBody}], loop;
+while = &quot;while&quot;, (expression | literal), eol, [{statement}];
+loopBody = statement | &quot;break&quot; | &quot;continue&quot;, eol;
+loop = &quot;loop&quot;, eol;</code></pre>
+<pre class="obse"><code>scn WhileLoop
+int i
+begin gamemode
+while i &lt; 10
+  printc &quot;%g&quot;, i
+  let i += 1
+loop
+end</code></pre>
+<p>The while statement loops over the body of the statement as long as
+the condition is true. The conditions are standard conditions, however
+they do not always evaluate like conditionals do. As well, while
+statements will process within a script execution time. They will not
+process per line.</p>
+<p>Remember to have a condition that actually will return <a href="#truthy/falsy-values">falsy</a> eventually. The game will lock up
+otherwise.</p>
+<h2 id="break-statement">Break Statement</h2>
+<p>The break statement is a substatement. It behaves like a return
+statement, but within a loop. It cancels the execution of the loop.</p>
+<h2 id="continue-statement">Continue Statement</h2>
+<p>The continue statement is a substatement. It behaves like a return
+statement, but within a loop. It stops the current execution of the loop
+for the next iteration.</p>
+<h1 id="foreach-statement">ForEach Statement</h1>
+<pre class="ebnf"><code>forEachStatement = forEach, [{loopBody}], loop;
+forEach = destinationVariable, &quot;&lt;-&quot;, sourceContainer;
+loopBody = statement | &quot;break&quot; | &quot;continue&quot;, eol;
+loop = &quot;loop&quot;, eol;</code></pre>
+<pre class="obse"><code>scn ForEachLoop
+array_var iter
+string_var string
+begin gamemode
+let string := &quot;string&quot;
+foreach iter &lt;- string
+print
+loop
+end</code></pre>
+<p>The ForEach statement iterates over each value of a container type.
+It can iterate over: strings, arrays, and references that can be
+physical containers. The destination variable depends on the type of the
+source container.</p>
+<h2 id="array-source">Array Source</h2>
+<p>For array source containers, the destination variable is a string map
+of 2 keys: “key” and “value”. “key” is the current key of the source
+container. “value” is the current value of the source container.</p>
+<h2 id="string-source">String Source</h2>
+<p>For string source containers, the destination variable is a string
+variable of the current character of the string.</p>
+<h3 id="reference-source">Reference Source</h3>
+<p>For reference source containers (which contain a physical container),
+the destination variable is a reference variable of the current item
+being processed. See the section on Inventory References for more.</p>
+<p>ForEach statements can take the <a href="#break-statement">Break</a>
+and <a href="#continue-statement">Continue</a>.</p>
+<h1 id="user-defined-function-return-statement">User-Defined Function
+Return Statement</h1>
+<pre class="ebnf"><code>functionValue = &quot;SetFunctionValue&quot;, {expression}</code></pre>
+<pre class="obse"><code>scn FunctionReturn
+begin funciton {}
+SetFunctionValue 1 + 1
+end</code></pre>
+<p>User-defined functions (UDF) can return a single value of any type.
+Multi-value return values are packed as single arrays for return. This
+does not end execution of the user-defined function however. The last
+call of <code>SetFunctionValue</code> will determine the return value of
+the UDF</p>
+<p>See: User-Defined Functions in Expressions for more.</p>
+<h1 id="label-statement">Label Statement</h1>
+<pre class="ebnf"><code>label = (&quot;label&quot; | &quot;SaveIP&quot;), [labelName];
+labelName = identifier;</code></pre>
+<pre class="obse"><code>scn LabelGoTo
+int i
+int j
+begin gamemode
+  ; nested for loop using label/goto
+  Label 0
+  set j to 0
+  Label 1
+  set j to ( j + 1 )
+  if ( j &lt; 3 )
+    GoTo 1
+  endif
+  set i to ( i + 1 )
+  if ( i &lt; 5 ) 
+    GoTo 0
+  endif
+end</code></pre>
+<p>Label statements create points in a block of a script that can be
+jumped back to arbitrarily. The 2 keywords used are “Label” and
+“SaveIP”, they have identical functionality. The argument for a name is
+optional. If its not used, then using a goto statement without an
+argument will goto the unnamed label statement. Additionally the label
+name is under the same namespace as regular variable identifiers. Most
+of the same limitations apply.</p>
+<p>The biggest difference is when using the same label name across
+different scripts. When a script indirectly calls scripts via result
+scripts using <code>SetStage</code> or by calling a ‘OnActivate’ block
+on a scripted object, these scripts will run immediately without the
+current script completing first. It is best to not use this feature, it
+is unintentional.</p>
+<p>Label statements must be loaded into memory first, a goto statement
+will not find the label otherwise.</p>
+<h1 id="goto-statement">GoTo Statement</h1>
+<pre class="ebnf"><code>label = (&quot;goto&quot; | &quot;RestoreIP&quot;), [labelName];
+labelName = identifier;</code></pre>
+<pre class="obse"><code>scn LabelGoTo
+int i
+int j
+begin gamemode
+  ; nested for loop using label/goto
+  Label 0
+  set j to 0
+  Label 1
+  set j to ( j + 1 )
+  if ( j &lt; 3 )
+    GoTo 1
+  endif
+  set i to ( i + 1 )
+  if ( i &lt; 5 ) 
+    GoTo 0
+  endif
+end</code></pre>
+<p>GoTo statements return the execution of the script back to the point
+of the label statement of label name. If no label name is provided, it
+goes to the unnamed label statement.</p>
+<h1 id="game-statements">Game Statements</h1>
+<p>Being a video game oriented language, <code>obl</code> has many
+statements that update and mutate many game features which only ever
+return null. As these return null, the compiler will not compile the
+script unless you use OE to ignore this. This will lead to runtime
+errors instead.</p>
+<p>These operate like any regular function, and are typically prefixed
+with “Set”, or are otherwise self explanatory. A full list will can be
+found elsewhere. Generally expect to use these to create
+side-effects.</p>
+</body>
+</html>
