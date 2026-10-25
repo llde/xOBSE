@@ -1,3 +1,8 @@
+xOBSE 22.14
+       Addition:	
+       		- Added support to GOG v3 version (Game Preservation Program).
+		- Removed ATL includes.
+
 xOBSE 22.13
 	Fix:
 		- Fix some GetTotalAE ... C family commands, that could cause a crash (in particualr with OBSE compiler and expressions)
