@@ -723,7 +723,7 @@ public:
 	virtual void	GetHandReachDistance(void) = 0;   
 	virtual void	SetTransparency(bool on, float amount) = 0;  //Can create or delete ExtraRefractionProperty, set something on the NiAvObject, call a base object vtbl function
 	virtual void	Unk_9D(void) = 0;
-	virtual void	Unk_9E(void) = 0;
+	virtual bool	HasRagDoll() = 0;
 	virtual void	Unk_9F(void) = 0;
 	virtual void	Unk_A0(void) = 0;	// A0
 	virtual SInt32	GetActorValue(UInt32 avCode) = 0;								// current, cumulative value
@@ -807,16 +807,18 @@ public:
 
 	// unk1 looks like quantity, usu. 1; ignored for ammo (equips entire stack)
 	// itemExtraList is NULL as the container changes entry is not resolved before the call
-	void				EquipItem(TESForm * objType, UInt32 unk1, ExtraDataList* itemExtraList, UInt32 unk3, bool lockEquip);
-	void				UnequipItem(TESForm* objType, UInt32 unk1, ExtraDataList* itemExtraList, UInt32 unk3, bool lockUnequip, UInt32 unk5);
-	void				UnequipItemSilent(TESForm* objType, UInt32 unk1, ExtraDataList* itemExtraList, UInt32 unk3, bool lockUnequip, UInt32 unk5);
+	void					EquipItem(TESForm * objType, UInt32 unk1, ExtraDataList* itemExtraList, UInt32 unk3, bool lockEquip);
+	void					UnequipItem(TESForm* objType, UInt32 unk1, ExtraDataList* itemExtraList, UInt32 unk3, bool lockUnequip, UInt32 unk5);
+	void					UnequipItemSilent(TESForm* objType, UInt32 unk1, ExtraDataList* itemExtraList, UInt32 unk3, bool lockUnequip, UInt32 unk5);
 
-	UInt32				GetBaseActorValue(UInt32 value);
-	EquippedItemsList	GetEquippedItems();
+	void					DrainFatigue(float a_amount);
+	UInt32					GetBaseActorValue(UInt32 value);
+	EquippedItemsList		GetEquippedItems();
 	ExtraContainerDataList	GetEquippedEntryDataList();
-	bool				CanCastGreaterPower(SpellItem* power);
-	void				SetCanUseGreaterPower(SpellItem* power, bool bAllowUse, float timer = -1);
-	void				UnequipAllItems();
+	bool					CanCastGreaterPower(SpellItem* power);
+	void					SetCanUseGreaterPower(SpellItem* power, bool bAllowUse, float timer = -1);
+	void					UnequipAllItems();
+	void					UpdateCastPowers(float a_elaspedTime);
 
 	// 8
 	struct PowerListData {
@@ -1085,13 +1087,14 @@ public:
 		return majorSkillAdvances;
 	}
 
-	MagicItem* GetActiveMagicItem();
-	bool IsThirdPerson() { return isThirdPerson ? true : false; }
-	void TogglePOV(bool bFirstPerson);
-	void SetBirthSign(BirthSign* birthSign);
-	void ChangeExperience(UInt32 actorValue, UInt32 scaleIndex, float baseDelta);
-	void ChangeExperience(UInt32 actorValue, float amount);
-	float ExperienceNeeded(UInt32 skill, UInt32 atLevel);
+	MagicItem*	GetActiveMagicItem();
+	bool		IsThirdPerson() { return isThirdPerson ? true : false; }
+	void		TogglePOV(bool bFirstPerson);
+	void		SetBirthSign(BirthSign* birthSign);
+	void		ChangeExperience(UInt32 actorValue, UInt32 scaleIndex, float baseDelta);
+	void		ChangeExperience(UInt32 actorValue, float amount);
+	float		ExperienceNeeded(UInt32 skill, UInt32 atLevel);
+	void		UseSkill(UInt32 a_whichSkill, float a_usage, TESSkill* a_skill, bool a_dontIncrementChargenSkillUses);
 
 	TESClass* GetPlayerClass() const;
 
@@ -1332,30 +1335,50 @@ public:
 	ArrowProjectile();
 	~ArrowProjectile();
 
-	// 54
-	struct CollisionData
+	enum class ArrowCollisionType
 	{
-		// not sure if this data is generated for collisions with immobile objects too, or if struct is unique to ArrowProjectile (probably not)
-		float			unk00[9];	// 00 presumably a matrix or set of 3 3-dimensional vectors
-		TESObjectREFR	* refr;		// 24 what it hit
-		NiNode			* ninode;	// 28 seen "Bip01 Spine" for Creature
-		float			unk2C[9];	// 2C again
+		kStickActor,
+		kStickRef,
+		kStickGround,
+		kBounce,
+		kSimulate,
 	};
 
-	CollisionData	* unk05C;		//05C
-	UInt32			unk060;			//060
-	float			unk064;			//064
-	float			elapsedTime;	//068
-	float			speed;			//06C - base speed * GMST fArrowSpeedMult
-	float			unk070;			//070
-	float			unk074;			//074
-	Actor			* shooter;		//078;
-	EnchantmentItem	* arrowEnch;	//07C
-	EnchantmentItem	* bowEnch;		//080
-	AlchemyItem		* poison;		//084
-	float			unk088;			//088
-	float			unk08C;			//08C
-	float			unk090;			//090
-	UInt32			unk094;			//094
-	UInt32			unk098;			//098
+	enum class ArrowState
+	{
+		kFlying,
+		kCollision,
+		kPostCollision,
+		kDeleting
+	};
+
+	// 54
+	struct CollisionInfo
+	{
+		ArrowCollisionType	collisionType;	// 00
+		float				point[3];		// 04
+		float				normal[3];		// 10
+		float				velocity[3];	// 1C
+		TESObjectREFR*		collidee;		// 28
+		NiAVObject*			closestObject;	// 2C
+		NiMatrix33			rotation;		// 30
+	};
+
+	CollisionInfo*		collisionData;				//05C
+	ArrowState			state;						//060
+	float				fadeAlpha;					//064
+	float				age;						//068
+	float				speed;						//06C - base speed * GMST fArrowSpeedMult
+	float				damage;						//070
+	float				waterSpeed;					//074
+	Actor*				shooter;					//078
+	EnchantmentItem*	enchantment;				//07C
+	EnchantmentItem*	bowEnchantment;				//080
+	AlchemyItem*		poison;						//084
+	float				deltaS[3];					//088
+	bool				needsFinishInitLoadGame;	//094
+	bool				addedToInventory;			//095
+	bool				bowIgnoresWeaponsResist;	//096
+	bool				postForce;					//097
+	UInt32				loadGameFlags;				//098
 };

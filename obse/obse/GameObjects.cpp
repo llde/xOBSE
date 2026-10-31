@@ -71,6 +71,16 @@ UInt32 Actor::GetBaseActorValue(UInt32 value)
 	return ThisStdCall(s_Actor_GetBaseActorValue, this, value);
 }
 
+void Actor::DrainFatigue(float a_amount)
+{
+	ThisStdCall(0x005E07D0, this, a_amount);
+}
+
+void Actor::UpdateCastPowers(float a_elaspsedTime)
+{
+	ThisStdCall(0x005E7A60, this, a_elaspsedTime);
+}
+
 EquippedItemsList Actor::GetEquippedItems()
 {
 	EquippedItemsList itemList;
@@ -136,6 +146,11 @@ void PlayerCharacter::SetBirthSign(BirthSign* birthSign)
 	ThisStdCall(0x0066A400, this, birthSign);
 }
 
+void PlayerCharacter::UseSkill(UInt32 a_whichSkill, float a_usage, TESSkill* a_skill, bool a_dontIncrementChargenSkillUses)
+{
+	ThisStdCall(0x00668B30, this, a_whichSkill, a_usage, a_skill, a_dontIncrementChargenSkillUses);
+}
+
 float GetGameSettingFloat(const char* settingName)
 {
 	float fVal = 1.0;
@@ -181,20 +196,13 @@ void PlayerCharacter::ChangeExperience(UInt32 valSkill, UInt32 whichUse, float h
 
 void PlayerCharacter::ChangeExperience(UInt32 valSkill, float expChange)
 {
-	float &curExperience = skillExp[valSkill - kActorVal_Armorer];
-	float curSkillLevel = GetBaseActorValue(valSkill);
-	float skillLevel = curSkillLevel;
-
 	if (expChange > 0) {
-		curExperience += expChange;
-		float expNeeded = ExperienceNeeded(valSkill, curSkillLevel);
-		while (expNeeded < curExperience) {
-			curExperience -= expNeeded;
-			skillLevel++;
-			expNeeded = ExperienceNeeded(valSkill, skillLevel);
-		}
-	}
-	else {
+		UseSkill(valSkill, expChange, nullptr, false);
+	} else {
+		float& curExperience = skillExp[valSkill - kActorVal_Armorer];
+		float curSkillLevel = GetBaseActorValue(valSkill);
+		float skillLevel = curSkillLevel;
+
 		expChange = -expChange; // reverse the sign
 		while (curExperience < expChange  && skillLevel > 1) {
 			// we have to reduce the skill by at least a level
@@ -214,13 +222,14 @@ void PlayerCharacter::ChangeExperience(UInt32 valSkill, float expChange)
 		} else {
 			curExperience -= expChange;
 		}
-	}
-	if (skillLevel != curSkillLevel) {
-		SetActorValue(valSkill, skillLevel);
-		SInt32 delta = skillLevel - curSkillLevel;
-		ModSkillAdvanceCount(valSkill, delta);
-		if (GetPlayerClass()->IsMajorSkill(valSkill)) {
-			ModMajorSkillAdvanceCount(delta);
+
+		if (skillLevel != curSkillLevel) {
+			SetActorValue(valSkill, skillLevel);
+			SInt32 delta = skillLevel - curSkillLevel;
+			ModSkillAdvanceCount(valSkill, delta);
+			if (GetPlayerClass()->IsMajorSkill(valSkill)) {
+				ModMajorSkillAdvanceCount(delta);
+			}
 		}
 	}
 }
