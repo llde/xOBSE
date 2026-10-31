@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>lexical</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">
+body {
+padding: 10%;
+}
+
+h1 {
+font-size: 150%;
+font-weight: normal;
+}
+h2 {
+font-size: 130%;
+font-weight: normal;
+margin-top: 40px;
+}
+h3 {
+font-size: 110%;
+font-weight: normal;
+margin-top: 30px;
+color: #000099;
+background-color: #ffffff;
+}
+h4 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+}
+h5 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+color: #000099;
+background-color: #ffffff;
+}
+
+table {
+border: 1px solid black;
+margin: 20px 0px 20px 0px;
+}
+caption {
+text-align: left;
+margin-bottom: 10px;
+}
+td, th {
+padding: 5px;
+}
+tr.alt {
+color: black;
+background-color: #dedede;
+}
+code.alt {
+color: 770000;
+background-color: #dedede;
+}
+table.functionIndex td{
+padding: 0px 30px 0px 5px;
+}
+
+ul {
+list-style-type: none;
+}
+
+.boxhl {
+border: 1px dotted black;
+padding: 8px;
+color: #000000;
+background-color: #eeeeff;
+}
+
+.code {
+border: 1px solid black;
+padding: 20px;
+font-family: monospace;
+color: #770000;
+background-color: #ffffff;
+}
+
+pre {
+color: #770000;
+background-color: #ffffff;
+}
+
+code.s {
+margin-left: 40px;
+font-weight: normal;
+color: #770000;
+background-color: #ffffff;
+}
+
+code {
+color: #000000;
+background-color: #ffffff;
+}
+
+span.op {
+font-style: italic;
+color: #666666;
+background-color: #ffffff;
+}
+
+pre.msgbox {
+color: #777700;
+background-color: #ffffff;
+font-family: serif;
+}
+
+.ind {
+margin-left: 40px;
+}
+.c {
+text-align: center;
+}
+.l {
+text-align: left;
+}
+
+.f {
+color: #3333cc;
+background-color: white;
+}
+a:link.f{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.f {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.f {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link.cf{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.cf {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.cf {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link img {
+border-style: none;
+}
+a:visited img {
+border-style: none;
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<p>As stated previously, <code>obl</code> is a rather loose language. It
+is completely case and whitespace insensitive. Indentation and case are
+completely up to the end developer, though it is recommended to keep a
+convention.</p>
+<h1 id="keywords">Keywords</h1>
+<p>The following is a list of language keywords: - while - foreach -
+loop - let</p>
+<p>Interestingly, other keywords like ‘if’ can be used as variables.
+This does not produce runtime errors. This is limited to constructs
+found in the vanilla game mostly.</p>
+<p>All game functions, block types, and any EditorID are considered as
+keywords and cannot be used as variables.</p>
+<h1 id="text-format">Text Format</h1>
+<p><code>obl</code> can only accept printable ASCII characters (i.e. up
+to byte 127) in any applicable construct. Additionally, string variables
+can contain any of the extended ASCII characters.</p>
+</body>
+</html>

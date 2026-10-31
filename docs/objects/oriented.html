@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>oriented</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">
+body {
+padding: 10%;
+}
+
+h1 {
+font-size: 150%;
+font-weight: normal;
+}
+h2 {
+font-size: 130%;
+font-weight: normal;
+margin-top: 40px;
+}
+h3 {
+font-size: 110%;
+font-weight: normal;
+margin-top: 30px;
+color: #000099;
+background-color: #ffffff;
+}
+h4 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+}
+h5 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+color: #000099;
+background-color: #ffffff;
+}
+
+table {
+border: 1px solid black;
+margin: 20px 0px 20px 0px;
+}
+caption {
+text-align: left;
+margin-bottom: 10px;
+}
+td, th {
+padding: 5px;
+}
+tr.alt {
+color: black;
+background-color: #dedede;
+}
+code.alt {
+color: 770000;
+background-color: #dedede;
+}
+table.functionIndex td{
+padding: 0px 30px 0px 5px;
+}
+
+ul {
+list-style-type: none;
+}
+
+.boxhl {
+border: 1px dotted black;
+padding: 8px;
+color: #000000;
+background-color: #eeeeff;
+}
+
+.code {
+border: 1px solid black;
+padding: 20px;
+font-family: monospace;
+color: #770000;
+background-color: #ffffff;
+}
+
+pre {
+color: #770000;
+background-color: #ffffff;
+}
+
+code.s {
+margin-left: 40px;
+font-weight: normal;
+color: #770000;
+background-color: #ffffff;
+}
+
+code {
+color: #000000;
+background-color: #ffffff;
+}
+
+span.op {
+font-style: italic;
+color: #666666;
+background-color: #ffffff;
+}
+
+pre.msgbox {
+color: #777700;
+background-color: #ffffff;
+font-family: serif;
+}
+
+.ind {
+margin-left: 40px;
+}
+.c {
+text-align: center;
+}
+.l {
+text-align: left;
+}
+
+.f {
+color: #3333cc;
+background-color: white;
+}
+a:link.f{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.f {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.f {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link.cf{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.cf {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.cf {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link img {
+border-style: none;
+}
+a:visited img {
+border-style: none;
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 id="object-oriented-programming-for-oblivion">Object Oriented
+Programming for Oblivion</h1>
+<p>As Oblivion is a game, most of your interaction will be with objects.
+<code>obl</code> doesn’t offer specific object-oriented programming,
+however much of the interfacing you will be doing with the language will
+be with objects themselves. It can thus be useful to enter the OOP
+mindset when working in this language.</p>
+<h2 id="objects">Objects</h2>
+<p>You cannot, readily, create or destroy new objects from
+<code>obl</code>. Some object types have functions to achieve that, but
+it’s not something that is the norm. Thus objects in <code>obl</code>
+are immutable and purely provided for you. However, despite this you are
+able to access any feature available from the object within
+<code>obl</code>.</p>
+<h2 id="getters">Getters</h2>
+<p>Many game functions are designed to return some value of an object.
+Functions that return a non-boolean value, such as the numerical
+monetary value of the item, are usually prefixed with “Get”.</p>
+<pre class="obse"><code>scn Getter
+int intVar
+begin gamemode
+let intVar := PlayerREF.GetActorValue Strength
+; &quot;get&quot; the actor value &#39;strength&#39; from the reference object
+let intVar := GetGoldValue Apple
+; &quot;get&quot; the gold value from the base object
+end</code></pre>
+<h2 id="setters">Setters</h2>
+<p>Like getters, setters set a value of an object. These functions don’t
+return any value, and are usually statements. They are prefixed with
+“Set”. You can think of these functions as setting attributes of a
+class, only we cannot define classes.</p>
+<pre class="obse"><code>scn Setter
+begin gamemode
+PlayerREF.SetActorValue Strength 100
+; &quot;set&quot; the actor value &#39;strength&#39; of the reference object
+SetGoldValue Apple 100
+; &quot;set&quot; the gold value of the base object</code></pre>
+<h2 id="predicates">Predicates</h2>
+<p>These functions ask a question of the object, all prefixing the
+function name. The list includes: “Is”, “Has”, and “Can”. These
+functions all return a boolean as they are all effectively asking a
+yes/no question about the object.</p>
+<ul>
+<li>“Is” functions in particular ask about a quality or type of an
+object.</li>
+<li>“Has” functions usually ask about a mutable state of the object,
+like their name or if they have a specific spell.</li>
+<li>“Can” functions usually return whether or not an actor can do some
+feature, usually implicitly the player object</li>
+</ul>
+<pre class="obse"><code>scn Predicate
+begin gamemode
+if IsIngredient Apple
+  Print &quot;yes an apple is an ingredient&quot;
+endif
+if PlayerREF.HasTail
+  Print &quot;only if you&#39;re an argonian or khajit&quot;
+endif
+if CanFastTravelFromWorld Tamriel
+  Print &quot;of course you can travel in tamriel&quot;
+endif
+end</code></pre>
+<h2 id="ownership">Ownership</h2>
+<p>In Oblivion, there are base objects, which are the source object
+defined, and references, which refer to these base objects. You can
+think of a base object as the parent of the child reference object. The
+reference inherits all attributes and features of the base object
+automatically. If you create 3 references to the object “Apple” and then
+change the monetary value of the base object “Apple”, then all 3
+references will get that new value. However, children are distinct from
+each other. If you only change the monetary value of 1 reference, no
+other object will receive this change. It can be very important to
+remember to work on references when you need to as to not affect
+references undesired.</p>
+<p>Do note that this is purely language to get one more comfortable with
+<code>obl</code>. The words “parent” and “child” have a very different
+meaning in Oblivion, and instead refer to how references can be grouped
+together for group management.</p>
+</body>
+</html>

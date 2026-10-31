@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Types</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">
+body {
+padding: 10%;
+}
+
+h1 {
+font-size: 150%;
+font-weight: normal;
+}
+h2 {
+font-size: 130%;
+font-weight: normal;
+margin-top: 40px;
+}
+h3 {
+font-size: 110%;
+font-weight: normal;
+margin-top: 30px;
+color: #000099;
+background-color: #ffffff;
+}
+h4 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+}
+h5 {
+font-size: 100%;
+font-weight: bold;
+margin-bottom: 0px;
+color: #000099;
+background-color: #ffffff;
+}
+
+table {
+border: 1px solid black;
+margin: 20px 0px 20px 0px;
+}
+caption {
+text-align: left;
+margin-bottom: 10px;
+}
+td, th {
+padding: 5px;
+}
+tr.alt {
+color: black;
+background-color: #dedede;
+}
+code.alt {
+color: 770000;
+background-color: #dedede;
+}
+table.functionIndex td{
+padding: 0px 30px 0px 5px;
+}
+
+ul {
+list-style-type: none;
+}
+
+.boxhl {
+border: 1px dotted black;
+padding: 8px;
+color: #000000;
+background-color: #eeeeff;
+}
+
+.code {
+border: 1px solid black;
+padding: 20px;
+font-family: monospace;
+color: #770000;
+background-color: #ffffff;
+}
+
+pre {
+color: #770000;
+background-color: #ffffff;
+}
+
+code.s {
+margin-left: 40px;
+font-weight: normal;
+color: #770000;
+background-color: #ffffff;
+}
+
+code {
+color: #000000;
+background-color: #ffffff;
+}
+
+span.op {
+font-style: italic;
+color: #666666;
+background-color: #ffffff;
+}
+
+pre.msgbox {
+color: #777700;
+background-color: #ffffff;
+font-family: serif;
+}
+
+.ind {
+margin-left: 40px;
+}
+.c {
+text-align: center;
+}
+.l {
+text-align: left;
+}
+
+.f {
+color: #3333cc;
+background-color: white;
+}
+a:link.f{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.f {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.f {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.f {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link.cf{
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:visited.cf {
+text-decoration: none;
+color: #3333cc;
+background-color: white;
+}
+a:focus.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:hover.cf {
+text-decoration: underline;
+color: #0000ff;
+background-color: white;
+}
+a:active.cf {
+text-decoration: none;
+color: #ff0000;
+background-color: white;
+}
+a:link img {
+border-style: none;
+}
+a:visited img {
+border-style: none;
+}
+</style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 id="literal-types">Literal Types</h1>
+<p>Literals can be used in any place a variable can, and are simply the
+direct connotation of what the type refers to. There are a number of
+literals available to <code>obl</code>:</p>
+<ul>
+<li>String literals: Any ASCII characters enclosed in double quotes:
+<code>&quot;string&quot;</code></li>
+<li>Integer literals: Any Arabic-Indic numeral, with optional negative
+symbol: <code>-1, 333</code></li>
+<li>Float literals: Any Arabic-Indic numeral with a period for decimal
+notation: <code>-1.22, 3.44</code></li>
+<li>Scientific literal: Any scientific notation numeral, using the E
+notation: <code>3E10, 3e-10</code>
+<ul>
+<li>These numbers are all floats</li>
+</ul></li>
+<li>Reference literal: Any game object reference, usually an identifier:
+<code>Torch02</code>
+<ul>
+<li>Any EditorID is acceptable here, which includes every valid object
+found in a plugin</li>
+</ul></li>
+<li>Type literal: Any unenclosed string, identifiers not found as game
+objects</li>
+</ul>
+<h1 id="variable-types">Variable Types</h1>
+<p>Variable types are the types that variables can be. - floats:
+32-bit/single precision. Effective precision is 1.18E-38 to 3.40E38 -
+integers: integers internally stored as floats - reference: stores a
+game object, object must be persistent - array: reference to an array,
+type unspecified - string: reference to a string, a container type</p>
+<pre class="ebnf"><code>variableDeclaration = varType, variable;
+varType = &quot;float&quot;
+        | &quot;int&quot;
+        | &quot;short&quot;
+        | &quot;long&quot;
+        | &quot;ref&quot;
+        | &quot;array_var&quot;
+        | &quot;string_var&quot;</code></pre>
+<pre class="obse"><code>scn VarDeclaration
+float floating
+int integer
+ref reference
+array_var array
+string_var string</code></pre>
+<h2 id="numbers">Numbers</h2>
+<p>All numbers are ultimately stored as floats, there is no use for
+distinguishing between shorts and longs. Thus there are only 2 types,
+with one having 3 aliases for declaration:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Declaration</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>float</td>
+<td><code>float</code></td>
+</tr>
+<tr class="even">
+<td>integer</td>
+<td><code>int</code>, <code>short</code>, <code>long</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>NOTE:</strong> the following two headings are here to address
+2 solutions to integers being stored as floats. While it is absolutely
+confirmed that the game internally stores integers in scripts as floats,
+there is conflicting information on if they are stored as
+double-precision or single-precision floats. Thus until one of these is
+confirmed, both are assumed to be true and responsible for behaviors
+found when working with high number integers.</p>
+<h3 id="integers-as-single-floats">Integers as single floats</h3>
+<p>As all numbers are stored as floats internally, the only precision is
+the limitations of the 32-bit floats available. Therefore the largest
+integer value you can make where there’s a +/- 1 addition is 16,777,216.
+Higher values are rounded down. This is the source of weird math
+behavior.</p>
+<h3 id="integers-as-double-floats">Integers as double floats</h3>
+<p>As all numbers are stored as double-precision floats internally,
+there is no use in distinguishing between shorts and longs. Thus the
+full signed range up to 2,147,483,647 can be used for any integer
+type.</p>
+<h2 id="reference">Reference</h2>
+<p>Reference variables, confusingly, do not refer to anything. They
+contain the metadata of the game object using the EditorID of the object
+as the name. EditorID is an unenclosed string of characters. FormID, a
+hexadecimal number, can be stored in a reference variable but only as
+the return value of a function. It’ll get converted to the EditorID
+implicitly.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Declaration</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>reference</td>
+<td>ref</td>
+</tr>
+</tbody>
+</table>
+<pre class="obse"><code>scn HowRefVarsWork
+ref editorID
+begin gamemode
+let editorID := Torch02
+end</code></pre>
+<h2 id="strings">Strings</h2>
+<p>Strings are standard ASCII. They behave as containers, taking all
+array operations available. They additionally get saved to the player’s
+save game. Variables of this type behave in specific ways. See the
+section on Strings in Expressions for more details.</p>
+<table>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Declaration</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>string</td>
+<td>string_var</td>
+</tr>
+</tbody>
+</table>
+<h2 id="arrays">Arrays</h2>
+<p>Arrays are a generalized container type that gets saved to the
+player’s saved game. They can be 1 of three types:</p>
+<ol type="1">
+<li>Array: this is a 0-indexed array. Standard array operations
+apply</li>
+<li>Map: a non-ordered array that takes any number as index</li>
+<li>StringMap: a non-ordered array that takes any string as index</li>
+</ol>
+<table>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Declaration</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>array</td>
+<td>array_var</td>
+</tr>
+</tbody>
+</table>
+<p>Array variables, like string variables are references to the
+container. The container must exist before manipulation, see the section
+on Arrays in Expressions for more details.</p>
+<h1 id="return-and-parameter-types">Return and Parameter Types</h1>
+<p>Documentation of game functions will show a variety of types that can
+be returned and used as parameters. The above types can all be used in
+addition to the following:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Type</th>
+<th>Source Type</th>
+<th>Stored Type</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>chars</td>
+<td><code>4</code> character string, optionally enclosed in quotes</td>
+<td>String</td>
+</tr>
+<tr class="even">
+<td>bool</td>
+<td><code>1</code> for true, <code>0</code> for false</td>
+<td>Number</td>
+</tr>
+<tr class="odd">
+<td>formatString</td>
+<td>a string that takes format specifiers, plus up to 20 arguments <a href="#1">1</a></td>
+<td>String</td>
+</tr>
+<tr class="even">
+<td>FormID</td>
+<td>a hexadecimal number of an object <a href="#2">2</a></td>
+<td>Reference</td>
+</tr>
+<tr class="odd">
+<td>multi</td>
+<td>any non-object value</td>
+<td>n/a</td>
+</tr>
+</tbody>
+</table>
+<h5 id="section">1</h5>
+<p>Format specifiers can be found in the sections on Strings in
+Expressions.</p>
+<h5 id="section-1">2</h5>
+<p>See the section on References for more details.</p>
+<h1 id="null-type">Null Type</h1>
+<p>You cannot assign anything to the null type, it is simply returned
+upon a runtime error.</p>
+</body>
+</html>
