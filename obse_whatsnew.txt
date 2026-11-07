@@ -1,3 +1,6 @@
+xOBSE 22.15:
+	- Added support for GOG v4 (Game Preservation Program)
+
 xOBSE 22.14
        Addition:	
        		- Added support to GOG v3 version (Game Preservation Program).
